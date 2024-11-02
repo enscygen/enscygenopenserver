@@ -1,0 +1,653 @@
+[
+
+  {
+    "question": "_____ is a state or condition of atmosphere at a given place and at a given time",
+    "options": [
+      "Climate",
+      "Weather",
+      "Albedo",
+      "Disturbances",
+      "None of the above"
+    ],
+    "correctAnswer": "Weather",
+    "explanation": "Weather is a state or condition of atmosphere at a given place and at a given time",
+    "selectedOption": null
+  },
+{
+    "question": "Atmosphere is a colorless, tasteless and odorless mixture of gases that surround the earth. It extends upto a height of ____",
+    "options": [
+      "800 km",
+      "1200 km",
+      "1600 km",
+      "2100 km",
+      "2600 km"
+    ],
+    "correctAnswer": "1600 km",
+    "explanation": "Atmosphere is a colorless, tasteless and odorless mixture of gases that surround the earth. It extends upto a height of 1600 km. However 99% of total mass of the atmosphere is within a height of 40 km from the earth surface.",
+    "selectedOption": null
+  },
+{
+    "question": "The lowermost layer of atmosphere, which extends up to a height of 8 to 18 km from the earth surface is called",
+    "options": [
+      "Thermosphere",
+      "Stratosphere",
+      "Mesosphere",
+      "Troposphere",
+      "Exosphere"
+    ],
+    "correctAnswer": "Troposphere",
+    "explanation": "The lowermost layer of atmosphere, which extends up to a height of 8 to 18 km from the earth surface is called Troposphere. It influences the earth's climate.",
+    "selectedOption": null
+  },
+{
+    "question": "The layer in atmosphere which influences earth climate and is the place for all weather phenomenon like clouds, rain, mist, fog, dew etc is called ____",
+    "options": [
+      "Thermosphere",
+      "Stratosphere",
+      "Mesosphere",
+      "Troposphere",
+      "Exosphere"
+    ],
+    "correctAnswer": "Troposphere",
+    "explanation": "The layer in atmosphere which influences earth climate and is the place for all weather phenomenon like clouds, rain, mist, fog, dew etc is called Troposphere",
+    "selectedOption": null
+  },
+{
+    "question": "Troposphere contains ____ % of the atmosphere's mass.",
+    "options": [
+      "80",
+      "85",
+      "90",
+      "95",
+      "None of the above"
+    ],
+    "correctAnswer": "85",
+    "explanation": "Troposphere contains 85 % of the atmosphere's mass and hence is the dense part of atmosphere.",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the correct order of the layers of atmosphere from lowermost to uppermost from earth.",
+    "options": [
+      "Thermosphere - Stratosphere - Troposphere - Mesosphere",
+      "Thermosphere - Stratosphere - Mesosphere - Troposphere",
+      "Troposphere - Stratosphere - Mesosphere - Thermosphere",
+      "Troposphere - Mesosphere - Stratosphere - Thermosphere",
+      "Troposphere - Exosphere - Mesosphere - Thermosphere"
+    ],
+    "correctAnswer": "Troposphere - Stratosphere - Mesosphere - Thermosphere",
+    "explanation": "Troposphere (lowermost) - Stratosphere - Mesosphere - Thermosphere (uppermost)<br>Thermosphere can be further divided into two - <strong>Ionosphere</strong> (lower) and <strong>Exosphere</strong> (outer).",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the wrong pair",
+    "options": [
+      "Troposphere : 8 - 18 km",
+      "Stratosphere : 18 - 50 km",
+      "Mesosphere : 50 - 80 km",
+      "Thermosphere : 80 - 1600 km",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "Troposphere : 8 - 18 km<br>Stratosphere : 18 - 50 km<br>Mesosphere : 50 - 80 km<br>Thermosphere : 80 - 1600 km",
+    "selectedOption": null
+  },
+{
+    "question": "Temperature increases with altitude in",
+    "options": [
+      "Troposphere & Mesosphere",
+      "Stratosphere & Thermosphere",
+      "Stratosphere & Mesosphere",
+      "Thermosphere & Mesosphere",
+      "Troposphere & Thermosphere"
+    ],
+    "correctAnswer": "Stratosphere & Thermosphere",
+    "explanation": "Temperature increases with altitude in Stratosphere & Thermosphere.<br>Troposphere : Temperature decreases<br>Stratosphere : Temperature increases<br>Mesosphere : Temperature decreases<br>Thermosphere : Temperature increases",
+    "selectedOption": null
+  },
+{
+    "question": "The warmest layer in atmosphere is ___",
+    "options": [
+      "Thermosphere",
+      "Stratosphere",
+      "Mesosphere",
+      "Troposphere",
+      "Exosphere"
+    ],
+    "correctAnswer": "Stratosphere",
+    "explanation": "The warmest layer in atmosphere is <strong>Stratosphere</strong> and the coldest layer in atmosphere is <strong>Mesosphere</strong>",
+    "selectedOption": null
+  },
+{
+    "question": "Due to the presence of Ozone, which absorbs UV rays, _____ layer is also known as Ozonosphere.",
+    "options": [
+      "Thermosphere",
+      "Stratosphere",
+      "Mesosphere",
+      "Troposphere",
+      "Ionosphere"
+    ],
+    "correctAnswer": "Stratosphere",
+    "explanation": "Due to the presence of Ozone, which absorbs UV rays, Stratosphere layer is also known as Ozonosphere.",
+    "selectedOption": null
+  },
+{
+    "question": "The lowermost layer of thermosphere is called ___",
+    "options": [
+      "Ionosphere",
+      "Exosphere",
+      "Biosphere",
+      "Ozonosphere",
+      "None of the above"
+    ],
+    "correctAnswer": "Ionosphere",
+    "explanation": "The lowermost layer of thermosphere is called Ionosphere, and the outermost layer is called Exosphere. Long range radio communication is made possible through the ionized layer of Ionosphere.",
+    "selectedOption": null
+  },
+{
+    "question": "Percentage volume of Nitrogen,Oxygen and Argon in the atmosphere is ____, ____ & ____ % respectively.",
+    "options": [
+      "73.02, 20.95, 0.60",
+      "78.08, 21.85, 0.93",
+      "78.08, 20.95, 0.93",
+      "68.08, 21.95, 0.63",
+      "None of the above"
+    ],
+    "correctAnswer": "78.08, 20.95, 0.93",
+    "explanation": "Composition of atmospheric air is as follows;<br>Nitrogen : 78.08 %<br>Oxygen : 20.95 %<br>Argon : 0.93 %<br>Carbon dioxide : 0.03 %<br>Neon : 0.0018 %",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the correct statements regarding composition of soil air <br>(i) Nitrogen percentage is more or less same as in atmosphere <br>(ii) Oxygen level slightly decreased as compared to atmosphere <br>(iii) CO2 levels will be 8-10 times more as compared to atmosphere",
+    "options": [
+      "(i) and (iii)",
+      "(ii) and (iii)",
+      "(i), (ii) and (iii)",
+      "(i) only",
+      "(i) and (iv)"
+    ],
+    "correctAnswer": "(i), (ii) and (iii)",
+    "explanation": "(i) Nitrogen percentage is more or less same as in atmosphere <br>(ii) Oxygen level slightly decreased as compared to atmosphere <br>(iii) CO2 levels will be 8-10 times more as compared to atmosphere",
+    "selectedOption": null
+  },
+{
+    "question": "______ is defined as the energy falling in one minute on a surface area of one square centimeter at the outer boundary of the atmosphere, held normally to the sunlight at the mean distance of the earth from the sun.",
+    "options": [
+      "Albedo",
+      "Solar Constant",
+      "Lapse rate",
+      "Inversion",
+      "Photosynthetic Active Radiation"
+    ],
+    "correctAnswer": "Solar Constant",
+    "explanation": "Solar constant is defined as the energy falling in one minute on a surface area of one square centimeter at the outer boundary of the atmosphere, held normally to the sunlight at the mean distance of the earth from the sun.",
+    "selectedOption": null
+  },
+{
+    "question": "The value of Solar Constant is",
+    "options": [
+      "1.43 Cal/cm<sup>2</sup>/min",
+      "1.54 Cal/cm<sup>2</sup>/min",
+      "1.59 Cal/cm<sup>2</sup>/min",
+      "1.94 Cal/cm<sup>2</sup>/min",
+      "2.01 Cal/cm<sup>2</sup>/min"
+    ],
+    "correctAnswer": "1.94 Cal/cm<sup>2</sup>/min",
+    "explanation": "The value of Solar Constant is 1.94 Cal/cm<sup>2</sup>/min or 1353 Watts/m<sup>2</sup>",
+    "selectedOption": null
+  },
+{
+    "question": "The vertical temperature decrease or gradient is expressed as _____",
+    "options": [
+      "Albedo",
+      "Solar Constant",
+      "Lapse rate",
+      "Inversion",
+      "Cyclone"
+    ],
+    "correctAnswer": "Lapse rate",
+    "explanation": "The vertical temperature decrease or gradient is expressed as Lapse rate.",
+    "selectedOption": null
+  },
+{
+    "question": "Lapse rate is generally ____ and Dry adiabatic lapse rate is generally ____",
+    "options": [
+      "10°C/km, 6.5°C/km",
+      "6.5°C/km, 10°C/km",
+      "4.5°C/km, 8°C/km",
+      "8°C/km, 4.5°C/km",
+      "6°C/km, 7°C/km"
+    ],
+    "correctAnswer": "6.5°C/km, 10°C/km",
+    "explanation": "Lapse rate is generally 6.5°C/km and Dry adiabatic lapse rate is generally 10°C/km.",
+    "selectedOption": null
+  },
+{
+    "question": "The rate at which temperature changes as air rises or falls is called _____",
+    "options": [
+      "Adiabatic lapse rate",
+      "Solar Constant",
+      "Inversion",
+      "Albedo",
+      "None of the above"
+    ],
+    "correctAnswer": "Adiabatic lapse rate",
+    "explanation": "The rate at which temperature changes as air rises or falls is called Adiabatic lapse rate. Dry adiabatic lapse rate is generally 10°C/km.",
+    "selectedOption": null
+  },
+{
+    "question": "The percentage of the incident solar radiation reflected by a surface is known as _____",
+    "options": [
+      "Albedo",
+      "Solar Constant",
+      "Lapse rate",
+      "Inversion",
+      "Photosynthetic Active Radiation"
+    ],
+    "correctAnswer": "Albedo",
+    "explanation": "The percentage of the incident solar radiation reflected by a surface is known as Albedo.",
+    "selectedOption": null
+  },
+{
+    "question": "The MDI (Moisture Deficit Index) of Semi-arid regions fall under the range of _____",
+    "options": [
+      "0 to -33.3",
+      "-33.3 to -66.6",
+      "33.3 to -33.3",
+      "0 to 33.3",
+      "None of the above"
+    ],
+    "correctAnswer": "-33.3 to -66.6",
+    "explanation": "MDI values of different climates<br>Sub humid : 0 to -33.3<br>Semi arid : -33.3 to -66.6<br>Arid : -66.6 and below",
+    "selectedOption": null
+  },
+{
+    "question": "Size of drops of Drizzle is",
+    "options": [
+      "< 0.1 mm",
+      "< 0.3 mm",
+      "< 0.5 mm",
+      "> 0.5 mm",
+      "> 0.3 mm"
+    ],
+    "correctAnswer": "< 0.5 mm",
+    "explanation": "Size of drops of Drizzle is < 0.5 mm.",
+    "selectedOption": null
+  },
+{
+    "question": "Size of drops of Rain is",
+    "options": [
+      "< 0.5",
+      "> 0.5 to 6 mm",
+      "> 0.5 to 1 mm",
+      "< 0.8",
+      "None of the above"
+    ],
+    "correctAnswer": "> 0.5 to 6 mm",
+    "explanation": "Size of drops of Rain is > 0.5 to 6 mm",
+    "selectedOption": null
+  },
+{
+    "question": "Lines connecting points of equal amounts of rainfall is called ____",
+    "options": [
+      "Isobaths",
+      "Isohyets",
+      "Isobar",
+      "Isophene",
+      "Isostere"
+    ],
+    "correctAnswer": "Isohyets",
+    "explanation": "Lines connecting points of equal amounts of rainfall is called Isohyets.",
+    "selectedOption": null
+  },
+{
+    "question": "Imaginary lines connecting points of equal water table elevations is called _____",
+    "options": [
+      "Isobaths",
+      "Isohyets",
+      "Isobar",
+      "Isophene",
+      "Isostere"
+    ],
+    "correctAnswer": "Isobaths",
+    "explanation": "Imaginary lines connecting points of equal water table elevations is called Isobaths.",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the wrong pairs <br>(i) Beaufort Scale : Wind force in sea <br>(ii) Crescograph : Growth of plant <br>(iii) Cambel stokes : Root pressure <br>(iv) Hydrometer : Relative humidity <br>(v) Hygrometer : Relative density <br>(vi) Lysimeter : Evapo transpiration",
+    "options": [
+      "(i) and (v)",
+      "(i) and (iii)",
+      "(iii), (iv) and (v)",
+      "(ii), (iv) and (v)",
+      "(ii), (iii), (iv) and (v)"
+    ],
+    "correctAnswer": "(iii), (iv) and (v)",
+    "explanation": "Beaufort Scale : Wind force in sea <br>Crescograph : Growth of plant <br>Cambel stokes : Duration of sunshine <br>Hydrometer : Relative density <br>Hygrometer : Relative humidity <br>Lysimeter : Evapo transpiration",
+    "selectedOption": null
+  },
+{
+    "question": "Total amount of precipitation in India is around ____",
+    "options": [
+      "892 mm",
+      "994 mm",
+      "1194 mm",
+      "1224 mm",
+      "1296 mm"
+    ],
+    "correctAnswer": "1194 mm",
+    "explanation": "Total amount of precipitation in India is around 1194 mm.",
+    "selectedOption": null
+  },
+{
+    "question": "Average rainy days in India is ____ days/year.",
+    "options": [
+      "100",
+      "110",
+      "120",
+      "130",
+      "140"
+    ],
+    "correctAnswer": "130",
+    "explanation": "Average rainy days in India is 130 days/year.",
+    "selectedOption": null
+  },
+{
+    "question": "A day is called Rainy day if the amount of rain received during 24 hours is _____",
+    "options": [
+      "> 2.5 mm",
+      "> 3.5 mm",
+      "> 4 mm",
+      "> 4.25 mm",
+      "> 5 mm"
+    ],
+    "correctAnswer": "> 2.5 mm",
+    "explanation": "A day is called Rainy day if the amount of rain received during 24 hours is > 2.5 mm.",
+    "selectedOption": null
+  },
+{
+    "question": "South West monsoon reach south India (at coast of Kerala) around _____ of every year.",
+    "options": [
+      "May 1",
+      "June 1",
+      "July 1",
+      "August 1",
+      "September 15"
+    ],
+    "correctAnswer": "June 1",
+    "explanation": "South West monsoon reach south India (at coast of Kerala) around June 1 of every year and in the middle of July it covers whole India under the grip of rainfall. Its withdrawal starts from western Rajasthan in 1st September to complete withdrawal from who",
+    "selectedOption": null
+  },
+{
+    "question": "Which monsoon contributes to more than 75% of total rainfall in India?",
+    "options": [
+      "South West Monsoon",
+      "North West Monsoon",
+      "South East Monsoon",
+      "North East Monsoon",
+      "Western Disturbances"
+    ],
+    "correctAnswer": "South West Monsoon",
+    "explanation": "South West Monsoon contributes to more than 75% of total rainfall in India. It moves at an average speed of 30 km/hr. Its called as <strong>Grand period</strong> of rainfall in India.",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the correct statements <br>(i) Arabian sea branch of SWM contributes 770 mm rainfall (80 % of SWM) <br>(ii) Bay of Bengal branch of SWM contributes 340 mm rainfall (20 % of SWM) <br>(iii) Arabian sea branch moves downward (towards Kerala) <br>(iv) Bay of Bengal branch moves up to Assam",
+    "options": [
+      "(i) and (ii)",
+      "(ii) and (iii)",
+      "(ii) and (iv)",
+      "(i), (ii) and (iv)",
+      "(ii), (iii) and (iv)"
+    ],
+    "correctAnswer": "(i), (ii) and (iv)",
+    "explanation": "(i) Arabian sea branch of SWM contributes 770 mm rainfall (80 % of SWM) <br>(ii) Bay of Bengal branch of SWM contributes 340 mm rainfall (20 % of SWM) <br>(iii) <strong>Arabian sea branch moves northward</strong> <br>(iv) Bay of Bengal branch moves up to Assam",
+    "selectedOption": null
+  },
+{
+    "question": "______ onset at about 15 October and is limited mostly to southern states (AP and TN) and withdraws almost by mid-December.",
+    "options": [
+      "South West Monsoon",
+      "North East Monsoon",
+      "South East Monsoon",
+      "North West Monsoon",
+      "Western Disturbances"
+    ],
+    "correctAnswer": "North East Monsoon",
+    "explanation": "North East Monsoon onset at about 15 October and is limited mostly to southern states (AP and TN) and withdraws almost by mid-December.",
+    "selectedOption": null
+  },
+{
+    "question": "Which state gets the highest annual rainfall in North East Monsoon?",
+    "options": [
+      "Andhra Pradesh",
+      "Tamil Nadu",
+      "Kerala",
+      "Karnataka",
+      "Maharashtra"
+    ],
+    "correctAnswer": "Tamil Nadu",
+    "explanation": "Tamil Nadu gets the highest annual rainfall in North East Monsoon followed by Andhra Pradesh.",
+    "selectedOption": null
+  },
+{
+    "question": "_____ is defined as a low pressure or cyclonic circulation in the wind above the surface which moves from western countries to Himalayalas mountains (J&K).",
+    "options": [
+      "Cyclone",
+      "Tornado",
+      "EL Nino",
+      "Western Disturbances",
+      "None of the above"
+    ],
+    "correctAnswer": "Western Disturbances",
+    "explanation": "Western Disturbances is defined as a low pressure or cyclonic circulation in the wind above the surface which moves from western countries to Himalayalas mountains (J&K). December to March is the main period when western disturbances carry rainfall in nor",
+    "selectedOption": null
+  },
+{
+    "question": "Artificial rain making or Cloud seeding can be achieved by using ____",
+    "options": [
+      "Silver Iodide",
+      "Dry Ice",
+      "Sodium Chloride",
+      "All except Dry Ice",
+      "All the three"
+    ],
+    "correctAnswer": "All the three",
+    "explanation": "Application of foreign materials to clouds to induce precipitation is called cloud seeding.<br><strong>Cold seeding</strong> : Silver Iodide or Dry Ice<br><strong>Warm clouds</strong> : Sodium Chloride",
+    "selectedOption": null
+  },
+{
+    "question": "______ forecasts are issued thrice in a year and are useful for choosing cropping patterns.",
+    "options": [
+      "Short range",
+      "Medium range",
+      "Long range",
+      "Hazardous weather forecasts",
+      "None of the above"
+    ],
+    "correctAnswer": "Long range",
+    "explanation": "Long range forecasts are issued thrice in a year and are useful for choosing cropping patterns.",
+    "selectedOption": null
+  },
+{
+    "question": "National Center for Medium Range Weather forecasting is situated at _____",
+    "options": [
+      "New Delhi",
+      "Bhopal",
+      "Chennai",
+      "Mumbai",
+      "Kolkata"
+    ],
+    "correctAnswer": "New Delhi",
+    "explanation": "National Center for Medium Range Weather Forecasting (NC MRWF) is situated at New Delhi.",
+    "selectedOption": null
+  },
+{
+    "question": "Highest density of water is at ____",
+    "options": [
+      "-4° C",
+      "-2° C",
+      "0° C",
+      "2° C",
+      "4° C"
+    ],
+    "correctAnswer": "4° C",
+    "explanation": "Highest density of water is at 4° C.",
+    "selectedOption": null
+  },
+{
+    "question": "A situation where all the pores both macro and micro are filled with water temporarily or permanently is called _____. This reduces the ODR (Oxygen Diffusion Rate) and Eh (Redox potential) of the soil.",
+    "options": [
+      "Transpiration",
+      "Leaching",
+      "Water logging",
+      "Flooding",
+      "Percolation"
+    ],
+    "correctAnswer": "Water logging",
+    "explanation": "A situation where all the pores both macro and micro are filled with water temporarily or permanently is called Water logging. This reduces the ODR (Oxygen Diffusion Rate) and Eh (Redox potential) of the soil.",
+    "selectedOption": null
+  },
+{
+    "question": "IW/CPE approach is a scientific approach used in irrigation scheduling. Which of the following statements is true regarding this approach?",
+    "options": [
+      "The IW/CPE ratio of Rice is 1.2",
+      "The IW/CPE ratio of Safflower is 0.4",
+      "Lower the ratio, more will be the stress",
+      "It is also known as Soil Moisture Index approach",
+      "All of the above"
+    ],
+    "correctAnswer": "All of the above",
+    "explanation": "IW/CPE approach is a scientific approach used in irrigation scheduling.<br>It is also known as Soil Moisture Index approach.<br>Lower the ratio, more will be the stress.<br>The IW/CPE ratio of Rice is 1.2<br>The IW/CPE ratio of Safflower is 0.4.",
+    "selectedOption": null
+  },
+{
+    "question": "The average water requirement of Rice is ____",
+    "options": [
+      "900 mm",
+      "1200 mm",
+      "1300 mm",
+      "1350 mm",
+      "1500 mm"
+    ],
+    "correctAnswer": "1500 mm",
+    "explanation": "The average water requirement of Rice is 1500 mm.",
+    "selectedOption": null
+  },
+{
+    "question": "1 Cusec equals to ____",
+    "options": [
+      "26.2 litres",
+      "28.3 litres",
+      "29.4 litres",
+      "30.2 litres",
+      "31.3 litres"
+    ],
+    "correctAnswer": "28.3 litres",
+    "explanation": "1 Cusec equals to 28.3 litres.",
+    "selectedOption": null
+  },
+{
+    "question": "1 ha mm of irrigation water is ____ litres.",
+    "options": [
+      "1,000",
+      "5,000",
+      "10,000",
+      "1,00,000",
+      "None of the above"
+    ],
+    "correctAnswer": "10,000",
+    "explanation": "1 ha mm of irrigation water is 10,000 litres.",
+    "selectedOption": null
+  },
+{
+    "question": "A watershed can be classified as Macro watershed, if the coverage is _____ ha.",
+    "options": [
+      "10 - 100",
+      "100 - 1000",
+      "1000 - 10,000",
+      "10,000 - 50,000",
+      "> 50,000"
+    ],
+    "correctAnswer": "> 50,000",
+    "explanation": "Classification of Watershed<br>Macro watershed : > 50,000 ha<br>Sub-macro watershed : 10,000 - 50,000<br>Milli watershed : 1000 -10,000 ha<br>Micro watershed : 100 - 1000 ha<br>Mini watershed : 10 - 100 ha",
+    "selectedOption": null
+  },
+{
+    "question": "The device used to measure specific gravity of soil is called ____",
+    "options": [
+      "Pyranometer",
+      "Pycnometer",
+      "Peizometer",
+      "Potometer",
+      "Porometer"
+    ],
+    "correctAnswer": "Pycnometer",
+    "explanation": "The device used to measure specific gravity of soil is called Pycnometer.<br>Pyranometer : Total incoming solar radiation<br>Peizometer : Depth of water table<br>Potometer : Transpiration<br>Porometer : Stomal behaviour",
+    "selectedOption": null
+  },
+{
+    "question": "_____ monsoon contributes to about 15% of total rainfall in India and called as Retreating monsoon.",
+    "options": [
+      "South West Monsoon",
+      "North East Monsoon",
+      "South East Monsoon",
+      "North West Monsoon",
+      "Western Disturbances"
+    ],
+    "correctAnswer": "North East Monsoon",
+    "explanation": "North East Monsoon contributes to about 15% of total rainfall in India and called as <strong>Retreating monsoon</strong>.",
+    "selectedOption": null
+  },
+{
+    "question": "Thornthwaite classified climate based on ____",
+    "options": [
+      "Temperature",
+      "PE Index",
+      "Weather elements",
+      "Vegetation",
+      "Moisture Deficit Index"
+    ],
+    "correctAnswer": "PE Index",
+    "explanation": "Thornthwaite classified climate based on PE Index.",
+    "selectedOption": null
+  },
+{
+    "question": "The albedo of crop surface ranges between ______",
+    "options": [
+      "5 - 10 %",
+      "13 - 20 %",
+      "23 - 30 %",
+      "31 - 39 %",
+      "12 - 38 %"
+    ],
+    "correctAnswer": "23 - 30 %",
+    "explanation": "The albedo of crop surface ranges between 23 - 30 %.",
+    "selectedOption": null
+  },
+{
+    "question": "The condition in which there is abrupt rise instead of fall in temperature is called ______",
+    "options": [
+      "Cyclone",
+      "Tornado",
+      "EL Nino",
+      "Inversion",
+      "Albedo"
+    ],
+    "correctAnswer": "Inversion",
+    "explanation": "The condition in which there is abrupt rise instead of fall in temperature is called Inversion.",
+    "selectedOption": null
+  },
+{
+    "question": "Identify the correct statement regarding weather forecasting.",
+    "options": [
+      "Short range : up to 72 hrs",
+      "Medium range : 3 - 10 days",
+      "Long range : > 10 days",
+      "Long range : Cropping patterns",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "Short range : up to 72 hrs<br>Medium range : 3 - 10 days<br>Long range : > 10 days (useful in choosing cropping patterns)",
+    "selectedOption": null
+  }
+  ]
