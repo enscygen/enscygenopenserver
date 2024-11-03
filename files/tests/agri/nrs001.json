@@ -1,786 +1,786 @@
 [
     {
-      question: "Mychorrhiza is a symbiotic association between",
-      options: [
+      "question": "Mychorrhiza is a symbiotic association between",
+      "options": [
         "Bacteria and roots of higher plants",
         "Algae and roots of higher plants",
         "Fungus and roots of higher plants",
         "Protozoa and roots of higher plants",
         "Mosses and roots of higher plants"
       ],
-      correctAnswer: "Fungus and roots of higher plants",
-      explanation: "Mycorrhiza is a symbiotic association between a fungus and the roots of higher plants, facilitating nutrient uptake for both parties.",
-      selectedOption: null
+      "correctAnswer": "Fungus and roots of higher plants",
+      "explanation": "Mycorrhiza is a symbiotic association between a fungus and the roots of higher plants, facilitating nutrient uptake for both parties.",
+      "selectedOption": null
     },
     {
-      question: "VAM (Vascular Arboscular Mycorrhyza ) is used as",
-      options: [
+      "question": "VAM (Vascular Arboscular Mycorrhyza ) is used as",
+      "options": [
         "nitrogen-fixing bacterium",
         "pathogenic fungus",
         "K solubilizing fungus in plant roots",
         "P solubilizing fungus in plant roots",
         "Both (3) and (4)"
       ],
-      correctAnswer: "P solubilizing fungus in plant roots",
-      explanation: "VAM (Vascular Arbuscular Mycorrhiza) is used as a P-solubilizing fungus in plant roots to help in the absorption of phosphorus by plants.",
-      selectedOption: null
+      "correctAnswer": "P solubilizing fungus in plant roots",
+      "explanation": "VAM (Vascular Arbuscular Mycorrhiza) is used as a P-solubilizing fungus in plant roots to help in the absorption of phosphorus by plants.",
+      "selectedOption": null
     },
     {
-      question: "Cereals are deficient in which amino acid",
-      options: [
+      "question": "Cereals are deficient in which amino acid",
+      "options": [
         "Methionine",
         "Leucine",
         "Lysine",
         "Proline",
         "Glycine"
       ],
-      correctAnswer: "Lysine",
-      explanation: "Cereals are deficient in the amino acid lysine, which is why complementary protein sources are often recommended for a balanced diet.",
-      selectedOption: null
+      "correctAnswer": "Lysine",
+      "explanation": "Cereals are deficient in the amino acid lysine, which is why complementary protein sources are often recommended for a balanced diet.",
+      "selectedOption": null
     },
     {
-      question: "Amino acid which is deficient in legumes",
-      options: [
+      "question": "Amino acid which is deficient in legumes",
+      "options": [
         "Lysine",
         "Methionine",
         "Leucine",
         "Proline",
         "Glycine"
       ],
-      correctAnswer: "Methionine",
-      explanation: "Amino acid which is deficient in legumes is methionine.",
-      selectedOption: null
+      "correctAnswer": "Methionine",
+      "explanation": "Amino acid which is deficient in legumes is methionine.",
+      "selectedOption": null
     },
     {
-      question: "Power tiller is most suitable for the cultivation of",
-      options: [
+      "question": "Power tiller is most suitable for the cultivation of",
+      "options": [
         "Wheat",
         "Maize",
         "Sugarcane",
         "Paddy",
         "Cotton"
       ],
-      correctAnswer: "Paddy",
-      explanation: "Power tiller is most suitable for the cultivation of paddy.",
-      selectedOption: null
+      "correctAnswer": "Paddy",
+      "explanation": "Power tiller is most suitable for the cultivation of paddy.",
+      "selectedOption": null
     },
     {
-      question: "Ammonium polyphosphate contains",
-      options: [
+      "question": "Ammonium polyphosphate contains",
+      "options": [
         "30% N and 20% K2O",
         "10% N and 50% P2O5",
         "20% N and 10% K2O",
         "15% N and 62% P2O5",
         "40% N and 60% P2O5"
       ],
-      correctAnswer: "15% N and 62% P2O5",
-      explanation: "Ammonium polyphosphate contains 15% N and 62% P2O5.",
-      selectedOption: null
+      "correctAnswer": "15% N and 62% P2O5",
+      "explanation": "Ammonium polyphosphate contains 15% N and 62% P2O5.",
+      "selectedOption": null
     },
     {
-      question: "Tetrazolium test is done for",
-      options: [
+      "question": "Tetrazolium test is done for",
+      "options": [
         "Soil pH determination",
         "Viability of seeds",
         "Fertilizer analysis",
         "Plant disease diagnosis",
         "Pesticide residue detection"
       ],
-      correctAnswer: "Viability of seeds",
-      explanation: "Tetrazolium test is done for the viability of seeds.",
-      selectedOption: null
+      "correctAnswer": "Viability of seeds",
+      "explanation": "Tetrazolium test is done for the viability of seeds.",
+      "selectedOption": null
     },
     {
-      question: "In wet nursery of rice, the level of water is maintained at",
-      options: [
+      "question": "In wet nursery of rice, the level of water is maintained at",
+      "options": [
         "5 cm",
         "10 cm",
         "15 cm",
         "20 cm",
         "25 cm"
       ],
-      correctAnswer: "5 cm",
-      explanation: "In wet nursery of rice, the level of water is maintained at 5 cm.",
-      selectedOption: null
+      "correctAnswer": "5 cm",
+      "explanation": "In wet nursery of rice, the level of water is maintained at 5 cm.",
+      "selectedOption": null
     },
     {
-      question: "The optimum depth of puddling in rice",
-      options: [
+      "question": "The optimum depth of puddling in rice",
+      "options": [
         "5 cm",
         "10 cm",
         "15 cm",
         "20 cm",
         "25 cm"
       ],
-      correctAnswer: "5 cm",
-      explanation: "The optimum depth of puddling in rice is 5 cm.",
-      selectedOption: null
+      "correctAnswer": "5 cm",
+      "explanation": "The optimum depth of puddling in rice is 5 cm.",
+      "selectedOption": null
     },
     {
-      question: "Ultra violet radiations are absorbed by",
-      options: [
+      "question": "Ultra violet radiations are absorbed by",
+      "options": [
         "Ozone",
         "Carbon dioxide",
         "Water vapor",
         "Nitrogen",
         "Oxygen"
       ],
-      correctAnswer: "Ozone",
-      explanation: "Ultra violet radiations are absorbed by ozone in the Earth's atmosphere.",
-      selectedOption: null
+      "correctAnswer": "Ozone",
+      "explanation": "Ultra violet radiations are absorbed by ozone in the Earth's atmosphere.",
+      "selectedOption": null
     },
     {
-      question: "The most critical stage of irrigation in wheat is",
-      options: [
+      "question": "The most critical stage of irrigation in wheat is",
+      "options": [
         "Flowering Stage",
         "CRI Stage",
         "Grain Filling Stage",
         "Tillering Stage",
         "Maturity Stage"
       ],
-      correctAnswer: "CRI Stage",
-      explanation: "The most critical stage of irrigation in wheat is the CRI (Crown Root Initiation) stage (21 DAS), which occurs early in the crop's growth.",
-      selectedOption: null
+      "correctAnswer": "CRI Stage",
+      "explanation": "The most critical stage of irrigation in wheat is the CRI (Crown Root Initiation) stage (21 DAS), which occurs early in the crop's growth.",
+      "selectedOption": null
     },
     {
-      question: "Jhuming is a practice of rice cultivation in",
-      options: [
+      "question": "Jhuming is a practice of rice cultivation in",
+      "options": [
         "Western part of India",
         "Northern part of India",
         "Eastern part of India",
         "Southern part of India",
         "Central part of India"
       ],
-      correctAnswer: "Eastern part of India",
-      explanation: "Jhuming is a practice of rice cultivation in the eastern part of India, particularly in states like Assam and Nagaland.",
-      selectedOption: null
+      "correctAnswer": "Eastern part of India",
+      "explanation": "Jhuming is a practice of rice cultivation in the eastern part of India, particularly in states like Assam and Nagaland.",
+      "selectedOption": null
     },
 
     {
-      question: "Crop canopy temperature is measured by",
-      options: [
+      "question": "Crop canopy temperature is measured by",
+      "options": [
         "Thermocouple",
         "Barometer",
         "Pyrometer",
         "Hygrometer",
         "Infrared thermometer"
       ],
-      correctAnswer: "Infrared thermometer",
-      explanation: "Crop canopy temperature is measured by an infrared thermometer to monitor plant stress and growth conditions.",
-      selectedOption: null
+      "correctAnswer": "Infrared thermometer",
+      "explanation": "Crop canopy temperature is measured by an infrared thermometer to monitor plant stress and growth conditions.",
+      "selectedOption": null
     },
     {
-      question: "Reclamation disease is due to deficiency of",
-      options: [
+      "question": "Reclamation disease is due to deficiency of",
+      "options": [
         "Iron",
         "Copper",
         "Manganese",
         "Zinc",
         "Boron"
       ],
-      correctAnswer: "Copper",
-      explanation: "Reclamation disease is due to the deficiency of copper in plants.",
-      selectedOption: null
+      "correctAnswer": "Copper",
+      "explanation": "Reclamation disease is due to the deficiency of copper in plants.",
+      "selectedOption": null
     },
     {
-      question: "Hormone related to drought tolerance",
-      options: [
+      "question": "Hormone related to drought tolerance",
+      "options": [
         "Gibberellic acid (GA)",
         "Auxins",
         "Cytokinins",
         "Abscisic acid (ABA)",
         "Ethylene"
       ],
-      correctAnswer: "Abscisic acid (ABA)",
-      explanation: "The hormone related to drought tolerance in plants is abscisic acid (ABA). It helps plants conserve water and survive periods of water stress.",
-      selectedOption: null
+      "correctAnswer": "Abscisic acid (ABA)",
+      "explanation": "The hormone related to drought tolerance in plants is abscisic acid (ABA). It helps plants conserve water and survive periods of water stress.",
+      "selectedOption": null
     },
     {
-      question: "Element available in both anion and cation forms",
-      options: [
+      "question": "Element available in both anion and cation forms",
+      "options": [
         "Nitrogen",
         "Phosphorus",
         "Potassium",
         "Calcium",
         "Sulfur"
       ],
-      correctAnswer: "Nitrogen",
-      explanation: "Nitrogen is an element available in both anion (nitrate) and cation (ammonium) forms in the soil.",
-      selectedOption: null
+      "correctAnswer": "Nitrogen",
+      "explanation": "Nitrogen is an element available in both anion (nitrate) and cation (ammonium) forms in the soil.",
+      "selectedOption": null
     },
     {
-      question: "Dormancy-breaking hormone is",
-      options: [
+      "question": "Dormancy-breaking hormone is",
+      "options": [
         "Indole-3-acetic acid",
         "Cytokinin",
         "Abscisic acid",
         "Ethylene",
         "Gibberellic acid"
       ],
-      correctAnswer: "Gibberellic acid",
-      explanation: "The dormancy-breaking hormone is gibberellic acid, which promotes germination in seeds and bud growth.",
-      selectedOption: null
+      "correctAnswer": "Gibberellic acid",
+      "explanation": "The dormancy-breaking hormone is gibberellic acid, which promotes germination in seeds and bud growth.",
+      "selectedOption": null
     },
     {
-      question: "Monsoon responsible for causing rainfall in Tamil Nadu",
-      options: [
+      "question": "Monsoon responsible for causing rainfall in Tamil Nadu",
+      "options": [
         "Northeast Monsoon",
         "Southwest Monsoon",
         "Summer Monsoon",
         "Winter Monsoon",
         "Northwest Monsoon"
       ],
-      correctAnswer: "Northeast Monsoon",
-      explanation: "The monsoon responsible for causing rainfall in Tamil Nadu is the Northeast Monsoon, which brings rain during the winter months.",
-      selectedOption: null
+      "correctAnswer": "Northeast Monsoon",
+      "explanation": "The monsoon responsible for causing rainfall in Tamil Nadu is the Northeast Monsoon, which brings rain during the winter months.",
+      "selectedOption": null
     },
     {
-      question: "Stress hardening in plants can be achieved by",
-      options: [
+      "question": "Stress hardening in plants can be achieved by",
+      "options": [
         "Abscisic acid (ABA)",
         "Ethylene",
         "Jasmonic acid (JA)",
         "Salicylic acid (SA)",
         "Gibberellic acid (GA)"
       ],
-      correctAnswer: "Abscisic acid (ABA)",
-      explanation: "Stress hardening in plants can be achieved by the hormone abscisic acid (ABA), which helps plants adapt to environmental stressors.",
-      selectedOption: null
+      "correctAnswer": "Abscisic acid (ABA)",
+      "explanation": "Stress hardening in plants can be achieved by the hormone abscisic acid (ABA), which helps plants adapt to environmental stressors.",
+      "selectedOption": null
     },
     {
-      question: "What is the maximum permissible limit of biuret in urea?",
-      options: [
+      "question": "What is the maximum permissible limit of biuret in urea?",
+      "options": [
         "1.5%",
         "2.0%",
         "0.5%",
         "3.0%",
         "1.0%"
       ],
-      correctAnswer: "1.5%",
-      explanation: "The maximum permissible limit of biuret in urea is 1.5%.",
-      selectedOption: null
+      "correctAnswer": "1.5%",
+      "explanation": "The maximum permissible limit of biuret in urea is 1.5%.",
+      "selectedOption": null
     },
 
     {
-      question: "Which biofertilizer is commonly used in wheat cultivation?",
-      options: [
+      "question": "Which biofertilizer is commonly used in wheat cultivation?",
+      "options": [
         "Azotobacter",
         "Rhizobium",
         "Mycorrhiza",
         "Azospirillum",
         "Phosphobacteria"
       ],
-      correctAnswer: "Azotobacter",
-      explanation: "Azotobacter is a commonly used biofertilizer in wheat cultivation.",
-      selectedOption: null
+      "correctAnswer": "Azotobacter",
+      "explanation": "Azotobacter is a commonly used biofertilizer in wheat cultivation.",
+      "selectedOption": null
     },
     {
-      question: "Which biofertilizer is suitable for sorghum and grasses?",
-      options: [
+      "question": "Which biofertilizer is suitable for sorghum and grasses?",
+      "options": [
         "Azotobacter",
         "Rhizobium",
         "Mycorrhiza",
         "Azospirillum",
         "Phosphobacteria"
       ],
-      correctAnswer: "Azospirillum",
-      explanation: "Azospirillum is a suitable biofertilizer for sorghum and grasses.",
-      selectedOption: null
+      "correctAnswer": "Azospirillum",
+      "explanation": "Azospirillum is a suitable biofertilizer for sorghum and grasses.",
+      "selectedOption": null
     },
     {
-      question: "In which type of soils is vertical mulch used?",
-      options: [
+      "question": "In which type of soils is vertical mulch used?",
+      "options": [
         "Red soils",
         "Black cotton soils",
         "Laterite soils",
         "Alluvial soils",
         "Loamy soils"
       ],
-      correctAnswer: "Black cotton soils",
-      explanation: "Vertical mulch is used in black cotton soils.",
-      selectedOption: null
+      "correctAnswer": "Black cotton soils",
+      "explanation": "Vertical mulch is used in black cotton soils.",
+      "selectedOption": null
     },
     {
-      question: "Who provided the criteria for essentiality of nutrients?",
-      options: [
+      "question": "Who provided the criteria for essentiality of nutrients?",
+      "options": [
         "Arnon & Stout",
         "Liebig",
         "Van Helmont",
         "Sprengel",
         "Lawes and Gilbert"
       ],
-      correctAnswer: "Arnon & Stout",
-      explanation: "The criteria for the essentiality of nutrients were provided by Arnon & Stout (1939).",
-      selectedOption: null
+      "correctAnswer": "Arnon & Stout",
+      "explanation": "The criteria for the essentiality of nutrients were provided by Arnon & Stout (1939).",
+      "selectedOption": null
     },
     {
-      question: "Which is the major phosphorus (P) fertilizer commonly used in India?",
-      options: [
+      "question": "Which is the major phosphorus (P) fertilizer commonly used in India?",
+      "options": [
         "Urea",
         "Ammonium sulfate",
         "Muriate of potash",
         "Diammonium phosphate (DAP)",
         "Superphosphate"
       ],
-      correctAnswer: "Diammonium phosphate (DAP)",
-      explanation: "Diammonium phosphate (DAP) is a major phosphorus (P) fertilizer commonly used in India.",
-      selectedOption: null
+      "correctAnswer": "Diammonium phosphate (DAP)",
+      "explanation": "Diammonium phosphate (DAP) is a major phosphorus (P) fertilizer commonly used in India.",
+      "selectedOption": null
     },
     {
-      question: "Which biofertilizer is more suitable for sugarcane cultivation?",
-      options: [
+      "question": "Which biofertilizer is more suitable for sugarcane cultivation?",
+      "options": [
         "Azotobacter",
         "Rhizobium",
         "Mycorrhiza",
         "Azospirillum",
         "Phosphobacteria"
       ],
-      correctAnswer: "Azotobacter",
-      explanation: "Azotobacter is more suitable as a biofertilizer for sugarcane cultivation.",
-      selectedOption: null
+      "correctAnswer": "Azotobacter",
+      "explanation": "Azotobacter is more suitable as a biofertilizer for sugarcane cultivation.",
+      "selectedOption": null
     },
     {
-      question: "What is Indian mustard known as?",
-      options: [
+      "question": "What is Indian mustard known as?",
+      "options": [
         "Raphanus sativus",
         "Brassica campestris",
         "Brassica napus",
         "Brassica juncea",
         "Brassica oleracea"
       ],
-      correctAnswer: "Brassica juncea",
-      explanation: "Indian mustard is known as Brassica juncea.",
-      selectedOption: null
+      "correctAnswer": "Brassica juncea",
+      "explanation": "Indian mustard is known as Brassica juncea.",
+      "selectedOption": null
     },
     {
-      question: "Which fertilizer is known as an explosive fertilizer?",
-      options: [
+      "question": "Which fertilizer is known as an explosive fertilizer?",
+      "options": [
         "Ammonium sulfate",
         "Urea",
         "Ammonium nitrate",
         "Superphosphate",
         "Potassium nitrate"
       ],
-      correctAnswer: "Ammonium nitrate",
-      explanation: "Ammonium nitrate is known as an explosive fertilizer.",
-      selectedOption: null
+      "correctAnswer": "Ammonium nitrate",
+      "explanation": "Ammonium nitrate is known as an explosive fertilizer.",
+      "selectedOption": null
     },
     {
-      question: "What is the most prominent soil group in India?",
-      options: [
+      "question": "What is the most prominent soil group in India?",
+      "options": [
         "Laterite soils",
         "Red soils",
         "Black cotton soils",
         "Alluvial soils",
         "Arid soils"
       ],
-      correctAnswer: "Alluvial soils",
-      explanation: "The most prominent soil group in India is Alluvial soils.",
-      selectedOption: null
+      "correctAnswer": "Alluvial soils",
+      "explanation": "The most prominent soil group in India is Alluvial soils.",
+      "selectedOption": null
     },
     {
-      question: "What is the sulfur content in Single Super Phosphate (SSP)?",
-      options: [
+      "question": "What is the sulfur content in Single Super Phosphate (SSP)?",
+      "options": [
         "10%",
         "8%",
         "12%",
         "15%",
         "20%"
       ],
-      correctAnswer: "12%",
-      explanation: "Single Super Phosphate (SSP) contains approximately 12% sulfur.",
-      selectedOption: null
+      "correctAnswer": "12%",
+      "explanation": "Single Super Phosphate (SSP) contains approximately 12% sulfur.",
+      "selectedOption": null
     },
     {
-      question: "Which micronutrient is deficient in Indian soils?",
-      options: [
+      "question": "Which micronutrient is deficient in Indian soils?",
+      "options": [
         "Copper",
         "Iron",
         "Zinc",
         "Manganese",
         "Boron"
       ],
-      correctAnswer: "Zinc",
-      explanation: "Zinc is a micronutrient that is often deficient in Indian soils.",
-      selectedOption: null
+      "correctAnswer": "Zinc",
+      "explanation": "Zinc is a micronutrient that is often deficient in Indian soils.",
+      "selectedOption": null
     },
     {
-      question: "Which macronutrient is commonly deficient in Indian soils?",
-      options: [
+      "question": "Which macronutrient is commonly deficient in Indian soils?",
+      "options": [
         "Phosphorus",
         "Potassium",
         "Nitrogen",
         "Calcium",
         "Sulfur"
       ],
-      correctAnswer: "Nitrogen",
-      explanation: "Nitrogen is a macronutrient that is commonly deficient in Indian soils.",
-      selectedOption: null
+      "correctAnswer": "Nitrogen",
+      "explanation": "Nitrogen is a macronutrient that is commonly deficient in Indian soils.",
+      "selectedOption": null
     },
     {
-      question: "What is the most widely used material for correcting soil acidity?",
-      options: [
+      "question": "What is the most widely used material for correcting soil acidity?",
+      "options": [
         "Gypsum",
         "Lime",
         "Sulfur",
         "Potash",
         "Phosphorus"
       ],
-      correctAnswer: "Lime",
-      explanation: "Lime is the most widely used material for correcting soil acidity.",
-      selectedOption: null
+      "correctAnswer": "Lime",
+      "explanation": "Lime is the most widely used material for correcting soil acidity.",
+      "selectedOption": null
     },
 
     {
-      question: "Which hormone promotes root growth in plants?",
-      options: [
+      "question": "Which hormone promotes root growth in plants?",
+      "options": [
         "Gibberellic acid (GA)",
         "Indole-3-butyric acid (IBA)",
         "Abscisic acid (ABA)",
         "Cytokinin",
         "Ethylene"
       ],
-      correctAnswer: "Indole-3-butyric acid (IBA)",
-      explanation: "Indole-3-butyric acid (IBA) is a hormone that promotes root growth in plants.",
-      selectedOption: null
+      "correctAnswer": "Indole-3-butyric acid (IBA)",
+      "explanation": "Indole-3-butyric acid (IBA) is a hormone that promotes root growth in plants.",
+      "selectedOption": null
     },
     {
-      question: "Which hormone is responsible for flower and fruit setting in plants?",
-      options: [
+      "question": "Which hormone is responsible for flower and fruit setting in plants?",
+      "options": [
         "Gibberellic acid (GA)",
         "Abscisic acid (ABA)",
         "Naphthaleneacetic acid (NAA)",
         "Cytokinin",
         "Ethylene"
       ],
-      correctAnswer: "Naphthaleneacetic acid (NAA)",
-      explanation: "Naphthaleneacetic acid (NAA) is responsible for flower and fruit setting in plants.",
-      selectedOption: null
+      "correctAnswer": "Naphthaleneacetic acid (NAA)",
+      "explanation": "Naphthaleneacetic acid (NAA) is responsible for flower and fruit setting in plants.",
+      "selectedOption": null
     },
     {
-      question: "What is the first man-made cereal?",
-      options: [
+      "question": "What is the first man-made cereal?",
+      "options": [
         "Wheat",
         "Rice",
         "Barley",
         "Triticale",
         "Oats"
       ],
-      correctAnswer: "Triticale",
-      explanation: "Triticale is considered the first man-made cereal, developed by crossing wheat and rye.",
-      selectedOption: null
+      "correctAnswer": "Triticale",
+      "explanation": "Triticale is considered the first man-made cereal, developed by crossing wheat and rye.",
+      "selectedOption": null
     },
     {
-      question: "What is the first product of urea hydrolysis?",
-      options: [
+      "question": "What is the first product of urea hydrolysis?",
+      "options": [
         "Ammonium bicarbonate",
         "Ammonium carbonate",
         "Ammonium nitrate",
         "Ammonium carbamate",
         "Ammonium chloride"
       ],
-      correctAnswer: "Ammonium carbamate",
-      explanation: "The first product of urea hydrolysis is Ammonium carbamate.",
-      selectedOption: null
+      "correctAnswer": "Ammonium carbamate",
+      "explanation": "The first product of urea hydrolysis is Ammonium carbamate.",
+      "selectedOption": null
     },
     {
-      question: "Which crop variety is Lunishree?",
-      options: [
+      "question": "Which crop variety is Lunishree?",
+      "options": [
         "Wheat",
         "Rice",
         "Maize",
         "Barley",
         "Sorghum"
       ],
-      correctAnswer: "Rice",
-      explanation: "Lunishree is a variety of rice.",
-      selectedOption: null
+      "correctAnswer": "Rice",
+      "explanation": "Lunishree is a variety of rice.",
+      "selectedOption": null
     },
     {
-      question: "What does the Beaufort scale measure?",
-      options: [
+      "question": "What does the Beaufort scale measure?",
+      "options": [
         "Temperature",
         "Rainfall",
         "Wind direction",
         "Humidity",
         "Wind force"
       ],
-      correctAnswer: "Wind force",
-      explanation: "The Beaufort scale is used to measure wind force.",
-      selectedOption: null
+      "correctAnswer": "Wind force",
+      "explanation": "The Beaufort scale is used to measure wind force.",
+      "selectedOption": null
     },
     {
-      question: "Which disease is the most destructive in sugarcane?",
-      options: [
+      "question": "Which disease is the most destructive in sugarcane?",
+      "options": [
         "Leaf blight",
         "Smut",
         "Red rot",
         "White rust",
         "Rust"
       ],
-      correctAnswer: "Red rot",
-      explanation: "Red rot is the most destructive disease of sugarcane.",
-      selectedOption: null
+      "correctAnswer": "Red rot",
+      "explanation": "Red rot is the most destructive disease of sugarcane.",
+      "selectedOption": null
     },
     {
-      question: "What are potato tubers a modified form of?",
-      options: [
+      "question": "What are potato tubers a modified form of?",
+      "options": [
         "Leaf",
         "Root",
         "Stem",
         "Flower",
         "Fruit"
       ],
-      correctAnswer: "Stem",
-      explanation: "Potato tubers are a modified form of stem.",
-      selectedOption: null
+      "correctAnswer": "Stem",
+      "explanation": "Potato tubers are a modified form of stem.",
+      "selectedOption": null
     },
     {
-      question: "Why is sowing sugarcane in trench method helpful?",
-      options: [
+      "question": "Why is sowing sugarcane in trench method helpful?",
+      "options": [
         "To save labor",
         "To increase yield",
         "To prevent lodging",
         "To reduce disease",
         "To improve root growth"
       ],
-      correctAnswer: "To prevent lodging",
-      explanation: "Sowing sugarcane in trench method is helpful to prevent lodging.",
-      selectedOption: null
+      "correctAnswer": "To prevent lodging",
+      "explanation": "Sowing sugarcane in trench method is helpful to prevent lodging.",
+      "selectedOption": null
     },
     {
-      question: "At what concentration is boron harmful to plants?",
-      options: [
+      "question": "At what concentration is boron harmful to plants?",
+      "options": [
         "More than 1 ppm",
         "More than 2 ppm",
         "More than 3 ppm",
         "More than 4 ppm",
         "More than 5 ppm"
       ],
-      correctAnswer: "More than 3 ppm",
-      explanation: "Boron is harmful to plants when the concentration is more than 3 ppm.",
-      selectedOption: null
+      "correctAnswer": "More than 3 ppm",
+      "explanation": "Boron is harmful to plants when the concentration is more than 3 ppm.",
+      "selectedOption": null
     },
     {
-      question: "Which cereal crop typically has the highest productivity?",
-      options: [
+      "question": "Which cereal crop typically has the highest productivity?",
+      "options": [
         "Wheat",
         "Rice",
         "Maize",
         "Barley",
         "Sorghum"
       ],
-      correctAnswer: "Maize",
-      explanation: "Maize is known for its high productivity among cereal crops.",
-      selectedOption: null
+      "correctAnswer": "Maize",
+      "explanation": "Maize is known for its high productivity among cereal crops.",
+      "selectedOption": null
     },
     {
-      question: "What type of anti-transpirant is Kaolin?",
-      options: [
+      "question": "What type of anti-transpirant is Kaolin?",
+      "options": [
         "Absorbing type",
         "Reflecting type",
         "Blocking type",
         "Stimulating type",
         "Suppressing type"
       ],
-      correctAnswer: "Reflecting type",
-      explanation: "Kaolin is a type of reflecting-type anti-transpirant.",
-      selectedOption: null
+      "correctAnswer": "Reflecting type",
+      "explanation": "Kaolin is a type of reflecting-type anti-transpirant.",
+      "selectedOption": null
     },
     {
-      question: "What type of anti-transpirant is Cycocel?",
-      options: [
+      "question": "What type of anti-transpirant is Cycocel?",
+      "options": [
         "Growth retardant",
         "Reflecting type",
         "Blocking type",
         "Stimulating type",
         "Absorbing type"
       ],
-      correctAnswer: "Growth retardant",
-      explanation: "Cycocel is a type of growth retardant anti-transpirant.",
-      selectedOption: null
+      "correctAnswer": "Growth retardant",
+      "explanation": "Cycocel is a type of growth retardant anti-transpirant.",
+      "selectedOption": null
     },
     {
-      question: "Which irrigation method is suitable for saline soils?",
-      options: [
+      "question": "Which irrigation method is suitable for saline soils?",
+      "options": [
         "Drip irrigation",
         "Flood irrigation",
         "Sprinkler irrigation",
         "Subsurface irrigation",
         "Furrow irrigation"
       ],
-      correctAnswer: "Flood irrigation",
-      explanation: "The flooding method is suitable for irrigating saline soils.",
-      selectedOption: null
+      "correctAnswer": "Flood irrigation",
+      "explanation": "The flooding method is suitable for irrigating saline soils.",
+      "selectedOption": null
     },
     {
-      question: "Which element contributes to disease and drought resistance in plants?",
-      options: [
+      "question": "Which element contributes to disease and drought resistance in plants?",
+      "options": [
         "Nitrogen",
         "Phosphorus",
         "Potassium",
         "Sulfur",
         "Calcium"
       ],
-      correctAnswer: "Potassium",
-      explanation: "Potassium is an element that contributes to disease and drought resistance in plants.",
-      selectedOption: null
+      "correctAnswer": "Potassium",
+      "explanation": "Potassium is an element that contributes to disease and drought resistance in plants.",
+      "selectedOption": null
     },
     {
-      question: "Which weed was the first to be biologically controlled?",
-      options: [
+      "question": "Which weed was the first to be biologically controlled?",
+      "options": [
         "Water hyacinth",
         "Lantana camara",
         "Parthenium",
         "Ipomoea aquatica",
         "Eichhornia crassipes"
       ],
-      correctAnswer: "Lantana camara",
-      explanation: "Lantana camara was the first weed to be biologically controlled.",
-      selectedOption: null
+      "correctAnswer": "Lantana camara",
+      "explanation": "Lantana camara was the first weed to be biologically controlled.",
+      "selectedOption": null
     },
     {
-      question: "What does a Parshall flume measure?",
-      options: [
+      "question": "What does a Parshall flume measure?",
+      "options": [
         "Rainfall",
         "Soil moisture",
         "Air pressure",
         "Water flow",
         "Temperature"
       ],
-      correctAnswer: "Water flow",
-      explanation: "A Parshall flume is used for the measurement of water flow.",
-      selectedOption: null
+      "correctAnswer": "Water flow",
+      "explanation": "A Parshall flume is used for the measurement of water flow.",
+      "selectedOption": null
     },
     {
-      question: "What is the most efficient method of irrigation?",
-      options: [
+      "question": "What is the most efficient method of irrigation?",
+      "options": [
         "Flood irrigation",
         "Drip irrigation",
         "Sprinkler irrigation",
         "Subsurface irrigation",
         "Furrow irrigation"
       ],
-      correctAnswer: "Drip irrigation",
-      explanation: "Drip irrigation is considered the most efficient method of irrigation.",
-      selectedOption: null
+      "correctAnswer": "Drip irrigation",
+      "explanation": "Drip irrigation is considered the most efficient method of irrigation.",
+      "selectedOption": null
     },
     {
-      question: "Which herbicide is used as pre-plant incorporation (PPI)?",
-      options: [
+      "question": "Which herbicide is used as pre-plant incorporation (PPI)?",
+      "options": [
         "Glyphosate",
         "Atrazine",
         "Fluchloralin",
         "Paraquat",
         "Imazapyr"
       ],
-      correctAnswer: "Fluchloralin",
-      explanation: "Fluchloralin is used as a pre-plant incorporation (PPI) herbicide.",
-      selectedOption: null
+      "correctAnswer": "Fluchloralin",
+      "explanation": "Fluchloralin is used as a pre-plant incorporation (PPI) herbicide.",
+      "selectedOption": null
     },
     {
-      question: "Which fruit crop is most extensively grown in the world?",
-      options: [
+      "question": "Which fruit crop is most extensively grown in the world?",
+      "options": [
         "Banana",
         "Apple",
         "Orange",
         "Mango",
         "Grapes"
       ],
-      correctAnswer: "Mango",
-      explanation: "Mango is the most extensively grown fruit crop in the world.",
-      selectedOption: null
+      "correctAnswer": "Mango",
+      "explanation": "Mango is the most extensively grown fruit crop in the world.",
+      "selectedOption": null
     },
     {
-      question: "Which type of water is most useful for plants?",
-      options: [
+      "question": "Which type of water is most useful for plants?",
+      "options": [
         "Rainwater",
         "Groundwater",
         "Surface water",
         "Capillary water",
         "Saline water"
       ],
-      correctAnswer: "Capillary water",
-      explanation: "Capillary water is the most useful type of water for plants.",
-      selectedOption: null
+      "correctAnswer": "Capillary water",
+      "explanation": "Capillary water is the most useful type of water for plants.",
+      "selectedOption": null
     },
     {
-      question: "What is the optimum pH range for the growth of most field crops?",
-      options: [
+      "question": "What is the optimum pH range for the growth of most field crops?",
+      "options": [
         "5.0-5.5",
         "6.0-6.5",
         "6.5-7.0",
         "7.0-7.5",
         "8.0-8.5"
       ],
-      correctAnswer: "6.5-7.0",
-      explanation: "The optimum pH range for the growth of most field crops is 6.5-7.0.",
-      selectedOption: null
+      "correctAnswer": "6.5-7.0",
+      "explanation": "The optimum pH range for the growth of most field crops is 6.5-7.0.",
+      "selectedOption": null
     },
     {
-      question: "What causes rancidity in sunflower oil?",
-      options: [
+      "question": "What causes rancidity in sunflower oil?",
+      "options": [
         "Heat",
         "Light",
         "Oxidation",
         "Moisture",
         "Freezing"
       ],
-      correctAnswer: "Oxidation",
-      explanation: "Rancidity in sunflower oil is primarily due to oxidation.",
-      selectedOption: null
+      "correctAnswer": "Oxidation",
+      "explanation": "Rancidity in sunflower oil is primarily due to oxidation.",
+      "selectedOption": null
     },
     {
-      question: "Where is Triacontanol, a growth stimulant, obtained from?",
-      options: [
+      "question": "Where is Triacontanol, a growth stimulant, obtained from?",
+      "options": [
         "Seeds of sunflower",
         "Leaves of lucerne",
         "Roots of radish",
         "Stems of wheat",
         "Fruits of tomato"
       ],
-      correctAnswer: "Leaves of lucerne",
-      explanation: "Triacontanol, a growth stimulant, is obtained from the leaves of lucerne.",
-      selectedOption: null
+      "correctAnswer": "Leaves of lucerne",
+      "explanation": "Triacontanol, a growth stimulant, is obtained from the leaves of lucerne.",
+      "selectedOption": null
     },
     {
-      question: "What causes the red and purple color of maize leaves?",
-      options: [
+      "question": "What causes the red and purple color of maize leaves?",
+      "options": [
         "Potassium deficiency",
         "Phosphorus deficiency",
         "Nitrogen deficiency",
         "Magnesium deficiency",
         "Iron deficiency"
       ],
-      correctAnswer: "Phosphorus deficiency",
-      explanation: "The red and purple color of maize leaves is due to phosphorus deficiency.",
-      selectedOption: null
+      "correctAnswer": "Phosphorus deficiency",
+      "explanation": "The red and purple color of maize leaves is due to phosphorus deficiency.",
+      "selectedOption": null
     },
     {
-      question: "Continuous consumption of Lathyrus causes a disease known as:",
-      options: [
+      "question": "Continuous consumption of Lathyrus causes a disease known as:",
+      "options": [
         "Anemia",
         "Scurvy",
         "Beriberi",
         "Rickets",
         "Lathyrism"
       ],
-      correctAnswer: "Lathyrism",
-      explanation: "Continuous consumption of Lathyrus causes a disease known as Lathyrism as its grains contains BOAA (Benzo-oxalin acetic acid) a neurotoxin.",
-      selectedOption: null
+      "correctAnswer": "Lathyrism",
+      "explanation": "Continuous consumption of Lathyrus causes a disease known as Lathyrism as its grains contains BOAA (Benzo-oxalin acetic acid) a neurotoxin.",
+      "selectedOption": null
     },
     {
-      question: "What do cattle consuming grasses of low magnesium content suffer from?",
-      options: [
+      "question": "What do cattle consuming grasses of low magnesium content suffer from?",
+      "options": [
         "Grass Tetany",
         "Foot and Mouth Disease",
         "Mastitis",
         "Bloat",
         "Rinderpest"
       ],
-      correctAnswer: "Grass Tetany",
-      explanation: "Cattle consuming grasses of low magnesium content suffer from hypomagnesaemia, commonly called as Grass Tetany.",
-      selectedOption: null
+      "correctAnswer": "Grass Tetany",
+      "explanation": "Cattle consuming grasses of low magnesium content suffer from hypomagnesaemia, commonly called as Grass Tetany.",
+      "selectedOption": null
     },
 
 
