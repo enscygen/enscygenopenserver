@@ -47,7 +47,7 @@
         "correctAnswer": "Kanpur",
         "explanation": "Kanpur (Uttar Pradesh)",
         "selectedOption": null,
-        exams:["KPSC AO 2016"]
+        "exams":["KPSC AO 2016"]
     },
     {
         "question": "Indian Institute of Soil Science (IISS)",
