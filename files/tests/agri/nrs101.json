@@ -1,0 +1,143 @@
+[
+    {
+        "question": "Central Institute of Agricultural Engineering (CIAE)",
+        "options": ["Bhopal", "Nagpur", "Cuttack", "Dehradun", "Hyderabad"],
+        "correctAnswer": "Bhopal",
+        "explanation": "Bhopal (Madhya Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Institute of Post-Harvest Engineering and Technology (CIPHET)",
+        "options": ["Bhopal", "Nagpur", "Cuttack", "Ludhiana", "Hyderabad"],
+        "correctAnswer": "Ludhiana",
+        "explanation": "Ludhiana (Punjab)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Soil Salinity Research Institute (CSSRI)",
+        "options": ["Bhopal", "Karnal", "Cuttack", "Ludhiana", "Jhansi"],
+        "correctAnswer": "Karnal",
+        "explanation": "Karnal (Haryana)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Tobacco Research Institute (CTRI)",
+        "options": ["Rajahmundry", "Nagpur", "Cuttack", "Ludhiana", "Hyderabad"],
+        "correctAnswer": "Rajahmundry",
+        "explanation": "Rajahmundry (Andhra Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Research Institute for Jute and Allied Fiber (CRIJAF)",
+        "options": ["Barrackpore", "Nagpur", "Cuttack", "Jhansi", "Rajahmundry"],
+        "correctAnswer": "Barrackpore",
+        "explanation": "Barrackpore (West Bengal)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Grain Storage Institute (IGSI)",
+        "options": ["Bhopal", "Hapor", "Cuttack", "Ludhiana", "Hyderabad"],
+        "correctAnswer": "Hapor",
+        "explanation": "Hapor (Uttar Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Institute of Pulse Research (IIPR)",
+        "options": ["Bhopal", "Varanasi", "Cuttack", "Kanpur", "Hyderabad"],
+        "correctAnswer": "Kanpur",
+        "explanation": "Kanpur (Uttar Pradesh)",
+        "selectedOption": null,
+        exams:["KPSC AO 2016"]
+    },
+    {
+        "question": "Indian Institute of Soil Science (IISS)",
+        "options": ["Bhopal", "Varanasi", "Ranchi", "Kanpur", "Hyderabad"],
+        "correctAnswer": "Bhopal",
+        "explanation": "Bhopal (Madhya Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Institute of Sugarcane Research (IISR)",
+        "options": ["Coimbatore", "Varanasi", "Lukhnow", "Kanpur", "Hyderabad"],
+        "correctAnswer": "Lukhnow",
+        "explanation": "Lukhnow (Uttar Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Institute of Vegetable Research (IIVR)",
+        "options": ["Bhopal", "Varanasi", "Cuttack", "Ludhiana", "Calcutta"],
+        "correctAnswer": "Varanasi",
+        "explanation": "Varanasi (Uttar Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Sugarcane Breeding Institute (SBI)",
+        "options": ["Coimbatore", "Varanasi", "Cuttack", "Lukhnow", "Ranchi"],
+        "correctAnswer": "Coimbatore",
+        "explanation": "Coimbatore (Tamil Nadu)",
+        "selectedOption": null
+    },
+    {
+        "question": "National Institute of Research on Jute and Allied Fiber Technology (NIRJAFT)",
+        "options": ["Jhansi", "New Delhi", "Cuttack", "Lukhnow", "Calcutta"],
+        "correctAnswer": "Calcutta",
+        "explanation": "Calcutta (West Bengal)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Lac Research Institute (ILRI)",
+        "options": ["Varanasi", "Cuttack","Ranchi", "Lukhnow", "Calcutta"],
+        "correctAnswer": "Ranchi",
+        "explanation": "Ranchi (Jharkhand)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Grassland and Fodder Research Institute (IGFRI)",
+        "options": ["Jhansi", "Varanasi", "Cuttack", "Lukhnow", "Calcutta"],
+        "correctAnswer": "Jhansi",
+        "explanation": "Jhansi (Uttar Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Institute of Arid Horticulture (CIAH)",
+        "options": ["Jodhpur", "Bikaner", "Cuttack", "Lukhnow", "New Delhi"],
+        "correctAnswer": "Bikaner",
+        "explanation": "Bikaner (Rajasthan)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Arid Zone Research Institute (CAZRI)",
+        "options": ["Cuttack", "Varanasi", "Jodhpur", "Lukhnow", "Hyderabad"],
+        "correctAnswer": "Jodhpur",
+        "explanation": "Jodhpur (Rajasthan)",
+        "selectedOption": null
+    },
+    {
+        "question": "Central Institute for Cotton Research (CICR)",
+        "options": ["Karnal", "Nagpur", "Jodhpur", "Lukhnow", "Hyderabad"],
+        "correctAnswer": "Nagpur",
+        "explanation": "Nagpur (Maharashtra)",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Agricultural Statistics Research Institute (IASRI)",
+        "options": ["Ranchi", "New Delhi", "Jodhpur", "Allahabad", "Hyderabad"],
+        "correctAnswer": "New Delhi",
+        "explanation": "Pusa, New Delhi",
+        "selectedOption": null
+    },
+    {
+        "question": "Indian Veterinary Research Institute (IVRI)",
+        "options": ["Varanasi", "Izatnagar", "Cuttack", "Mumbai", "Calcutta"],
+        "correctAnswer": "Izatnagar",
+        "explanation": "Izatnagar (Uttar Pradesh)",
+        "selectedOption": null
+    },
+    {
+        "question": "National Dairy Research Institute (NDRI)",
+        "options": ["Karnal", "Izatnagar", "Cuttack", "Mumbai", "Calcutta"],
+        "correctAnswer": "Karnal",
+        "explanation": "Karnal (Haryana)",
+        "selectedOption": null
+    },
+]
