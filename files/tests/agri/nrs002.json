@@ -85,7 +85,7 @@
         "Foliage Ratio",
         "Total Leaf Coverage",
         "Leaf Area",
-        "Leaf Area Index",
+        "Leaf Area Index"
       ],
       "correctAnswer": "Leaf Area Index",
       "explanation": "The ratio of total leaf area to ground area is known as the Leaf Area Index. The concept was developed by <strong>Watson</strong>, 1948",
@@ -650,7 +650,7 @@
       "correctAnswer": "Growth retardant : Hexadecanol",
       "explanation": "Hexadecanol, Mobileaf, Silicone, Oils and waxes are some examples of Film forming type of Anti-transpirants.",
       "selectedOption": null
-    },
+    }
 
 
 
