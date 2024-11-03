@@ -1,0 +1,108 @@
+[
+    {
+        "question": "Rice",
+        "options": ["China", "Mexico", "Africa", "South East Asia", "South West Asia"],
+        "correctAnswer": "South East Asia",
+        "explanation": "Center of Origin of Rice is South East Asia (Burma)",
+        "selectedOption": null
+    },
+    {
+        "question": "Sugarcane",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "New Guinea",
+        "explanation": "Center of Origin of Sugarcane is New Guinea",
+        "selectedOption": null
+    },
+    {
+        "question": "Tea",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "China",
+        "explanation": "Center of Origin of Tea is China",
+        "selectedOption": null
+    },
+    {
+        "question": "Soybean",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "China",
+        "explanation": "Center of Origin of Soybean is China",
+        "selectedOption": null
+    },
+    {
+        "question": "Wheat",
+        "options": ["South East Asia", "Mexico", "Africa", "South West Asia", "New Guinea"],
+        "correctAnswer": "South West Asia",
+        "explanation": "Center of Origin of Wheat is South West Asia (Turkey)",
+        "selectedOption": null
+    },
+    {
+        "question": "Maize",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "Mexico",
+        "explanation": "Center of Origin of Maize is Mexico (Central America)",
+        "selectedOption": null
+    },
+    {
+        "question": "Tobacco",
+        "options": ["Central America", "South West Asia", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "Central America",
+        "explanation": "Center of Origin of Tobacco is Central America",
+        "selectedOption": null
+    },
+    {
+        "question": "Groundnut",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "Brazil",
+        "explanation": "Center of Origin of Groundnut is Brazil",
+        "selectedOption": null
+    },
+    {
+        "question": "Moong",
+        "options": ["India", "Mexico", "China", "Brazil", "Africa"],
+        "correctAnswer": "India",
+        "explanation": "Center of Origin of Moong (Green Gram) is India",
+        "selectedOption": null
+    },
+    {
+        "question": "Potato",
+        "options": ["China", "South America", "North America", "Africa", "New Guinea"],
+        "correctAnswer": "South America",
+        "explanation": "Center of Origin of Maize is South America (Peru)",
+        "selectedOption": null
+    },
+    {
+        "question": "Mustard",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "China",
+        "explanation": "Center of Origin of Mustard is China",
+        "selectedOption": null
+    },
+    {
+        "question": "Cow pea",
+        "options": ["China", "Mexico", "Africa", "Brazil", "New Guinea"],
+        "correctAnswer": "Africa",
+        "explanation": "Center of Origin of Cowpea is Africa",
+        "selectedOption": null
+    },
+    {
+        "question": "Cotton and Brinjal",
+        "options": ["China", "Mexico", "Africa", "Brazil", "India"],
+        "correctAnswer": "India",
+        "explanation": "Center of Origin of Cotton and Brinjal is India",
+        "selectedOption": null
+    },
+    {
+        "question": "Jowar and Bajra",
+        "options": ["China", "Mexico", "Africa", "Brazil", "India"],
+        "correctAnswer": "Africa",
+        "explanation": "Center of Origin of Jowar and Bajra is Africa",
+        "selectedOption": null
+    },
+    
+    {
+        "question": "Arhar (Pigeon pea)",
+        "options": ["China", "Mexico", "Africa", "Brazil", "India"],
+        "correctAnswer": "Africa",
+        "explanation": "Center of Origin of Arhar (Pigeon pea) is Africa",
+        "selectedOption": null
+    }
+]
