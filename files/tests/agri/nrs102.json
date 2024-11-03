@@ -1,0 +1,72 @@
+[
+    {
+        "question": "The type of agriculture which makes use of low cost inputs, lower amounts of chemical fertilizers, maintain soil fertility and ecological harmony is called _____",
+         "options": ["Shifting cultivation", "Permaculture", "Response farming", "Precision farming", "Site specific farming"],
+         "correctAnswer": "Permaculture",
+         "explanation": "Sustainable agriculture is one which makes use of low cost inputs, lower amounts of chemical fertilizers, maintain soil fertility and ecological harmony (FAO,1989). It is also known as ecological farming/natural farming/organic farming/permaculture.",
+         "selectedOption": null
+    },
+    {
+        "question": "_____ may be defined as a 'biological modal which is expected to perform or behave in a predictable manner within a defined environment'.",
+         "options": ["Ideotype", "Pureline", "Homozygous", "Multiline", "None of the above"],
+         "correctAnswer": "Ideotype",
+         "explanation": "Ideotype may be defined as a biological modal which is expected to perform or behave in a predictable manner within a defined environment. The concept of Ideotype was given by Donald in 1968.",
+         "selectedOption": null
+    },
+    {
+        "question": "What is the maximum permissible limit of biuret in urea?",
+         "options": ["1%", "1.5%", "2%", "2.5%"],
+         "correctAnswer": "1.5%",
+         "explanation": "The maximum permissible limit of biuret in urea is 1.5%",
+         "selectedOption": null
+    },
+    {
+        "question": "Most widely used material for correcting soil acidity is ____",
+         "options": ["Gypsum", "Lime", "Green Manure", "Both Lime and Gypsum", "Both Lime and Green Manure"],
+         "correctAnswer": "Lime",
+         "explanation": "Most widely used material for correcting soil acidity is Lime.",
+         "selectedOption": null
+    },
+    {
+        "question": "National Seed Act was passed in ___",
+         "options": ["1963", "1966", "1969", "1971", "1973"],
+         "correctAnswer": "1966",
+         "explanation": "National Seed Act was passed in 1966 and National Seed Corporation (NSC) was established in 1963.",
+         "selectedOption": null
+    },
+    {
+        "question": "Bench terracing is done when slope is more than ___",
+         "options": ["5%", "12%", "15%", "20%", "25%"],
+         "correctAnswer": "15%",
+         "explanation": "Bench terracing is done when slope is more than 15% (i.e. 16% - 33%)",
+         "selectedOption": null
+    },
+    {
+        "question": "In which five year plan 'Agro climatic regional planning in India' was initiated",
+         "options": ["Fifth Five year plan", "Sixth Five year plan", "Seventh Five year plan", "Fifth Five year plan", "None of the above"],
+         "correctAnswer": "Seventh Five year plan",
+         "explanation": "'Agro climatic regional planning in India' was initiated during Seventh Five year plan (1988).",
+         "selectedOption": null
+    },
+    {
+        "question": "Central Institute of Cotton Research (CICR) is located in",
+         "options": ["Jodhpur", "Nagpur", "Ludhiana", "Hyderabad", "Dehradun"],
+         "correctAnswer": "Nagpur",
+         "explanation": "Central Institute of Cotton Research (CICR) is located in Nagpur.",
+         "selectedOption": null
+    },
+    {
+        "question": "Lunishree is a variety of",
+         "options": ["Wheat", "Maize", "Rice", "Pearl Millet", "Ragi"],
+         "correctAnswer": "Rice",
+         "explanation": "Lunishree is a variety of Rice known as Super Rice. It was released by CRRI, Cuttack.",
+         "selectedOption": null
+    },
+    {
+        "question": "Tip burn of paddy occurs due to ____ under submerged condition.",
+         "options": ["Reduced O2 and Increased N2", "Reduced O2 and N2", "Increased O2 and Reduced N2", "Increased O2 and N2", "None of the above"],
+         "correctAnswer": "Reduced O2 and N2",
+         "explanation": "Tip burn of paddy occurs due to reduced O<sub>2</sub> and N<sub>2</sub> under submerged condition.",
+         "selectedOption": null
+    },
+]
