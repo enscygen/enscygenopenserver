@@ -1,0 +1,659 @@
+[
+
+    {
+      "question": "The term agronomy is derived from?",
+      "options": [
+        "Latin words Ager and Nomos",
+        "Greek words Agros and Nomos",
+        "Greek words Ager and Nomos",
+        "Latin words Agros and Nomos",
+        "None of the above"
+      ],
+      "correctAnswer": "Greek words Agros and Nomos",
+      "explanation": "The term agronomy is derived from the Greek words <strong>'Agros'</strong> meaning <strong>field</strong> and <strong>'Nomos'</strong> meaning <strong>To manage</strong>.",
+      "selectedOption": null
+    },
+    {
+      "question": "A branch of agricultural sciences that deals with methods providing a favorable environment for higher crop productivity is known as?",
+      "options": [
+        "Crop Science",
+        "Agronomy",
+        "Horticulture",
+        "Botany",
+        "Agriculture"
+      ],
+      "correctAnswer": "Agronomy",
+      "explanation": "Agronomy is the branch of agricultural sciences dealing with methods for providing a favorable environment for higher crop productivity.",
+      "selectedOption": null
+    },
+    {
+      "question": "Who is the author of the book 'Opus ruralium commodorum' and is known as the father of agronomy?",
+      "options": [
+        "Jethro Tull",
+        "Van Helmont",
+        "Pietro de'Crescenzi",
+        "Arthur Young",
+        "Gregor Mendel"
+      ],
+      "correctAnswer": "Pietro de'Crescenzi",
+      "explanation": "Pietro de'Crescenzi, also known as <strong>the father of agronomy</strong>, authored the book 'Opus ruralium commodorum'.",
+      "selectedOption": null
+    },
+    {
+      "question": "Who concluded that the main principle of vegetation is water?",
+      "options": [
+        "Van Helmont",
+        "Jethro Tull",
+        "Arthur Young",
+        "Pietro de'Crescenzi",
+        "Gregor Mendel"
+      ],
+      "correctAnswer": "Van Helmont",
+      "explanation": "Van Helmont concluded that the main principle of vegetation is water through his <strong>Willow tree experiment</strong>.<br>He wanted to prove that plants use materials from soil to perform photosynthesis. He planted the willow tree in a pot of soil after taking seperate measurements. He watered it regularly for 5 years and then weighed it. The tree gained 76.8 Kg (Initially it was 2.3 Kg). Then he weighed the soil thinking that the weight of the tree came from the soil. But the weight of the soil weighed nearly the same (90.8 Kg to 90.23 Kg). Thus his experiment proved that plants grew by drinking water.",
+      "selectedOption": null
+    },
+    {
+      "question": "Who is known as the father of weed science?",
+      "options": [
+        "Jethro Tull",
+        "Pietro de'Crescenzi",
+        "Arthur Young",
+        "Van Helmont",
+        "Stephen Swingler"
+      ],
+      "correctAnswer": "Jethro Tull",
+      "explanation": "Jethro Tull (1674-1741) is known as the father of weed science and made significant contributions to agriculture. He published a book <strong>Horse Hoeing Husbandry</strong>. The words <strong>Weeds</strong> and <strong>Zero tillage</strong> were also given by Jethro Tull",
+      "selectedOption": null
+    },
+    {
+      "question": "Who conducted pot culture experiments using materials like poultry dung, litter, and gunpowder to increase crop yields?",
+      "options": [
+        "Pietro de'Crescenzi",
+        "Jethro Tull",
+        "Van Helmont",
+        "Arthur Young",
+        "Gregor Mendel"
+      ],
+      "correctAnswer": "Arthur Young",
+      "explanation": "Arthur Young conducted pot culture experiments to increase crop yields using various materials. He published his work in 46 volumes as <strong>'Annals of agriculture'</strong>",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the term for the total leaf area to ground area ratio?",
+      "options": [
+        "Leaf Surface Ratio",
+        "Foliage Ratio",
+        "Total Leaf Coverage",
+        "Leaf Area",
+        "Leaf Area Index",
+      ],
+      "correctAnswer": "Leaf Area Index",
+      "explanation": "The ratio of total leaf area to ground area is known as the Leaf Area Index. The concept was developed by <strong>Watson</strong>, 1948",
+      "selectedOption": null
+    },
+    {
+      "question": "How is the relative land area occupied by a sole crop required to produce the yield achieved in intercropping determined?",
+      "options": [
+        "Crop Efficiency Ratio (CER)",
+        "Land Equivalent Ratio (LER)",
+        "Crop Land Ratio (CLR)",
+        "Intercrop Yield Index (IYI)",
+        "Crop Yield Efficiency (CYE)"
+      ],
+      "correctAnswer": "Land Equivalent Ratio (LER)",
+      "explanation": "LER is a concept in agriculture that describes the relative land area required under sole cropping to produce the same yield as under intercropping.<br> LER = La + Lb = (Yab/Yaa) + (Yba/Ybb)",
+      "selectedOption": null
+    },
+    {
+      "question": "Intercropping is considered beneficial when",
+      "options": [
+        "LER is greater than 1",
+        "LER is equal to 1",
+        "LER is less than 1",
+        "LER is 0",
+        "LER is negative"
+      ],
+      "correctAnswer": "LER is greater than 1",
+      "explanation": "Intercropping is considered beneficial when the Land Equivalent Ratio (LER) is greater than 1.<br>For eg. If LER = 1.10, means the mixture would give 10% more yield.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the approximate cropping intensity in India?",
+      "options": [
+        "100%",
+        "115%",
+        "125%",
+        "135%",
+        "150%"
+      ],
+      "correctAnswer": "135%",
+      "explanation": "The cropping intensity in India is approximately 135%.<br>CI = (Total Cropped Area/Net Cultivated Area)x100",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the crop rotation intensity for Groundnut-Wheat-Sugarcane in a 2-year cycle?",
+      "options": [
+        "100%",
+        "125%",
+        "135%",
+        "150%",
+        "175%"
+      ],
+      "correctAnswer": "150%",
+      "explanation": "The crop rotation intensity for Groundnut-Wheat-Sugarcane in a 2-year cycle is 150%.<br>CRI = (No. of crops in crop rotation/No. of years in crop rotation)x100<br><br>CRI = (3/2) x 100 = 150 %",
+      "selectedOption": null
+    },
+    {
+      "question": "What term refers to the cropping patterns used on a farm, their interaction with farm resources, associated farm enterprises, and available component technologies?",
+      "options": [
+        "Crop Ecology",
+        "Farm Management",
+        "Agricultural Science",
+        "Cropping System",
+        "Field Management"
+      ],
+      "correctAnswer": "Cropping System",
+      "explanation": "Cropping system refers to the cropping patterns on a farm and their interaction with resources, enterprises, and technologies.",
+      "selectedOption": null
+    },
+    {
+      "question": "What formula is used to calculate the Harvesting Index?",
+      "options": [
+        "(Economic yield/Biological yield) x 100",
+        "(Economic yield/Biological yield) x 10",
+        "(Biological yield/Economic yield) x 100",
+        "(Biological yield/Economic yield) x 10",
+        "(Economic yield x Biological yield) / 100"
+      ],
+      "correctAnswer": "(Economic yield/Biological yield) x 100",
+      "explanation": "The formula for the Harvesting Index is (Economic yield/Biological yield) x 100. HI is also called Coefficient of effectiveness",
+      "selectedOption": null
+    },
+    {
+      "question": "To reduce sorghum sickness, how much more nitrogen is applied at the time of the first fertilizer dose of the succeeding crop?",
+      "options": [
+        "10%",
+        "15%",
+        "20%",
+        "25%",
+        "30%"
+      ],
+      "correctAnswer": "25%",
+      "explanation": "The stubbles of sorghum takes a long time to decompose due to wide C:N ratio hence, during the process of decomposition, soil nitrogen gets blocked or temporarly immobilized, affecting the growth of succeeding crop be showing early nitrogen deficiency symptoms.<br>To reduce sorghum sickness, an additional 25% more nitrogen is applied at the time of the first fertilizer dose of the succeeding crop.",
+      "selectedOption": null
+    },
+    {
+      "question": "Cultivation of crops in areas where annual rainfall is less than 750mm, and crop failure occurs due to prolonged dry spells is known as what?",
+      "options": [
+        "Dry Land Farming",
+        "Desert Farming",
+        "Rainfed Farming",
+        "Arid Farming",
+        "Dry Farming"
+      ],
+      "correctAnswer": "Dry Farming",
+      "explanation": "Cultivation of crops in areas where annual rainfall is less than 750mm, and crop failure occurs due to prolonged dry spells is known as Dry Farming.",
+      "selectedOption": null
+    },
+    {
+      "question": "Cultivation of crops in areas where rainfall is more than 750 mm but less than 1150mm is called what?",
+      "options": [
+        "Dry Land Farming",
+        "Desert Farming",
+        "Rainfed Farming",
+        "Arid Farming",
+        "Moist Farming"
+      ],
+      "correctAnswer": "Dry Land Farming",
+      "explanation": "Cultivation of crops in areas where rainfall is more than 750 mm but less than 1150mm is called Dry Land Farming.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the term for the means of cultivation in regions where annual rainfall is more than 1150mm?",
+      "options": [
+        "Rainfed Farming",
+        "Wetland Farming",
+        "Monsoon Farming",
+        "Irrigated Farming",
+        "Humid Farming"
+      ],
+      "correctAnswer": "Rainfed Farming",
+      "explanation": "Means of cultivation in regions where annual rainfall is more than 1150mm is called Rainfed Farming.",
+      "selectedOption": null
+    },
+    {
+      "question": "What cropping system is suggested for Rainfed farming?",
+      "options": [
+        "Double Cropping",
+        "Intercropping",
+        "Monocropping",
+        "Mixed Cropping",
+        "Both (1) and (2)"
+      ],
+      "correctAnswer": "Both (1) and (2)",
+      "explanation": "Double cropping or Intercropping is suggested as a cropping system for Rainfed farming.",
+      "selectedOption": null
+    },
+    {
+      "question": "What cropping system is suggested for Dryland farming?",
+      "options": [
+        "Single or Double Cropping",
+        "Double or Intercropping",
+        "Single or Mixed Cropping",
+        "Crop Rotation",
+        "Mixed Cropping only"
+      ],
+      "correctAnswer": "Single or Mixed Cropping",
+      "explanation": "Single or Mixed Cropping is suggested as a cropping system for Dryland farming.",
+      "selectedOption": null
+    },
+    {
+      "question": "Agroclimatic planning commission was initiated in which year by the planning commission under which Five-Year Plan?",
+      "options": [
+        "1988, Seventh Five-Year Plan",
+        "1990, Eighth Five-Year Plan",
+        "1985, Sixth Five-Year Plan",
+        "1992, Ninth Five-Year Plan",
+        "1975, Fifth Five-Year Plan"
+      ],
+      "correctAnswer": "1988, Seventh Five-Year Plan",
+      "explanation": "The Agroclimatic Planning Commission was initiated in 1988 under the Seventh Five-Year Plan.",
+      "selectedOption": null
+    },
+    {
+      "question": "Agroclimatic zones are classified based on criteria of homogeneity in agro-characteristics such as rainfall, temperature, soil, topography, water resources, and cropping system. According to the planning commission, how many Agroclimatic zones has India been divided into?",
+      "options": [
+        "10",
+        "15",
+        "20",
+        "25",
+        "30"
+      ],
+      "correctAnswer": "15",
+      "explanation": "According to the planning commission, India has been divided into 15 Agroclimatic zones based on agro-characteristics.",
+      "selectedOption": null
+    },
+    {
+      "question": "According to NARP/ICAR, India has been divided into how many agroclimatic zones?",
+      "options": [
+        "100",
+        "120",
+        "131",
+        "145",
+        "160"
+      ],
+      "correctAnswer": "131",
+      "explanation": "According to NARP/ICAR, India has been divided into 131 agroclimatic zones.<br><br>Agro-climatic zones<br>NARP/ICAR : 131<br>Planning Commission : 15",
+      "selectedOption": null
+    },
+    {
+      "question": "According to NBSS & LUP, India has been divided into how many agroecological zones?",
+      "options": [
+        "15",
+        "18",
+        "21",
+        "24",
+        "27"
+      ],
+      "correctAnswer": "21",
+      "explanation": "According to NBSS & LUP, India has been divided into 21 agroecological zones.",
+      "selectedOption": null
+    },
+    {
+      "question": "According to ICAR, how many agroecological zones has India been divided into?",
+      "options": [
+        "5",
+        "7",
+        "8",
+        "10",
+        "12"
+      ],
+      "correctAnswer": "8",
+      "explanation": "According to ICAR, India has been divided into 8 agroecological zones.<br><br>Agro-ecological zones<br>ICAR : 8<br>NBSS&LUP : 21",
+      "selectedOption": null
+    },
+    {
+      "question": "What is a situation occurring in any area in a year when annual rainfall is less than 75% of the normal known as?",
+      "options": [
+        "Dry Season",
+        "Monsoon Failure",
+        "Drought",
+        "Rain Deficiency",
+        "Arid Period"
+      ],
+      "correctAnswer": "Drought",
+      "explanation": "A situation occurring in any area in a year when annual rainfall is less than 75% of the normal is known as a drought.",
+      "selectedOption": null
+    },
+    {
+      "question": "A drought is considered severe if the deficiency of rainfall is what percentage above the normal?",
+      "options": [
+        "10%",
+        "25%",
+        "35%",
+        "50%",
+        "75%"
+      ],
+      "correctAnswer": "50%",
+      "explanation": "A drought is considered severe if the deficiency of rainfall is 50% or more above the normal.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the ratio between rainfall at the 50% probability level to Potential Evapotranspiration (PET) of the corresponding period called?",
+      "options": [
+        "Rainfall Index",
+        "Drought Index",
+        "Moisture Availability Index (MAI)",
+        "Hydrological Index",
+        "Evaporation Ratio"
+      ],
+      "correctAnswer": "Moisture Availability Index (MAI)",
+      "explanation": "The ratio between rainfall at the 50% probability level and Potential Evapotranspiration (PET) of the corresponding period is known as the Moisture Availability Index (MAI).<br><br>MAI = Rainfall at 50% Prob./PET",
+      "selectedOption": null
+    },
+    {
+      "question": "What are materials that are applied to plant surfaces to reduce transpiration from the plant called?",
+      "options": [
+        "Anti-Evaporants",
+        "Waterproof Coatings",
+        "Anti-Transpirants",
+        "Moisture Barriers",
+        "Transpiration Inhibitors"
+      ],
+      "correctAnswer": "Anti-Transpirants",
+      "explanation": "Materials applied to plant surfaces to reduce transpiration from the plant are called Anti-Transpirants.",
+      "selectedOption": null
+    },
+    {
+      "question": "Mobileaf is an example of which type of anti-transpirant?",
+      "options": [
+        "Film Foaming",
+        "Leaf Coating",
+        "Spray Solution",
+        "Wax Emulsion",
+        "Dust Application"
+      ],
+      "correctAnswer": "Film Foaming",
+      "explanation": "Mobileaf is an example of a Film Foaming anti-transpirant.",
+      "selectedOption": null
+    },
+    {
+      "question": "What are structures that break the wind flow and reduce wind speed called?",
+      "options": [
+        "Wind Disrupters",
+        "Wind Chillers",
+        "Wind Erosion Barriers",
+        "Wind Breaks",
+        "Wind Dampeners"
+      ],
+      "correctAnswer": "Wind Breaks",
+      "explanation": "Structures that break the wind flow and reduce wind speed are called Wind Breaks.",
+      "selectedOption": null
+    },
+    {
+      "question": "What are rows of trees or shrubs planted across the wind direction for protection of crops against wind called?",
+      "options": [
+        "Wind Blockers",
+        "Wind Stoppers",
+        "Wind Buffers",
+        "Shelter Trees",
+        "Shelter Belts"
+      ],
+      "correctAnswer": "Shelter Belts",
+      "explanation": "Rows of trees or shrubs planted across the wind direction for protection of crops against wind are called Shelter Belts.",
+      "selectedOption": null
+    },
+    {
+      "question": "Wind beak and shelter belts provides the protective shelter against dessicating winds to the extent of (a)___ times the height of tall tree on windward side and upto (b)___ times on leeward side.",
+      "options": [
+
+        "(a) 5-10, (b) 5",
+        "(a) 10-30, (b) 10",
+        "(a) 5-10, (b) 30",
+        "(a) 10-30, (b) 40",
+        "(a) 10-30, (b) 20"
+      ],
+      "correctAnswer": "(a) 5-10, (b) 30",
+      "explanation": "Wind beak and shelter belts provides the protective shelter against dessicating winds to the extent of <strong>5-10 times</strong> the height of tall tree on windward side and upto <strong>30 times</strong> on leeward side.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is a sustainable land management system that increases land use by combining crop, fruit, forest plant, and animal production?",
+      "options": [
+        "Mixed Farming",
+        "Crop Diversification",
+        "Agroforestry",
+        "Polyculture",
+        "Sustainable Farming"
+      ],
+      "correctAnswer": "Agroforestry",
+      "explanation": "Agroforestry is a sustainable land management system that combines crop, fruit, forest plant, and animal production to increase land use.",
+      "selectedOption": null
+    },
+    {
+      "question": "Agronomic measures are adopted when the slope is less than ____ percentage and erosion problems are not severe.",
+      "options": [
+        "1%",
+        "2%",
+        "3%",
+        "5%",
+        "10%"
+      ],
+      "correctAnswer": "2%",
+      "explanation": "Agronomic measures of soil conservation are adopted when the slope is less than 2% and erosion problems are not severe.",
+      "selectedOption": null
+    },
+    {
+      "question": "Which of the following is not an agronomic measure of soil conservation?",
+      "options": [
+        "Contour cultivation",
+        "Graded Bunding",
+        "Mulching",
+        "Strip cropping",
+        "All are agronomic measures"
+      ],
+      "correctAnswer": "Graded Bunding",
+      "explanation": "Graded bunding is not considered an agronomic measure of soil conservation. It is a type of mechanical measure of soil conservation.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is any material applied on the soil surface to check evaporation and improve soil water retention called?",
+      "options": [
+        "Barrier",
+        "Insulation",
+        "Coating",
+        "Mulch",
+        "Sealer"
+      ],
+      "correctAnswer": "Mulch",
+      "explanation": "Any material applied on the soil surface to check evaporation and improve soil water retention is called Mulch.",
+      "selectedOption": null
+    },
+    {
+      "question": "What is the system of cropping in which long and narrow strips of erosion-resistant crops are alternated with strips of erosion-permitting crops known as?",
+      "options": [
+        "Strip Cropping",
+        "Interplanting",
+        "Row Cropping",
+        "Block Cropping",
+        "Mixed Cropping"
+      ],
+      "correctAnswer": "Strip Cropping",
+      "explanation": "The system of cropping in which long and narrow strips of erosion-resistant crops are alternated with strips of erosion-permitting crops is known as Strip Cropping.",
+      "selectedOption": null
+    },
+    {
+      "question": "Up to what slope is contour bunding adopted?",
+      "options": [
+        "4%",
+        "6%",
+        "8%",
+        "10%",
+        "12%"
+      ],
+      "correctAnswer": "6%",
+      "explanation": "Contour bunding is adopted up to a slope of 6%.",
+      "selectedOption": null
+    },
+    {
+      "question": "Graded bunding is recommended in areas receiving rainfall of more than ___",
+      "options": [
+        "800mm",
+        "600mm",
+        "400mm",
+        "200mm",
+        "100mm"
+      ],
+      "correctAnswer": "800mm",
+      "explanation": "Graded bunding is recommended in areas receiving rainfall of more than 800mm per year.",
+      "selectedOption": null
+    },
+    {
+      "question": "In general, bunding is suitable for lands having slopes in what range?",
+      "options": [
+        "2-5%",
+        "2-7%",
+        "2-10%",
+        "5-10%",
+        "5-15%"
+      ],
+      "correctAnswer": "2-10%",
+      "explanation": "In general, bunding is suitable for lands having slopes in the range of 2-10%.",
+      "selectedOption": null
+    },
+    {
+      "question": "Bench terracing is adopted in lands where the slope ranges from?",
+      "options": [
+        "10-20%",
+        "12-25%",
+        "16-33%",
+        "20-40%",
+        "25-50%"
+      ],
+      "correctAnswer": "16-33%",
+      "explanation": "Bench terracing is adopted in lands where the slope ranges from 16% to 33%.",
+      "selectedOption": null
+    },
+    {
+      "question": "Zing terracing is adopted in lands with what slope?",
+      "options": [
+        "1-3%",
+        "2-5%",
+        "3-7%",
+        "3-10%",
+        "5-10%"
+      ],
+      "correctAnswer": "3-10%",
+      "explanation": "Zing terracing is adopted in lands with slopes ranging from 3% to 10%.",
+      "selectedOption": null
+    },
+    {
+      "question": "Which cultivation practice is mostly practiced in coffee gardens?",
+      "options": [
+        "Strip Cropping",
+        "Terracing",
+        "Mulching",
+        "Contour Farming",
+        "Vertical Mulching"
+      ],
+      "correctAnswer": "Vertical Mulching",
+      "explanation": "Vertical mulching is mostly practiced in coffee gardens.",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the odd one",
+      "options": [
+        "Hexadecanol",
+        "Mobileaf",
+        "Silicone",
+        "Phenyl Mercuric Acetate",
+        "Waxes"
+      ],
+      "correctAnswer": "Phenyl Mercuric Acetate",
+      "explanation": "All are Film forming type of Anti-transpirants except PMA which is a stomata closing type.",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the incorrect statement about Dryland farming",
+      "options": [
+        "Rainfall < 800 mm",
+        "PET < P",
+        "< 200 days of growing season",
+        "Wind and Water erosion are the main constraints",
+        "All statements are correct"
+      ],
+      "correctAnswer": "PET < P",
+      "explanation": "PET (Potential Evapo-transpiration) is greater than P (Precipitation) in Dryland farming",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the incorrect statement about Anti-transpirants",
+      "options": [
+        "Anti-transpirants reduce photosynthesis",
+        "Atrazine act as an anti-transpirant",
+        "Kaolin @ 5% reduces transpiration losses",
+        "Growth retardants reduce shoot growth and increase root growth",
+        "All statements are correct"
+      ],
+      "correctAnswer": "All statements are correct",
+      "explanation": "All the given statements are true with respect to Anti-transpirants",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the correct statement(s)<br>(i) Intercropping is beneficial if LER > 1<br>(ii) Crop rotation decreases soil fertility due to intense cultivation<br>(iii) Leaf Area Index concept was developed by Watson",
+      "options": [
+        "Only (i)",
+        "Both (i) and (ii)",
+        "Both (i) and (iii)",
+        "Both (ii) and (iii)",
+        "(i), (ii) and (iii)"
+      ],
+      "correctAnswer": "Both (i) and (iii)",
+      "explanation": "Crop rotation maintains and improves soil fertility",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the correct statement(s)<br>(i) Crop failure due to prolonged dry spells during crop period is most common in Dry farming<br>(ii) Rainfed farming is practiced mostly in humid regions<br>(iii) Dry land farming is practiced in semi-arid regions",
+      "options": [
+        "Only (i)",
+        "Both (i) and (ii)",
+        "Both (i) and (iii)",
+        "Both (ii) and (iii)",
+        "(i), (ii) and (iii)"
+      ],
+      "correctAnswer": "(i), (ii) and (iii)",
+      "explanation": "All statements are correct",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the correct statement(s)<br>(i) Mechanical measures of soil conservation is adopted when land slope is less than 2%<br>(ii) Contour and graded bunds are mostly used in India<br>(iii) Breaking of hardpan of soil by the sub soiler is called strip cropping<br>(iv) <i>Vettiveria zelanica</i> (Khus) is the most suitable plant for Vegetative barriers",
+      "options": [
+        "Only (ii)",
+        "Both (ii) and (iv)",
+        "Both (ii) and (iii)",
+        "(i), (iii) and (iv)",
+        "(ii), (iii) and (iv)"
+      ],
+      "correctAnswer": "Both (ii) and (iv)",
+      "explanation": "Mechanical measures of soil conservation is adopted when land slope is more than 2%.<br>Breaking of hardpan of soil by the sub soiler is called sub soiling.",
+      "selectedOption": null
+    },
+    {
+      "question": "Identify the incorrect pair",
+      "options": [
+        "Stomata Closing Type : PMA",
+        "Film Forming : Mobileaf",
+        "Reflecting : Kaolin",
+        "Growth retardant : Hexadecanol",
+        "All are correct"
+      ],
+      "correctAnswer": "Growth retardant : Hexadecanol",
+      "explanation": "Hexadecanol, Mobileaf, Silicone, Oils and waxes are some examples of Film forming type of Anti-transpirants.",
+      "selectedOption": null
+    },
+
+
+
+
+
+  ]
