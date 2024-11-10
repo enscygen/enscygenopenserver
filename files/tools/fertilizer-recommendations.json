@@ -1,15 +1,15 @@
 {
-  "Rice (Uplands, Local Varieties)": { "nitrogen": 40, "phosphorus": 20, "potassium": 30, "unit": "kg/hectare" },
-  "Rice (Upland, High yielding short duration)": { "nitrogen": 60, "phosphorus": 30, "potassium": 30, "unit": "kg/hectare" },
-  "Rice (Wetland, General)": { "nitrogen": 70, "phosphorus": 35, "potassium": 35, "unit": "kg/hectare" },
-  "Paddy (HYV, SD) (Upland, Kerala)": { "nitrogen": 60, "phosphorus": 30, "potassium": 30, "unit": "kg/hectare" },
-  "Coconut (Good Management)": { "nitrogen": 0.50, "phosphorus": 0.32, "potassium": 1.20, "unit": "kg/tree" },
-  "Coconut (Average Management)": { "nitrogen": 0.34, "phosphorus": 0.17, "potassium": 0.68, "unit": "kg/tree" },
-  "Coconut (Red Loam Soil)": { "nitrogen": 0.68, "phosphorus": 0.23, "potassium": 0.90, "unit": "kg/tree" },
-  "Coconut (Hybrid/HYV, Irrigated)": { "nitrogen": 1, "phosphorus": 0.50, "potassium": 2, "unit": "kg/tree" },
-  "Coconut (Hybrid/HYV, Rainfed)": { "nitrogen": 0.5, "phosphorus": 0.32, "potassium": 1.20, "unit": "kg/tree" },
-  "Coconut (Reclaimed Clayey Soil/Kuttanad)": { "nitrogen": 0.25, "phosphorus": 0.35, "potassium": 0.90, "unit": "kg/tree" },
-  "Banana (Nendran, Irrigated)": { "nitrogen": 0.190, "phosphorus": 0.115, "potassium": 0.300, "unit": "kg/tree" },
-  "Banana (Palayankodan, Rainfed)": { "nitrogen": 0.100, "phosphorus": 0.200, "potassium": 0.400, "unit": "kg/tree" },
-  "Banana (Tissue Culture Nendran)": { "nitrogen": 0.300, "phosphorus": 0.115, "potassium": 0.450, "unit": "kg/tree" }
+  "Rice (Uplands, Local Varieties)": { "nitrogen": 40, "phosphorus": 20, "potassium": 30, "unit": "kg/hectare", "apply" : "total" },
+  "Rice (Upland, High yielding short duration)": { "nitrogen": 60, "phosphorus": 30, "potassium": 30, "unit": "kg/hectare", "apply" : "total" },
+  "Rice (Wetland, General)": { "nitrogen": 70, "phosphorus": 35, "potassium": 35, "unit": "kg/hectare", "apply" : "total" },
+  "Paddy (HYV, SD) (Upland, Kerala)": { "nitrogen": 60, "phosphorus": 30, "potassium": 30, "unit": "kg/hectare", "apply" : "total" },
+  "Coconut (Good Management)": { "nitrogen": 0.50, "phosphorus": 0.32, "potassium": 1.20, "unit": "kg/tree", "apply" : "per annum" },
+  "Coconut (Average Management)": { "nitrogen": 0.34, "phosphorus": 0.17, "potassium": 0.68, "unit": "kg/tree", "apply" : "per annum" },
+  "Coconut (Red Loam Soil)": { "nitrogen": 0.68, "phosphorus": 0.23, "potassium": 0.90, "unit": "kg/tree", "apply" : "per annum" },
+  "Coconut (Hybrid/HYV, Irrigated)": { "nitrogen": 1, "phosphorus": 0.50, "potassium": 2, "unit": "kg/tree", "apply" : "per annum" },
+  "Coconut (Hybrid/HYV, Rainfed)": { "nitrogen": 0.5, "phosphorus": 0.32, "potassium": 1.20, "unit": "kg/tree", "apply" : "per annum" },
+  "Coconut (Reclaimed Clayey Soil/Kuttanad)": { "nitrogen": 0.25, "phosphorus": 0.35, "potassium": 0.90, "unit": "kg/tree", "apply" : "per annum" },
+  "Banana (Nendran, Irrigated)": { "nitrogen": 0.190, "phosphorus": 0.115, "potassium": 0.300, "unit": "kg/tree", "apply" : "per annum" },
+  "Banana (Palayankodan, Rainfed)": { "nitrogen": 0.100, "phosphorus": 0.200, "potassium": 0.400, "unit": "kg/tree", "apply" : "per annum" },
+  "Banana (Tissue Culture Nendran)": { "nitrogen": 0.300, "phosphorus": 0.115, "potassium": 0.450, "unit": "kg/tree", "apply" : "per annum" }
 }
