@@ -51,6 +51,216 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  {
+    "question": "Identify the common character shared by the rice varieties Uma and Vyttila 2",
+    "options": [
+      "Both are long duration varieties recommended for Pokkali area",
+      "Both are short duration varieties recommended for Kaipad tracts",
+      "Both are medium duration varieties recommended for Kari soils",
+      "None of the above"
+    ],
+    "correctAnswer": "Both are medium duration varieties recommended for Kari soils",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The rice variety which is generally recommended as a contingent variety for areas where there is crop loss is",
+    "options": [
+      "Triveni",
+      "Hraswa",
+      "Jyothi",
+      "Kattamodan"
+    ],
+    "correctAnswer": "Hraswa",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Hraswa is a",
+    "options": [
+      "Extra short duration rice variety",
+      "Rice variety with red colored bold grains",
+      "Contingent variety",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "A rice variety released by College of Agriculture Vellayani which is recommended for southern region for Virippu season for delayed sowing",
+    "options": [
+      "KAU Mithila",
+      "Rashmi",
+      "Akshaya",
+      "Aarathi"
+    ],
+    "correctAnswer": "Aarathi",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "For rice seed production, the minimum isolation distance that should be maintained to ensure genetic purity is",
+    "options": [
+      "1m",
+      "2m",
+      "3m",
+      "4m"
+    ],
+    "correctAnswer": "3m",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "For quality seed production in rice, the moisture content that should be maintained after harvesting is",
+    "options": [
+      "Less than 13%",
+      "Not more than 13%",
+      "Exactly 13%",
+      "Not more than 10%"
+    ],
+    "correctAnswer": "Not more than 13%",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "For storage of rice seed grains generally polythene bags of 700 gauge or double gunny bags are recommended. But the seeds can be preferably stored in 400 gauge polythene bags if",
+    "options": [
+      "2% malathion is sprayed to seeds",
+      "seeds are dried to 10% moisture or less",
+      "storage is for short period, usually between 3 to 4 months",
+      "piles contain less than 8 bags"
+    ],
+    "correctAnswer": "seeds are dried to 10% moisture or less",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The viability of short duration varieties of rice can be extended for a period of 2-3 months at 80% level if the seeds are",
+    "options": [
+      "soaked in brine solution, dried in shade back to 13% moisture level",
+      "soaked in CuSO4 solution, followed by soaking in water, drying back to 10% moisture level",
+      "soaked in water, dried in shade back to 13% moisture level",
+      "None of the above"
+    ],
+    "correctAnswer": "soaked in water, dried in shade back to 13% moisture level",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "To keep sprouted Pokkali seeds viable for two weeks, the seeds are",
+    "options": [
+      "kept in baskets made of plaited coconut leaves lined with koova, banana, karingotta or teak leaves",
+      "kept in basket made of moistened rice straws lined with koova, banana, karingotta or teak leaves",
+      "placed in a dapog mat nursery supplemented with 2% brine",
+      "soaked for 12 to 16 hours in water"
+    ],
+    "correctAnswer": "kept in baskets made of plaited coconut leaves lined with koova, banana, karingotta or teak leaves",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The seed rate of rice under transplanting method is",
+    "options": [
+      "40 to 65 kg/ha",
+      "60 to 85 kg/ha",
+      "80 to 90 kg/ha",
+      "80 to 100 kg/ha"
+    ],
+    "correctAnswer": "60 to 85 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The seed rate of rice under broadcasting method is",
+    "options": [
+      "40 to 65 kg/ha",
+      "60 to 85 kg/ha",
+      "80 to 100 kg/ha",
+      "100 to 110 kg/ha"
+    ],
+    "correctAnswer": "80 to 100 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The seed rate of rice under dibbling method is",
+    "options": [
+      "40 to 60 kg/ha",
+      "60 to 85 kg/ha",
+      "80 to 100 kg/ha",
+      "80 to 90 kg/ha"
+    ],
+    "correctAnswer": "80 to 90 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The seed rate of rice under SRI method is",
+    "options": [
+      "2 kg/ha",
+      "5 kg/ha",
+      "8 kg/ha",
+      "10 kg/ha"
+    ],
+    "correctAnswer": "5 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The system of rice cultivation in which a mixture of seeds of a non-photosensitive variety and a photosensitive variety of rice in the proportion 70:30 is sown during virippu season is",
+    "options": [
+      "Kaipad",
+      "Onattukara",
+      "Koottumundakan",
+      "Kattukampal"
+    ],
+    "correctAnswer": "Koottumundakan",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": [
+      "Agri Asst. Grade II 2024"
+    ]
+  },
+  {
+    "question": "Recommended lime dose for rice main field is",
+    "options": [
+      "240 kg/ha",
+      "300 kg/ha",
+      "420 kg/ha",
+      "600 kg/ha"
+    ],
+    "correctAnswer": "600 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "<i>Alternaria padwickii</i> causes",
+    "options": [
+      "Narrow brown spot of rice",
+      "Leaf scald of rice",
+      "Stack burn of rice",
+      "Die back of rice"
+    ],
+    "correctAnswer": "Stack burn of rice",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
 ]
             
