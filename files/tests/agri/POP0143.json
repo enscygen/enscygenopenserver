@@ -1,0 +1,56 @@
+
+[
+  {
+    "question": "The critical mean temperature for flowering and fertilization in rice ranges from",
+    "options": [
+      "16°C to 20°C",
+      "18°C to 32°C",
+      "32°C and above",
+      "None of the above"
+    ],
+    "correctAnswer": "16°C to 20°C",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The critical mean temperature for ripening in rice ranges from",
+    "options": [
+      "16°C to 20°C",
+      "18°C to 32°C",
+      "16°C to 28°C",
+      "None of the above"
+    ],
+    "correctAnswer": "18°C to 32°C",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "pH suitable for rice ranges from",
+    "options": [
+      "4 to 5",
+      "5 to 8",
+      "6.5 to 7.5",
+      "4.5 to 6.3"
+    ],
+    "correctAnswer": "5 to 8",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Identify the wrong statement",
+    "options": [
+      "Mundakan is the second rice growing season",
+      "Puncha generally coincides with summer period",
+      "Virippu starts from april and extends till september",
+      "Mundakan starts from december and extends till march"
+    ],
+    "correctAnswer": "Mundakan starts from december and extends till march",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  }
+]
+            
