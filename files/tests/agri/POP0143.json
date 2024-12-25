@@ -261,6 +261,243 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+
+  {
+    "question": "The total seed bed area for 1 ha of paddy main field is",
+    "options": [
+      "100 m<sup>2</sup>",
+      "500 m<sup>2</sup>",
+      "1000 m<sup>2</sup>",
+      "1500 m<sup>2</sup>"
+    ],
+    "correctAnswer": "1000 m<sup>2</sup>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The amount of compost or cattle manure to be added to paddy nursery bed is&nbsp;",
+    "options": [
+      "1 kg/m<sup>2</sup>",
+      "2 kg/m<sup>2</sup>",
+      "3 kg/m<sup>2</sup>",
+      "2.5 kg/m<sup>2</sup>"
+    ],
+    "correctAnswer": "1 kg/m<sup>2</sup>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The depth of irrigation followed in paddy seedbed to control weeds is",
+    "options": [
+      "2 cm",
+      "3 cm",
+      "4 cm",
+      "5 cm"
+    ],
+    "correctAnswer": "5 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Nitrogen deficiency in paddy seedbed can be combated by broadcasting urea",
+    "options": [
+      "@ 0.5 kg for 100 m<sup>2</sup>",
+      "@ 1 kg for 100 m<sup>2</sup>",
+      "@ 1.5 kg for 100 m<sup>2</sup>",
+      "@ 5 kg for 100 m<sup>2</sup>"
+    ],
+    "correctAnswer": "@ 1 kg for 100 m<sup>2</sup>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Paddy seedlings are ready to be transplanted at 4 to 5 leaf stage which is",
+    "options": [
+      "about 18 after sowing days for SD varieties",
+      "about 20 to 25 days after sowing for MD varieties",
+      "about 30 days after sowing for LD varieties",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In cases where paddy transplanting is delayed, the following measures can be adopted",
+    "options": [
+      "Plant at wider spacing (40 cm gap) and apply more nitrogen @ 5kg/ha as basal dressing",
+      "Plant at closer spacing (3/4 seedlings per hill) and apply more nitrogen @ 5kg/ha as basal dressing",
+      "Plant at closer spacing (3/4 seedlings per hill) and apply more phosphorus @ 2.5kg/ha as basal dressing",
+      "None of the above"
+    ],
+    "correctAnswer": "Plant at closer spacing (3/4 seedlings per hill) and apply more nitrogen @ 5kg/ha as basal dressing",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The best time to transplant paddy seedlings is _______ after incorporating organic manure",
+    "options": [
+      "2 to 5 days",
+      "5 to 10 days",
+      "10 to 15 days",
+      "15 to 20 days"
+    ],
+    "correctAnswer": "10 to 15 days",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Cracking is usually found in Kari soils of Kuttanad region. To prevent cracking by prolonged drying, the following method can be adopted",
+    "options": [
+      "Flooding the land with 2 cm depth of water",
+      "Providing surface drains of 20 cm width and depth within the field at 10-20 m interval and joining them with surface drain of 30 cm width and depth taken along perimeter of field",
+      "Providing surface drains of 40 cm width and 25 cm depth within the field at 5 m interval and joining them with surface drain of 50 cm width and depth taken along perimeter of field",
+      "Providing surface drains of 20 cm width and depth within the field at 10-20 m interval and joining them with surface drain of 30 cm width and depth running diagonally"
+    ],
+    "correctAnswer": "Providing surface drains of 20 cm width and depth within the field at 10-20 m interval and joining them with surface drain of 30 cm width and depth taken along perimeter of field",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Kachals and Vachals are associated with",
+    "options": [
+      "Monsoons",
+      "Drainage",
+      "Planting",
+      "Disease attack"
+    ],
+    "correctAnswer": "Drainage",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Dibbling of unsprouted seeds behind the plough is the common practise in",
+    "options": [
+      "Kuttanad&nbsp;",
+      "Kole",
+      "Onattukara",
+      "Pokkali"
+    ],
+    "correctAnswer": "Onattukara",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Paddy seed treatment with <i>P. fluorescenes</i> is done at the rate of ____ of seeds",
+    "options": [
+      "2 g/kg&nbsp;",
+      "4 g/kg",
+      "8 g/kg",
+      "10 g/kg"
+    ],
+    "correctAnswer": "10 g/kg",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Paddy seed treatment with Carbendazim is done at the rate of ____ of seeds",
+    "options": [
+      "2 g/kg",
+      "4 g/kg",
+      "6 g/kg",
+      "10 g/kg"
+    ],
+    "correctAnswer": "2 g/kg",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The spacing followed in short duration rice varieties during first season is",
+    "options": [
+      "10 x 15 cm",
+      "15 x 10 cm",
+      "20 x 15 cm",
+      "15 x 20 cm"
+    ],
+    "correctAnswer": "15 x 10 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The spacing followed in short duration rice varieties during second season is",
+    "options": [
+      "10 x 15 cm",
+      "15 x 10 cm",
+      "20 x 15 cm",
+      "15 x 20 cm"
+    ],
+    "correctAnswer": "15 x 10 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The spacing followed in medium duration rice varieties during first season is",
+    "options": [
+      "10 x 15 cm",
+      "15 x 10 cm",
+      "20 x 15 cm",
+      "15 x 20 cm"
+    ],
+    "correctAnswer": "20 x 15 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The spacing followed in medium duration rice varieties during second season is",
+    "options": [
+      "10 x 15 cm",
+      "15 x 10 cm",
+      "20 x 10 cm",
+      "10 x 20 cm"
+    ],
+    "correctAnswer": "20 x 10 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The spacing followed in medium duration rice varieties in paired row planting is",
+    "options": [
+      "35 - 15 x 10 - 15 cm",
+      "25 - 10 x 15 - 20 cm",
+      "35 - 15 x 15 - 20 cm",
+      "None of the above"
+    ],
+    "correctAnswer": "35 - 15 x 10 - 15 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "During paddy transplanting, leave wider rows of __________ to facilitate spraying and other cultural operations",
+    "options": [
+      "20 cm after every 3 m",
+      "30 cm after every 3 m",
+      "20 cm after every 2 m",
+      "60 cm after every 1 m"
+    ],
+    "correctAnswer": "30 cm after every 3 m",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
 ]
+            
+
             
