@@ -535,7 +535,60 @@
     "explanation": "<div>The entire content quantity of Phosphatic fertilizers can be applied along with organic manure.</div>Vermicompost or coir pith compost @ 2.5 t/ha can be substituted for 5t/ha FYM in Onattukara region.&nbsp;",
     "selectedOption": null,
     "exams": []
+  },
+   {
+    "question": "Cowpea can be raised as an intercrop in dry seeded low land (semi-dry) rice by sowing __________ seed along with the rice to serve as a source of green manure",
+    "options": [
+      "10 kg/ha",
+      "12.5 kg/ha",
+      "15 kg/ha",
+      "17.5 kg/ha"
+    ],
+    "correctAnswer": "12.5 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "When there is a delay in onset of monsoon, the intercropped cowpea can be incorporated in rice fields by",
+    "options": [
+      "spraying 2,4-D @ 1 kg/ha at 30-40 DAS",
+      "spraying NAA @ 0.5 kg/ha at 30-40 DAS",
+      "spraying 2,4-D @ 2 kg/ha at 20-30 DAS",
+      "spraying NAA @ 0.5 kg/ha at 20-30 DAS"
+    ],
+    "correctAnswer": "spraying 2,4-D @ 1 kg/ha at 30-40 DAS",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The green manure intercrop recommended for wet seeded rice is",
+    "options": [
+      "Daincha @ 20 kg/ha",
+      "Cowpea @ 12.5 kg/ha",
+      "Daincha @ 60 kg/ha",
+      "Gliricidia @ 15 kg/ha"
+    ],
+    "correctAnswer": "Daincha @ 20 kg/ha",
+    "explanation": "Dry seeded rice: Cowpea @ 12.5 kg/ha<div>Wet seeded rice: Daincha @ 20 kg/ha</div>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The green manure intercrop recommended for dry seeded rice is",
+    "options": [
+      "Daincha @ 20 kg/ha",
+      "Cowpea @ 12.5 kg/ha",
+      "Daincha @ 60 kg/ha",
+      "Cowpea @ 20 kg/ha"
+    ],
+    "correctAnswer": "Cowpea @ 12.5 kg/ha",
+    "explanation": "<div>Dry seeded rice: Cowpea @ 12.5 kg/ha</div><div>Wet seeded rice: Daincha @ 20 kg/ha</div>",
+    "selectedOption": null,
+    "exams": []
   }
+
 
 ]
             
