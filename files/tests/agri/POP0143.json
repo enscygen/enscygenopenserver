@@ -496,7 +496,47 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  {
+    "question": "The recommended spacing of seed drums in short duration and medium duration varieties of rice is _____ and ______ respectively",
+    "options": [
+      "15 cm and 20 cm",
+      "20 cm and 15 cm",
+      "10 cm and 20 cm",
+      "20 cm and 10 cm"
+    ],
+    "correctAnswer": "15 cm and 20 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "System of Rice Intensification (SRI) is a method of rice cultivation introduced by",
+    "options": [
+      "Henry D Laulanie in 1983",
+      "Norman Borlaug in 1983",
+      "M S Swaminathan in 1983",
+      "Norman Uphoff in 1983"
+    ],
+    "correctAnswer": "Henry D Laulanie in 1983",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The recommended dose of farmyard manure/compost/green leaf to be incorporated into the soil during ploughing in rice is",
+    "options": [
+      "2 t/ha",
+      "3 t/ha",
+      "4 t/ha",
+      "5t/ha"
+    ],
+    "correctAnswer": "5t/ha",
+    "explanation": "<div>The entire content quantity of Phosphatic fertilizers can be applied along with organic manure.</div>Vermicompost or coir pith compost @ 2.5 t/ha can be substituted for 5t/ha FYM in Onattukara region.&nbsp;",
+    "selectedOption": null,
+    "exams": []
   }
+
 ]
             
 
