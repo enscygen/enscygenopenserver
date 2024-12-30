@@ -587,6 +587,19 @@
     "explanation": "<div>Dry seeded rice: Cowpea @ 12.5 kg/ha</div><div>Wet seeded rice: Daincha @ 20 kg/ha</div>",
     "selectedOption": null,
     "exams": []
+  },
+  {
+    "question": "What is the general recommendation of fertilizer dosage (in N:P:K kg/ha) for rice in wetland type of cultivation",
+    "options": [
+      "45:35:20",
+      "70:35:35",
+      "40:20:20",
+      "60:30:30"
+    ],
+    "correctAnswer": "70:35:35",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
 
 
