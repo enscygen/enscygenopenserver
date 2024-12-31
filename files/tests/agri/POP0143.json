@@ -796,7 +796,128 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "The minimum time interval between application of lime and fertilizers is",
+    "options": [
+      "1 week",
+      "2 week",
+      "4 days",
+      "2 days"
+    ],
+    "correctAnswer": "1 week",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The addition of lime in rice fields is absolutely necessary when pH is lower than",
+    "options": [
+      "5.5",
+      "6.5",
+      "7",
+      "7.5"
+    ],
+    "correctAnswer": "5.5",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Water level that should be maintained during transplanting rice seedlings is",
+    "options": [
+      "1 cm",
+      "1.5 cm",
+      "3.5 cm",
+      "5 cm"
+    ],
+    "correctAnswer": "1.5 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In rice fields, the water should be drained",
+    "options": [
+      "7 days before harvest",
+      "10 days before harvest",
+      "13 days before harvest",
+      "20 days before harvest"
+    ],
+    "correctAnswer": "13 days before harvest",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The water level to be maintained during transplanting, maximum tillering and harvesting of rice is",
+    "options": [
+      "1.5 cm, 5 cm, 0 cm",
+      "1 cm, 3 cm, 0 cm",
+      "2 cm, 3 cm, 0 cm",
+      "5 cm, 1.5 cm, 0 cm"
+    ],
+    "correctAnswer": "1.5 cm, 5 cm, 0 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The common grass weed of rice, <i>Kavada</i> belongs to",
+    "options": [
+      "<i>Oryza</i> genus",
+      "<i>Echinochloa</i> genus",
+      "<i>Sacciolepis</i> genus",
+      "<i>Cyperus</i> genus"
+    ],
+    "correctAnswer": "<i>Echinochloa</i> genus",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The weed <i>Cyperus iria</i> (Manjakora/Chengoal) belongs to",
+    "options": [
+      "Grasses",
+      "Sedges",
+      "Broad leaved weeds",
+      "Ferns"
+    ],
+    "correctAnswer": "Sedges",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is a broad leaved weed in rice ecosystem?",
+    "options": [
+      "<i>Sacciolepis interrupta</i>",
+      "<i>Cyperus difformis</i>",
+      "<i>Monochoria vaginalis</i>",
+      "<i>Salvinia molesta</i>"
+    ],
+    "correctAnswer": "<i>Monochoria vaginalis</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Find the odd one out",
+    "options": [
+      "<i>Salvinia molesta</i>",
+      "<i>Ludwigia perennis</i>",
+      "<i>Limnocharis flava</i>",
+      "<i>Ammania baccifera</i>"
+    ],
+    "correctAnswer": "<i>Salvinia molesta</i>",
+    "explanation": "Salvinia molesta (African payal) is a Fern, while others belong to Broad leaved weeds category",
+    "selectedOption": null,
+    "exams": []
   }
+
+            
+
             
 
 
