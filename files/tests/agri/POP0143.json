@@ -600,7 +600,205 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "For Thiruvananthapuram and Malappuram districts, _____ application is necessary for increasing rice yields",
+    "options": [
+      "Nitrogen",
+      "Phosphorus",
+      "Potassium",
+      "Zinc"
+    ],
+    "correctAnswer": "Phosphorus",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Identify the correct statement regarding fertilizer application in Koottumundakan system for better yield",
+    "options": [
+      "20:10:10 kg NPK/ha for the first crop and 30:15:15 kg NPK/ha for the second crop",
+      "30:15:15 kg NPK/ha for the first crop and 20:10:10 kg NPK/ha for the second crop",
+      "20:10:10 kg NPK/ha for the first crop and 40:10:10 kg NPK/ha for the second crop",
+      "None of the above"
+    ],
+    "correctAnswer": "20:10:10 kg NPK/ha for the first crop and 30:15:15 kg NPK/ha for the second crop",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The fertilizer dosage (kg NPK/ha) recommended for Virippu (photo insensitive) varieties in Koottumundakan system is",
+    "options": [
+      "40:20:20",
+      "20:10:10",
+      "30:15:15",
+      "70:35:35"
+    ],
+    "correctAnswer": "40:20:20",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The fertilizer dosage (kg NPK/ha) recommended for Mundakan (photosensitive) varieties in Koottumundakan system is",
+    "options": [
+      "40:20:20",
+      "20:10:10",
+      "70:35:35",
+      "30:15:15"
+    ],
+    "correctAnswer": "20:10:10",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In Koottumundakan system of rice cultivation, the non photosensitive varieties (virippu) and photosensitive varieties (mundakan) are sown in the ratio of",
+    "options": [
+      "70:30",
+      "30:70",
+      "50:50",
+      "60:40"
+    ],
+    "correctAnswer": "70:30",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The following method can be used to increase the efficiency of urea for top dressing",
+    "options": [
+      "Mixing urea with six times its weight of slightly moist soil",
+      "Mixing neem cake and urea (1:5 by weight)",
+      "Mixing <i>punna</i> cake and urea (1:5 by weight)",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Under special conditions of drought and water logging in rice fields, the following method can be adopted for the application of nitrogen",
+    "options": [
+      "Low volume spray @ 15% conc. or High volume spray @ 5 % conc.",
+      "Low volume spray @ 5% conc. or High volume spray @ 15 % conc.",
+      "Low volume spray @ 20% conc. or High volume spray @ 15 % conc.",
+      "Low volume spray @ 5% conc. or High volume spray @ 1 % conc."
+    ],
+    "correctAnswer": "Low volume spray @ 15% conc. or High volume spray @ 5 % conc.",
+    "explanation": "Limited to 15 kg/ha in one application",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Zinc deficiency in rice fields can be overcomed by the application of Zinc sulphate at the rate of",
+    "options": [
+      "10 kg/ha",
+      "15 kg/ha",
+      "20 kg/ha",
+      "25 kg/ha"
+    ],
+    "correctAnswer": "20 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Early stages of zinc deficiency in rice fields are evidenced by",
+    "options": [
+      "Interveinal chlorosis, bleaching of midribs and light yellow discoloration of the leaves",
+      "Bronzing, yellowing and marginal necrosis",
+      "Purplish discoloration, bleaching of midribs and interveinal chlorosis",
+      "Interveinal chlorosis, light yellow discoloration and reduced panicles"
+    ],
+    "correctAnswer": "Interveinal chlorosis, bleaching of midribs and light yellow discoloration of the leaves",
+    "explanation": "Interveinal chlorosis, bleaching of midribs and light yellow discoloration of the leaves. Older leaves develop rusty brown spots and are extremely brittle.",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The effect of zinc application can persist in soils for upto",
+    "options": [
+      "2 years",
+      "5 years",
+      "8 years",
+      "10 years"
+    ],
+    "correctAnswer": "5 years",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Urea should be substitued with ammonium phosphate sulphate if soil has less than ______ ppm of calcium chloride extractable sulphur or ______ ppm of phosphate extractable sulphur respectively",
+    "options": [
+      "5, 10",
+      "10, 15",
+      "15, 20",
+      "20, 25"
+    ],
+    "correctAnswer": "10, 15",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Potassium is generally maintained by straw incorporation in rice fields. Even after straw incorporation, if soil analysis indicates low potassium status, it should be applied at the rate of",
+    "options": [
+      "5 kg/ha",
+      "10 kg/ha",
+      "15 kg/ha",
+      "25 kg/ha"
+    ],
+    "correctAnswer": "15 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The recommended magnesium (as MgO) as basal dose in magnesium deficient soils for rice cultivation is",
+    "options": [
+      "10 kg/ha",
+      "15 kg/ha",
+      "20 kg/ha",
+      "25 kg/ha"
+    ],
+    "correctAnswer": "20 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Magnesite contains ___ % of MgO",
+    "options": [
+      "20",
+      "40",
+      "60",
+      "70"
+    ],
+    "correctAnswer": "40",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Dolomite contains ____ % of MgO",
+    "options": [
+      "10",
+      "20",
+      "30",
+      "40"
+    ],
+    "correctAnswer": "10",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+            
+
 
 
 ]
