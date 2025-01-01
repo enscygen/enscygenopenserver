@@ -228,9 +228,9 @@
         "Intercropping",
         "Monocropping",
         "Mixed Cropping",
-        "Both (1) and (2)"
+        "Double or Intercropping"
       ],
-      "correctAnswer": "Both (1) and (2)",
+      "correctAnswer": "Double or Intercropping",
       "explanation": "Double cropping or Intercropping is suggested as a cropping system for Rainfed farming.",
       "selectedOption": null
     },
