@@ -250,12 +250,12 @@
   {
     "question": "National Centre for Organic and Natural Farming is located at",
     "options": [
-      "Bhopal",
+      "Ghaziabad",
       "Bhopal",
       "Coimbatore",
       "Sikkim"
     ],
-    "correctAnswer": "Bhopal",
+    "correctAnswer": "Ghaziabad",
     "explanation": "",
     "selectedOption": null,
     "exams": []
