@@ -1138,7 +1138,179 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "Installation of bird perches at the rate of ____ increases the activity of insectivorous birds and reduces the pest population in rice fields.",
+    "options": [
+      "50/ha",
+      "20/ha",
+      "10/ha",
+      "30/ha"
+    ],
+    "correctAnswer": "50/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The correct stage for the transplantation of SRI based rice seedlings is",
+    "options": [
+      "8-12 days old",
+      "4-7 days old",
+      "15-20 days old",
+      "20-25 days old"
+    ],
+    "correctAnswer": "8-12 days old",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Spacing adopted in SRI based rice cultivation is",
+    "options": [
+      "25 to 30 cm",
+      "15 to 20 cm",
+      "10 to 15 cm",
+      "30 to 35 cm"
+    ],
+    "correctAnswer": "25 to 30 cm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Lesions with typical zonations with dark coloured wavy lines usually starting from the tips of the leaves and extending downwards or arising from the margin and advancing inside is a characteristic symptom of",
+    "options": [
+      "Narrow brown spot",
+      "Rice blast",
+      "Leaf scald",
+      "Stack burn"
+    ],
+    "correctAnswer": "Leaf scald",
+    "explanation": "Leaf scald (<i>Rhynchosporium oryzae</i>)",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The contact fungicide recommended for both sheath blight and rice blast is",
+    "options": [
+      "Thiophanate",
+      "Propineb",
+      "Fluzilazole",
+      "Copper hydroxide"
+    ],
+    "correctAnswer": "Thiophanate",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The concentration of Streptocycline recommended as a management practice for Bacterial leaf blight is",
+    "options": [
+      "150 ppm",
+      "250 ppm",
+      "300 ppm",
+      "100 ppm"
+    ],
+    "correctAnswer": "250 ppm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Adventitious root formation in rice is due to",
+    "options": [
+      "<i>Fusarium moniliformae</i>",
+      "<i>Ephelis oryzae</i>",
+      "<i>Alternaria padwickii</i>",
+      "<i>Sarocladium oryzae</i>"
+    ],
+    "correctAnswer": "<i>Fusarium moniliformae</i>",
+    "explanation": "Foot rot by&nbsp;<i>Fusarium moniliformae</i>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The Economic Threshold Level (ETL) of Rice stem borer from nursery to booting stage is",
+    "options": [
+      "1 moth or 1 egg mass/m<sup>2</sup>",
+      "2 moth or 2 egg mass/m<sup>2</sup>",
+      "3 moth or 3 egg mass/m<sup>2</sup>",
+      "5 moth or 5 egg mass/m<sup>2</sup>"
+    ],
+    "correctAnswer": "1 moth or 1 egg mass/m<sup>2</sup>",
+    "explanation": "Nursery to Booting : 10% dead heart or 1 moth or 1 egg mass/m<sup>2&nbsp;</sup><div>Flowering and after: 2% white ear head</div>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The Economic Threshold Level (ETL) of Rice blast disease at nursery stage is",
+    "options": [
+      "5% disease severity",
+      "10% disease severity",
+      "15% disease severity",
+      "20% disease severity"
+    ],
+    "correctAnswer": "5% disease severity",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "An insect which is effectively used for the control of African payal is",
+    "options": [
+      "<i>Crocidosema lantana</i>",
+      "<i>Cyrtobagous salviniae</i>",
+      "<i>Neochetina eichorniae</i>",
+      "<i>Cactoblastis cactorum</i>"
+    ],
+    "correctAnswer": "<i>Cyrtobagous salviniae</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Pre-emergence herbicide used in rice cultivation",
+    "options": [
+      "Topramezone",
+      "Metsulfuron methyl",
+      "Pyrazosulfuron ethyl",
+      "Carfentrazone"
+    ],
+    "correctAnswer": "Pyrazosulfuron ethyl",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "<i>Leptochloa chinensis</i> is tolerant to which of the following herbicide?",
+    "options": [
+      "Cyhalofopbutyl",
+      "Fenoxaprop-P-ethyl",
+      "Bispyribac sodium",
+      "None of the above"
+    ],
+    "correctAnswer": "Bispyribac sodium",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Salt tolerant rice varieties suited for Oorumundakan lands are",
+    "options": [
+      "Makom and Uma",
+      "Sagara and Amritha",
+      "Remya and Arathi",
+      "Bhadra and Sagara"
+    ],
+    "correctAnswer": "Sagara and Amritha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+
+            
 
             
 
