@@ -259,6 +259,19 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  {
+    "question": "Which of the following statement is TRUE about mouth parts of insect?&nbsp;<div>(i) In hemiptera, mandibles, maxillae and labium are elongate structures and are\nfluid feeders&nbsp;</div><div>(ii) Thysanoptera are solid feeders&nbsp;</div><div>(iii) Locusts and caterpillars having biting and chewing type of mouthpart</div>",
+    "options": [
+      "(i) and (iii)",
+      "(ii) and (iii)",
+      "only (i) and (ii)",
+      "All of the above (i), (ii) and (iii)"
+    ],
+    "correctAnswer": "(i) and (iii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
 ]
             
