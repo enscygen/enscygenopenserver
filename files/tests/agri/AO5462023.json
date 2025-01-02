@@ -272,6 +272,127 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "The most important excretory organ in insects",
+    "options": [
+      "Fat bodies",
+      "Malpighian tubules",
+      "Dorsal vessel",
+      "Both (1) and (2)"
+    ],
+    "correctAnswer": "Malpighian tubules",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Major pest of brinjal affects both vegetative and reproductive parts",
+    "options": [
+      "<i>Epilachna vigintioctopunctata</i>",
+      "<i>Amrasca biguttula biguttula</i>",
+      "<i>Antoba olevaceae</i>",
+      "<i>Leucinodes orbonalis</i>"
+    ],
+    "correctAnswer": "<i>Leucinodes orbonalis</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statement is TRUE about economic damage by\r<div>insect?\r</div><div>(i)&nbsp;&nbsp;&nbsp; The lowest level of injury where damage can be measured is called Economic Threshold Level (ETL)</div><div>(ii)&nbsp;&nbsp; Gain Threshold has been used to express the beginning point of economic damage</div><div>(iii)&nbsp;&nbsp; Economic Injury Level (EIL) is the minimum number of insects that would reduce yield equal to the gain threshold</div>",
+    "options": [
+      "(i) and (ii)",
+      "(ii) and (iii)",
+      "Only (iii)",
+      "Only (i)"
+    ],
+    "correctAnswer": "(ii) and (iii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "An Act to regulate the import, manufacture, sale, transport,\r<div>distribution and use of insecticides in India</div>",
+    "options": [
+      "Destructive Insect and Pest Act, 1914",
+      "Insecticide Act, 1971",
+      "Insecticide Act, 1968",
+      "Both (1) and (3)"
+    ],
+    "correctAnswer": "Insecticide Act, 1968",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statement is FALSE about pests of rice?",
+    "options": [
+      "An important Natural Enemy of rice stem borer is <i>Tetrastichus schoenobii</i>",
+      "<i>Cyrtorhinus lividipennis</i> is a predator of Rice bug",
+      "Larvae of rice thrips lacerate the tender leaves and suck up the plant sap causing rolling and drying of the leaf tips",
+      "Flooding helps to reduce the infestation of rice swarming caterpillar"
+    ],
+    "correctAnswer": "<i>Cyrtorhinus lividipennis</i> is a predator of Rice bug",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Insecticide not included under Neonicotinoid group",
+    "options": [
+      "Nitenpyram",
+      "Thiacloprid",
+      "Acetamiprid",
+      "Acephate"
+    ],
+    "correctAnswer": "Acephate",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statement is TRUE about Insect Growth Regulators (IGR)?",
+    "options": [
+      "IGR which disrupt metamorphosis are called juvenile hormone",
+      "IGR are called second generation insecticides",
+      "Flonicamid is a novel IGR",
+      "Azadirachtin is not an IGR"
+    ],
+    "correctAnswer": "IGR which disrupt metamorphosis are called juvenile hormone",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Anticoagulant rodenticide",
+    "options": [
+      "Warfarin",
+      "Bromadiolone",
+      "Warfarin and Bromadiolone",
+      "Cyromazine"
+    ],
+    "correctAnswer": "Warfarin and Bromadiolone",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Select correct statement in connection with honey bees:\r<div>(i)&nbsp;&nbsp;&nbsp; The mouth parts are piercing and sucking type\r</div><div>(ii)&nbsp;&nbsp; The drones being females lack a sting\r</div><div>(iii)&nbsp;&nbsp; Fore leg is antenna cleaner</div>",
+    "options": [
+      "(i) and (ii)",
+      "(i) and (iii)",
+      "Only (iii)",
+      "(i), (ii) and (iii)"
+    ],
+    "correctAnswer": "Only (iii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+
+            
+
 ]
             
