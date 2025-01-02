@@ -914,7 +914,233 @@
     "explanation": "Salvinia molesta (African payal) is a Fern, while others belong to Broad leaved weeds category",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "Which one of the following is a broad spectrum post emergence herbicide?",
+    "options": [
+      "Pendimethalin",
+      "Cyhalofop butyl",
+      "Bispyribac sodium",
+      "Oxyfluorfen"
+    ],
+    "correctAnswer": "Bispyribac sodium",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which one of the following post emergence herbicide is very effective against <i>Melochia corchorifolia</i> (a Dicot weed of rice) ?",
+    "options": [
+      "2,4-D",
+      "Carfentrazone",
+      "Ethoxysulfuron",
+      "Bispyribac sodium"
+    ],
+    "correctAnswer": "Carfentrazone",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which one of the following is a pre emergence herbicide?",
+    "options": [
+      "2,4-D",
+      "Butachlor",
+      "Carfentrazone",
+      "Ethoxysulfurone"
+    ],
+    "correctAnswer": "Butachlor",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Non selective herbicides like glyphosate can be applied directly on to the earheads of weedy rice, using",
+    "options": [
+      "KAU Weed Wiper",
+      "KAU Herbicide Applicator",
+      "KAU Herbicide Drum",
+      "KAU Weeder"
+    ],
+    "correctAnswer": "KAU Weed Wiper",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is incorrect regarding the application of herbicides in rice fields",
+    "options": [
+      "Drain the field before herbicide application",
+      "Re-flood after 48 hours to prevent further weed germination when post-emergence herbicides are used",
+      "Re-flood after a week to prevent further weed germination when pre-emergence herbicides are used",
+      "All are correct"
+    ],
+    "correctAnswer": "All are correct",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Dead heart (central shoot dies off turning yellow) and white ear head (chaffy and white in color) are characteristic symptom produced by the rice pest",
+    "options": [
+      "Rice stem borer",
+      "Gall midge",
+      "Rice hispa",
+      "Leaf hoppers"
+    ],
+    "correctAnswer": "Rice stem borer",
+    "explanation": "Rice stem borer (<i>Scirpophaga incertulas</i>)",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Brownish discolored patches on the husk of rice grains is the damage produced by",
+    "options": [
+      "Rice hispa",
+      "Rice bug",
+      "Leaf folder",
+      "Rice swarming caterpillar"
+    ],
+    "correctAnswer": "Rice bug",
+    "explanation": "Rice bug (<i>Leptochorisa acuta</i>)",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Presence of silver shoot in rice is due to",
+    "options": [
+      "Gall midge",
+      "Rice hispa",
+      "Rice thrips",
+      "Whorl maggots"
+    ],
+    "correctAnswer": "Gall midge",
+    "explanation": "Gall midge (<i>Orseolia oryzae</i>)",
+    "selectedOption": null,
+    "exams": [
+      "Agri. Asst. GII 2024"
+    ]
+  },
+  {
+    "question": "Hopper burn, yellowing and drying is due to the attack of",
+    "options": [
+      "<i>Leptocorisa acuta</i>",
+      "<i>Nilaparvata lugens</i>",
+      "<i>Nymphula depunctalis</i>",
+      "<i>Hydrellia philippina</i>"
+    ],
+    "correctAnswer": "<i>Nilaparvata lugens</i>",
+    "explanation": "Brown Plant Hopper (BPH) -&nbsp;<i>Nilaparvata lugens</i>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The adults of this pest feeds on the green tissues of the leaves and feeding scars appear as short white lines on the leaf surface. The grubs mine the leaves causing formation of white blotches. Identify the pest.",
+    "options": [
+      "Rice thrips",
+      "Rice hispa",
+      "Leaf hoppers",
+      "Rice bug"
+    ],
+    "correctAnswer": "Rice hispa",
+    "explanation": "Rice hispa (<i>Dicladispa armigera</i>)",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The rice pest which makes the tips of leaves get rolled longitudinally into needle like outgrowths and turn whitish is",
+    "options": [
+      "Rice thrips",
+      "Rice hispa",
+      "Whorl maggots",
+      "Leaf folder"
+    ],
+    "correctAnswer": "Rice thrips",
+    "explanation": "Rice thrips (<i>Stenchaetothrips biformis</i>)",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Spindle shaped water soaked greyish lesions on leaves are the symptoms caused by the rice pathogen",
+    "options": [
+      "<i>Pyricularia</i>",
+      "<i>Alternaria</i>",
+      "<i>Helminthosporium</i>",
+      "<i>Rhynchosporium</i>"
+    ],
+    "correctAnswer": "<i>Pyricularia</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Oval, oblong or irregular greenish grey spots on the lower leaf sheath, which enlarge and become greyish white with brown margin is due to the infestation of",
+    "options": [
+      "<i>Rhizoctonia solani</i>",
+      "<i>Sarocladium oryzae</i>",
+      "<i>Ustilaginoidea virens</i>",
+      "<i>Helminthosporium oryzae</i>"
+    ],
+    "correctAnswer": "<i>Rhizoctonia solani</i>",
+    "explanation": "Sheath blight caused by<i> R. solani</i>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Kresek phase of infection is associated with",
+    "options": [
+      "Bacterial blight",
+      "Bacterial leaf streak",
+      "Sheath blight",
+      "Stack burn"
+    ],
+    "correctAnswer": "Bacterial blight",
+    "explanation": "Bacterial blight caused by <i>Xanthomonas oryzae</i> pv. <i>oryzae</i><div>Two phases - KRESEK (drying or wilting of whole plant) and LEAF BLIGHT</div>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Narrow brownish yellow translucent interveinal lines joining to form large dirty white patches is associated with the disease",
+    "options": [
+      "Bacterial blight",
+      "Narrow brown spot",
+      "Bacterial leaf streak",
+      "Brown spot"
+    ],
+    "correctAnswer": "Bacterial leaf streak",
+    "explanation": "Bacterial leaf streak caused by&nbsp;<i>Xanthomonas oryzae</i>&nbsp;pv.&nbsp;<i>oryzicola</i>",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which one of the following is an egg parasitoid of rice pests",
+    "options": [
+      "<i>Cotesia</i> sp.",
+      "<i>Trichogramma japonicum</i>",
+      "<i>Stenobracon</i> sp.",
+      "<i>Macrocentrus</i> sp."
+    ],
+    "correctAnswer": "<i>Trichogramma japonicum</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following correctly represents the egg parasitoid of plant hoppers and leaf hoppers",
+    "options": [
+      "<i>Trichogramma japonicum </i>and <i>Telenomus chilonis</i>",
+      "<i>Gonatocerus</i> sp. and&nbsp;<i>Anagris </i>sp.",
+      "<i>Cotesia </i>sp. and&nbsp;<i>Stenobracon </i>sp.",
+      "<i>Trichogramma japonicum </i>and <i>Anagris</i> sp."
+    ],
+    "correctAnswer": "<i>Gonatocerus</i> sp. and&nbsp;<i>Anagris </i>sp.",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+
+            
 
             
 
