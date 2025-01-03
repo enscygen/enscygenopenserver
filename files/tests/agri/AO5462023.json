@@ -912,7 +912,399 @@
     "explanation": "Please check the answer for this question.&nbsp;<i>Cucumis melo var. acidulous vs&nbsp;</i><i>Cucumis melo var. conomon ?</i><i>&nbsp;</i><div><i>Cucumis melo var. acidulous </i>was given in the answer key<i></i></div>",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "The primary objective of green house cultivation of vegetables is",
+    "options": [
+      "To get early yield",
+      "To protect the crop from diseases",
+      "To protect the crop from pests",
+      "To get off season yield"
+    ],
+    "correctAnswer": "To get off season yield",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is a teinturier grapes variety?",
+    "options": [
+      "Pusa Urvashi",
+      "Pusa Navrang",
+      "Pusa Aditi",
+      "Pusa Trishar"
+    ],
+    "correctAnswer": "Pusa Navrang",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following plants are propagated by leaf bud cutting?",
+    "options": [
+      "Blackberry",
+      "Lemon",
+      "Raspberry",
+      "All of these"
+    ],
+    "correctAnswer": "All of these",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "What is the selection index of an arecanut seedling having 5 leaves\nand 30 cm height?",
+    "options": [
+      "110",
+      "60",
+      "190",
+      "170"
+    ],
+    "correctAnswer": "170",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statements about coconut palms is not true?",
+    "options": [
+      "Life span of a leaf is 2.5 to 3 years",
+      "New leaves emerge in a crown every 3 to 4 weeks",
+      "Dwarf palms are allogamous while tall palms are autogamous",
+      "Coconut trees lack root hairs"
+    ],
+    "correctAnswer": "Dwarf palms are allogamous while tall palms are autogamous",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Radiation dose for sprout inhibition in bulbs and tubers is",
+    "options": [
+      "0.03 - 0.15 KGy",
+      "0.25 - 1 KGy",
+      "10 - 20 KGy",
+      "None of the above"
+    ],
+    "correctAnswer": "0.03 - 0.15 KGy",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Adam's Apple is used as a rootstock for the propagation of",
+    "options": [
+      "Guava",
+      "Grapes",
+      "Peach",
+      "Sapota"
+    ],
+    "correctAnswer": "Sapota",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Roots of which of the following medicinal plants contain reserpine?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Rauvolfia&nbsp;</div><div>(ii)&nbsp;&nbsp; Periwinkle&nbsp;</div><div>(iii)&nbsp; Opium poppy&nbsp;</div><div>(iv)&nbsp; Costus</div>",
+    "options": [
+      "(i) only",
+      "(ii) only",
+      "(i) and (ii) only",
+      "All of these"
+    ],
+    "correctAnswer": "(i) and (ii) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "A D×T hybrid coconut recommended for root wilt affected areas&nbsp;",
+    "options": [
+      "Chandrakalpa",
+      "Kalparaksha",
+      "Kerasankara",
+      "Chandrasankara"
+    ],
+    "correctAnswer": "Chandrasankara",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which grass is used to prepare fine textured lawn?",
+    "options": [
+      "Buffalo grass",
+      "Japan grass",
+      "Doob grass",
+      "Kentucky Blue grass"
+    ],
+    "correctAnswer": "Kentucky Blue grass",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Who proposed scarcity definition?",
+    "options": [
+      "Marshall",
+      "Smith",
+      "Robbins",
+      "Samuelson"
+    ],
+    "correctAnswer": "Robbins",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which law is also known as Law of Substitution?",
+    "options": [
+      "Law of Opportunity Cost",
+      "Indifference curve technique",
+      "Law of diminishing marginal utility",
+      "Law of equimarginal utility"
+    ],
+    "correctAnswer": "Law of equimarginal utility",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Type of markets located in big Cities/Seaports/State capitals",
+    "options": [
+      "Sea board markets",
+      "Terminal markets",
+      "National markets",
+      "International markets"
+    ],
+    "correctAnswer": "Terminal markets",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statement is/are correct about indifference\ncurves?&nbsp;<div>(a)&nbsp; Indifference curve slopes downward to right&nbsp;</div><div>(b)&nbsp; Indifference curve intersect each other&nbsp;</div><div>(c)&nbsp; Indifference curves are not convex to the origin&nbsp;</div><div>(d) Higher indifference represents a higher level of satisfaction than a lower indifference curve</div>",
+    "options": [
+      "All the above",
+      "Only (a), (c), (d)",
+      "Only (a) and (b)",
+      "Only (a) and (d)"
+    ],
+    "correctAnswer": "Only (a) and (d)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The reason for decline in marginal rate of substitution is that the goods\nare __________ of each other.",
+    "options": [
+      "Perfect substitutes",
+      "Perfect complements",
+      "Imperfect substitutes",
+      "Imperfect complements"
+    ],
+    "correctAnswer": "Perfect substitutes",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Those goods in which income effect is negative, strong as well as\noutweigh the substitution effect so that with the fall in price the consumer will buy\nless of the good are called _____&nbsp;",
+    "options": [
+      "Inferior goods",
+      "Giffen goods",
+      "Normal goods",
+      "None of the above"
+    ],
+    "correctAnswer": "Giffen goods",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Dividing the market into groups based on variables such as income,\noccupation, education etc. is known as __________ segmentation.",
+    "options": [
+      "demographic segmentation",
+      "psychographic segmentation",
+      "behavioural segmentation",
+      "geographic segmentation"
+    ],
+    "correctAnswer": "demographic segmentation",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is/are true regarding growth stage of product\nlifecycle?&nbsp;<div>(i)&nbsp; &nbsp;The increase in competitors leads to an in the number of distribution outlets&nbsp;</div><div>(ii)&nbsp; Firm uses several strategies to sustain rapid market growth as long as possible</div><div>(iii) The industry contains only well established competitors&nbsp;</div><div>(iv) Competitors increase their R &amp; D budgets to find better versions of the product\nleading to a decrease in profit</div>",
+    "options": [
+      "Only (iii) and (iv)",
+      "(ii), (iii) and (iv)",
+      "Only (i) and (ii)",
+      "All the above"
+    ],
+    "correctAnswer": "Only (i) and (ii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Marketable surplus is influenced by the following :&nbsp;<div>(a)&nbsp; price of products&nbsp;</div><div>(b)&nbsp; level of production&nbsp;</div><div>(c)&nbsp; family consumption requirements&nbsp;</div><div>(d)&nbsp; size of holding</div>",
+    "options": [
+      "Only (a) and (c)",
+      "Only (b), (c), (d)",
+      "all the above",
+      "Only (c) and (d)"
+    ],
+    "correctAnswer": "all the above",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In ____________ supply response model, the desired area to be allocated\nto a crop in a particular time period <i>t</i> is a function of expected price, last years\nprice and a number of shifters like private and public fixed factors.",
+    "options": [
+      "simultaneous equation model",
+      "complete structural models",
+      "rational expectation model",
+      "Nerlovian"
+    ],
+    "correctAnswer": "Nerlovian",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Programme planning is defined as",
+    "options": [
+      "A method to determine how far an activity has been progressed and how\nmuch further it should be carried out to accomplish the objectives",
+      "A decision making process involving critical analysis of the existing situation\nand problems, evaluation of various alternatives to solve these problems and\nselection of relevant ones for individual and community development",
+      "Changing the behavior of local rural people for implementing the skillful\ninformation in their own farming system",
+      "Process by which an individual can decide on what to do, how to do and\nwith what result prior to implementation"
+    ],
+    "correctAnswer": "A decision making process involving critical analysis of the existing situation\nand problems, evaluation of various alternatives to solve these problems and\nselection of relevant ones for individual and community development",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Choose the correct statement about 'extension education':&nbsp;",
+    "options": [
+      "Strict adherence to institutional norms and no free choice for the learners",
+      "The learners are homogenous with common goals",
+      "Education starts with practical situation of the learners in which they live\nand work and develops into theoretical or basic understanding of them",
+      "There is a fixed curriculum, after completion of which the students are\nexamined and degrees are awarded"
+    ],
+    "correctAnswer": "Education starts with practical situation of the learners in which they live\nand work and develops into theoretical or basic understanding of them",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The programme/project aimed at disseminating the proven technology\nin a discipline/area among farmers on a watershed basis, covering the whole village\nand concurrently studying the constraints as barriers to the rapid spread of\ntechnical know - how?",
+    "options": [
+      "National Extension Service",
+      "Community Development Programme&nbsp;",
+      "National Agriculture Innovation Project",
+      "Operational Research Project"
+    ],
+    "correctAnswer": "Operational Research Project",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Choose the wrong statement about the provisions of \"Seventy-Third\nAmendment Act 1992 of The Constitution\".",
+    "options": [
+      "Panchayats shall be constituted in every State at the village, intermediate\nand district levels",
+      "All the seats in the Panchayat shall be filled by direct election",
+      "All the blocks should have Agriculture Technology Management Agency to\nco-ordinate agriculture and allied activities",
+      "Seats should be reserved for Scheduled Castes and Scheduled Tribes in\nevery Panchayat"
+    ],
+    "correctAnswer": "All the blocks should have Agriculture Technology Management Agency to\nco-ordinate agriculture and allied activities",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Intensive Agricultural Area Programme has the objectives",
+    "options": [
+      "To extend the benefits of improved technology in larger areas at less cost\nwith reduced staff strength to promote intensive agriculture",
+      "High yielding wheat varieties developed in Mexico were imported for\nexperimentation and adaptation to Indian conditions",
+      "To run vocational training centres on co-operative lines",
+      "To identify eligible farmers, agricultural labourers and their problems,\ndevising economic programmes for gainful employment and augmenting income"
+    ],
+    "correctAnswer": "To extend the benefits of improved technology in larger areas at less cost\nwith reduced staff strength to promote intensive agriculture",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which is not the characteristic of a successful entrepreneur?",
+    "options": [
+      "Have a positive approach towards things, they become optimistic for future",
+      "They do not like to be guided by others and to follow their rules, they like to\nbe independent",
+      "Willingness to work under a manager so that risks involved in the success of\nenterprise is not affected",
+      "Initiate research and innovative activities to produce goods to satisfy the\ncustomers changing requirements"
+    ],
+    "correctAnswer": "Willingness to work under a manager so that risks involved in the success of\nenterprise is not affected",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Fabian entrepreneur is",
+    "options": [
+      "Characterized by refusal to adopt opportunities to make changes in\nproduction formulae at the cost of severely reduced returns relative to other like\nproducers",
+      "One who introduce new goods, inaugurate new method of production,\ndiscover new market and recognize the enterprise",
+      "Characterized by readiness to adopt successful innovation inaugurated by\ninnovating entrepreneurs&nbsp;",
+      "Characterized by very great caution and skepticism in experimenting any\nchange in their enterprise, they imitate only when it becomes perfect"
+    ],
+    "correctAnswer": "Characterized by very great caution and skepticism in experimenting any\nchange in their enterprise, they imitate only when it becomes perfect",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The salient feature of 'Systems approach' in Transfer of Technology",
+    "options": [
+      "There is no interaction between research and officials/extension agents who\nare actually involved in technology transfer",
+      "It is an extension/communication system to evolve technology, transfer\ntechnology from research station to farmer's fields, adopts technology and takes\nbenefits from it",
+      "The role of extension was to persuade farmers to adopt new technologies",
+      "Farmers were seen as passive recipient of technologies as there is no\nprovision for feedback"
+    ],
+    "correctAnswer": "It is an extension/communication system to evolve technology, transfer\ntechnology from research station to farmer's fields, adopts technology and takes\nbenefits from it",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "A scientific method for identification of leaders which is concerned with\nobtaining choices on interpersonal relations such as with whom one would like to\nwork, play etc. or to whom one would go for advice or for dealing other problems",
+    "options": [
+      "Socio-metric method",
+      "Key informants method",
+      "Self-designating method",
+      "Workshop method"
+    ],
+    "correctAnswer": "Socio-metric method",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "An extension teaching method which is coming under group contact\nmethod and is used to show the technique of doing things to impart skill or carrying\nout new practices",
+    "options": [
+      "Experimentation",
+      "Group discussion",
+      "Brain storming",
+      "Method demonstration"
+    ],
+    "correctAnswer": "Method demonstration",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+            
             
             
 
