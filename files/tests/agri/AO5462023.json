@@ -651,7 +651,269 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "A farmer is producing the foundation seed of rice variety ADT 43.\nDuring verification of the source of seed the colour of the tag should be",
+    "options": [
+      "Golden Yellow",
+      "White",
+      "Azure Blue",
+      "Opal Green"
+    ],
+    "correctAnswer": "Golden Yellow",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Labelling of seed packages under The Seeds Act, 1966 is",
+    "options": [
+      "Voluntary",
+      "Need based",
+      "Compulsory",
+      "Tentative"
+    ],
+    "correctAnswer": "Compulsory",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Heterostyle nature of flower is formed in",
+    "options": [
+      "Bhendi",
+      "Snakegourd",
+      "Soyabean",
+      "Brinjal"
+    ],
+    "correctAnswer": "Brinjal",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Seeds, which are neither hard nor germinated but remain clean, firm\nand apparently viable at the end of the test period of germination are known as",
+    "options": [
+      "Viable seed",
+      "Dead seed",
+      "Fresh Ungerminated seed",
+      "Hard seed"
+    ],
+    "correctAnswer": "Fresh Ungerminated seed",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Validity period for seed lot of vegetable crops is",
+    "options": [
+      "12 months",
+      "9 months",
+      "6 months",
+      "3 months"
+    ],
+    "correctAnswer": "9 months",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The legal rights given to the inventor or creator to protect his invention\nor creation for a certain period of item is known as",
+    "options": [
+      "Farmers Right",
+      "Researchers Right",
+      "Breeders Right",
+      "Intellectual property Rights"
+    ],
+    "correctAnswer": "Intellectual property Rights",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Objectionable weed in Lucerne seed production field is",
+    "options": [
+      "<i>Argimone mexicana</i>",
+      "<i>Abelmoschus caillei</i>",
+      "<i>Cuscuta campestris</i>",
+      "<i>Chenopodium album</i>"
+    ],
+    "correctAnswer": "<i>Cuscuta campestris</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Formation of Dunken layer is the physiological maturity symptom to\nharvest the seed crop is noticed in",
+    "options": [
+      "Finger millet",
+      "Maize",
+      "Blackgram",
+      "Blackgram"
+    ],
+    "correctAnswer": "Maize",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Presence of female parent in male parent during hybrid seed\nproduction of rice is",
+    "options": [
+      "Objectionable weed plant",
+      "Live markers&nbsp;",
+      "Shedding tassel",
+      "Pollen shedder"
+    ],
+    "correctAnswer": "Pollen shedder",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The method used to test the genetic purity of seed sample is",
+    "options": [
+      "Grow Out Test",
+      "GADA test",
+      "ATPase Activity test",
+      "Blotter test"
+    ],
+    "correctAnswer": "Grow Out Test",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statements about the development of economic\npart in vegetables is incorrect?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Potato - 10 to 14°C&nbsp;</div><div>(ii)&nbsp;&nbsp; Cabbage - 15 to 18ºC&nbsp;</div><div>(iii)&nbsp; Carrot - 16 to 21ºC&nbsp;</div><div>(iv)&nbsp; Garlic - 10 to 15ºC</div>",
+    "options": [
+      "(i) only",
+      "(i) and (iii) only",
+      "(i), (ii) and (iv) only",
+      "All of the above"
+    ],
+    "correctAnswer": "(i) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In which of the following medicinal plants, officinal part used is flower?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Ixora&nbsp;</div><div>(ii)&nbsp;&nbsp; Hibiscus&nbsp;</div><div>(iii)&nbsp; Glory lilly&nbsp;</div><div>(iv)&nbsp; Thippali</div>",
+    "options": [
+      "(i) and (ii) only",
+      "(i), (ii) and (iii) only",
+      "(i), (ii) and (iv) only",
+      "All the above"
+    ],
+    "correctAnswer": "(i), (ii) and (iv) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is a natural auxin?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; IAA&nbsp;</div><div>(ii)&nbsp;&nbsp; IBA&nbsp;</div><div>(iii)&nbsp; NAA&nbsp;</div><div>(iv)&nbsp; 2, 4-D</div>",
+    "options": [
+      "(i) only",
+      "(ii) only",
+      "(i) and (ii) only",
+      "All of these"
+    ],
+    "correctAnswer": "(i) and (ii) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Pick the odd man out",
+    "options": [
+      "Rhubarb",
+      "Rutabaga",
+      "Kale",
+      "Knol-khol&nbsp;"
+    ],
+    "correctAnswer": "Rhubarb",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following disorders will occur in cauliflower when it is\nexposed to high temperature during curd development?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Riceyness&nbsp;</div><div>(ii)&nbsp;&nbsp; Fuzziness&nbsp;</div><div>(iii)&nbsp; Leafyness&nbsp;</div><div>(iv)&nbsp; Buttoning</div>",
+    "options": [
+      "(i) only",
+      "(i) and (ii) only",
+      "(i) and (iii) only",
+      "(iii) and (iv) only"
+    ],
+    "correctAnswer": "(i) and (iii) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following crops and their minimum isolation distance for\nproduction of certified vegetable seeds is wrongly matched?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Chilli - 200m&nbsp;</div><div>(ii)&nbsp;&nbsp; Cauliflower - 1000m&nbsp;</div><div>(iii)&nbsp; Tomato - 25m&nbsp;</div><div>(iv)&nbsp; Cucurbits - 500 m</div>",
+    "options": [
+      "(i) and (iii) only",
+      "(ii) only",
+      "(iv) only",
+      "None of these"
+    ],
+    "correctAnswer": "None of these",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Minimum germination percentage recommended as standard for okra\nseed production",
+    "options": [
+      "60",
+      "65",
+      "70",
+      "75"
+    ],
+    "correctAnswer": "65",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is not correct regarding seed production in\nonion?&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; It is a biennial crop&nbsp;</div><div>(ii)&nbsp;&nbsp; It is a long day plant&nbsp;</div><div>(iii)&nbsp; It is largely a cross pollinated crop&nbsp;</div><div>(iv)&nbsp; Mostly bulb to seed method is used</div><div>(v)&nbsp; &nbsp;Isolation distance for foundation seeds is 1000m</div>",
+    "options": [
+      "(ii) only",
+      "(ii) and (v) only",
+      "(iii) only",
+      "None of these"
+    ],
+    "correctAnswer": "(ii) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Application of which of the following increases the number of female\nflowers and fruit set in cucumber?",
+    "options": [
+      "GA (1500-2000ppm)",
+      "Silver nitrate (200-300ppm)&nbsp;",
+      "Ethrel (150-200ppm)",
+      "None of these"
+    ],
+    "correctAnswer": "Ethrel (150-200ppm)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "KAU Vishal is a variety of",
+    "options": [
+      "<i>Cucumis sativus</i>",
+      "<i>Cucumis melo var. acidulous</i>",
+      "<i>Cucumis melo var. conomon</i>",
+      "<i>None of these</i>"
+    ],
+    "correctAnswer": "<i>Cucumis melo var. acidulous</i>",
+    "explanation": "Please check the answer for this question.&nbsp;<i>Cucumis melo var. acidulous vs&nbsp;</i><i>Cucumis melo var. conomon ?</i><i>&nbsp;</i><div><i>Cucumis melo var. acidulous </i>was given in the answer key<i></i></div>",
+    "selectedOption": null,
+    "exams": []
   }
+            
             
 
             
