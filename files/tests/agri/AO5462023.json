@@ -390,7 +390,269 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  
+  {
+    "question": "The gene which controls victorin production in fungus <i>Cochliobous\nvictoriae&nbsp;</i><div>(i) Tox3\n(ii) Tox2\n(iii) Hct3\n(iv) Hct2</div>",
+    "options": [
+      "(i) and (ii)",
+      "(ii) and (iv)",
+      "(i) only",
+      "(iii) only"
+    ],
+    "correctAnswer": "(i) only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following statements are true?&nbsp;<div>(i) Ediphenphos inhibit chitin synthesis&nbsp;</div><div>(ii) Strobilurins inhibit mitochondrial respiration&nbsp;</div><div>(iii) Triazoles inhibit sterol biosynthesis&nbsp;</div><div>(iv) Metalaxyl inhibit mitosis</div>",
+    "options": [
+      "(i), (ii) and (iii)",
+      "(i), (ii), (iii) and (iv)",
+      "(ii) and (iii)",
+      "(i), (ii) and (iv)"
+    ],
+    "correctAnswer": "(i), (ii) and (iii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following fungicides have colour code of green\nrepresenting toxicity level?&nbsp;<div>(i) Fosetyl-Al&nbsp;</div><div>(ii) Strobilurin&nbsp;</div><div>(iii) Metalaxyl&nbsp;</div><div>(iv) Potassium phosphonate</div>",
+    "options": [
+      "(i), (ii) and (iii)",
+      "(i), (ii), (iii) and (iv)",
+      "(ii) and (iii)",
+      "(i), (ii) and (iv)"
+    ],
+    "correctAnswer": "(i), (ii) and (iv)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Genes in rice offering resistant to <i>Magnaporthe oryzae</i><div>(i)&nbsp;&nbsp;&nbsp; Pi44&nbsp;</div><div>(ii)&nbsp;&nbsp; Pi54&nbsp;</div><div>(iii)&nbsp; Pi64&nbsp;</div><div>(iv)&nbsp; Pi74<i></i></div>",
+    "options": [
+      "(i), (ii), (iii) and (iv)",
+      "(i), (ii) and (iii)",
+      "(ii) and (iii)",
+      "(i), (ii) and (iv)"
+    ],
+    "correctAnswer": "(i), (ii) and (iii)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Secretion system in <i>Agrobacterium tumefaciens</i> involved in the\ndelivery of (T) DNA from bacterial system into host plant cell",
+    "options": [
+      "T4SS",
+      "T3SS",
+      "T2SS",
+      "T1SS"
+    ],
+    "correctAnswer": "T4SS",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Head Quarters of DPPQS is at ___",
+    "options": [
+      "Hyderabad",
+      "New Delhi",
+      "Faridabad",
+      "Bangalore&nbsp;"
+    ],
+    "correctAnswer": "Faridabad",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "PR-protein which do not have their properties and functions related to\nchitinase",
+    "options": [
+      "PR 3",
+      "PR 4",
+      "PR 5",
+      "PR 8"
+    ],
+    "correctAnswer": "PR 5",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Genetic material in MS2 bacteriophage",
+    "options": [
+      "ssRNA",
+      "dsRNA",
+      "ssDNA",
+      "dsDNA"
+    ],
+    "correctAnswer": "ssRNA",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Hyperparasite of rust fungi",
+    "options": [
+      "<i>Paecilomyces lilacinus</i>",
+      "<i>Ampelomyces quisqualis</i>",
+      "<i>Pichia gulliermondii</i>",
+      "<i>Darluca filum</i>"
+    ],
+    "correctAnswer": "<i>Darluca filum</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Match the following:&nbsp;<div>(i)&nbsp;&nbsp;&nbsp; Common bunt&nbsp; &nbsp; (a)&nbsp; <i>Neovossia indica&nbsp;</i></div><div>(ii)&nbsp;&nbsp; Dwarf bunt&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(b)&nbsp; <i>Tilletia caries&nbsp;</i></div><div>(iii)&nbsp; Partial bunt&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(c)&nbsp; <i>Urocystis tritici&nbsp;</i></div><div>(iv)&nbsp; Flag smut&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(d)&nbsp; <i>Tilletia contraversa</i></div>",
+    "options": [
+      "(i)-(d), (ii)-(a), (iii)-(b), (iv)-(c)",
+      "(i)-(b), (ii)-(d), (iii)-(a), (iv)-(c)",
+      "(i)-(b), (ii)-(a), (iii)-(d), (iv)-(c)",
+      "(i)-(c), (ii)-(d), (iii)-(a), (iv)-(b)"
+    ],
+    "correctAnswer": "(i)-(b), (ii)-(d), (iii)-(a), (iv)-(c)",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Texas cytoplasm of male sterility is utilized in",
+    "options": [
+      "Bajra",
+      "Maize",
+      "Sorghum",
+      "Finger millet"
+    ],
+    "correctAnswer": "Maize",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Who is the father of Green Revolution?&nbsp;",
+    "options": [
+      "Yuan Long Ping",
+      "Norman Borlaug",
+      "Gregor Mendel",
+      "Dr. M.S.Swaminathan"
+    ],
+    "correctAnswer": "Norman Borlaug",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Cultivated wheat <i>Triticum aestivum</i> is",
+    "options": [
+      "Triploid",
+      "Diploid",
+      "Hexaploid",
+      "Monoploid"
+    ],
+    "correctAnswer": "Hexaploid",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Father of hybrid rice is",
+    "options": [
+      "Yuan Long Ping",
+      "Norman Borloug",
+      "Herman Young",
+      "Charles Cove"
+    ],
+    "correctAnswer": "Yuan Long Ping",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The superiority of F1 Hybrid over both parents is termed as",
+    "options": [
+      "Heterosis",
+      "Inbreeding depression",
+      "Apoptosis",
+      "Glycolysis"
+    ],
+    "correctAnswer": "Heterosis",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Most expensive Spice in the world is",
+    "options": [
+      "Pepper",
+      "Cinnamon",
+      "Garlic",
+      "Saffron"
+    ],
+    "correctAnswer": "Saffron",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Natural hybrid between Forastero and Criollo Cocoa is",
+    "options": [
+      "Vazhukka",
+      "Trinitario",
+      "Ontario",
+      "Chinensis"
+    ],
+    "correctAnswer": "Trinitario",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Scientific name of Ground nut is ___",
+    "options": [
+      "<i>Eliaeis guanensis</i>",
+      "<i>Arachis hypogaea</i>",
+      "<i>Brassica nigra</i>",
+      "<i>Sesamum indicum</i>"
+    ],
+    "correctAnswer": "<i>Arachis hypogaea</i>",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "ICRISAT is located at",
+    "options": [
+      "New Delhi",
+      "Copenhagen",
+      "Patencheru",
+      "Mudigare"
+    ],
+    "correctAnswer": "Patencheru",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Worlds First Coconut breeding station at ____________ in 1916",
+    "options": [
+      "Trivandrum",
+      "Neeleswaram",
+      "Texas",
+      "Udumbanchola"
+    ],
+    "correctAnswer": "Neeleswaram",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+            
 
             
 
