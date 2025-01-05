@@ -1,0 +1,134 @@
+
+[
+  {
+    "question": "Number of micronutrients essential for plant growth as per essentiality criteria is",
+    "options": [
+      "7",
+      "8",
+      "6",
+      "9"
+    ],
+    "correctAnswer": "8",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "A post emergence herbicide recommended for the selective killing of sedges and dicot weeds in transplanted rice is",
+    "options": [
+      "Bispyribac sodium",
+      "Cyhalofop butyl + Penoxsulam",
+      "Fenoxaprop-p-ethyl",
+      "Ethoxy sulfuron"
+    ],
+    "correctAnswer": "Ethoxy sulfuron",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Percentage of boron in Borax (Na<sub>2</sub>B<sub>4</sub>O<sub>7</sub>.10H<sub>2</sub>O) is",
+    "options": [
+      "11%",
+      "15%",
+      "20%",
+      "7%"
+    ],
+    "correctAnswer": "11%",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Quantity of bispyribac sodium [Nominee gold 10 SC] needed per acre if recommendation is 0.03 kg ai/ha is",
+    "options": [
+      "300 ml",
+      "200 ml",
+      "250 ml",
+      "120 ml"
+    ],
+    "correctAnswer": "120 ml",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "An essential plant nutrient immobile in soil and mobile inside plants is",
+    "options": [
+      "Potassium",
+      "Sulphur",
+      "Phosphorus",
+      "Calcium"
+    ],
+    "correctAnswer": "Phosphorus",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "As per the classification of Central Soil Salinity Research Institute, Karnal an irrigation water with electrical conductivity ______ is suitable for irrigation.",
+    "options": [
+      "&lt;1.5 dS/m",
+      "&lt;2.5 dS/m",
+      "&lt;5 dS/m",
+      "&lt;4 dS/m"
+    ],
+    "correctAnswer": "&lt;1.5 dS/m",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Kerala soils are said to be magnesium deficient if the soil test value is",
+    "options": [
+      "&lt;200 ppm",
+      "&lt;120 ppm",
+      "&lt;300 ppm",
+      "&lt;250 ppm"
+    ],
+    "correctAnswer": "&lt;120 ppm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Number of Agro Ecological management units [AEMU] in Kerala as per National Bureau of Soil Survey and land use Planning.",
+    "options": [
+      "15",
+      "20",
+      "13",
+      "23"
+    ],
+    "correctAnswer": "23",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Nano urea recommendation to crops as per IFFCO is",
+    "options": [
+      "6 - 8 ml",
+      "5 - 10 ml",
+      "2 - 4 ml",
+      "5 - 7 ml"
+    ],
+    "correctAnswer": "2 - 4 ml",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "What will be the depth of irrigation if IW/CPE ratio is 0.75 with a CPE of 6 mm ?",
+    "options": [
+      "6.25 mm",
+      "4.5 mm",
+      "8.0 mm",
+      "5.75 mm"
+    ],
+    "correctAnswer": "4.5 mm",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  }
+]
+            
