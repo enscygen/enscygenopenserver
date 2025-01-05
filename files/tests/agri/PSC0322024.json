@@ -129,6 +129,169 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+
+
+  {
+    "question": "Multi Spectral Scanner (MSS) was on board on which satellite?",
+    "options": [
+      "IRS-1A",
+      "NOAA - 18",
+      "SPOT-1",
+      "Landsat-1"
+    ],
+    "correctAnswer": "Landsat-1",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "There are two Survey of India 1: 50,000 toposheets with 15'x15' angular coverage, one from Jammu and another from Kerala. Which of the following statement is true?",
+    "options": [
+      "Both the toposheets will cover exactly same size of area",
+      "The toposheet from Jammu will cover a large area than that of the Kerala",
+      "The toposheet from Kerala will cover a large area than that of the Jammu",
+      "Projection will affect the size of area coverage"
+    ],
+    "correctAnswer": "The toposheet from Kerala will cover a large area than that of the Jammu",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Calculate the percentage pore space in a soil with a bulk density of 1.3 Mg/m³ and particle density of 2.6 Mg/m³.",
+    "options": [
+      "45",
+      "48",
+      "50",
+      "52"
+    ],
+    "correctAnswer": "50",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In a soil plant system, water and nutrient rise due to capillary action. If suddenly the acceleration due to gravity is reduced to half, the capillary rise will be",
+    "options": [
+      "Double",
+      "Half",
+      "Remain same",
+      "Becomes zero"
+    ],
+    "correctAnswer": "Double",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "SMP buffer is used in",
+    "options": [
+      "Lime requirement",
+      "Gypsum requirement",
+      "Phosphate potential",
+      "Lime potential"
+    ],
+    "correctAnswer": "Lime requirement",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The coordination number of Al<sup>+3</sup> ion in Phyllosilicate mineral is",
+    "options": [
+      "Eight",
+      "Six",
+      "Three",
+      "One"
+    ],
+    "correctAnswer": "Six",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Rank the following moisture regimes below from driest to wettest",
+    "options": [
+      "udic, aquic, aridic",
+      "aquic, udic, aridic",
+      "xeric, udic, aquic",
+      "udic, xeric, aquic"
+    ],
+    "correctAnswer": "xeric, udic, aquic",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "What are the six master horizons in the order which you will find them in the soil, from top to bottom?",
+    "options": [
+      "O, E, T, A, P, C",
+      "A, B, C, E, O, R",
+      "O, A, B, E, C, R",
+      "O, A, E, B, C, R"
+    ],
+    "correctAnswer": "O, A, E, B, C, R",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Who first used the term nanotechnology and when ?",
+    "options": [
+      "Rechard Feynman, 1959",
+      "Nario Taniguchi, 1974",
+      "Eric drexier, 1986",
+      "Sumio lijima, 1991"
+    ],
+    "correctAnswer": "Nario Taniguchi, 1974",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "What is graphene ?",
+    "options": [
+      "a new material made from carbon nanotubes",
+      "thin film made from fullerenes",
+      "a software tool made to measure and graphically represent nano particles",
+      "a one atom thick sheet of carbon"
+    ],
+    "correctAnswer": "a one atom thick sheet of carbon",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which among the following statements regarding IPM are correct ?<div>i. Management is initiated when the increasing population of a pest crosses ETL.<div>ii. Insecticides are never used in IPM.</div><div>iii. Management is initiated as soon as the damage by a pest is observed.</div><div>iv. IPM aims to keep the population of pests below EIL.</div></div>",
+    "options": [
+      "i and ii",
+      "ii and iii",
+      "iii and iv",
+      "i and iv"
+    ],
+    "correctAnswer": "i and iv",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Intra specific competition between parasitoids occurs in<div>i. Super parasitism</div><div>ii. Multiple parasitism</div><div>iii. Gregarious parasitism</div><div>iv. Solitary parasitism</div>",
+    "options": [
+      "i only",
+      "ii only",
+      "both ii and iv",
+      "both i and ii"
+    ],
+    "correctAnswer": "ii only",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
+
+            
+
+
+  
 ]
             
