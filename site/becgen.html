@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Digit Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        label {
+            font-size: 16px;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .steps {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .steps p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Check Digit Calculator</h1>
+    <div class="container">
+        <label for="inputCode">Enter Code (e.g., F-0001-01):</label>
+        <input type="text" id="inputCode" placeholder="Enter code here">
+        <button onclick="calculateCheckDigit()">Get Check Digit</button>
+        <div class="result" id="result"></div>
+        <div class="steps" id="steps"></div>
+    </div>
+
+    <script>
+        function calculateCheckDigit() {
+            // Get input code
+            const inputCode = document.getElementById('inputCode').value.trim();
+
+            // Validate input format (e.g., F-0001-01, B-2-32, etc.)
+            const regex = /^[A-Za-z]-\d+-\d+$/;
+            if (!regex.test(inputCode)) {
+                alert("Please enter a valid code in the format F-0001-01 or similar.");
+                return;
+            }
+
+            // Parse the input
+            const parts = inputCode.split('-');
+            const letter = parts[0].toUpperCase();
+            const number1 = parts[1].trim();  // Keep it as a string for individual digit processing
+            const number2 = parts[2].trim();
+
+            // Strip leading zeros
+            const number1WithoutLeadingZeros = number1.replace(/^0+/, '');
+            const number2WithoutLeadingZeros = number2.replace(/^0+/, '');
+
+            // Calculate the alphabetic order of the letter
+            const alphabetOrder = letter.charCodeAt(0) - 64; // A = 1, B = 2, ..., Z = 26
+
+            // Create a function to process each number part
+            function processNumber(numberString, startMultiplier) {
+                let sum = 0;
+                let steps = [];
+                // Process each digit in the number string
+                for (let i = 0; i < numberString.length; i++) {
+                    const digit = parseInt(numberString[i]);
+                    const multiplier = startMultiplier + i;
+                    const product = digit * multiplier;
+                    sum += product;
+                    steps.push(`${digit} × ${multiplier} = ${product}`);
+                }
+                return { sum, steps };
+            }
+
+            // Process the second and third parts of the input number
+            let sum1 = 0, sum2 = 0;
+            let steps1 = [], steps2 = [];
+
+            const firstPart = processNumber(number1WithoutLeadingZeros, 2);  // Multiply second part digits starting from 2
+            const secondPart = processNumber(number2WithoutLeadingZeros, firstPart.steps.length + 2);  // Multiply third part digits sequentially from after the second part
+
+            sum1 = firstPart.sum;
+            steps1 = firstPart.steps;
+            sum2 = secondPart.sum;
+            steps2 = secondPart.steps;
+
+            // Total sum calculation
+            const totalSum = alphabetOrder * 1 + sum1 + sum2;
+            const checkDigit = totalSum % 10;
+
+            // Display the result code
+            const resultCode = `${letter}-${number1WithoutLeadingZeros}-${number2WithoutLeadingZeros}-${checkDigit}`;
+
+            // Display the result code
+            document.getElementById('result').innerHTML = `Result: ${resultCode}`;
+
+            // Display the step-by-step calculation
+            let stepsHtml = "<strong>Step-wise Calculation:</strong>";
+            stepsHtml += `<p>${letter} × 1 = ${alphabetOrder}</p>`;
+            steps1.forEach(step => stepsHtml += `<p>${step}</p>`);
+            steps2.forEach(step => stepsHtml += `<p>${step}</p>`);
+            stepsHtml += `<p><strong>Total Sum: ${totalSum}</strong></p>`;
+            stepsHtml += `<p><strong>Check Digit (Total Sum % 10): ${checkDigit}</strong></p>`;
+            document.getElementById('steps').innerHTML = stepsHtml;
+        }
+    </script>
+
+</body>
+</html>
