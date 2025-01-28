@@ -18,3 +18,5 @@ export async function searchRegistry(query) {
     return [];
   }
 }
+
+
