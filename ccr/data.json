@@ -1,0 +1,68 @@
+[
+  {
+    "name": "<i>Colletotrichum capsici</i> Positive Sample (Host: Turmeric) IPX6",
+    "id": "CLCS-IP6",
+    "host": "Turmeric",
+    "remarks": "Purified sample from leaf",
+    "types": [
+      {
+        "type": "Positive Tube",
+        "id": "PT",
+        "remarks": "In tube culture",
+        "amount": "340",
+        "dockets": ["T5", "T7", "V8"]
+      },
+      {
+        "type": "Positive Plate",
+        "id": "PP",
+        "remarks": "In plate culture",
+        "amount": "450",
+        "dockets": ["T2", "V3"]
+      }
+    ]
+  },
+  {
+    "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
+    "id": "FOX1",
+    "host": "Tomato",
+    "remarks": "Sample from infected roots",
+    "types": [
+      {
+        "type": "Spore Suspension",
+        "id": "SS",
+        "remarks": "Suspension in sterile water",
+        "amount": "300",
+        "dockets": ["L1", "L4"]
+      },
+      {
+        "type": "Culture Plate",
+        "id": "CP",
+        "remarks": "Grown on PDA plate",
+        "amount": "500",
+        "dockets": ["L2", "L6", "T1"]
+      }
+    ]
+  },
+  {
+    "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
+    "id": "AFM7",
+    "host": "Maize",
+    "remarks": "Sample from contaminated grain",
+    "types": [
+      {
+        "type": "Dry Spore Sample",
+        "id": "DS",
+        "remarks": "Lyophilized spores",
+        "amount": "400",
+        "dockets": ["A2", "A3"]
+      },
+      {
+        "type": "Plate Culture",
+        "id": "PC",
+        "remarks": "Colonies on nutrient agar",
+        "amount": "550",
+        "dockets": ["A5", "B1"]
+      }
+    ]
+  }
+]
