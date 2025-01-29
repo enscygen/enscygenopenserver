@@ -2,7 +2,9 @@
   {
     "name": "<i>Colletotrichum capsici</i> Positive Sample (Host: Turmeric) IPX6",
     "id": "CLCS-IP6",
+    "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
     "host": "Turmeric",
+    "for":"check test",
     "remarks": "Purified sample from leaf",
     "types": [
       {
@@ -10,14 +12,14 @@
         "id": "PT",
         "remarks": "In tube culture",
         "amount": "340",
-        "dockets": ["T5", "T7", "V8"]
+        "as": "Test tube slant 3 ml media"
       },
       {
         "type": "Positive Plate",
         "id": "PP",
         "remarks": "In plate culture",
         "amount": "450",
-        "dockets": ["T2", "V3"]
+        "as": "Petriplate 15 ml media"
       }
     ]
   },
