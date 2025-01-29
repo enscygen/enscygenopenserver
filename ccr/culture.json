@@ -29,6 +29,7 @@
     "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
     "id": "FOX1",
     "cat":"BioSample",
+    "suppliers": ["KAU DPP"],
     "availability":"RA",
     "host": "Tomato",
     "for":"Cultural Studies",
@@ -55,6 +56,7 @@
     "id": "AFM7",
     "cat":"BioSample",
     "availability":"RA",
+    "suppliers": ["KAU DPP"],
     "host": "Maize",
     "for":"Cultural Studies",
     "remarks": "Sample from contaminated grain",
@@ -81,7 +83,7 @@
     "cat":"BioSample",
     "for":"Cultural Studies",
     "availability":"RA",
-    "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
+    "suppliers": ["KAU DPP"],
     "host": "N/A",
     "for": "check test",
     "remarks": "Pure culture sample",
@@ -90,7 +92,7 @@
         "type": "Slant Agar",
         "id": "SA",
         "remarks": "5 ml PDA + Fungal Culture, 2 days old",
-        "amount": "N/A",
+        "amount": "150",
         "as": "Test tube slant 5 ml PDA media"
       }
     ]
