@@ -66,5 +66,22 @@
         "dockets": ["A5", "B1"]
       }
     ]
+  },
+  {
+    "name": "<i>Pythium aphanidermatum</i> Pure Culture",
+    "id": "PYAP-PC",
+    "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
+    "host": "N/A",
+    "for": "check test",
+    "remarks": "Pure culture sample",
+    "types": [
+      {
+        "type": "Slant Agar",
+        "id": "SA",
+        "remarks": "5 ml PDA + Fungal Culture, 2 days old",
+        "amount": "N/A",
+        "as": "Test tube slant 5 ml PDA media"
+      }
+    ]
   }
 ]
