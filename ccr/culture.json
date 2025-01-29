@@ -2,9 +2,11 @@
   {
     "name": "<i>Colletotrichum capsici</i> Positive Sample (Host: Turmeric) IPX6",
     "id": "CLCS-IP6",
+    "cat":"BioSample",
+    "availability":"RA",
     "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
     "host": "Turmeric",
-    "for":"check test",
+    "for":"Cultural Studies",
     "remarks": "Purified sample from leaf",
     "types": [
       {
@@ -26,7 +28,10 @@
   {
     "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
     "id": "FOX1",
+    "cat":"BioSample",
+    "availability":"RA",
     "host": "Tomato",
+    "for":"Cultural Studies",
     "remarks": "Sample from infected roots",
     "types": [
       {
@@ -48,7 +53,10 @@
   {
     "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
     "id": "AFM7",
+    "cat":"BioSample",
+    "availability":"RA",
     "host": "Maize",
+    "for":"Cultural Studies",
     "remarks": "Sample from contaminated grain",
     "types": [
       {
@@ -70,6 +78,9 @@
   {
     "name": "<i>Pythium aphanidermatum</i> Pure Culture",
     "id": "PYAP-PC",
+    "cat":"BioSample",
+    "for":"Cultural Studies",
+    "availability":"RA",
     "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
     "host": "N/A",
     "for": "check test",
