@@ -25,6 +25,7 @@
       }
     ]
   },
+
   {
     "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
     "id": "FOX1",
@@ -94,6 +95,32 @@
         "remarks": "5 ml PDA + Fungal Culture, 2 days old",
         "amount": "150",
         "as": "Test tube slant 5 ml PDA media"
+      }
+    ]
+  },
+  {
+    "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample (Host: Turmeric) IPX6 Multisite Package",
+    "id": "CLGS-IP6-MSP",
+    "cat":"BioSample",
+    "availability":"Pre Order",
+    "suppliers": ["KAU DPP CT1 (Trivandrum)","KAU DPP CK1 (Kollam)","KAU DPP CP1 (Palakkad)","KAU DPP CS1 (Kasargode)"],
+    "host": "Turmeric/Curcuma",
+    "for":"Cultural Studies/Pathogenicity/Inoculation",
+    "remarks": "Purified isolate (CS1) from leaf",
+    "types": [
+      {
+        "type": "Positive Slant Agar Pack",
+        "id": "PSAP",
+        "remarks": "In tube culture (Amount=Culture+Tube+Vial)",
+        "amount": "225",
+        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc), Spore Suspension 10 ml"
+      },
+      {
+        "type": "Positive Slant Agar Only",
+        "id": "PSA",
+        "remarks": "In tube culture (Amount=Culture+Tube)",
+        "amount": "85",
+        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc)"
       }
     ]
   }
