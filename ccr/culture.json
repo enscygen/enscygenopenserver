@@ -1,10 +1,10 @@
 [
   {
-    "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample (Host: Turmeric) IPX6 CS1",
+    "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
     "id": "CLGS-IP6",
     "cat":"BioSample",
     "availability":"Readily Available",
-    "suppliers": ["KAU DPP", "TNAU GPB", "ENS"],
+    "suppliers": ["KAU DPP"],
     "host": "Turmeric/Curcuma",
     "for":"Cultural Studies/Pathogenicity",
     "remarks": "Purified isolate (CS1) from leaf",
