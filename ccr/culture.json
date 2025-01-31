@@ -8,6 +8,12 @@
     "host": "Turmeric/Curcuma",
     "for":"Cultural Studies/Pathogenicity",
     "remarks": "Purified isolate (CS1) from leaf",
+    "details": {
+        "Species": "Colletotrichum gloeosporioides",
+        "Type": "Fungus",
+        "Usage": "Cultural Studies Only",
+        "Storage Temp": "15℃"
+    },
     "types": [
       {
         "type": "Positive Pure Slant Tube",
