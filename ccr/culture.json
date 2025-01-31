@@ -129,5 +129,31 @@
         "as": "Test tube slant 3 ml PDA (+ Grown culture from disc)"
       }
     ]
+  },
+  {
+    "name": "<i>Rhizoctonia solani</i> Positive Sample (Host: Amaranthus) SM6 Single",
+    "id": "RZSL-SM6-T1",
+    "cat":"BioSample",
+    "availability":"Pre Order",
+    "suppliers": ["KAU DPP T1 (Trivandrum)"],
+    "host": "Amaranthus",
+    "for":"Cultural Studies/Pathogenicity/Inoculation",
+    "remarks": "Purified isolate (SM6 Series) from leaf",
+    "types": [
+      {
+        "type": "Positive Slant Agar Pack",
+        "id": "PSAP",
+        "remarks": "In tube culture (Amount=Culture+Tube+Vial+Survey Charges)",
+        "amount": "95",
+        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc), Spore Suspension 10 ml"
+      },
+      {
+        "type": "Positive Slant Agar Only",
+        "id": "PSA",
+        "remarks": "In tube culture (Amount=Culture+Tube+Survey Charges)",
+        "amount": "185",
+        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc)"
+      }
+    ]
   }
 ]
