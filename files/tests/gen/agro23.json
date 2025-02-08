@@ -869,5 +869,213 @@
     "explanation": "",
     "selectedOption": null,
     "exams": []
+  },
+  {
+    "question": "The flour corn is also known as ________ .",
+    "options": [
+      "Zea mays amylacea",
+      "Zea mays indurata",
+      "Zea mays everta",
+      "Zea mays tunicata"
+    ],
+    "correctAnswer": "Zea mays amylacea",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Hybrid rice for commercial production was first evolved in;",
+    "options": [
+      "India",
+      "China",
+      "Japan",
+      "USA"
+    ],
+    "correctAnswer": "China",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The optimum temperature range for sowing of wheat crop is;",
+    "options": [
+      "10 to 15°C",
+      "15 to 20°C",
+      "20 to 25°C",
+      "25 to 30°C"
+    ],
+    "correctAnswer": "20 to 25°C",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The optimum plant population of sorghum can be obtained by using seed rate;-",
+    "options": [
+      "9 to 10 kg/ha",
+      "12 to 15 kg/ha",
+      "15 to 18 kg/ha",
+      "18 to 20 kg/ha"
+    ],
+    "correctAnswer": "12 to 15 kg/ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which one of the following is an incorrect pair?",
+    "options": [
+      "Wheat : Picking",
+      "Jute : Retting",
+      "Groundnut : Pegging",
+      "Maize : Tasselling"
+    ],
+    "correctAnswer": "Wheat : Picking",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "All the grain legumes have a high rate of respiration because of;-",
+    "options": [
+      "Carbon mechanism",
+      "More vegetative growth",
+      "Indeterminate",
+      "Pod position"
+    ],
+    "correctAnswer": "Carbon mechanism",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Interculture operation in groundnut crop should be avoided at;-",
+    "options": [
+      "Flowering stage",
+      "Seedling stage",
+      "Pegging stage",
+      "Branching"
+    ],
+    "correctAnswer": "Pegging stage",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Castor belongs to the family;-",
+    "options": [
+      "Euphorbiaceae",
+      "Leguminosae",
+      "Cruciferae",
+      "Compositae"
+    ],
+    "correctAnswer": "Euphorbiaceae",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Adsali sugarcane crop is planted during the months;",
+    "options": [
+      "February – May",
+      "December - January",
+      "January - April",
+      "July – August"
+    ],
+    "correctAnswer": "July – August",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Chipson is a variety of;-",
+    "options": [
+      "Tapioca",
+      "Potato",
+      "Elephant foot yam",
+      "Sweet potato"
+    ],
+    "correctAnswer": "Potato",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "To study two factors with different levels of precision, _____ design is used.",
+    "options": [
+      "Completely randomized design",
+      "Latin square design",
+      "Split plot design",
+      "Factorial RBD"
+    ],
+    "correctAnswer": "Split plot design",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "When experimental material is limited and homogeneous, ______ design is used.",
+    "options": [
+      "Latin square design",
+      "Split plot design",
+      "Strip plot design",
+      "Completely randomized design"
+    ],
+    "correctAnswer": "Completely randomized design",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The ANOVA table of ________ design consists of three error variances.",
+    "options": [
+      "Latin square design",
+      "Strip plot design",
+      "Factorial RBD",
+      "Completely randomized design"
+    ],
+    "correctAnswer": "Strip plot design",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The optimum number of treatments studied in Latin square design is _______ .",
+    "options": [
+      "2 - 4",
+      "15 - 20",
+      "5 - 12",
+      "> 20"
+    ],
+    "correctAnswer": "5 - 12",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "When the calculated F is greater than the table F value at 5% only, the difference in treatments is considered _________.",
+    "options": [
+      "Significant",
+      "Highly significant",
+      "Non-significant",
+      "Both a and b"
+    ],
+    "correctAnswer": "Significant",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "With increasing number of error degrees of freedom, the table F value follows ______ trend.",
+    "options": [
+      "Initially decreased then increased",
+      "Gradually decreased",
+      "Initially increased then decreased",
+      "Gradually increased"
+    ],
+    "correctAnswer": "Gradually decreased",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
   }
   ]
