@@ -1,0 +1,625 @@
+[
+  {
+    "question": "The book 'Annals of Agriculture' is published by",
+    "options": [
+      "Arthur Young",
+      "Van Helmont",
+      "Jethro Tull",
+      "Blackman"
+    ],
+    "correctAnswer": "Arthur Young",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In India, the first separate department of agriculture was established in",
+    "options": [
+      "1881",
+      "1900",
+      "1801",
+      "1985"
+    ],
+    "correctAnswer": "1881",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Yellow revolution is associated with",
+    "options": [
+      "Pulse production",
+      "Milk production",
+      "Fruit production",
+      "Oilseeds production"
+    ],
+    "correctAnswer": "Oilseeds production",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Secondary consequences of increasing elevation, both agronomically and economically significant, are",
+    "options": [
+      "Decreased temperature",
+      "Decreased precipitation",
+      "Decreased wind velocity",
+      "Increased soil fertility"
+    ],
+    "correctAnswer": "Decreased temperature",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The net assimilation rate is expressed in terms of",
+    "options": [
+      "g cm-2 day-1",
+      "g g-1 ha-1",
+      "g g-1 day-1",
+      "g cm-2 ha-1"
+    ],
+    "correctAnswer": "g cm-2 day-1",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following crop geometry ensures uniform solar radiation availability to crops?",
+    "options": [
+      "Rectangular",
+      "Random",
+      "Square",
+      "None of these"
+    ],
+    "correctAnswer": "Square",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+  "question": "The origin place of potato is",
+  "options": [
+    "China",
+    "South America",
+    "India",
+    "Africa"
+  ],
+  "correctAnswer": "South America",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Conservation tillage tends to encourage",
+  "options": [
+    "Higher microbial population",
+    "Lower number of earthworms",
+    "Reduced soil fauna",
+    "None of these"
+  ],
+  "correctAnswer": "Higher microbial population",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Though tilth is dynamic in nature, it can be measured by",
+  "options": [
+    "Aggregate analysis",
+    "Chemical analysis",
+    "Biological analysis",
+    "None of these"
+  ],
+  "correctAnswer": "Aggregate analysis",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Capillary movement of water is complemented by",
+  "options": [
+    "Stem elongation",
+    "Root extension",
+    "Leaf orientation",
+    "None of these"
+  ],
+  "correctAnswer": "Root extension",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "A soil absorbs about ______ of incoming solar radiation.",
+  "options": [
+    "5 Percent",
+    "10 Percent",
+    "15 Percent",
+    "20 Percent"
+  ],
+  "correctAnswer": "10 Percent",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Nitrate levels in drinking water above ______ mg per litre are considered a human health hazard.",
+  "options": [
+    "5",
+    "10",
+    "15",
+    "20"
+  ],
+  "correctAnswer": "10",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Biogeochemical nutrient cycles have led to the recognition that ____ is very important.",
+  "options": [
+    "Balanced fertilization",
+    "Over fertilization",
+    "Under fertilization",
+    "None of these"
+  ],
+  "correctAnswer": "Balanced fertilization",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Wavelengths longer than ______ m/µ are not visible to the eye and are called infrared.",
+  "options": [
+    "450",
+    "550",
+    "650",
+    "750"
+  ],
+  "correctAnswer": "750",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+  {
+  "question": "North of the equator, surface winds are known as",
+  "options": [
+    "Northeast trade winds",
+    "Southeast winds",
+    "Westerlies",
+    "Easterlies"
+  ],
+  "correctAnswer": "Northeast trade winds",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The spray drift of 2,4-D (ester form) can cause considerable damage in",
+  "options": [
+    "Maize",
+    "Rice",
+    "Sorghum",
+    "Cotton"
+  ],
+  "correctAnswer": "Cotton",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Mustard crop planted at a spacing of 50 x 20 cm will have _______ plants per hectare.",
+  "options": [
+    "75,000",
+    "1,00,000",
+    "1,25,000",
+    "1,50,000"
+  ],
+  "correctAnswer": "1,00,000",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The Agroclimatic zone XIII, comprising the state of Gujarat, represents _________ type of climate.",
+  "options": [
+    "Arid to extremely arid",
+    "Arid to dry sub-humid",
+    "Semi-arid",
+    "Humid"
+  ],
+  "correctAnswer": "Arid to dry sub-humid",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The optimum temperature for better crop production is between",
+  "options": [
+    "12 – 18°C",
+    "24 – 30°C",
+    "18 – 24°C",
+    "30 – 35°C"
+  ],
+  "correctAnswer": "18 – 24°C",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following instruments is used to determine the direction of wind?",
+  "options": [
+    "Anemometer",
+    "Anemograph",
+    "Aerometer",
+    "Aeroscope slide"
+  ],
+  "correctAnswer": "Anemometer",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following weeds has herbicide resistance?",
+  "options": [
+    "Avena fatua",
+    "Phalaris minor",
+    "Tridox procumbens",
+    "Trianthema portulocastrum"
+  ],
+  "correctAnswer": "Avena fatua",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following causes more wastage of herbicide by drift?",
+  "options": [
+    "High volume sprayer",
+    "Ultra-low volume sprayer",
+    "Hand sprayer",
+    "Low volume sprayer"
+  ],
+  "correctAnswer": "Ultra-low volume sprayer",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following pair of weeds and crops is not correctly matched?",
+  "options": [
+    "Striga : Sorghum",
+    "Cuscuta : Lucerne",
+    "Typha : Sugarcane",
+    "Orobanche : Tobacco"
+  ],
+  "correctAnswer": "Typha : Sugarcane",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following is capable of counteracting the effect of herbicide?",
+  "options": [
+    "Anathesia",
+    "Antidote",
+    "Aborgines",
+    "None of these"
+  ],
+  "correctAnswer": "Antidote",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Stale seed bed technique of weed control is a _______ method.",
+  "options": [
+    "Cultural",
+    "Mechanical",
+    "Chemical",
+    "Biological"
+  ],
+  "correctAnswer": "Cultural",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Thiocarbamates viz., EPTC, a soil-incorporated herbicide, is readily absorbed by roots and coleoptile and is translocated by",
+  "options": [
+    "Only upward",
+    "Only downward",
+    "Both of these",
+    "None of these"
+  ],
+  "correctAnswer": "Both of these",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Photodecomposition plays an important role in the loss of urea herbicides from ____ soil surface.",
+  "options": [
+    "Moist",
+    "Wet",
+    "Dry",
+    "None of these"
+  ],
+  "correctAnswer": "Dry",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "______ a.i./ha has been recommended for weed control measure in mungbean.",
+  "options": [
+    "Fluchloralin @ 1 kg",
+    "2,4 – D @ 1 litre",
+    "Simazine @ 1 kg",
+    "Atrazine @ 1 kg"
+  ],
+  "correctAnswer": "Fluchloralin @ 1 kg",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the followings is an indicator plant for the bioassay of Atrazine?",
+  "options": [
+    "Sugarcane",
+    "Sesbania",
+    "Sorghum",
+    "Soybean"
+  ],
+  "correctAnswer": "Soybean",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The quantity of alachlor (50%) needed for spraying 1 ha @ 0.75 kg a.i. ha⁻¹.",
+  "options": [
+    "1.5 kg",
+    "1.25 kg",
+    "1.0 kg",
+    "1.75 kg"
+  ],
+  "correctAnswer": "1.5 kg",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "When 10 kg 2,4–D is mixed in 1000 litres of water, it will give a concentration of ____.",
+  "options": [
+    "100 ppm",
+    "10000 ppm",
+    "1000 ppm",
+    "100000 ppm"
+  ],
+  "correctAnswer": "10000 ppm",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following stages of a crop are more prone to weed competition?",
+  "options": [
+    "Germination to seedling",
+    "Vegetative",
+    "Reproductive",
+    "Maturity"
+  ],
+  "correctAnswer": "Germination to seedling",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "pF refers to:",
+  "options": [
+    "Logarithm of H ion concentration",
+    "Logarithm of free flow water",
+    "Logarithm of soil moisture tension",
+    "Logarithm of salt concentration"
+  ],
+  "correctAnswer": "Logarithm of soil moisture tension",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following is a method of indirect measurement of soil moisture?",
+  "options": [
+    "Neutron moisture meter",
+    "Electron moisture meter",
+    "Positron moisture meter",
+    "Proton moisture meter"
+  ],
+  "correctAnswer": "Neutron moisture meter",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following formulae is correct?",
+  "options": [
+    "WR = ET + AW + INR",
+    "WR = IR + (ER + S)",
+    "ET = IR + INR (-S)",
+    "IR = WR – (ER + S)"
+  ],
+  "correctAnswer": "IR = WR – (ER + S)",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "What will be the CPE value when irrigation is scheduled at 0.8 IW/CPE with 6.0 cm depth of irrigation water?",
+  "options": [
+    "7.5 cm",
+    "75 mm",
+    "750 cm",
+    "Both a & b"
+  ],
+  "correctAnswer": "Both a & b",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Sugarcane crop requires maximum water at:",
+  "options": [
+    "Germination stage",
+    "Grand growth stage",
+    "Maturity stage",
+    "All of these"
+  ],
+  "correctAnswer": "Grand growth stage",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following is not a component of the moisture potential in soils?",
+  "options": [
+    "Matric potential",
+    "Gravity potential",
+    "Turgor potential",
+    "Osmotic potential"
+  ],
+  "correctAnswer": "Turgor potential",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Major irrigation projects cover an area of _______.",
+  "options": [
+    "1000 ha",
+    "> 10000 ha",
+    "5000 ha",
+    "None of these"
+  ],
+  "correctAnswer": "> 10000 ha",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "SAR and RSC values for normal water should be _________.",
+  "options": [
+    "> 10 and < 2.5",
+    "< 10 and > 2.5",
+    "< 10 and < 2.5",
+    "None of these"
+  ],
+  "correctAnswer": "< 10 and < 2.5",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The C/N ratio in the organic matter of furrow slice (upper 15 cm) of arable soils commonly ranges from _________.",
+  "options": [
+    "3:1 to 4:1",
+    "6:1 to 7:1",
+    "18:1 to 19:1",
+    "8:1 to 15:1"
+  ],
+  "correctAnswer": "8:1 to 15:1",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following rotations is likely to leave soil richer in organic matter?",
+  "options": [
+    "Continuous sorghum",
+    "Continuous maize",
+    "Continuous oats",
+    "Maize – Oats - Clovers"
+  ],
+  "correctAnswer": "Maize – Oats - Clovers",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The maximum phosphorus availability in most soils is in the pH range:",
+  "options": [
+    "4.0 to 4.5",
+    "5.0 to 5.5",
+    "6.0 to 6.5",
+    "7.0 to 7.5"
+  ],
+  "correctAnswer": "6.0 to 6.5",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The deficiency symptoms are first observed on apical buds in the case of:",
+  "options": [
+    "Zn deficiency",
+    "Mo deficiency",
+    "N deficiency",
+    "B deficiency"
+  ],
+  "correctAnswer": "B deficiency",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The law of diminishing return was proposed by ________.",
+  "options": [
+    "Mitscherlich",
+    "Wilcox",
+    "Blackman",
+    "Van Liebig"
+  ],
+  "correctAnswer": "Mitscherlich",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Which of the following plant species produces nodules on its stem?",
+  "options": [
+    "Sesbania aculeata",
+    "Sesbania rostrata",
+    "Crotalaria juncea",
+    "Sesbania acuminata"
+  ],
+  "correctAnswer": "Sesbania rostrata",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "The quantity of DAP and urea required to fertilize the crop @ 120 – 60 kg N P₂O₅ will be:",
+  "options": [
+    "130 kg DAP and 210 kg Urea",
+    "130 kg DAP and 260 kg Urea",
+    "210 kg DAP and 130 kg Urea",
+    "260 kg DAP and 130 kg Urea"
+  ],
+  "correctAnswer": "130 kg DAP and 210 kg Urea",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+},
+{
+  "question": "Who is the first scientist to attempt to classify the climate?",
+  "options": [
+    "Köppen",
+    "Decandole",
+    "Troll",
+    "Hargreaves"
+  ],
+  "correctAnswer": "Decandole",
+  "explanation": "",
+  "selectedOption": null,
+  "exams": []
+}
