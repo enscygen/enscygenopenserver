@@ -622,4 +622,252 @@
   "explanation": "",
   "selectedOption": null,
   "exams": []
-}
+},
+  {
+    "question": "PMA and atrazine at low concentration act as a _____ type of antitranspirants.",
+    "options": [
+      "Reflectant",
+      "Film forming",
+      "Stomatal closing",
+      "Growth retardant"
+    ],
+    "correctAnswer": "Stomatal closing",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following is a more dangerous situation in dryland conditions?",
+    "options": [
+      "Early withdrawal of rainfall",
+      "Long dry spell",
+      "Late onset of rainfall",
+      "None of these"
+    ],
+    "correctAnswer": "Early withdrawal of rainfall",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Areas receiving average annual rainfall > 1150 mm are categorized as ______.",
+    "options": [
+      "Dry farming",
+      "Dry land farming",
+      "Dry land agriculture",
+      "Rainfed farming"
+    ],
+    "correctAnswer": "Rainfed farming",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In flat topography land, _____ type of ponds are highly suitable.",
+    "options": [
+      "Excavated",
+      "Excavated cum embankment",
+      "Embankment",
+      "None of these"
+    ],
+    "correctAnswer": "Excavated",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Few showers of rain during December and January are beneficial to the rabi crop because they;",
+    "options": [
+      "Cause fall in temperature",
+      "Make the plant strong",
+      "Protect the crops from frost",
+      "Ensure moisture for seed germination"
+    ],
+    "correctAnswer": "Protect the crops from frost",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Which of the following crops is more tolerant against drought?",
+    "options": [
+      "Cowpea",
+      "Green gram",
+      "Blackgram",
+      "Pigeon pea"
+    ],
+    "correctAnswer": "Cowpea",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Photothermal unit is related to",
+    "options": [
+      "Average monthly temperature",
+      "Day degrees",
+      "Reflected solar radiation",
+      "Daily sunshine hours"
+    ],
+    "correctAnswer": "Day degrees",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Long-range weather forecast will help in planning of;",
+    "options": [
+      "Irrigation",
+      "Land preparation",
+      "Cropping pattern",
+      "Pesticide application"
+    ],
+    "correctAnswer": "Cropping pattern",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Pyranometer is used to measure;",
+    "options": [
+      "Light duration",
+      "Solar radiation",
+      "Evaporation rate",
+      "Wind speed"
+    ],
+    "correctAnswer": "Solar radiation",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "In a waterlogged soil, the concentration of _______ is high.",
+    "options": [
+      "Ethane",
+      "Methane",
+      "Carbon dioxide",
+      "Carbon monoxide"
+    ],
+    "correctAnswer": "Methane",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Ammonia present in the soil can be lost in significant quantities from _____ .",
+    "options": [
+      "Acid soils",
+      "Alkaline soils",
+      "Both of these",
+      "None of these"
+    ],
+    "correctAnswer": "Alkaline soils",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Barley, rape, and cotton are ______ salt tolerant.",
+    "options": [
+      "High",
+      "Low",
+      "Medium",
+      "None of these"
+    ],
+    "correctAnswer": "High",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "The choice of chemical amendments may be influenced by the _____ required for reaction in soil.",
+    "options": [
+      "Cost",
+      "Quantity",
+      "Quality",
+      "Time"
+    ],
+    "correctAnswer": "Time",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Gypsum, an amendment applied to alkali soils, belongs to _____ type.",
+    "options": [
+      "Acid former",
+      "Low solubility",
+      "Soluble Ca-salt",
+      "None of these"
+    ],
+    "correctAnswer": "Soluble Ca-salt",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Total area under salt-affected soil in India is approximately;",
+    "options": [
+      "7.0 M ha",
+      "1.0 M ha",
+      "14.0 M ha",
+      "65 M ha"
+    ],
+    "correctAnswer": "7.0 M ha",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Drip irrigation is most suitable for ;-",
+    "options": [
+      "Acid soil",
+      "Alkaline soil",
+      "Saline soil",
+      "All the above"
+    ],
+    "correctAnswer": "Saline soil",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Ridge sowing is recommended on salt-affected soil. Which is the safest site for seed sowing?",
+    "options": [
+      "Crown of the ridge",
+      "Midway on slope of ridge",
+      "Bottom of ridge",
+      "All of these"
+    ],
+    "correctAnswer": "Midway on slope of ridge",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "According to USDA classification, the soil is categorized as moderately alkaline when ESP value is ______ .",
+    "options": [
+      "25 - 30",
+      "30 - 50",
+      "15 - 25",
+      "> 50"
+    ],
+    "correctAnswer": "25 - 30",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  },
+  {
+    "question": "Poor soil physical properties of sodic soil are associated with;",
+    "options": [
+      "High concentration of Ex. K+",
+      "High concentration of Ex. Na+",
+      "High concentration of Ex. Ca++",
+      "High pH"
+    ],
+    "correctAnswer": "High concentration of Ex. Na+",
+    "explanation": "",
+    "selectedOption": null,
+    "exams": []
+  }
+  ]
