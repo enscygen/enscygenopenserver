@@ -5,9 +5,9 @@
         "link": "pdcs.pdf"
     },
     {
-        "name": "Crop Yield Data 2024",
-        "purpose": "Statistical data on crop yields across regions",
-        "link": "crop_yield_2024.xlsx"
+        "name": "MACS (Measurement, Alignment, Calibration Sheet)",
+        "purpose": "Calibration sheet for samples",
+        "link": "MACS.pdf"
     },
     {
         "name": "Gene Editing Protocol",
