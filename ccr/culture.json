@@ -2,36 +2,42 @@
   {
     "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
     "id": "CLGS-IP6",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/CLGS-IP6.json"
   },
   {
     "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
     "id": "FOX1",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/FOX1.json"
   },
   {
     "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
     "id": "AFM7",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/AFM7.json"
   },
   {
     "name": "<i>Pythium aphanidermatum</i> Pure Culture",
     "id": "PYAP-PC",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/PYAP-PC.json"
   },
   {
     "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample (Host: Turmeric) IPX6 Multisite Package",
     "id": "CLGS-IP6-MSP",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/CLGS-IP6-MSP.json"
   },
   {
     "name": "<i>Rhizoctonia solani</i> Positive Sample (Host: Amaranthus) SM6 Single",
     "id": "RZSL-SM6-T1",
+    "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/RZSL-SM6-T1.json"
   }
