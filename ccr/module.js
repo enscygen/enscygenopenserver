@@ -4,7 +4,7 @@ export async function searchRegistry(query) {
   try {
     // Fetch the JSON data
     const response = await fetch(url);
-    const cultures = await response.json();
+    const cultures = await response.json(); // Now, cultures is a direct array
 
     // Filter data based on the query
     const filteredCultures = cultures.filter((culture) =>
@@ -18,5 +18,3 @@ export async function searchRegistry(query) {
     return [];
   }
 }
-
-
