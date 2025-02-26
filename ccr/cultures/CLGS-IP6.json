@@ -1,0 +1,32 @@
+{
+  "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
+  "id": "CLGS-IP6",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "host": "Turmeric/Curcuma",
+  "for": "Cultural Studies/Pathogenicity",
+  "remarks": "Purified isolate (CS1) from leaf",
+  "details": {
+    "Species": "Colletotrichum gloeosporioides",
+    "Type": "Fungus",
+    "Usage": "Cultural Studies Only",
+    "Storage Temp": "15℃"
+  },
+  "types": [
+    {
+      "type": "Positive Pure Slant Tube",
+      "id": "PPST",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "40",
+      "as": "Test tube slant 3 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Positive Plate",
+      "id": "PP",
+      "remarks": "In plate culture (Amount=Culture+Plate)",
+      "amount": "150",
+      "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    }
+  ]
+}
