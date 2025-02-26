@@ -1,0 +1,36 @@
+{
+  "name": "<i>Pythium aphanidermatum</i> Pure Culture",
+  "id": "PYAP-PC",
+  "brandtag": "PathLabs™",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "host": "Various crops",
+  "for": "Oomycete Research/Pathogenicity Studies",
+  "remarks": "Highly aggressive isolate (PYAP-PC) from root zone",
+  "overview": "Pythium aphanidermatum is an oomycete known to cause damping-off and root rot diseases, affecting a wide range of crops, particularly in warm and humid environments. It is a significant concern in greenhouse and field settings. <br> This culture is available for research in plant pathology, biocontrol, and disease management. Proper storage and handling are required to maintain culture integrity and viability.",
+  "details": {
+    "Species": "Pythium aphanidermatum",
+    "Type": "Oomycete",
+    "Usage": "Pathogenicity Studies",
+    "Storage Temp": "10℃"
+  },
+  "types": [
+    {
+      "type": "Positive Slant Tube",
+      "for": "Pure culture in tube",
+      "id": "PST",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "30",
+      "as": "Test tube slant 3 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Positive Plate",
+      "for": "Pure culture in plate",
+      "id": "PP",
+      "remarks": "In plate culture (Amount=Culture+Plate)",
+      "amount": "120",
+      "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    }
+  ]
+}
