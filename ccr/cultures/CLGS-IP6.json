@@ -1,6 +1,7 @@
 {
   "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
   "id": "CLGS-IP6",
+  "brandtag": "PathLabs™", 
   "cat": "BioSample",
   "availability": "Readily Available",
   "suppliers": ["KAU DPP"],
