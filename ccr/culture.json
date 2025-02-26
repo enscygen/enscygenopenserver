@@ -1,159 +1,36 @@
-[
-  {
-    "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
-    "id": "CLGS-IP6",
-    "cat":"BioSample",
-    "availability":"Readily Available",
-    "suppliers": ["KAU DPP"],
-    "host": "Turmeric/Curcuma",
-    "for":"Cultural Studies/Pathogenicity",
-    "remarks": "Purified isolate (CS1) from leaf",
-    "details": {
-        "Species": "Colletotrichum gloeosporioides",
-        "Type": "Fungus",
-        "Usage": "Cultural Studies Only",
-        "Storage Temp": "15℃"
+ {
+      "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
+      "id": "CLGS-IP6",
+      "cat": "BioSample",
+      "fileLocation": "cultures/CLGS-IP6.json"
     },
-    "types": [
-      {
-        "type": "Positive Pure Slant Tube",
-        "id": "PPST",
-        "remarks": "In tube culture (Amount=Culture+Tube)",
-        "amount": "40",
-        "as": "Test tube slant 3 ml PDA + Grown culture from disc"
-      },
-      {
-        "type": "Positive Plate",
-        "id": "PP",
-        "remarks": "In plate culture (Amount=Culture+Plate)",
-        "amount": "150",
-        "as": "Petriplate 15 ml PDA + Grown culture from disc"
-      }
-    ]
-  },
-
-  {
-    "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
-    "id": "FOX1",
-    "cat":"BioSample",
-    "suppliers": ["KAU DPP"],
-    "availability":"RA",
-    "host": "Tomato",
-    "for":"Cultural Studies",
-    "remarks": "Sample from infected roots",
-    "types": [
-      {
-        "type": "Spore Suspension",
-        "id": "SS",
-        "remarks": "Suspension in sterile water",
-        "amount": "300",
-        "dockets": ["L1", "L4"]
-      },
-      {
-        "type": "Culture Plate",
-        "id": "CP",
-        "remarks": "Grown on PDA plate",
-        "amount": "500",
-        "dockets": ["L2", "L6", "T1"]
-      }
-    ]
-  },
-  {
-    "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
-    "id": "AFM7",
-    "cat":"BioSample",
-    "availability":"RA",
-    "suppliers": ["KAU DPP"],
-    "host": "Maize",
-    "for":"Cultural Studies",
-    "remarks": "Sample from contaminated grain",
-    "types": [
-      {
-        "type": "Dry Spore Sample",
-        "id": "DS",
-        "remarks": "Lyophilized spores",
-        "amount": "400",
-        "dockets": ["A2", "A3"]
-      },
-      {
-        "type": "Plate Culture",
-        "id": "PC",
-        "remarks": "Colonies on nutrient agar",
-        "amount": "550",
-        "dockets": ["A5", "B1"]
-      }
-    ]
-  },
-  {
-    "name": "<i>Pythium aphanidermatum</i> Pure Culture",
-    "id": "PYAP-PC",
-    "cat":"BioSample",
-    "for":"Cultural Studies",
-    "availability":"RA",
-    "suppliers": ["KAU DPP"],
-    "host": "N/A",
-    "for": "check test",
-    "remarks": "Pure culture sample",
-    "types": [
-      {
-        "type": "Slant Agar",
-        "id": "SA",
-        "remarks": "5 ml PDA + Fungal Culture, 2 days old",
-        "amount": "150",
-        "as": "Test tube slant 5 ml PDA media"
-      }
-    ]
-  },
-  {
-    "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample (Host: Turmeric) IPX6 Multisite Package",
-    "id": "CLGS-IP6-MSP",
-    "cat":"BioSample",
-    "availability":"Pre Order",
-    "suppliers": ["KAU DPP CT1 (Trivandrum)","KAU DPP CK1 (Kollam)","KAU DPP CP1 (Palakkad)","KAU DPP CS1 (Kasargode)"],
-    "host": "Turmeric/Curcuma",
-    "for":"Cultural Studies/Pathogenicity/Inoculation",
-    "remarks": "Purified isolate (IPX C Series) from leaf",
-    "types": [
-      {
-        "type": "Positive Slant Agar Pack",
-        "id": "PSAP",
-        "remarks": "In tube culture (Amount=Culture+Tube+Vial+Survey Charges)",
-        "amount": "325",
-        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc), Spore Suspension 10 ml"
-      },
-      {
-        "type": "Positive Slant Agar Only",
-        "id": "PSA",
-        "remarks": "In tube culture (Amount=Culture+Tube+Survey Charges)",
-        "amount": "185",
-        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc)"
-      }
-    ]
-  },
-  {
-    "name": "<i>Rhizoctonia solani</i> Positive Sample (Host: Amaranthus) SM6 Single",
-    "id": "RZSL-SM6-T1",
-    "cat":"BioSample",
-    "availability":"Pre Order",
-    "suppliers": ["KAU DPP T1 (Trivandrum)"],
-    "host": "Amaranthus",
-    "for":"Cultural Studies/Pathogenicity/Inoculation",
-    "remarks": "Purified isolate (SM6 Series) from leaf",
-    "types": [
-      {
-        "type": "Positive Slant Agar Pack",
-        "id": "PSAP",
-        "remarks": "In tube culture (Amount=Culture+Tube+Vial+Survey Charges)",
-        "amount": "95",
-        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc), Spore Suspension 10 ml"
-      },
-      {
-        "type": "Positive Slant Agar Only",
-        "id": "PSA",
-        "remarks": "In tube culture (Amount=Culture+Tube+Survey Charges)",
-        "amount": "185",
-        "as": "Test tube slant 3 ml PDA (+ Grown culture from disc)"
-      }
-    ]
-  }
-]
+    {
+      "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
+      "id": "FOX1",
+      "cat": "BioSample",
+      "fileLocation": "cultures/FOX1.json"
+    },
+    {
+      "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
+      "id": "AFM7",
+      "cat": "BioSample",
+      "fileLocation": "cultures/AFM7.json"
+    },
+    {
+      "name": "<i>Pythium aphanidermatum</i> Pure Culture",
+      "id": "PYAP-PC",
+      "cat": "BioSample",
+      "fileLocation": "cultures/PYAP-PC.json"
+    },
+    {
+      "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample (Host: Turmeric) IPX6 Multisite Package",
+      "id": "CLGS-IP6-MSP",
+      "cat": "BioSample",
+      "fileLocation": "cultures/CLGS-IP6-MSP.json"
+    },
+    {
+      "name": "<i>Rhizoctonia solani</i> Positive Sample (Host: Amaranthus) SM6 Single",
+      "id": "RZSL-SM6-T1",
+      "cat": "BioSample",
+      "fileLocation": "cultures/RZSL-SM6-T1.json"
+    }
