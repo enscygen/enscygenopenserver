@@ -15,7 +15,7 @@
   },
   "types": [
     {
-      "type": "Positive Pure Slant Tube",
+      "type": "Positive Slant Tube",
       "id": "PPST",
       "remarks": "In tube culture (Amount=Culture+Tube)",
       "amount": "40",
