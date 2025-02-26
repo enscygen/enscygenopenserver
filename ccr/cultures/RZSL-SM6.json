@@ -1,0 +1,36 @@
+{
+  "name": "<i>Rhizoctonia solani</i> Positive Sample (Host: Amaranthus) SM6 Single",
+  "id": "RZSL-SM6-T1",
+  "brandtag": "PathLabs™",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "host": "Amaranthus",
+  "for": "Pathogenicity Studies",
+  "remarks": "Single hyphal isolate (SM6) from infected stem",
+  "overview": "Rhizoctonia solani is a soilborne fungal pathogen responsible for various diseases, including root rot, damping-off, and sheath blight. It affects a broad host range, including cereals, vegetables, and ornamentals. <br> This isolate is available for pathogenicity studies and disease management research. It is recommended for studies on host-pathogen interactions, biocontrol strategies, and soilborne disease suppression.",
+  "details": {
+    "Species": "Rhizoctonia solani",
+    "Type": "Fungus",
+    "Usage": "Pathogenicity Studies",
+    "Storage Temp": "15℃"
+  },
+  "types": [
+    {
+      "type": "Positive Slant Tube",
+      "for": "Pure culture in tube",
+      "id": "PST",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "35",
+      "as": "Test tube slant 3 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Positive Plate",
+      "for": "Pure culture in plate",
+      "id": "PP",
+      "remarks": "In plate culture (Amount=Culture+Plate)",
+      "amount": "140",
+      "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    }
+  ]
+}
