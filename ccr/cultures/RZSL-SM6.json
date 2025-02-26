@@ -31,6 +31,14 @@
       "remarks": "In plate culture (Amount=Culture+Plate)",
       "amount": "140",
       "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Sclerotia",
+      "for": "Sclerotia (20 Nos.) x 1",
+      "id": "SR20",
+      "remarks": "Sclerotia (20 Nos.) in sterile vial (1 Nos.)",
+      "amount": "115",
+      "as": "Sclerotia 20 Nos. x 1 Vial"
     }
   ]
 }
