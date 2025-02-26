@@ -1,0 +1,36 @@
+{
+  "name": "<i>Fusarium oxysporum</i> (Host: Tomato) FOX1",
+  "id": "FOX1",
+  "brandtag": "PathLabs™",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "host": "Tomato/Solanum lycopersicum",
+  "for": "Cultural Studies/Pathogenicity",
+  "remarks": "Purified isolate (FOX1) from vascular tissue",
+  "overview": "Fusarium oxysporum is a soilborne fungal pathogen responsible for Fusarium wilt, a devastating disease affecting various crops worldwide. The pathogen colonizes xylem vessels, leading to wilting and plant death. <br> Our culture is available in both test tube slants and petri plates for research applications such as plant pathology, disease resistance studies, and biological control research. Proper storage and handling protocols must be maintained to ensure culture viability and prevent contamination.",
+  "details": {
+    "Species": "Fusarium oxysporum",
+    "Type": "Fungus",
+    "Usage": "Cultural Studies Only",
+    "Storage Temp": "15℃"
+  },
+  "types": [
+    {
+      "type": "Positive Slant Tube",
+      "for": "Pure culture in tube",
+      "id": "PST",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "40",
+      "as": "Test tube slant 3 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Positive Plate",
+      "for": "Pure culture in plate",
+      "id": "PP",
+      "remarks": "In plate culture (Amount=Culture+Plate)",
+      "amount": "150",
+      "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    }
+  ]
+}
