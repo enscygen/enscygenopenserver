@@ -1,0 +1,36 @@
+{
+  "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
+  "id": "AFM7",
+  "brandtag": "PathLabs™",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "host": "Maize/Zea mays",
+  "for": "Mycotoxin Research",
+  "remarks": "Toxin-producing isolate (AFM7) from maize kernel",
+  "overview": "Aspergillus flavus is a saprophytic fungus known for producing aflatoxins, highly toxic secondary metabolites that contaminate food and feed crops. Aflatoxin contamination poses significant health risks and economic losses. <br> We provide this isolate for mycotoxin-related research, including detection methods, resistance studies, and biocontrol strategies. Cultures are maintained under strict biosafety conditions to prevent contamination and ensure research reliability.",
+  "details": {
+    "Species": "Aspergillus flavus",
+    "Type": "Fungus",
+    "Usage": "Mycotoxin Research",
+    "Storage Temp": "4℃"
+  },
+  "types": [
+    {
+      "type": "Positive Slant Tube",
+      "for": "Pure culture in tube",
+      "id": "PST",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "50",
+      "as": "Test tube slant 3 ml PDA + Grown culture from disc"
+    },
+    {
+      "type": "Positive Plate",
+      "for": "Pure culture in plate",
+      "id": "PP",
+      "remarks": "In plate culture (Amount=Culture+Plate)",
+      "amount": "200",
+      "as": "Petriplate 15 ml PDA + Grown culture from disc"
+    }
+  ]
+}
