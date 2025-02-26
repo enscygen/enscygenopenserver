@@ -16,6 +16,7 @@
   "types": [
     {
       "type": "Positive Slant Tube",
+      "for":"Pure culture in tube",
       "id": "PPST",
       "remarks": "In tube culture (Amount=Culture+Tube)",
       "amount": "40",
@@ -23,6 +24,7 @@
     },
     {
       "type": "Positive Plate",
+      "for":"Pure culture in plate",
       "id": "PP",
       "remarks": "In plate culture (Amount=Culture+Plate)",
       "amount": "150",
