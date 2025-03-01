@@ -2,6 +2,7 @@
   {
     "name": "<i>Colletotrichum gloeosporioides</i> Positive Sample IPX6 CS1",
     "id": "CLGS-IP6",
+    "img":"https://enscygen.github.io/enscygenopenserver/ccr/images/CLGS-IP6.png",
     "for": "Cultural Studies/Pathogenicity",
     "cat": "BioSample",
     "fileLocation": "cultures/CLGS-IP6.json"
