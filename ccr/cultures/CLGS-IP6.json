@@ -3,6 +3,7 @@
   "id": "CLGS-IP6",
   "brandtag": "PathLabs™", 
   "cat": "BioSample",
+  "img":"https://enscygen.github.io/enscygenopenserver/ccr/images/CLGS-IP6.png",
   "availability": "Readily Available",
   "suppliers": ["KAU DPP"],
   "host": "Turmeric/Curcuma",
