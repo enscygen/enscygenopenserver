@@ -21,7 +21,7 @@
       "for": "Pure culture in tube",
       "id": "PST",
       "remarks": "In tube culture (Amount=Culture+Tube)",
-      "amount": "35",
+      "amount": "300",
       "as": "Test tube slant 3 ml PDA + Grown culture from disc"
     },
     {
@@ -29,7 +29,7 @@
       "for": "Pure culture in plate",
       "id": "PP",
       "remarks": "In plate culture (Amount=Culture+Plate)",
-      "amount": "140",
+      "amount": "380",
       "as": "Petriplate 15 ml PDA + Grown culture from disc"
     },
     {
