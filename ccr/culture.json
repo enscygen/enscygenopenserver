@@ -14,6 +14,14 @@
     "fileLocation": "cultures/FOX1.json"
   },
   {
+    "name": "<i>Bacillus amyloliquefaciens</i> (BCA) T Isolate",
+    "id": "BCAL-06",
+    "for": "Cultural Studies/Biocontrol",
+    "cat": "BioSample",
+    "fileLocation": "cultures/BCAL-06.json",
+    "img":"https://enscygen.github.io/enscygenopenserver/ccr/images/BCAL-06.png"
+  },
+  {
     "name": "<i>Aspergillus flavus</i> Aflatoxin Producing (Host: Maize) AFM7",
     "id": "AFM7",
     "for": "Cultural Studies/Pathogenicity",
