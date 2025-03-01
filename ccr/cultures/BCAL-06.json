@@ -1,0 +1,29 @@
+{
+  "name": "<i>Bacillus amyloliquefaciens</i> Bacteria (BCA) T Isolate",
+  "id": "BCAL-06",
+  "brandtag": "PathLabs™",
+  "cat": "BioSample",
+  "availability": "Readily Available",
+  "suppliers": ["KAU DPP"],
+  "img":"https://enscygen.github.io/enscygenopenserver/ccr/images/BCAL-06.png",
+  "host": "NA Culture Media",
+  "for": "Biocontrol Research",
+  "remarks": "Bacillus sp. for biocontrol studies",
+  "overview": "Bacteria used in biological control",
+  "details": {
+    "Species": "Bacillus amyloliquefaciens",
+    "Type": "Bacteria",
+    "Usage": "Biocontrol Research",
+    "Storage Temp": "4℃"
+  },
+  "types": [
+    {
+      "type":"Pure Culture",
+      "for": "Pure culture in tube for multiplication",
+      "id": "PC",
+      "remarks": "In tube culture (Amount=Culture+Tube)",
+      "amount": "500",
+      "as": "Test tube slant 3 ml NA + Streaked colony"
+    }
+  ]
+}
