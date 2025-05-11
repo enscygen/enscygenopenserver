@@ -1,0 +1,34 @@
+[
+  {
+    "category": "Recruitment",
+    "tags": "Inside Enscygen",
+    "title": "Inviting applications for researchers in Statistics",
+    "description": "Enscygen is inviting experts/researchers in the field of statistics to join for non-profit projects. Contact our nearest center for more details.",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjuSnS0qL_5OOyGYGXdeilCVXVxF9XNmOSIg&usqp=CAU",
+    "link": "https://enscygen.web.app/company/contact"
+  },
+  {
+    "category": "In Science",
+    "tags": "Scientific World | Nobel Prizes",
+    "title": "They cracked the code for proteins’ amazing structures",
+    "description": "The Nobel Prize in Chemistry 2024 is about proteins, life’s ingenious chemical tools. David Baker has succeeded with the almost impossible feat of building entirely new kinds of proteins. Demis Hassabis and John Jumper have developed an AI model to solve a 50-year-old problem: predicting proteins’ complex structures. These discoveries hold enormous potential.",
+    "image": "https://www.nobelprize.org/uploads/2024/10/fig_ke_24_4x3-992x656.jpg",
+    "link": "https://www.nobelprize.org/prizes/chemistry/2024/press-release/"
+  },
+  {
+    "category": "In Science",
+    "tags": "Scientific World | Nobel Prizes",
+    "title": "Tiny RNAs with profound physiological importance",
+    "description": "microRNA, a new class of tiny RNA molecules that play a crucial role in gene regulation. Their groundbreaking discovery in the small worm C. elegans revealed a completely new principle of gene regulation. This turned out to be essential for multicellular organisms, including humans.",
+    "image": "https://www.nobelprize.org/uploads/2024/10/Carrier_1200x800_02-992x656.jpg",
+    "link": "https://www.nobelprize.org/prizes/medicine/2024/press-release/"
+  },
+  {
+    "category": "This Site",
+    "tags": "Inside Enscygen",
+    "title": "Effortless Visualization of Plant and Pathogen Hierarchies",
+    "description": "Explore and analyze detailed taxonomic classifications of plants, phytopathogens, and more with our intuitive Taxonomy Viewer. Seamlessly navigate through hierarchical structures, from Kingdom to Species, gaining insights into the relationships between organisms. Perfect for researchers and professionals in plant pathology, biology, and agriculture.",
+    "image": "https://enscygen.web.app/assets/home/phytopathogens.jpg",
+    "link": "https://enscygen.web.app/taxonomy"
+  }
+]
