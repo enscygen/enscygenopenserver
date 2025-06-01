@@ -1,0 +1,15 @@
+[
+                        { "crop": "Rice (Uplands, Local Varieties)", "n": 40, "p": 20, "k": 30, "unit": "kg_ha", "notes": "total" },
+                        { "crop": "Rice (Upland, High yielding short duration)", "n": 60, "p": 30, "k": 30, "unit": "kg_ha", "notes": "total" },
+                        { "crop": "Rice (Wetland, General)", "n": 70, "p": 35, "k": 35, "unit": "kg_ha", "notes": "total" },
+                        { "crop": "Paddy (HYV, SD) (Upland, Kerala)", "n": 60, "p": 30, "k": 30, "unit": "kg_ha", "notes": "total" },
+                        { "crop": "Coconut (Good Management)", "n": 0.50, "p": 0.32, "k": 1.20, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Coconut (Average Management)", "n": 0.34, "p": 0.17, "k": 0.68, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Coconut (Red Loam Soil)", "n": 0.68, "p": 0.23, "k": 0.90, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Coconut (Hybrid/HYV, Irrigated)", "n": 1, "p": 0.50, "k": 2, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Coconut (Hybrid/HYV, Rainfed)", "n": 0.5, "p": 0.32, "k": 1.20, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Coconut (Reclaimed Clayey Soil/Kuttanad)", "n": 0.25, "p": 0.35, "k": 0.90, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Banana (Nendran, Irrigated)", "n": 0.190, "p": 0.115, "k": 0.300, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Banana (Palayankodan, Rainfed)", "n": 0.100, "p": 0.200, "k": 0.400, "unit": "kg_plant", "notes": "per annum" },
+                        { "crop": "Banana (Tissue Culture Nendran)", "n": 0.300, "p": 0.115, "k": 0.450, "unit": "kg_plant", "notes": "per annum" }
+                    ]
