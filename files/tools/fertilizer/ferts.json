@@ -1,5 +1,5 @@
 [
-  { "id": "urea", "name": "Urea", "n": 46, "p": 0, "k": 0, "ca": 0, "mg": 0, "s": 0, "b": 0, "bagSize": 50, "price": 700 },
+  { "id": "urea", "name": "Urea", "n": 46, "p": 0, "k": 0, "ca": 0, "mg": 0, "s": 0, "b": 0, "bagSize": 45, "price": 242 },
   { "id": "dap", "name": "DAP", "n": 18, "p": 46, "k": 0, "ca": 0, "mg": 0, "s": 0, "b": 0, "bagSize": 50, "price": 1350 },
   { "id": "mop", "name": "MOP (Potash)", "n": 0, "p": 0, "k": 60, "ca": 0, "mg": 0, "s": 0, "b": 0, "bagSize": 50, "price": 1700 },
   { "id": "ssp", "name": "SSP (16%)", "n": 0, "p": 16, "k": 0, "ca": 19, "mg": 0, "s": 11, "b": 0, "bagSize": 50, "price": 450 },
