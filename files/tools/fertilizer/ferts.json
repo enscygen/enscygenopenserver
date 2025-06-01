@@ -8,5 +8,5 @@
                         { id: "calcium_nitrate", name: "Calcium Nitrate", n: 15.5, p: 0, k: 0, ca: 18.8, mg: 0, s: 0, b: 0, bagSize: 25, price: 1200 },
                         { id: "nitrate_of_soda", name: "Nitrate of Soda", n: 16.5, p: 0, k: 0, ca: 0, mg: 0, s: 0, b: 0, bagSize: 0, price: 0 },
                         { id: "magnesium_sulphate", name: "Magnesium Sulphate", n: 0, p: 0, k: 0, ca: 0, mg: 9.6, s: 12, b: 0, bagSize: 25, price: 500 },
-                        { id: "borax", name: "Borax (Agri)", n: 0, p: 0, k: 0, ca: 0, mg: 0, s: 0, b: 10.5, bagSize: 1, price: 100 },
+                        { id: "borax", name: "Borax (Agri)", n: 0, p: 0, k: 0, ca: 0, mg: 0, s: 0, b: 10.5, bagSize: 1, price: 100 }
                     ]
