@@ -66,9 +66,6 @@
 <label>Tracking ID:</label>
 <input type="text" id="trackingId" />
 
-<label>Tracking URL:</label>
-<input type="text" id="trackingUrl" />
-
 <label>Delivery Date:</label>
 <input type="date" id="deliveryDate" />
 
@@ -103,7 +100,7 @@
   </div>  <script>
     const fields = [
       'customerName', 'orderId', 'itemNames', 'amount', 'orderDate',
-      'courierName', 'trackingId', 'trackingUrl', 'deliveryDate', 'recipientName'
+      'courierName', 'trackingId', 'deliveryDate', 'recipientName'
     ];
 
     function loadFromUrl() {
@@ -137,48 +134,50 @@
       const portalLink = "https://enscygenstore.odoo.com/my/home";
       const extraNote = "\n\n📌 Kindly follow the instructions provided in the product brochure, SOPs, and SDSs attached with your order.";
       let msg = '';
+
       switch(messageType) {
         case 'orderConfirm':
-          msg = `Hello ${f('customerName')},\nThank you for placing your order with Enscygen Bioscience.\n\n📦 Order ID: ${f('orderId')}\n🧪 Items: ${f('itemNames')}\n💰 Total Amount: ₹${f('amount')}\n🕒 Order Date: ${formatDate('orderDate')}\n\nYou can track, download invoice, or contact our team at: ${portalLink}` + extraNote;
+          msg = `Hello ${f('customerName')},\nThank you for placing your order with Enscygen Bioscience.\n\n📦 Order ID: ${f('orderId')}\n🧪 Items: ${f('itemNames')}\n💰 Total Amount: ₹${f('amount')}\n🕒 Order Date: ${formatDate('orderDate')}\n\nYou can manage your order, make payment, download invoice or reach us at: ${portalLink}`;
           break;
         case 'paymentConfirm':
-          msg = `Hi ${f('customerName')},\nWe’ve received your payment for Order ID ${f('orderId')}.\n💰 Amount Paid: ₹${f('amount')}\n📅 Payment Date: ${formatDate('orderDate')}\n\nYou can view your transaction history and order details here: ${portalLink}` + extraNote;
+          msg = `Hi ${f('customerName')},\nWe’ve received your payment for Order ID ${f('orderId')}.\n💰 Amount Paid: ₹${f('amount')}\n📅 Payment Date: ${formatDate('orderDate')}\n\nYou can view your transaction and manage orders here: ${portalLink}`;
           break;
         case 'processing':
-          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is now being processed by our technical team.\nYou will be notified once it is ready for shipment.` + extraNote;
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is now under processing.\nOur team is preparing your items for shipment. You will be notified once dispatched.`;
           break;
         case 'dispatched':
-          msg = `Hello ${f('customerName')},\nYour order ${f('orderId')} has been dispatched.\n🚚 Courier: ${f('courierName')}\n📦 Tracking ID: ${f('trackingId')}\n🔗 Track: ${f('trackingUrl')}\n📅 ETA: ${formatDate('deliveryDate')}\n\nManage order here: ${portalLink}` + extraNote;
+          msg = `Hello ${f('customerName')},\nYour order ${f('orderId')} has been dispatched.\n🚚 Courier: ${f('courierName')}\n📦 Tracking ID: ${f('trackingId')}\n📅 ETA: ${formatDate('deliveryDate')}\n\nTrack and manage your order: ${portalLink}`;
           break;
         case 'outForDelivery':
-          msg = `Hi ${f('customerName')},\nYour order ${f('orderId')} is out for delivery today. Please ensure someone is available to receive it.` + extraNote;
+          msg = `Hi ${f('customerName')},\nYour order ${f('orderId')} is out for delivery today.\nPlease ensure availability at your location.`;
           break;
         case 'delivered':
-          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} was successfully delivered on ${formatDate('deliveryDate')}.\n📦 Received by: ${f('recipientName')}\n\nWe hope the items reached you in excellent condition.` + extraNote;
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} was successfully delivered on ${formatDate('deliveryDate')}.\n📦 Received by: ${f('recipientName')}\n\nYou may login to ${portalLink} to access invoice or raise any concerns.\nYou may also reply to this message with any specific instructions or updates.` + extraNote;
           break;
         case 'feedback':
-          msg = `Hi ${f('customerName')},\nThank you for choosing Enscygen Bioscience.\nWe would appreciate your feedback on Order ID ${f('orderId')}.\nYou can also reach us via: ${portalLink}`;
+          msg = `Hi ${f('customerName')},\nWe hope you're satisfied with your order ${f('orderId')}.\nYour feedback is valuable to us.\nPlease visit ${portalLink} to share your experience or reply to this message.`;
           break;
         case 'cancelled':
-          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} has been cancelled. If you have made a payment, the refund will be initiated shortly.\nView status or contact us at: ${portalLink}`;
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} has been cancelled. If you have already paid, a refund will be processed shortly.\nManage your orders and track status at: ${portalLink}`;
           break;
         case 'delay':
         case 'deliveryDelayed':
-          msg = `Hi ${f('customerName')},\nThere is a delay in delivering your order ${f('orderId')} due to unforeseen logistics issues.\nWe sincerely apologize for the inconvenience.\nPlease track and communicate with us via: ${portalLink}`;
+          msg = `Hi ${f('customerName')},\nThere is a delay in delivering your order ${f('orderId')} due to unforeseen circumstances.\nWe apologize for the inconvenience.\nPlease login at ${portalLink} to view updates or contact support.`;
           break;
         case 'recipientUnavailable':
-          msg = `Dear ${f('customerName')},\nOur delivery attempt for Order ID ${f('orderId')} was unsuccessful as the recipient was not available.\nPlease ensure availability and update delivery preferences at: ${portalLink}`;
+          msg = `Dear ${f('customerName')},\nOur delivery attempt for Order ID ${f('orderId')} was unsuccessful due to recipient unavailability.\nPlease login to ${portalLink} to reschedule or provide updated instructions.`;
           break;
         case 'deliveryWithheld':
-          msg = `Hi ${f('customerName')},\nDelivery of Order ID ${f('orderId')} has been temporarily withheld due to pending action.\n⚠️ Kindly login to your account at ${portalLink} to complete payment, confirm address or provide additional instructions.`;
+          msg = `Hi ${f('customerName')},\nDelivery of Order ID ${f('orderId')} is currently withheld due to pending action from your side.\nKindly login at ${portalLink} to complete required steps or reply to this message for assistance.`;
           break;
         case 'readyForPickup':
-          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is ready for pickup.\nPlease collect it from our facility at your earliest convenience.` + extraNote;
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is ready for pickup from our facility.\nPlease arrange collection at your earliest convenience.`;
           break;
         case 'returnInitiated':
-          msg = `Hi ${f('customerName')},\nA return has been initiated for your order ${f('orderId')}.\nOur team will reach out with the next steps shortly.\nTrack status or raise queries at: ${portalLink}`;
+          msg = `Hi ${f('customerName')},\nReturn request for Order ID ${f('orderId')} has been initiated.\nOur team will coordinate with you for the next steps.\nTrack progress or message us directly at ${portalLink}`;
           break;
       }
+
       document.getElementById('output').value = msg;
     }
 
