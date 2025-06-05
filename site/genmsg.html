@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enscygen Order Message Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      color: #007b8f;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007b8f;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005f6b;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Enscygen Order Message Generator</h1><label>Customer Name:</label>
+<input type="text" id="customerName" />
+
+<label>Order ID:</label>
+<input type="text" id="orderId" />
+
+<label>Item Names:</label>
+<input type="text" id="itemNames" />
+
+<label>Total Amount:</label>
+<input type="text" id="amount" />
+
+<label>Order Date:</label>
+<input type="date" id="orderDate" />
+
+<label>Courier Partner:</label>
+<input type="text" id="courierName" />
+
+<label>Tracking ID:</label>
+<input type="text" id="trackingId" />
+
+<label>Tracking URL:</label>
+<input type="text" id="trackingUrl" />
+
+<label>Delivery Date:</label>
+<input type="date" id="deliveryDate" />
+
+<label>Recipient Name:</label>
+<input type="text" id="recipientName" />
+
+<label>Message Type:</label>
+<select id="messageType">
+  <option value="orderConfirm">Order Confirmation</option>
+  <option value="paymentConfirm">Payment Confirmation</option>
+  <option value="processing">Order Processing</option>
+  <option value="dispatched">Order Dispatched</option>
+  <option value="outForDelivery">Out for Delivery</option>
+  <option value="delivered">Delivered</option>
+  <option value="feedback">Feedback Request</option>
+  <option value="cancelled">Order Cancelled</option>
+  <option value="delay">Delay Notification</option>
+  <option value="readyForPickup">Ready for Pickup</option>
+  <option value="returnInitiated">Return Initiated</option>
+</select>
+
+<button onclick="appendToUrl()">Append to URL</button>
+<button onclick="generateMessage()">Generate Message</button>
+<button onclick="copyToClipboard()">Copy to Clipboard</button>
+
+<label>Generated Message:</label>
+<textarea id="output" rows="12" readonly></textarea>
+
+  </div>  <script>
+    const fields = [
+      'customerName', 'orderId', 'itemNames', 'amount', 'orderDate',
+      'courierName', 'trackingId', 'trackingUrl', 'deliveryDate', 'recipientName'
+    ];
+
+    function loadFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      fields.forEach(field => {
+        const val = params.get(field);
+        if (val) document.getElementById(field).value = decodeURIComponent(val);
+      });
+    }
+
+    function formatDate(inputId) {
+      const date = document.getElementById(inputId).value;
+      if (!date) return '';
+      const d = new Date(date);
+      return d.toLocaleDateString('en-GB');
+    }
+
+    function appendToUrl() {
+      const params = new URLSearchParams();
+      fields.forEach(field => {
+        params.set(field, encodeURIComponent(document.getElementById(field).value));
+      });
+      const newUrl = window.location.origin + window.location.pathname + '?' + params.toString();
+      window.history.replaceState(null, '', newUrl);
+      alert("URL updated with current inputs.");
+    }
+
+    function generateMessage() {
+      const f = id => document.getElementById(id).value;
+      const messageType = document.getElementById('messageType').value;
+      let msg = '';
+      switch(messageType) {
+        case 'orderConfirm':
+          msg = `Hello ${f('customerName')},\nThank you for placing your order with Enscygen Bioscience.\n\n📦 Order ID: ${f('orderId')}\n🧪 Items: ${f('itemNames')}\n💰 Total Amount: ₹${f('amount')}\n🕒 Order Date: ${formatDate('orderDate')}\n\nYour order has been received successfully. Our team will begin processing it shortly. You will receive further updates soon.`;
+          break;
+        case 'paymentConfirm':
+          msg = `Hi ${f('customerName')},\nWe’ve received your payment for Order ID ${f('orderId')}.\n💰 Amount Paid: ₹${f('amount')}\n📅 Payment Date: ${formatDate('orderDate')}\n\nThank you for your prompt payment. We are now preparing your order for dispatch.`;
+          break;
+        case 'processing':
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is now being processed by our technical team.\nWe appreciate your patience and will notify you as soon as it is ready for shipment.`;
+          break;
+        case 'dispatched':
+          msg = `Hello ${f('customerName')},\nWe’re pleased to inform you that your order ${f('orderId')} has been dispatched.\n🚚 Courier: ${f('courierName')}\n📦 Tracking ID: ${f('trackingId')}\n🔗 Track here: ${f('trackingUrl')}\n📅 Expected Delivery: ${formatDate('deliveryDate')}\n\nThank you for choosing Enscygen Bioscience.`;
+          break;
+        case 'outForDelivery':
+          msg = `Hi ${f('customerName')},\nYour order ${f('orderId')} is out for delivery today.\nPlease ensure someone is available to receive the package at the address provided.`;
+          break;
+        case 'delivered':
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} has been successfully delivered on ${formatDate('deliveryDate')}.\n📦 Received by: ${f('recipientName')}\n\nWe hope the contents were in excellent condition. Please reach out if you need any support.`;
+          break;
+        case 'feedback':
+          msg = `Hi ${f('customerName')},\nThank you for your recent order with Enscygen Bioscience.\nWe value your feedback and would love to hear your thoughts.\nPlease reply to this message or use the provided link to share your experience.`;
+          break;
+        case 'cancelled':
+          msg = `Dear ${f('customerName')},\nWe regret to inform you that your order ${f('orderId')} has been cancelled.\nIf payment was completed, a refund will be processed within 3–5 business days.\nPlease contact us if you need further clarification.`;
+          break;
+        case 'delay':
+          msg = `Hi ${f('customerName')},\nWe’re experiencing a delay in processing your order ${f('orderId')} due to unforeseen circumstances.\nWe sincerely apologize and will notify you once it's dispatched.`;
+          break;
+        case 'readyForPickup':
+          msg = `Dear ${f('customerName')},\nYour order ${f('orderId')} is now ready for pickup at our designated center.\nKindly collect it at your earliest convenience.\nThank you for shopping with Enscygen Bioscience.`;
+          break;
+        case 'returnInitiated':
+          msg = `Hi ${f('customerName')},\nWe have initiated a return process for your order ${f('orderId')}.\nOur team will get in touch shortly to coordinate the pickup or further steps.\nThank you for your cooperation.`;
+          break;
+      }
+      document.getElementById('output').value = msg;
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('output');
+      output.select();
+      document.execCommand('copy');
+      alert("Message copied to clipboard!");
+    }
+
+    window.onload = loadFromUrl;
+  </script></body>
+</html>
