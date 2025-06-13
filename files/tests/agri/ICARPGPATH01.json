@@ -404,7 +404,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Thirumalachar    (i) Vivotoxin\r\n(b) T.S. Sadasivam  (ii) Antibiotic\r\n(c) M.K. Patel         (iii) Solar Heat\r\n(d) Luthra               (iv) Xanthomonas uppalii\r\n(e) Griffith              (v) Transformation\r\n",
+    "question": "Match the following:<br>(a) Thirumalachar    (i) Vivotoxin<br>(b) T.S. Sadasivam  (ii) Antibiotic<br>(c) M.K. Patel         (iii) Solar Heat<br>(d) Luthra               (iv) Xanthomonas uppalii<br>(e) Griffith              (v) Transformation<br>",
     "options": [
       "(a)-(i), (b)-(iii), (c)-(ii), (d)-(iv), (e)-(v)",
       "(a)-(i), (b)-(ii), (c)-(iv), (d)-(iii), (e)-(v)",
@@ -417,7 +417,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Gene for Gene         (i) H.H. Flor\r\n(b) Germ Theory          (ii) Anton deBary\r\n(c) Puccinia Path          (iii) K.C. Mehta\r\n(d) Elicitor                   (iv) Noel T Keen",
+    "question": "Match the following:<br>(a) Gene for Gene         (i) H.H. Flor<br>(b) Germ Theory          (ii) Anton deBary<br>(c) Puccinia Path          (iii) K.C. Mehta<br>(d) Elicitor                   (iv) Noel T Keen",
     "options": [
       "(a)-(i), (b)-(iii), (c)-(ii), (d)-(iv)",
       "(a)-(i), (b)-(iii), (c)-(ii), (d)-(iv)",
@@ -430,7 +430,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Plant Pathology and Plant Pathogens   (i) R.S. Mehrotra\r\n(b) Fundamentals of Plant Pathology        (ii) James B Sinclair & Onkar Dev Dhingra\r\n(c) Essential Plant Pathology                   (iii) John A Lucas\r\n(d) Basic Plant Pathology Methods           (iv) Gail L Shumann & Cleora J. D’Arey",
+    "question": "Match the following:<br>(a) Plant Pathology and Plant Pathogens   (i) R.S. Mehrotra<br>(b) Fundamentals of Plant Pathology        (ii) James B Sinclair & Onkar Dev Dhingra<br>(c) Essential Plant Pathology                   (iii) John A Lucas<br>(d) Basic Plant Pathology Methods           (iv) Gail L Shumann & Cleora J. D’Arey",
     "options": [
       "(a)-(ii), (b)-(i), (c)-(iii), (d)-(iv)",
       "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
@@ -443,7 +443,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Pleurotus ostreatus          (i) Phytopathogenic\r\n(b) Magnoporthe oryzae        (ii) Entomopathogenic\r\n(c) Rhizophagus irregularis   (iii) Edible\r\n(d) Metarhizium                  (iv) Mycorrhizal",
+    "question": "Match the following:<br>(a) Pleurotus ostreatus          (i) Phytopathogenic<br>(b) Magnoporthe oryzae        (ii) Entomopathogenic<br>(c) Rhizophagus irregularis   (iii) Edible<br>(d) Metarhizium                  (iv) Mycorrhizal",
     "options": [
       "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
       "(a)-(iii), (b)-(i), (c)-(ii), (d)-(iv)",
@@ -456,7 +456,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Gene for Gene                (i) Pontecorvo and Roper\r\n(b) One Gene One Enzyme    (ii) Blakeslee\r\n(c) Parasexuality                  (iii) H.H. Flor\r\n(d) Heterothallism                (iv) Beadle and Tatum",
+    "question": "Match the following:<br>(a) Gene for Gene                (i) Pontecorvo and Roper<br>(b) One Gene One Enzyme    (ii) Blakeslee<br>(c) Parasexuality                  (iii) H.H. Flor<br>(d) Heterothallism                (iv) Beadle and Tatum",
     "options": [
       "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
       "(a)-(iii), (b)-(iv), (c)-(i), (d)-(ii)",
@@ -469,7 +469,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Black Pod               (i) Phytophthora infestans\r\n(b) Buckeye Rot           (ii) Phytophthora parasitica\r\n(c) Black Shank           (iii) Phytophthora capsici\r\n(d) Late Blight             (iv) Phytophthora megakarya",
+    "question": "Match the following:<br>(a) Black Pod               (i) Phytophthora infestans<br>(b) Buckeye Rot           (ii) Phytophthora parasitica<br>(c) Black Shank           (iii) Phytophthora capsici<br>(d) Late Blight             (iv) Phytophthora megakarya",
     "options": [
       "(a)-(iii), (b)-(iv), (c)-(ii), (d)-(i)",
       "(a)-(iv), (b)-(ii), (c)-(iii), (d)-(i)",
@@ -482,7 +482,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Bacteria need preexisting openings or wounds on plants to initiate infection.\r\nStatement II: Bacteria do not produce specialised infective structures.",
+    "question": "Statement I: Bacteria need preexisting openings or wounds on plants to initiate infection.<br>Statement II: Bacteria do not produce specialised infective structures.",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -495,7 +495,7 @@
     "exams": []
   },
   {
-    "question": "(A) Plasmodiophora brassicae causes club root of crucifers.\r\n(B) Spongospora subterranea causes powdery scab of potato\r\n(C) Polymyxa graminis is a vector for soil borne wheat mosaic virus\r\n(D) Plasmodiophoromycota are biotrophic parasites\r\n\r\nChoose the correct answer from the options given below.",
+    "question": "(A) Plasmodiophora brassicae causes club root of crucifers.<br>(B) Spongospora subterranea causes powdery scab of potato<br>(C) Polymyxa graminis is a vector for soil borne wheat mosaic virus<br>(D) Plasmodiophoromycota are biotrophic parasites<br><br>Choose the correct answer from the options given below.",
     "options": [
       "(A), (B) and (D) only",
       "(A), (C) and (D) only",
@@ -508,7 +508,7 @@
     "exams": []
   },
   {
-    "question": "Match the following:\r\n(a) Irish Famine             (i) 1870\r\n(b) Bengal Famine          (ii) 1089\r\n(c) St. Anthony’s Fire    (iii) 1943\r\n(d) Coffee Rust             (iv) 1845",
+    "question": "Match the following:<br>(a) Irish Famine             (i) 1870<br>(b) Bengal Famine          (ii) 1089<br>(c) St. Anthony’s Fire    (iii) 1943<br>(d) Coffee Rust             (iv) 1845",
     "options": [
       "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
       "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
@@ -742,7 +742,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Phytoplasmas are wall less  bacteria\r\nStatement II: Phytoplasma do posses flagella",
+    "question": "Statement I: Phytoplasmas are wall less  bacteria<br>Statement II: Phytoplasma do posses flagella",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -768,7 +768,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Viral genome is protected by protein shell known as capsid\r\nStatement II: Viruses can be used as vectors to transfer foreign gene into plants ",
+    "question": "Statement I: Viral genome is protected by protein shell known as capsid<br>Statement II: Viruses can be used as vectors to transfer foreign gene into plants ",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -807,7 +807,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Lichens are the symbiotic associations between a phycobiont and mycobiont\r\nStatement II: The photosynthetic partner in lichens can be either a green algae, a blue green algae or both",
+    "question": "Statement I: Lichens are the symbiotic associations between a phycobiont and mycobiont<br>Statement II: The photosynthetic partner in lichens can be either a green algae, a blue green algae or both",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -820,7 +820,7 @@
     "exams": []
   },
   {
-    "question": "Assertion (A): In Bacillus culture raised in a chemically defined medium, sporulation is initiated in the stationary phase\r\nReason (R): Lack of nutrient and high cell density trigger sporulation ",
+    "question": "Assertion (A): In Bacillus culture raised in a chemically defined medium, sporulation is initiated in the stationary phase<br>Reason (R): Lack of nutrient and high cell density trigger sporulation ",
     "options": [
       "Both A and R are true, R is the correct explanation of A",
       "Both A and R are true, R is not correct explanation of A",
@@ -833,7 +833,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Plasma membrane in bacteria is composed of double layer of phospholipid molecules\r\nStatement II: Plasma membrane is the site of enzymes involved in energy production in bacteria",
+    "question": "Statement I: Plasma membrane in bacteria is composed of double layer of phospholipid molecules<br>Statement II: Plasma membrane is the site of enzymes involved in energy production in bacteria",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -846,7 +846,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Transboundary pathogen triggered plant disease epidemics is responsible for famine in Europe in 19th  century \r\nStatement II: Invasive pathogens are highly aggressive",
+    "question": "Statement I: Transboundary pathogen triggered plant disease epidemics is responsible for famine in Europe in 19th  century <br>Statement II: Invasive pathogens are highly aggressive",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -859,7 +859,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct answer from the following:\r\n\r\nA) Ralstonia causes wilt disease\r\nB) Fusarium causes wilt disease\r\nC) Verticillium causes wilt disease\r\nD) Pseudomonas causes wilt disease",
+    "question": "Choose the correct answer from the following:<br><br>A) Ralstonia causes wilt disease<br>B) Fusarium causes wilt disease<br>C) Verticillium causes wilt disease<br>D) Pseudomonas causes wilt disease",
     "options": [
       "A, B, C only",
       "A, C, D only",
@@ -885,7 +885,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct answer from the following:\r\n\r\nA) Certain plant viruses are vectored by insects\r\nB) Certain plant viruses are transmitted by mechanical means\r\nC) No plant viruses are vectored by fungi\r\nD) No plant viruses are vectored by nematodes",
+    "question": "Choose the correct answer from the following:<br><br>A) Certain plant viruses are vectored by insects<br>B) Certain plant viruses are transmitted by mechanical means<br>C) No plant viruses are vectored by fungi<br>D) No plant viruses are vectored by nematodes",
     "options": [
       "A, B, C and D",
       "A, B, C only",
@@ -898,7 +898,7 @@
     "exams": []
   },
   {
-    "question": "Assertion (A): Oomycetes pathogen needs high moisture for their dissemination\r\nReason (R): Oomycetes pathogen do produce motile spores during their life cycle",
+    "question": "Assertion (A): Oomycetes pathogen needs high moisture for their dissemination<br>Reason (R): Oomycetes pathogen do produce motile spores during their life cycle",
     "options": [
       "Both A and R are true, R is the correct explanation of A",
       "Both A and R are true, R is not correct explanation of A",
@@ -911,7 +911,7 @@
     "exams": []
   },
   {
-    "question": "Assertion (A): Bacterial phytopathogen do cause explosive epidemics\r\nReason (R): Bacterial phytopathogens have short generation time by binary fission",
+    "question": "Assertion (A): Bacterial phytopathogen do cause explosive epidemics<br>Reason (R): Bacterial phytopathogens have short generation time by binary fission",
     "options": [
       "Both A and R are true, R is the correct explanation of A",
       "Both A and R are true, R is not correct explanation of A",
@@ -924,7 +924,7 @@
     "exams": []
   },
   {
-    "question": "Assertion (A): Only vegetatively propagated planting materials are responsible for transboundary movement of pathogens\r\nReason (R): High moisture content in the vegetative propagation material supports pathogen viability",
+    "question": "Assertion (A): Only vegetatively propagated planting materials are responsible for transboundary movement of pathogens<br>Reason (R): High moisture content in the vegetative propagation material supports pathogen viability",
     "options": [
       "Both A and R are true, R is the correct explanation of A",
       "Both A and R are true, R is not correct explanation of A",
@@ -937,7 +937,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct answer from the following:\r\nA) Magnoporthe is a pathogen on dicot only\r\nB) Puccinia is a pathogen on monocot only\r\nC) Ralstonia is a pathogen on both dicot and monocot\r\nD) RNA virus is a pathogen on both dicot and monocot",
+    "question": "Choose the correct answer from the following:<br>A) Magnoporthe is a pathogen on dicot only<br>B) Puccinia is a pathogen on monocot only<br>C) Ralstonia is a pathogen on both dicot and monocot<br>D) RNA virus is a pathogen on both dicot and monocot",
     "options": [
       "A, B, C only",
       "A, B. C and D",
@@ -950,7 +950,7 @@
     "exams": []
   },
   {
-    "question": "Polycyclic diseases are characterised by\r\nA) Air borne nature\r\nB) Foliar infection\r\nC) Multiplicity of infection\r\nD) Short generation time",
+    "question": "Polycyclic diseases are characterised by<br>A) Air borne nature<br>B) Foliar infection<br>C) Multiplicity of infection<br>D) Short generation time",
     "options": [
       "A, B, C only",
       "A, B. C and D",
@@ -963,7 +963,7 @@
     "exams": []
   },
   {
-    "question": "Which of the following disease(s) is/are transmitted by birds?\r\nA) Dutch Elm disease\r\nB) Grapevine fan leaf \r\nC) Chestnut blight \r\nD) Tree top disease",
+    "question": "Which of the following disease(s) is/are transmitted by birds?<br>A) Dutch Elm disease<br>B) Grapevine fan leaf <br>C) Chestnut blight <br>D) Tree top disease",
     "options": [
       "D only",
       "C only ",
@@ -976,7 +976,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct sequence of pathogenesis events\r\nA) Invasion\r\nB) Dissemination\r\nC) Reproduction\r\nD) Infection\r\nE) Inoculation\r\nF) Penetration ",
+    "question": "Choose the correct sequence of pathogenesis events<br>A) Invasion<br>B) Dissemination<br>C) Reproduction<br>D) Infection<br>E) Inoculation<br>F) Penetration ",
     "options": [
       "E, F, D, A, C and B",
       "B, F, D, A, C and E",
@@ -989,7 +989,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct answer from the following:\r\nA) Systemic Acquired Resistance is one of the induced non-specific resistance systems in plants\r\nB) Induced Systemic Resistance is one of the induced specific resistance systems in plants\r\nC) Hypersensitive Reaction is one of the induced non-specific resistance systems in plants\r\nD) Hypersensitive Reaction is one of the induced specific resistance systems in plants\r\nE) Induced Systemic Resistance is one of the induced non-specific resistance systems in plants",
+    "question": "Choose the correct answer from the following:<br>A) Systemic Acquired Resistance is one of the induced non-specific resistance systems in plants<br>B) Induced Systemic Resistance is one of the induced specific resistance systems in plants<br>C) Hypersensitive Reaction is one of the induced non-specific resistance systems in plants<br>D) Hypersensitive Reaction is one of the induced specific resistance systems in plants<br>E) Induced Systemic Resistance is one of the induced non-specific resistance systems in plants",
     "options": [
       "B and C only",
       "B and D only",
@@ -1015,7 +1015,7 @@
     "exams": []
   },
   {
-    "question": "Assertion (A): Outer membrane in Gram negative bacteria is more permeable than the inner membrane \r\nReason (R): Porin proteins are present in the outer membrane",
+    "question": "Assertion (A): Outer membrane in Gram negative bacteria is more permeable than the inner membrane <br>Reason (R): Porin proteins are present in the outer membrane",
     "options": [
       "Both A and R are true, R is the correct explanation of A",
       "Both A and R are true, R is not correct explanation of A",
@@ -1041,7 +1041,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct answer:\r\nA) Necrosis manifest in the form of blotch\r\nB) Abnormal growth manifest in the form of warts\r\nC) Necrosis manifest in the form of leaf curl\r\nD) Abnormal growth manifest in the form of anthracnose \r\nE) Witche’s broom is caused only by phytoplasma ",
+    "question": "Choose the correct answer:<br>A) Necrosis manifest in the form of blotch<br>B) Abnormal growth manifest in the form of warts<br>C) Necrosis manifest in the form of leaf curl<br>D) Abnormal growth manifest in the form of anthracnose <br>E) Witche’s broom is caused only by phytoplasma ",
     "options": [
       "A and B only ",
       " D and E only",
@@ -1067,7 +1067,7 @@
     "exams": []
   },
   {
-    "question": "Certain plant pathogens do not live at the site of the symptom or symptomate plant niche \r\nA) They only transfer virulent factors to host\r\nB) Plant attracts the virulent factors by its chemical signals\r\nC) This kind of pathogen survive in the rhizosphere of the infected plant \r\nD) Virulence factors can be cultured on media \r\nE) Infected plant can be recovered with time \r\nChoose the correct answers from the options given below.",
+    "question": "Certain plant pathogens do not live at the site of the symptom or symptomate plant niche <br>A) They only transfer virulent factors to host<br>B) Plant attracts the virulent factors by its chemical signals<br>C) This kind of pathogen survive in the rhizosphere of the infected plant <br>D) Virulence factors can be cultured on media <br>E) Infected plant can be recovered with time <br>Choose the correct answers from the options given below.",
     "options": [
       "B, C, E only",
       "C, D, E only",
@@ -1080,7 +1080,7 @@
     "exams": []
   },
   {
-    "question": "Statement I: Leaf curl is one of the symptoms of viral disease\r\nStatement II: Fungi can also cause leaf curl symptoms",
+    "question": "Statement I: Leaf curl is one of the symptoms of viral disease<br>Statement II: Fungi can also cause leaf curl symptoms",
     "options": [
       "Both statement I and statement II are correct",
       "Both statement I and statement II are incorrect",
@@ -1106,7 +1106,7 @@
     "exams": []
   },
   {
-    "question": "Monocyclic diseases are incited by soilborne pathogens\r\n(A) Monocyclic diseases are usually observed in perennial crops\r\n(B) Monocyclic diseases complete one life cycle in a year\r\n(C) Monocyclic disease can be controlled by soil treatment\r\n(D) Monocyclic diseases are usually endemic in a particular location",
+    "question": "Monocyclic diseases are incited by soilborne pathogens<br>(A) Monocyclic diseases are usually observed in perennial crops<br>(B) Monocyclic diseases complete one life cycle in a year<br>(C) Monocyclic disease can be controlled by soil treatment<br>(D) Monocyclic diseases are usually endemic in a particular location",
     "options": [
       "A, B and D only",
       "A, B and C only",
@@ -1119,7 +1119,7 @@
     "exams": []
   },
   {
-    "question": "Ug99 is a new race of Puccinia graminis f.sp. tritici\r\n(A) Ug99 was first emerged in Uttar Pradesh\r\n(B) Ug99 was first emerged in Uganda in 1999\r\n(C) Ug99 was first emerged in Uganda in 1998\r\n(D) Subvariants of Ug99 has emerged recently",
+    "question": "Ug99 is a new race of Puccinia graminis f.sp. tritici<br>(A) Ug99 was first emerged in Uttar Pradesh<br>(B) Ug99 was first emerged in Uganda in 1999<br>(C) Ug99 was first emerged in Uganda in 1998<br>(D) Subvariants of Ug99 has emerged recently",
     "options": [
       "A, B and D only",
       "B and D only",
@@ -1132,7 +1132,7 @@
     "exams": []
   },
   {
-    "question": "Which of the following is known to cause abnormal and unlimited proliferation of plant cells?\r\nA) Agrobacterium\r\nB) Rhizobium\r\nC) Xanthomonas\r\nD) Erwinia",
+    "question": "Which of the following is known to cause abnormal and unlimited proliferation of plant cells?<br>A) Agrobacterium<br>B) Rhizobium<br>C) Xanthomonas<br>D) Erwinia",
     "options": [
       "A and B only",
       "A only",
@@ -1184,7 +1184,7 @@
     "exams": []
   },
   {
-    "question": "Choose the correct option\r\nA) Conidia are endogenous\r\nB) Sporangiospores are exogenous\r\nC) Chlamydospores can be terminal or intercalary",
+    "question": "Choose the correct option<br>A) Conidia are endogenous<br>B) Sporangiospores are exogenous<br>C) Chlamydospores can be terminal or intercalary",
     "options": [
       "C only",
       "A and B",
@@ -1249,7 +1249,7 @@
     "exams": []
   },
   {
-    "question": "Choose the incorrect pair\r\nA) Total stem parasite - Cuscuta\r\nB) Total root parasite - Orobanche\r\nC) Partial stem parasite - Dodder\r\nD) Partial root parasite - Striga",
+    "question": "Choose the incorrect pair<br>A) Total stem parasite - Cuscuta<br>B) Total root parasite - Orobanche<br>C) Partial stem parasite - Dodder<br>D) Partial root parasite - Striga",
     "options": [
       "A and C",
       "C only",
