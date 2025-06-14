@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question & Test Converter (Excel to JSON/Key)</title>
+    <!-- CDN for SheetJS (xlsx.full.min.js) for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- CDN for FileSaver.js for saving files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7fa;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .heading-2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .heading-3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-input[type="file"],
+        .form-input[type="text"],
+        .form-input[type="number"],
+        .form-input[type="textarea"],
+        textarea.form-input { /* Added textarea */
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea.form-input {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background-color: #c0c0c0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .question-display-area, .key-display-area, .test-display-area { /* Added test-display-area */
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .question-card, .key-row {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .test-config-preview { /* Styling for test config preview */
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+        .test-config-preview p {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .test-config-preview strong {
+            color: #333;
+        }
+
+        .question-card p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .question-card ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+
+        .question-card li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+        }
+
+        .question-card .correct-answer {
+            font-weight: 700;
+            color: #28a745; /* Green for correct answer */
+        }
+
+        .key-row strong {
+            display: inline-block;
+            min-width: 120px;
+            color: #555;
+        }
+
+        .key-row span {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px; /* Limit height */
+            overflow-y: auto; /* Scroll if content overflows */
+            margin-top: 15px;
+            border: 1px solid #ced4da;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .button-group .btn {
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .heading-2 {
+                font-size: 1.5rem;
+            }
+            .heading-3 {
+                font-size: 1.2rem;
+            }
+            .btn {
+                width: 100%;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="heading-2 text-center">Excel to JSON Question & Test Converter</h2>
+        <p class="text-center" style="margin-bottom: 20px; color: #666;">Upload your Excel file (XLSX or CSV) with questions. Ensure your file has 'code', 'section', 'question', 'option1', 'option2', 'option3', 'option4', and 'correctanswer' columns. The tool will generate `questions.json`, `key.json`, `key.csv`, and `tests.json`.</p>
+
+        <div class="form-group">
+            <label for="excelFile" class="form-label">Upload Excel File:</label>
+            <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label for="testIdInput" class="form-label">Test ID (e.g., T001):</label>
+            <input type="text" id="testIdInput" class="form-input" placeholder="Enter a unique Test ID" required>
+        </div>
+        <div class="form-group">
+            <label for="testNameInput" class="form-label">Test Name (e.g., Agricultural Sciences Test):</label>
+            <input type="text" id="testNameInput" class="form-input" placeholder="Enter Test Name" required>
+        </div>
+        <div class="form-group">
+            <label for="durationInput" class="form-label">Duration in Minutes:</label>
+            <input type="number" id="durationInput" class="form-input" value="30" min="1" required>
+        </div>
+        <div class="form-group">
+            <label for="instructionsInput" class="form-label">Test Instructions:</label>
+            <textarea id="instructionsInput" class="form-input" rows="4" required>Read all questions carefully. Choose the best option. Do not refresh the page. Your time limit is [Duration] minutes.</textarea>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center;">
+            <input type="checkbox" id="useQuestionCodeAsPrefix" checked>
+            <label for="useQuestionCodeAsPrefix" class="form-label" style="margin-bottom: 0;">Use Question Code as prefix for Option Codes (e.g., 10011, 10012)</label>
+        </div>
+
+        <button id="generateBtn" class="btn btn-primary" style="width: 100%;">Generate All Files</button>
+        <div id="messageArea" class="message info hidden"></div>
+    </div>
+
+    <div id="outputContainer" class="container hidden">
+        <!-- Tests.json Preview -->
+        <h3 class="heading-3">Generated Test Configuration Preview</h3>
+        <div id="testConfigPreview" class="test-config-preview">
+            <!-- Test details will be displayed here -->
+        </div>
+        <div class="button-group">
+            <button id="downloadTestsJsonBtn" class="btn btn-success" disabled>Download tests.json</button>
+        </div>
+        <h3 class="heading-3" style="margin-top: 30px;">JSON Output (tests.json)</h3>
+        <pre id="testsJsonOutput" class="code-block"></pre>
+
+
+        <!-- Questions.json Preview -->
+        <h3 class="heading-3" style="margin-top: 40px;">Generated Questions Preview</h3>
+        <div id="questionsPreview">
+            <!-- Questions will be displayed here -->
+        </div>
+        <div class="button-group">
+            <button id="downloadQuestionsJsonBtn" class="btn btn-success" disabled>Download questions.json</button>
+        </div>
+        <h3 class="heading-3" style="margin-top: 30px;">JSON Output (questions.json)</h3>
+        <pre id="jsonOutput" class="code-block"></pre>
+
+
+        <!-- Answer Key Preview -->
+        <h3 class="heading-3" style="margin-top: 40px;">Generated Answer Key Preview</h3>
+        <div id="keyPreview">
+            <!-- Answer key will be displayed here -->
+        </div>
+        <div class="button-group">
+            <button id="downloadKeyJsonBtn" class="btn btn-success" disabled>Download key.json</button>
+            <button id="downloadKeyCsvBtn" class="btn btn-success" disabled>Download key.csv</button>
+        </div>
+        <h3 class="heading-3" style="margin-top: 30px;">JSON Output (key.json)</h3>
+        <pre id="keyJsonOutput" class="code-block"></pre>
+        <h3 class="heading-3" style="margin-top: 30px;">CSV Output (key.csv)</h3>
+        <pre id="keyCsvOutput" class="code-block"></pre>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const excelFileInput = document.getElementById('excelFile');
+            const testIdInput = document.getElementById('testIdInput');
+            const testNameInput = document.getElementById('testNameInput');
+            const durationInput = document.getElementById('durationInput');
+            const instructionsInput = document.getElementById('instructionsInput');
+            const useQuestionCodeAsPrefixCheckbox = document.getElementById('useQuestionCodeAsPrefix');
+            const generateBtn = document.getElementById('generateBtn');
+            const messageArea = document.getElementById('messageArea');
+            const outputContainer = document.getElementById('outputContainer');
+
+            // Question related elements
+            const questionsPreview = document.getElementById('questionsPreview');
+            const jsonOutputPre = document.getElementById('jsonOutput');
+            const downloadQuestionsJsonBtn = document.getElementById('downloadQuestionsJsonBtn'); 
+            
+            // Key related elements
+            const keyPreview = document.getElementById('keyPreview');
+            const keyJsonOutputPre = document.getElementById('keyJsonOutput');
+            const keyCsvOutputPre = document.getElementById('keyCsvOutput');
+            const downloadKeyJsonBtn = document.getElementById('downloadKeyJsonBtn');
+            const downloadKeyCsvBtn = document.getElementById('downloadKeyCsvBtn');
+
+            // Test related elements
+            const testConfigPreview = document.getElementById('testConfigPreview');
+            const testsJsonOutputPre = document.getElementById('testsJsonOutput');
+            const downloadTestsJsonBtn = document.getElementById('downloadTestsJsonBtn');
+
+
+            let generatedQuestionsDataStr = null; // Store the questions JSON string
+            let generatedKeyJsonData = null; // Store the key JSON string
+            let generatedKeyCsvData = null; // Store the key CSV string
+            let generatedTestsJsonData = null; // Store the tests JSON string
+
+            function showMessage(message, type = 'info') {
+                messageArea.textContent = message;
+                messageArea.className = `message ${type}`;
+                messageArea.classList.remove('hidden');
+            }
+
+            function hideMessage() {
+                messageArea.classList.add('hidden');
+                messageArea.textContent = '';
+            }
+
+            // Utility function to convert JSON array to CSV string
+            function convertToCsv(arr, columns) {
+                if (!arr || arr.length === 0) return '';
+
+                const header = columns.map(col => `"${col}"`).join(',');
+                const rows = arr.map(row => {
+                    return columns.map(col => {
+                        const val = row[col];
+                        // Handle potential commas/quotes in data for CSV
+                        return `"${String(val).replace(/"/g, '""')}"`;
+                    }).join(',');
+                });
+                return [header, ...rows].join('\n');
+            }
+
+
+            generateBtn.addEventListener('click', function() {
+                hideMessage();
+                // Clear all previous outputs
+                questionsPreview.innerHTML = '';
+                jsonOutputPre.textContent = '';
+                keyPreview.innerHTML = ''; 
+                keyJsonOutputPre.textContent = ''; 
+                keyCsvOutputPre.textContent = ''; 
+                testConfigPreview.innerHTML = '';
+                testsJsonOutputPre.textContent = '';
+                
+                // Disable all download buttons
+                downloadQuestionsJsonBtn.disabled = true;
+                downloadKeyJsonBtn.disabled = true; 
+                downloadKeyCsvBtn.disabled = true; 
+                downloadTestsJsonBtn.disabled = true;
+
+                // Reset all generated data variables
+                generatedQuestionsDataStr = null;
+                generatedKeyJsonData = null;
+                generatedKeyCsvData = null;
+                generatedTestsJsonData = null;
+
+
+                const file = excelFileInput.files[0];
+                if (!file) {
+                    showMessage("Please select an Excel or CSV file.", 'error');
+                    return;
+                }
+
+                // Get test details from input fields
+                const testId = testIdInput.value.trim();
+                const testName = testNameInput.value.trim();
+                const durationMinutes = parseInt(durationInput.value.trim());
+                const instructions = instructionsInput.value.trim();
+
+                if (!testId || !testName || isNaN(durationMinutes) || durationMinutes <= 0 || !instructions) {
+                    showMessage("Please fill in all test details (ID, Name, Duration, Instructions) before generating.", 'error');
+                    outputContainer.classList.add('hidden'); // Hide output if required info is missing
+                    return;
+                }
+
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                        if (jsonData.length === 0) {
+                            showMessage("The selected file is empty or contains no data.", 'error');
+                            outputContainer.classList.add('hidden');
+                            return;
+                        }
+
+                        // Temporary array to hold questions as they are parsed, before sorting/grouping
+                        const rawParsedQuestions = []; 
+                        const generatedAnswerKey = []; // For key.json/csv
+
+                        jsonData.forEach((row, index) => {
+                            const questionCode = String(row.code || '').trim();
+                            const sectionName = String(row.section || '').trim(); // Read 'section' from row
+                            const questionText = String(row.question || '').trim(); 
+                            const correctAnsText = String(row.correctanswer || '').trim(); 
+
+                            if (!questionCode || !questionText || !correctAnsText) {
+                                showMessage(`Skipping row ${index + 1}: Missing 'code', 'question', or 'correctanswer' data.`, 'info');
+                                return;
+                            }
+
+                            const options = [];
+                            const optionPrefix = useQuestionCodeAsPrefixCheckbox.checked ? questionCode : '';
+                            let correctOptionCode = null;
+
+                            for (let i = 1; i <= 4; i++) {
+                                const optionKey = `option${i}`;
+                                const optionText = String(row[optionKey] || '').trim();
+                                
+                                if (optionText) { 
+                                    const optionCode = `${optionPrefix}${i}`;
+                                    options.push({
+                                        option_code: optionCode,
+                                        text: optionText
+                                    });
+
+                                    if (optionText === correctAnsText) {
+                                        correctOptionCode = optionCode;
+                                    }
+                                }
+                            }
+                            
+                            // Fallback if correct answer text didn't perfectly match an option text
+                            if (!correctOptionCode && correctAnsText) {
+                                const foundByCode = options.find(opt => opt.option_code === correctAnsText);
+                                if (foundByCode) {
+                                    correctOptionCode = foundByCode.option_code;
+                                } else {
+                                    showMessage(`Warning for Q${questionCode}: Correct answer text '${correctAnsText}' not found among options or as an option code. Please verify.`, 'info');
+                                }
+                            }
+
+                            if (questionText && options.length > 0) {
+                                rawParsedQuestions.push({
+                                    question_code: questionCode,
+                                    section: sectionName || "Uncategorized", // Default if section is empty in Excel
+                                    question_text: questionText,
+                                    options: options,
+                                    correct_answer_code_for_key: correctOptionCode // Temporarily store for key generation
+                                });
+                            } else {
+                                showMessage(`Skipping row ${index + 1}: Question text or options missing.`, 'info');
+                            }
+                        });
+
+                        if (rawParsedQuestions.length === 0) {
+                            showMessage("No valid questions could be generated from the file. Please check your column headers and data.", 'error');
+                            outputContainer.classList.add('hidden');
+                            return;
+                        }
+
+                        // --- Logic for Sorting Questions and Generating tests.json sections ---
+                        const sectionsMap = {}; // Maps sectionName to an array of questions in that section
+                        rawParsedQuestions.forEach(q => {
+                            if (!sectionsMap[q.section]) {
+                                sectionsMap[q.section] = [];
+                            }
+                            sectionsMap[q.section].push(q);
+                        });
+
+                        const generatedQuestionsForJson = []; // Final questions array for questions.json
+                        const testSectionsArray = []; // Sections array for tests.json
+
+                        // Sort section names alphabetically for consistent output order in tests.json and questions.json
+                        const sortedSectionNames = Object.keys(sectionsMap).sort();
+
+                        let globalQuestionIndex = 0; // Tracks the index in the *final* generatedQuestionsForJson array
+
+                        sortedSectionNames.forEach(secName => {
+                            let questionsInSection = sectionsMap[secName];
+                            
+                            // Sort questions within each section by question_code for consistent ordering
+                            questionsInSection.sort((a, b) => {
+                                const codeA = isNaN(Number(a.question_code)) ? a.question_code : Number(a.question_code);
+                                const codeB = isNaN(Number(b.question_code)) ? b.question_code : Number(b.question_code);
+                                if (codeA < codeB) return -1;
+                                if (codeA > codeB) return 1;
+                                return 0;
+                            });
+
+                            const sectionStartIndex = globalQuestionIndex;
+                            questionsInSection.forEach(q => {
+                                // Add question to the main array for questions.json
+                                generatedQuestionsForJson.push({
+                                    question_code: q.question_code,
+                                    section: q.section,
+                                    question_text: q.question_text,
+                                    options: q.options
+                                });
+                                // Also populate the answer key array
+                                generatedAnswerKey.push({
+                                    question_code: q.question_code,
+                                    correct_answer_code: q.correct_answer_code_for_key || 'NOT_FOUND' 
+                                });
+                                globalQuestionIndex++;
+                            });
+                            const sectionEndIndex = globalQuestionIndex - 1;
+
+                            testSectionsArray.push({
+                                name: secName,
+                                start_index: sectionStartIndex,
+                                end_index: sectionEndIndex
+                            });
+                        });
+                        // --- End of Sorting and Section Generation Logic ---
+
+
+                        // --- Display Questions Preview (questions.json) ---
+                        questionsPreview.innerHTML = generatedQuestionsForJson.map(q => {
+                            // Find the correct answer code from the generatedAnswerKey for preview display
+                            const keyEntry = generatedAnswerKey.find(k => k.question_code === q.question_code);
+                            const currentCorrectAnswerCode = keyEntry ? keyEntry.correct_answer_code : 'N/A';
+
+                            return `
+                                <div class="question-card">
+                                    <p><strong>Code:</strong> ${q.question_code}</p>
+                                    <p><strong>Section:</strong> ${q.section}</p>
+                                    <p><strong>Question:</strong> ${q.question_text}</p>
+                                    <ul>
+                                        ${q.options.map(opt => `
+                                            <li>
+                                                [${opt.option_code}] ${opt.text}
+                                                ${currentCorrectAnswerCode === opt.option_code ? '<span class="correct-answer"> (Correct)</span>' : ''}
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                    <p><strong>Correct Answer Code:</strong> ${currentCorrectAnswerCode}</p>
+                                </div>
+                            `;
+                        }).join('');
+
+                        generatedQuestionsDataStr = JSON.stringify(generatedQuestionsForJson, null, 4);
+                        jsonOutputPre.textContent = generatedQuestionsDataStr;
+                        downloadQuestionsJsonBtn.disabled = false;
+
+
+                        // --- Display Answer Key Preview (key.json & key.csv) ---
+                        keyPreview.innerHTML = generatedAnswerKey.map(k => `
+                            <div class="key-row">
+                                <p><strong>Question Code:</strong> <span>${k.question_code}</span></p>
+                                <p><strong>Correct Answer Code:</strong> <span>${k.correct_answer_code}</span></p>
+                            </div>
+                        `).join('');
+
+                        generatedKeyJsonData = JSON.stringify(generatedAnswerKey, null, 4);
+                        keyJsonOutputPre.textContent = generatedKeyJsonData;
+                        downloadKeyJsonBtn.disabled = false;
+                        
+                        generatedKeyCsvData = convertToCsv(generatedAnswerKey, ['question_code', 'correct_answer_code']);
+                        keyCsvOutputPre.textContent = generatedKeyCsvData;
+                        downloadKeyCsvBtn.disabled = false;
+
+
+                        // --- Display Test Configuration Preview (tests.json) ---
+                        const futureDate = new Date();
+                        futureDate.setHours(futureDate.getHours() + 1); // Set to 1 hour from now for testing convenience
+
+                        const generatedTestsData = [
+                            {
+                                test_id: testId,
+                                test_name: testName,
+                                total_questions: generatedQuestionsForJson.length,
+                                duration_minutes: durationMinutes,
+                                start_time: futureDate.toISOString(), 
+                                instructions: instructions.replace('[Duration]', durationMinutes), // Replace placeholder
+                                sections: testSectionsArray 
+                            }
+                        ];
+
+                        testConfigPreview.innerHTML = `
+                            <p><strong>Test ID:</strong> ${generatedTestsData[0].test_id}</p>
+                            <p><strong>Test Name:</strong> ${generatedTestsData[0].test_name}</p>
+                            <p><strong>Total Questions:</strong> ${generatedTestsData[0].total_questions}</p>
+                            <p><strong>Duration:</strong> ${generatedTestsData[0].duration_minutes} minutes</p>
+                            <p><strong>Start Time (placeholder):</strong> ${generatedTestsData[0].start_time}</p>
+                            <p><strong>Instructions:</strong> ${generatedTestsData[0].instructions}</p>
+                            <p><strong>Sections:</strong></p>
+                            <ul>
+                                ${generatedTestsData[0].sections.map(s => `
+                                    <li>${s.name} (Questions ${s.start_index + 1} to ${s.end_index + 1})</li>
+                                `).join('')}
+                            </ul>
+                        `;
+
+                        generatedTestsJsonData = JSON.stringify(generatedTestsData, null, 4);
+                        testsJsonOutputPre.textContent = generatedTestsJsonData;
+                        downloadTestsJsonBtn.disabled = false;
+
+
+                        outputContainer.classList.remove('hidden');
+                        showMessage(`Successfully generated ${generatedQuestionsForJson.length} questions, answer key, and test configuration.`, 'success');
+
+                    } catch (error) {
+                        console.error("Error processing file:", error);
+                        showMessage(`Error processing file: ${error.message}. Ensure it's a valid Excel/CSV and headers match.`, 'error');
+                        outputContainer.classList.add('hidden');
+                    }
+                };
+
+                reader.onerror = function() {
+                    showMessage("Failed to read file.", 'error');
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+
+            // Download buttons for questions and keys
+            downloadQuestionsJsonBtn.addEventListener('click', function() {
+                if (generatedQuestionsDataStr) {
+                    const blob = new Blob([generatedQuestionsDataStr], { type: 'application/json;charset=utf-8' });
+                    saveAs(blob, 'questions.json');
+                } else {
+                    showMessage("No question JSON data to download. Please generate first.", 'error');
+                }
+            });
+
+            downloadKeyJsonBtn.addEventListener('click', function() {
+                if (generatedKeyJsonData) {
+                    const blob = new Blob([generatedKeyJsonData], { type: 'application/json;charset=utf-8' });
+                    saveAs(blob, 'key.json');
+                } else {
+                    showMessage("No key JSON data to download. Please generate first.", 'error');
+                }
+            });
+
+            downloadKeyCsvBtn.addEventListener('click', function() {
+                if (generatedKeyCsvData) {
+                    const blob = new Blob([generatedKeyCsvData], { type: 'text/csv;charset=utf-8' });
+                    saveAs(blob, 'key.csv');
+                } else {
+                    showMessage("No key CSV data to download. Please generate first.", 'error');
+                }
+            });
+
+            downloadTestsJsonBtn.addEventListener('click', function() {
+                if (generatedTestsJsonData) {
+                    const blob = new Blob([generatedTestsJsonData], { type: 'application/json;charset=utf-8' });
+                    saveAs(blob, 'tests.json');
+                } else {
+                    showMessage("No test JSON data to download. Please generate first.", 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
