@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Result Portal</title>
-    <!-- CDN for SheetJS (xlsx.full.min.js) for reading CSV files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- No need for SheetJS CDN here if we only fetch parsed CSV (not raw Excel) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -61,7 +60,6 @@
             margin-bottom: 8px;
         }
 
-        .form-input[type="file"],
         .form-input[type="text"],
         .form-input[type="password"] {
             width: 100%;
@@ -256,7 +254,7 @@
 <body>
     <div class="container" id="loginContainer">
         <h2 class="heading-2 text-center">Student Result Portal</h2>
-        <p class="text-center" style="margin-bottom: 20px; color: #666;">Enter your ID and password to view your results. You will also need to provide the grading report and student credentials files.</p>
+        <p class="text-center" style="margin-bottom: 20px; color: #666;">Enter your ID and password to view your results.</p>
 
         <div class="form-group">
             <label for="studentIdInput" class="form-label">Your Student ID:</label>
@@ -267,20 +265,9 @@
             <input type="password" id="passwordInput" class="form-input" required>
         </div>
         
-        <hr style="margin: 25px 0;">
-
-        <p class="text-center" style="margin-bottom: 15px; color: #666;">(Admin: Please upload the required files for results to display)</p>
-        <div class="form-group">
-            <label for="credentialsFile" class="form-label">Upload Student Credentials File (`student_credentials.json`):</label>
-            <input type="file" id="credentialsFile" accept=".json" class="form-input">
-        </div>
-        <div class="form-group">
-            <label for="gradingReportFile" class="form-label">Upload Grading Report File (`grading_report.csv`):</label>
-            <input type="file" id="gradingReportFile" accept=".csv" class="form-input">
-        </div>
-
         <button id="loginBtn" class="btn btn-primary" style="width: 100%;">View My Results</button>
         <div id="messageArea" class="message info hidden"></div>
+        <div id="loadingMessage" class="message info hidden">Loading data...</div>
     </div>
 
     <div class="container hidden" id="resultsContainer">
@@ -334,10 +321,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const studentIdInput = document.getElementById('studentIdInput');
             const passwordInput = document.getElementById('passwordInput');
-            const credentialsFile = document.getElementById('credentialsFile');
-            const gradingReportFile = document.getElementById('gradingReportFile');
             const loginBtn = document.getElementById('loginBtn');
             const messageArea = document.getElementById('messageArea');
+            const loadingMessage = document.getElementById('loadingMessage'); // New loading message
             const loginContainer = document.getElementById('loginContainer');
             const resultsContainer = document.getElementById('resultsContainer');
             const studentNameDisplay = document.getElementById('studentNameDisplay');
@@ -351,8 +337,8 @@
             const totalScoreEl = document.getElementById('totalScore');
             const detailedResponsesTableBody = document.getElementById('detailedResponsesTableBody');
 
-            let studentCredentialsData = null; // Stores parsed student_credentials.json
-            let gradingReportData = null;      // Stores parsed grading_report.csv
+            let studentCredentialsData = null; 
+            let gradingReportData = null;      
 
             function showMessage(message, type = 'info') {
                 messageArea.textContent = message;
@@ -363,6 +349,15 @@
             function hideMessage() {
                 messageArea.classList.add('hidden');
                 messageArea.textContent = '';
+            }
+
+            function showLoading(message = "Processing...") { // Adjusted default message
+                loadingMessage.textContent = message;
+                loadingMessage.classList.remove('hidden');
+            }
+
+            function hideLoading() {
+                loadingMessage.classList.add('hidden');
             }
 
             // Function to parse CSV string into an array of objects
@@ -388,36 +383,48 @@
                 return data;
             }
 
-            // Load and parse credentials file
-            credentialsFile.addEventListener('change', async (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    try {
-                        const jsonString = await file.text();
-                        studentCredentialsData = JSON.parse(jsonString);
-                        showMessage("Student credentials file loaded successfully.", 'success');
-                    } catch (e) {
-                        studentCredentialsData = null;
-                        showMessage(`Error loading credentials file: ${e.message}. Ensure it's valid JSON.`, 'error');
+            // --- Automatic Data Fetching on Page Load ---
+            async function loadRequiredFiles() {
+                showLoading("Fetching student credentials...");
+                try {
+                    const credentialsResponse = await fetch('https://enscygen.github.io/enscygenopenserver/site/fol/student_credentials.json');
+                    if (!credentialsResponse.ok) {
+                        const errorText = await credentialsResponse.text();
+                        throw new Error(`HTTP error! status: ${credentialsResponse.status} - ${credentialsResponse.statusText}. Response: ${errorText}`);
                     }
+                    studentCredentialsData = await credentialsResponse.json();
+                    console.log("Student credentials loaded.");
+                } catch (e) {
+                    showMessage(`Failed to load student_credentials.json: ${e.message}. Ensure it's in static/data/ and accessible.`, 'error');
+                    console.error("Error fetching credentials:", e);
+                    hideLoading();
+                    return false;
                 }
-            });
 
-            // Load and parse grading report file
-            gradingReportFile.addEventListener('change', async (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    try {
-                        const csvString = await file.text();
-                        gradingReportData = await parseCsv(csvString);
-                        showMessage("Grading report file loaded successfully.", 'success');
-                    } catch (e) {
-                        gradingReportData = null;
-                        showMessage(`Error loading grading report file: ${e.message}. Ensure it's valid CSV.`, 'error');
+                showLoading("Fetching grading report...");
+                try {
+                    const reportResponse = await fetch('https://enscygen.github.io/enscygenopenserver/site/fol/grading-report.csv');
+                    if (!reportResponse.ok) {
+                        const errorText = await reportResponse.text();
+                        throw new Error(`HTTP error! status: ${reportResponse.status} - ${reportResponse.statusText}. Response: ${errorText}`);
                     }
+                    const csvString = await reportResponse.text();
+                    gradingReportData = await parseCsv(csvString);
+                    console.log("Grading report loaded.");
+                } catch (e) {
+                    showMessage(`Failed to load grading_report.csv: ${e.message}. Ensure it's in static/data/ and accessible.`, 'error');
+                    console.error("Error fetching report:", e);
+                    hideLoading();
+                    return false;
                 }
-            });
+                hideLoading();
+                return true;
+            }
 
+            // Call loadRequiredFiles when the page loads
+            loadRequiredFiles();
+
+            // --- Login Logic ---
             loginBtn.addEventListener('click', function() {
                 hideMessage();
                 const studentId = studentIdInput.value.trim();
@@ -428,11 +435,11 @@
                     return;
                 }
                 if (!studentCredentialsData) {
-                    showMessage("Please upload the student credentials file.", 'error');
+                    showMessage("Student credentials data not loaded. Please try refreshing the page and check console for errors.", 'error');
                     return;
                 }
                 if (!gradingReportData) {
-                    showMessage("Please upload the grading report file.", 'error');
+                    showMessage("Grading report data not loaded. Please try refreshing the page and check console for errors.", 'error');
                     return;
                 }
 
@@ -452,7 +459,7 @@
                         studentNameDisplay.textContent = authenticatedStudent.name;
                         displayResults(studentReport);
                     } else {
-                        showMessage("Your results are not found in the uploaded grading report. Please contact the administrator.", 'error');
+                        showMessage("Your results are not found in the grading report. Please contact the administrator.", 'error');
                     }
                 } else {
                     showMessage("Invalid Student ID or Password.", 'error');
@@ -464,13 +471,13 @@
                 totalAttemptedEl.textContent = reportRow.total_answered || '0';
                 totalCorrectEl.textContent = reportRow.total_correct || '0';
                 totalIncorrectEl.textContent = reportRow.total_incorrect || '0';
-                totalScoreEl.textContent = reportRow.total_score || '0';
+                totalScoreEl.textContent = parseFloat(reportRow.total_score || '0').toFixed(2); // Format score
 
                 // Detailed Responses Tab
                 detailedResponsesTableBody.innerHTML = '';
                 const questionCodes = Object.keys(reportRow).filter(key => key.endsWith('__user_response'))
                                           .map(key => key.split('__')[0])
-                                          .sort((a,b) => { // Sort question codes numerically if possible
+                                          .sort((a,b) => { 
                                             const numA = parseInt(a);
                                             const numB = parseInt(b);
                                             if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
@@ -484,13 +491,13 @@
                     let status = '';
                     let rowClass = '';
 
-                    if (userResponse === '') {
+                    if (userResponse === '') { 
                         status = 'Not Answered';
                         rowClass = 'not-answered';
-                    } else if (userResponse === correctAnswer) {
+                    } else if (userResponse === correctAnswer) { 
                         status = 'Correct';
                         rowClass = 'correct-match';
-                    } else {
+                    } else { 
                         status = 'Incorrect';
                         rowClass = 'incorrect-match';
                     }
