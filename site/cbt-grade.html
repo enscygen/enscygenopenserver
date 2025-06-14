@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Grading & Report Tool</title>
+    <!-- CDN for SheetJS (xlsx.full.min.js) for reading Excel/CSV files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- CDN for FileSaver.js for saving files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7fa;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 1200px; /* Increased max-width for wider tables */
+            margin-bottom: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .heading-2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .heading-3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-input[type="file"],
+        .form-input[type="number"] {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background-color: #c0c0c0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .report-preview-area {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            overflow-x: auto; /* Enable horizontal scrolling for wide tables */
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap; /* Prevent text wrapping in cells */
+        }
+
+        .report-table th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: 600;
+            position: sticky; /* Keep header visible on scroll */
+            top: 0;
+            z-index: 1; /* Ensure it's above other content */
+        }
+
+        .report-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .report-table .correct-answer {
+            background-color: #e6ffe6; /* Light green for correct matches */
+        }
+
+        .report-table .incorrect-answer {
+            background-color: #ffe6e6; /* Light red for incorrect matches */
+        }
+
+        .report-table .not-answered {
+            background-color: #f9f9f9; /* Slightly darker for not answered */
+            color: #777;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .button-group .btn {
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .heading-2 {
+                font-size: 1.5rem;
+            }
+            .heading-3 {
+                font-size: 1.2rem;
+            }
+            .btn {
+                width: 100%;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="heading-2 text-center">Assessment Grading & Report Tool</h2>
+        <p class="text-center" style="margin-bottom: 20px; color: #666;">Upload the `key.csv` (or `key.json`) file and multiple `[student_id]_responses.csv` files to generate a consolidated grading report.</p>
+
+        <div class="form-group">
+            <label for="answerKeyFile" class="form-label">Upload Answer Key File (`key.csv` or `key.json`):</label>
+            <input type="file" id="answerKeyFile" accept=".csv, .json" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label for="studentResponsesFiles" class="form-label">Upload Student Response Files (e.g., `2023-11-109_responses.csv`):</label>
+            <input type="file" id="studentResponsesFiles" accept=".csv" multiple class="form-input">
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1;">
+                <label for="markCorrect" class="form-label">Marks for Correct Answer:</label>
+                <input type="number" id="markCorrect" value="1" min="0" class="form-input">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="markIncorrect" class="form-label">Marks for Incorrect Answer:</label>
+                <input type="number" id="markIncorrect" value="-0.25" step="0.01" class="form-input">
+            </div>
+        </div>
+
+        <button id="generateReportBtn" class="btn btn-primary" style="width: 100%;">Generate Grading Report</button>
+        <div id="messageArea" class="message info hidden"></div>
+    </div>
+
+    <div id="reportOutputContainer" class="container hidden">
+        <h3 class="heading-3">Generated Grading Report Preview</h3>
+        <div class="report-preview-area">
+            <table id="reportTable" class="report-table">
+                <thead>
+                    <tr id="reportTableHeader">
+                        <!-- Headers will be generated here -->
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    <!-- Report rows will be generated here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="button-group">
+            <button id="downloadReportCsvBtn" class="btn btn-success" disabled>Download Report CSV</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const answerKeyFileInput = document.getElementById('answerKeyFile');
+            const studentResponsesFilesInput = document.getElementById('studentResponsesFiles');
+            const markCorrectInput = document.getElementById('markCorrect');
+            const markIncorrectInput = document.getElementById('markIncorrect');
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const messageArea = document.getElementById('messageArea');
+            const reportOutputContainer = document.getElementById('reportOutputContainer');
+            const reportTableHeader = document.getElementById('reportTableHeader');
+            const reportTableBody = document.getElementById('reportTableBody');
+            const downloadReportCsvBtn = document.getElementById('downloadReportCsvBtn');
+
+            let answerKeyMap = {}; // {question_code: correct_answer_code}
+            let studentResponses = {}; // {student_id: {question_code: chosen_option_code}}
+            let allQuestionCodesOrdered = []; // To maintain consistent column order
+
+            let compiledReportData = []; // Final data for CSV generation
+
+            function showMessage(message, type = 'info') {
+                messageArea.textContent = message;
+                messageArea.className = `message ${type}`;
+                messageArea.classList.remove('hidden');
+            }
+
+            function hideMessage() {
+                messageArea.classList.add('hidden');
+                messageArea.textContent = '';
+            }
+
+            // Function to parse CSV string into an array of objects
+            async function parseCsv(csvString) {
+                const lines = csvString.split(/\r\n|\n/).filter(line => line.trim() !== ''); // Handle empty lines
+                if (lines.length < 1) {
+                    throw new Error("CSV file is empty or contains no valid data.");
+                }
+                const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '')); // Trim and remove quotes
+                const data = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                    if (values.length === headers.length) {
+                        const row = {};
+                        headers.forEach((header, index) => {
+                            row[header] = values[index];
+                        });
+                        data.push(row);
+                    } else if (values.length > 0 && ! (values.length === 1 && values[0] === '')) { // Avoid pushing completely empty lines
+                        console.warn(`Row ${i + 1} has mismatched column count: ${values.length} vs ${headers.length}. Skipping.`);
+                    }
+                }
+                return data;
+            }
+
+            // Utility to convert array of objects to CSV string
+            function convertToCsvString(data, columns) {
+                if (!data || data.length === 0) return '';
+                const header = columns.map(col => `"${col}"`).join(',');
+                const rows = data.map(row => {
+                    return columns.map(col => {
+                        const val = row[col] === null || row[col] === undefined ? '' : String(row[col]);
+                        return `"${val.replace(/"/g, '""')}"`; // Escape double quotes
+                    }).join(',');
+                });
+                return [header, ...rows].join('\n');
+            }
+
+
+            generateReportBtn.addEventListener('click', async function() {
+                hideMessage();
+                reportTableBody.innerHTML = '';
+                reportTableHeader.innerHTML = '';
+                downloadReportCsvBtn.disabled = true;
+                compiledReportData = [];
+
+                const keyFile = answerKeyFileInput.files[0];
+                const studentFiles = studentResponsesFilesInput.files;
+                const markCorrect = parseFloat(markCorrectInput.value);
+                const markIncorrect = parseFloat(markIncorrectInput.value);
+
+                if (!keyFile || studentFiles.length === 0 || isNaN(markCorrect) || isNaN(markIncorrect)) {
+                    showMessage("Please upload both answer key and student response files, and enter valid marks.", 'error');
+                    reportOutputContainer.classList.add('hidden');
+                    return;
+                }
+
+                if (keyFile.type.includes('json')) {
+                     try {
+                        const keyJsonString = await keyFile.text();
+                        const keyData = JSON.parse(keyJsonString);
+                        // Ensure keyData is an array of objects like {question_code: "Q1", correct_answer_code: "Q11"}
+                        answerKeyMap = {};
+                        allQuestionCodesOrdered = []; // Reset and rebuild from key
+                        keyData.forEach(item => {
+                            if (item.question_code && item.correct_answer_code) {
+                                answerKeyMap[item.question_code] = item.correct_answer_code;
+                                allQuestionCodesOrdered.push(item.question_code);
+                            }
+                        });
+                        showMessage(`Answer key loaded from JSON (${allQuestionCodesOrdered.length} questions).`, 'success');
+                    } catch (e) {
+                        showMessage(`Error parsing answer key JSON: ${e.message}`, 'error');
+                        return;
+                    }
+                } else if (keyFile.type.includes('csv')) {
+                    try {
+                        const keyCsvString = await keyFile.text();
+                        const keyData = await parseCsv(keyCsvString);
+                        // Assuming CSV has 'question_code' and 'correct_answer_code' columns
+                        answerKeyMap = {};
+                        allQuestionCodesOrdered = []; // Reset and rebuild from key
+                        keyData.forEach(row => {
+                            if (row.question_code && row.correct_answer_code) {
+                                answerKeyMap[row.question_code] = row.correct_answer_code;
+                                allQuestionCodesOrdered.push(row.question_code);
+                            }
+                        });
+                        showMessage(`Answer key loaded from CSV (${allQuestionCodesOrdered.length} questions).`, 'success');
+                    } catch (e) {
+                        showMessage(`Error parsing answer key CSV: ${e.message}`, 'error');
+                        return;
+                    }
+                } else {
+                    showMessage("Unsupported answer key file type. Please upload a .csv or .json file.", 'error');
+                    return;
+                }
+                
+                if (Object.keys(answerKeyMap).length === 0) {
+                    showMessage("Answer key is empty or invalid. Ensure it has 'question_code' and 'correct_answer_code' entries.", 'error');
+                    return;
+                }
+
+                studentResponses = {};
+                let processedStudentCount = 0;
+
+                for (const studentFile of studentFiles) {
+                    const fileName = studentFile.name;
+                    // Extract student ID from filename, assuming format like '2023-11-109_responses.csv'
+                    const studentIdMatch = fileName.match(/^([a-zA-Z0-9-]+)_responses\.csv$/);
+                    if (!studentIdMatch || studentIdMatch.length < 2) {
+                        showMessage(`Skipping file '${fileName}': Could not extract student ID from filename. Expected format like 'userid_responses.csv'.`, 'info');
+                        continue;
+                    }
+                    const studentId = studentIdMatch[1];
+
+                    try {
+                        const studentCsvString = await studentFile.text();
+                        const studentData = await parseCsv(studentCsvString);
+                        
+                        studentResponses[studentId] = {};
+                        studentData.forEach(row => {
+                            if (row.question_code && row.chosen_option_code !== undefined) { // Check if chosen_option_code is present (can be empty string)
+                                studentResponses[studentId][row.question_code] = row.chosen_option_code;
+                            }
+                        });
+                        processedStudentCount++;
+                    } catch (e) {
+                        showMessage(`Error processing student file '${fileName}': ${e.message}. Skipping this file.`, 'error');
+                    }
+                }
+
+                if (processedStudentCount === 0) {
+                    showMessage("No valid student response files could be processed.", 'error');
+                    return;
+                }
+
+                // Compile Report
+                compiledReportData = [];
+                
+                // Headers for the compiled CSV
+                const headerColumns = ['userid'];
+                allQuestionCodesOrdered.sort(); // Sort question codes for consistent column order
+                allQuestionCodesOrdered.forEach(qCode => {
+                    headerColumns.push(`${qCode}__user_response`);
+                    headerColumns.push(`${qCode}__correct_response`);
+                });
+                headerColumns.push('total_answered');
+                headerColumns.push('total_correct');
+                headerColumns.push('total_incorrect');
+                headerColumns.push('total_score');
+
+                // Populate report rows
+                for (const studentId in studentResponses) {
+                    const studentRowData = { userid: studentId };
+                    let totalAnswered = 0;
+                    let totalCorrect = 0;
+                    let totalIncorrect = 0;
+                    let totalScore = 0;
+
+                    allQuestionCodesOrdered.forEach(qCode => {
+                        const userAnswer = studentResponses[studentId][qCode] || ''; // Empty string if not answered
+                        const correctAnswer = answerKeyMap[qCode] || 'MISSING_KEY'; // Indicate if key is missing
+
+                        studentRowData[`${qCode}__user_response`] = userAnswer;
+                        studentRowData[`${qCode}__correct_response`] = correctAnswer;
+
+                        if (userAnswer !== '') { // Question was attempted/answered
+                            totalAnswered++;
+                            if (userAnswer === correctAnswer) {
+                                totalCorrect++;
+                                totalScore += markCorrect;
+                            } else {
+                                totalIncorrect++;
+                                totalScore += markIncorrect;
+                            }
+                        }
+                    });
+
+                    studentRowData.total_answered = totalAnswered;
+                    studentRowData.total_correct = totalCorrect;
+                    studentRowData.total_incorrect = totalIncorrect;
+                    studentRowData.total_score = totalScore;
+
+                    compiledReportData.push(studentRowData);
+                }
+
+                // Display Report Table
+                reportTableHeader.innerHTML = '';
+                headerColumns.forEach(col => {
+                    const th = document.createElement('th');
+                    th.textContent = col.replace(/__/g, ' '); // Replace double underscore with space for display
+                    reportTableHeader.appendChild(th);
+                });
+
+                reportTableBody.innerHTML = '';
+                compiledReportData.forEach(rowData => {
+                    const tr = document.createElement('tr');
+                    headerColumns.forEach(col => {
+                        const td = document.createElement('td');
+                        td.textContent = rowData[col];
+                        
+                        // Add styling based on correctness for question-specific columns
+                        if (col.endsWith('__user_response')) {
+                            const qCode = col.split('__')[0];
+                            const userAnswer = rowData[col];
+                            const correctAnswer = answerKeyMap[qCode]; // Get from the key map
+                            
+                            if (userAnswer !== '') {
+                                if (userAnswer === correctAnswer) {
+                                    td.classList.add('correct-answer');
+                                } else {
+                                    td.classList.add('incorrect-answer');
+                                }
+                            } else {
+                                td.classList.add('not-answered');
+                            }
+                        }
+                        tr.appendChild(td);
+                    });
+                    reportTableBody.appendChild(tr);
+                });
+
+                downloadReportCsvBtn.disabled = false;
+                reportOutputContainer.classList.remove('hidden');
+                showMessage(`Report generated for ${compiledReportData.length} students.`, 'success');
+            });
+
+            downloadReportCsvBtn.addEventListener('click', function() {
+                if (compiledReportData.length > 0) {
+                    const headerCols = Object.keys(compiledReportData[0]); // Get headers from the first row of compiled data
+                    const csvString = convertToCsvString(compiledReportData, headerCols);
+                    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8' });
+                    saveAs(blob, 'grading_report.csv');
+                } else {
+                    showMessage("No report data to download. Please generate first.", 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
