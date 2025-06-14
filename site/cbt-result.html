@@ -403,7 +403,7 @@
 
                 showLoading("Fetching grading report...");
                 try {
-                    const reportResponse = await fetch('https://enscygen.github.io/enscygenopenserver/site/fol/grading-report.csv');
+                    const reportResponse = await fetch('https://enscygen.github.io/enscygenopenserver/site/fol/grading_report.csv');
                     if (!reportResponse.ok) {
                         const errorText = await reportResponse.text();
                         throw new Error(`HTTP error! status: ${reportResponse.status} - ${reportResponse.statusText}. Response: ${errorText}`);
