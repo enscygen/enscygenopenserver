@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DNA Ladder Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 2rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.2rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e8f5e9;
+      width: 60%;
+    }
+
+    .recommendation {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DNA Ladder Calculator 🧬</h1>
+
+    <label for="conc">Ladder Concentration (µg/mL):</label>
+    <input type="number" id="conc" step="0.1" placeholder="e.g. 50" />
+
+    <label for="volume">Total Volume Available (µL):</label>
+    <input type="number" id="volume" step="1" placeholder="e.g. 500" />
+
+    <label for="target">Target DNA per lane (µg):</label>
+    <input type="number" id="target" step="0.01" placeholder="e.g. 0.25" />
+
+    <div class="recommendation">
+      <strong>Recommended DNA per lane:</strong>
+      <table>
+        <tr>
+          <th>Visibility</th>
+          <th>DNA per lane (µg)</th>
+          <th>Comment</th>
+        </tr>
+        <tr>
+          <td>Light</td>
+          <td>0.1–0.2</td>
+          <td>Just visible, saves ladder</td>
+        </tr>
+        <tr>
+          <td>Standard</td>
+          <td>0.25–0.4</td>
+          <td>Clearly visible bands</td>
+        </tr>
+        <tr>
+          <td>Strong</td>
+          <td>0.5–1.0</td>
+          <td>Thick bands, large gels</td>
+        </tr>
+      </table>
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="resultSection" style="display:none;">
+      <table id="resultTable">
+        <tr>
+          <th>Total DNA Available (µg)</th>
+          <td id="totalDNA">-</td>
+        </tr>
+        <tr>
+          <th>Target DNA per Lane (µg)</th>
+          <td id="dnaPerLane">-</td>
+        </tr>
+        <tr>
+          <th>Volume to Load per Lane (µL)</th>
+          <td id="uLPerLane">-</td>
+        </tr>
+        <tr>
+          <th>Total Lanes Possible</th>
+          <td id="totalLanes">-</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer">Made for bioscience applications 🧪 | Govindh | 2025</div>
+  </div>
+
+  <script>
+    function calculate() {
+      const conc = parseFloat(document.getElementById('conc').value);
+      const volume = parseFloat(document.getElementById('volume').value);
+      const target = parseFloat(document.getElementById('target').value);
+
+      if (isNaN(conc) || isNaN(volume) || isNaN(target) || conc <= 0 || volume <= 0 || target <= 0) {
+        alert("Please enter valid positive numbers in all fields.");
+        return;
+      }
+
+      const concPeruL = conc / 1000; // µg/µL
+      const uLPerLane = target / concPeruL;
+      const totalLanes = volume / uLPerLane;
+      const totalDNA = concPeruL * volume;
+
+      document.getElementById("totalDNA").innerText = totalDNA.toFixed(2);
+      document.getElementById("dnaPerLane").innerText = target.toFixed(2);
+      document.getElementById("uLPerLane").innerText = uLPerLane.toFixed(2);
+      document.getElementById("totalLanes").innerText = Math.floor(totalLanes);
+
+      document.getElementById("resultSection").style.display = "block";
+    }
+  </script>
+</body>
+</html>
