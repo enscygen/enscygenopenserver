@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRD Randomizer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    label {
+      display: inline-block;
+      width: 220px;
+      margin-bottom: 8px;
+    }
+    input {
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      margin: 10px 5px 10px 0;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cell.highlighted {
+      background-color: #34495e !important;
+      color: white !important;
+    }
+    #summary, #gridContainer {
+      margin-top: 20px;
+    }
+    #summary {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    #grid {
+      display: grid;
+      gap: 6px;
+    }
+    .column-labels, .row-label {
+      font-weight: bold;
+      text-align: center;
+    }
+    .button-container, #positionsTable {
+      margin-top: 20px;
+    }
+    #positionsTable td {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+    }
+    #positionsTable {
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Completely Randomized Design (CRD) Generator</h2>
+  <label>Number of Treatments:</label><input type="number" id="treatments" min="1" value="3"><br>
+  <label>Number of Replications:</label><input type="number" id="replications" min="1" value="2"><br>
+  <label>Sub-replications per replication:</label><input type="number" id="subreplications"><br>
+  <label>Preferred Number of Rows:</label><input type="number" id="rows"><br>
+  <label>Length of Area (cm):</label><input type="number" id="length"><br>
+  <label>Breadth of Area (cm):</label><input type="number" id="breadth"><br>
+  <label>Bag Diameter (cm):</label><input type="number" id="bagdia"><br>
+  <button onclick="generateCRD()">Generate Layout</button>
+  <button onclick="saveAsImage()">Save as Image</button>
+  <button onclick="downloadCSV()">Download Layout as CSV</button>  <div id="output">
+    <div id="summary"></div>
+    <div id="gridContainer"></div>
+    <div class="button-container" id="treatmentButtons"></div>
+    <table id="positionsTable"></table>
+  </div>  <script>
+    let cellData = [];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function getColumnLabel(index) {
+      return String.fromCharCode(65 + index); // A-Z
+    }
+
+    function generateColorMap(treatments) {
+      const colors = [];
+      for (let i = 0; i < treatments; i++) {
+        const hue = (i * 360 / treatments) % 360;
+        colors.push(`hsl(${hue}, 70%, 80%)`);
+      }
+      return colors;
+    }
+
+    function generateCRD() {
+      const T = parseInt(document.getElementById("treatments").value);
+      const R = parseInt(document.getElementById("replications").value);
+      const S_raw = document.getElementById("subreplications").value;
+      const S = S_raw === "" ? 1 : parseInt(S_raw);
+      const rowsRaw = document.getElementById("rows").value;
+      const rows = rowsRaw === "" ? null : parseInt(rowsRaw);
+      const length = document.getElementById("length").value;
+      const breadth = document.getElementById("breadth").value;
+      const bagdia = document.getElementById("bagdia").value;
+
+      const totalPots = T * R * S;
+      const cols = rows ? Math.ceil(totalPots / rows) : Math.ceil(Math.sqrt(totalPots));
+      const actualRows = rows ? rows : Math.ceil(totalPots / cols);
+
+      const summary = document.getElementById("summary");
+      const gridContainer = document.getElementById("gridContainer");
+      const treatmentButtons = document.getElementById("treatmentButtons");
+      const positionsTable = document.getElementById("positionsTable");
+
+      gridContainer.innerHTML = "";
+      summary.innerHTML = "";
+      treatmentButtons.innerHTML = "";
+      positionsTable.innerHTML = "";
+
+      cellData = [];
+      const cells = [];
+      for (let t = 1; t <= T; t++) {
+        for (let r = 1; r <= R; r++) {
+          for (let s = 1; s <= S; s++) {
+            cells.push({
+              code: `T${t}R${r}${S_raw === "" ? "" : `(${s})`}`,
+              treatment: t
+            });
+          }
+        }
+      }
+
+      shuffle(cells);
+      const colorMap = generateColorMap(T);
+
+      const grid = document.createElement("div");
+      grid.id = "grid";
+      grid.style.gridTemplateColumns = `repeat(${cols + 1}, 60px)`;
+
+      for (let j = 0; j <= cols; j++) {
+        const div = document.createElement("div");
+        div.className = "cell column-labels";
+        div.textContent = j === 0 ? "" : getColumnLabel(j - 1);
+        grid.appendChild(div);
+      }
+
+      let index = 0;
+      for (let i = 1; i <= actualRows; i++) {
+        for (let j = 0; j <= cols; j++) {
+          const div = document.createElement("div");
+          div.className = "cell";
+          if (j === 0) {
+            div.textContent = i;
+            div.className = "cell column-labels";
+          } else if (index < cells.length) {
+            const entry = cells[index++];
+            div.textContent = entry.code;
+            div.style.backgroundColor = colorMap[entry.treatment - 1];
+            div.dataset.treatment = `T${entry.treatment}`;
+            div.dataset.position = `${getColumnLabel(j - 1)}${i}`;
+            cellData.push({ ...entry, position: `${getColumnLabel(j - 1)}${i}` });
+          }
+          grid.appendChild(div);
+        }
+      }
+
+      gridContainer.appendChild(grid);
+
+      let html = `<strong>Design:</strong> CRD<br>
+        <strong>Total Pots/Elements:</strong> ${totalPots}<br>
+        <strong>Treatments:</strong> ${T}<br>
+        <strong>Replications:</strong> ${R}<br>`;
+      if (S_raw !== "") html += `<strong>Sub-replications:</strong> ${S}<br>`;
+      if (length && breadth) {
+        const area = length * breadth;
+        html += `<strong>Area:</strong> ${length}×${breadth} cm = ${area} cm²<br>`;
+        if (bagdia) html += `<strong>Bag Diameter:</strong> ${bagdia} cm<br>`;
+        const rowSpacing = (length / actualRows).toFixed(1);
+        const colSpacing = (breadth / cols).toFixed(1);
+        html += `<strong>Row Spacing:</strong> ${rowSpacing} cm<br><strong>Column Spacing:</strong> ${colSpacing} cm<br>`;
+      }
+      summary.innerHTML = html;
+
+      for (let i = 1; i <= T; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = `T${i}`;
+        btn.onclick = () => highlightTreatment(`T${i}`);
+        treatmentButtons.appendChild(btn);
+      }
+    }
+
+    function highlightTreatment(treatmentCode) {
+      document.querySelectorAll(".cell").forEach(cell => {
+        if (cell.dataset.treatment === treatmentCode) {
+          cell.classList.add("highlighted");
+        } else {
+          cell.classList.remove("highlighted");
+        }
+      });
+
+      const filtered = cellData.filter(cell => `T${cell.treatment}` === treatmentCode);
+      const sorted = filtered.sort((a, b) => a.code.localeCompare(b.code));
+
+      const table = document.getElementById("positionsTable");
+      table.innerHTML = "<tr><th>Code</th><th>Position</th></tr>";
+      sorted.forEach(c => {
+        const row = table.insertRow();
+        row.insertCell(0).textContent = c.code;
+        row.insertCell(1).textContent = c.position;
+      });
+    }
+
+    function saveAsImage() {
+      html2canvas(document.getElementById("output"), {
+        windowWidth: document.body.scrollWidth,
+        windowHeight: document.body.scrollHeight
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = 'CRD_Layout.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+
+    function downloadCSV() {
+      let csv = "Code,Position\n";
+      const sortedData = [...cellData].sort((a, b) => a.code.localeCompare(b.code));
+      sortedData.forEach(c => {
+        csv += `${c.code},${c.position}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "CRD_Layout.csv";
+      link.click();
+    }
+  </script></body>
+</html>
