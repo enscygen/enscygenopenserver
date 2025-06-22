@@ -1,7 +1,9 @@
+
+
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CRD Randomizer</title>
+  <title>CRD Randomizer | Enscygen</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
@@ -82,12 +84,15 @@
   <label>Bag Diameter (cm):</label><input type="number" id="bagdia"><br>
   <button onclick="generateCRD()">Generate Layout</button>
   <button onclick="saveAsImage()">Save as Image</button>
-  <button onclick="downloadCSV()">Download Layout as CSV</button>  <div id="output">
+  <button onclick="downloadCSVLayout()">Download Layout as CSV</button>  <div id="output">
     <div id="summary"></div>
     <div id="gridContainer"></div>
     <div class="button-container" id="treatmentButtons"></div>
     <table id="positionsTable"></table>
   </div>  <script>
+    let layoutMatrix = [];
+    let actualRows = 0;
+    let cols = 0;
     let cellData = [];
 
     function shuffle(array) {
@@ -123,8 +128,8 @@
       const bagdia = document.getElementById("bagdia").value;
 
       const totalPots = T * R * S;
-      const cols = rows ? Math.ceil(totalPots / rows) : Math.ceil(Math.sqrt(totalPots));
-      const actualRows = rows ? rows : Math.ceil(totalPots / cols);
+      cols = rows ? Math.ceil(totalPots / rows) : Math.ceil(Math.sqrt(totalPots));
+      actualRows = rows ? rows : Math.ceil(totalPots / cols);
 
       const summary = document.getElementById("summary");
       const gridContainer = document.getElementById("gridContainer");
@@ -137,6 +142,8 @@
       positionsTable.innerHTML = "";
 
       cellData = [];
+      layoutMatrix = Array.from({ length: actualRows }, () => Array(cols).fill(""));
+
       const cells = [];
       for (let t = 1; t <= T; t++) {
         for (let r = 1; r <= R; r++) {
@@ -164,20 +171,22 @@
       }
 
       let index = 0;
-      for (let i = 1; i <= actualRows; i++) {
+      for (let i = 0; i < actualRows; i++) {
         for (let j = 0; j <= cols; j++) {
           const div = document.createElement("div");
           div.className = "cell";
           if (j === 0) {
-            div.textContent = i;
+            div.textContent = i + 1;
             div.className = "cell column-labels";
           } else if (index < cells.length) {
             const entry = cells[index++];
+            const position = `${getColumnLabel(j - 1)}${i + 1}`;
             div.textContent = entry.code;
             div.style.backgroundColor = colorMap[entry.treatment - 1];
             div.dataset.treatment = `T${entry.treatment}`;
-            div.dataset.position = `${getColumnLabel(j - 1)}${i}`;
-            cellData.push({ ...entry, position: `${getColumnLabel(j - 1)}${i}` });
+            div.dataset.position = position;
+            layoutMatrix[i][j - 1] = entry.code;
+            cellData.push({ ...entry, position });
           }
           grid.appendChild(div);
         }
@@ -206,6 +215,22 @@
         btn.onclick = () => highlightTreatment(`T${i}`);
         treatmentButtons.appendChild(btn);
       }
+    }
+
+    function downloadCSVLayout() {
+      let csv = ["," + Array.from({ length: cols }, (_, i) => getColumnLabel(i)).join(",")];
+      for (let i = 0; i < actualRows; i++) {
+        let row = [`${i + 1}`];
+        for (let j = 0; j < cols; j++) {
+          row.push(layoutMatrix[i][j] || "");
+        }
+        csv.push(row.join(","));
+      }
+      const blob = new Blob([csv.join("\n")], { type: 'text/csv' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "CRD_Layout_Grid.csv";
+      link.click();
     }
 
     function highlightTreatment(treatmentCode) {
@@ -239,19 +264,6 @@
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
-    }
-
-    function downloadCSV() {
-      let csv = "Code,Position\n";
-      const sortedData = [...cellData].sort((a, b) => a.code.localeCompare(b.code));
-      sortedData.forEach(c => {
-        csv += `${c.code},${c.position}\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "CRD_Layout.csv";
-      link.click();
     }
   </script></body>
 </html>
