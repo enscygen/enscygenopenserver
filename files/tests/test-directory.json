@@ -1,0 +1,122 @@
+[
+  {
+    "testid": "AAG2020",
+    "category": "KPSC Exams",
+    "testtitle": "Agricultural Assistant Grade II 2024",
+    "testquestions": "100",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/aag2020.json",
+    "testnote": "The following questions and answers were obtained from KPSC Cat. 528/2023, QPC. 126/24 of AGRICULTURAL ASSISTANT GR II."
+  },
+  {
+    "testid": "NRS100",
+    "category": "Book Based",
+    "testtitle": "Centers of origin of major crops - Basic agriculture practice series",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs100.json",
+    "testnote": ""
+  },
+  {
+    "testid": "NRS101",
+    "category": "Book Based",
+    "testtitle": "Location of major Agricultural Research Institutes in India",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs101.json",
+    "testnote": ""
+  },
+  {
+    "testid": "NRS102",
+    "category": "Book Based",
+    "testtitle": "Basic agriculture practice series - Nem Raj Sunda",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs102.json",
+    "testnote": ""
+  },
+  {
+    "testid": "NRS001",
+    "category": "Book Based",
+    "testtitle": "Chapter 3 Agronomy - Important Points - A Competitive Book of Agriculture - Practice Series",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs001.json",
+    "testnote": ""
+  },
+  {
+    "testid": "NRS002",
+    "category": "Book Based",
+    "testtitle": "Chapter 3 Agronomy - Unit 1 to 4 - A Competitive Book of Agriculture - Practice Series",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs002.json",
+    "testnote": ""
+  },
+  {
+    "testid": "NRS003",
+    "category": "Book Based",
+    "testtitle": "Chapter 3 Agronomy - Unit 5 to 6 - A Competitive Book of Agriculture - Practice Series",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.25",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/nrs003.json",
+    "testnote": ""
+  },
+  {
+    "testid": "POP0143",
+    "category": "POP",
+    "testtitle": "Rice - Package of Practices Kerala Agricultural University",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.33",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/POP0143.json",
+    "testnote": ""
+  },
+  {
+    "testid": "PSC5462023",
+    "category": "KPSC Exams",
+    "testtitle": "AGRICULTURAL OFFICER (NCA-ST) KSCARD 546/2023",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.33",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/PSC5462023.json",
+    "testnote": "The following questions and answers were obtained from KPSC Cat. 546/2023, QPC. 60/2024/OL of AGRICULTURAL OFFICER (NCA-ST)."
+  },
+  {
+    "testid": "PSC0322024",
+    "category": "KPSC Exams",
+    "testtitle": "FARM ASSISTANT GRADE II (AGRI) KAU 032/2024",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.33",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/PSC0322024.json",
+    "testnote": "The following questions and answers were obtained from KPSC Cat. 032/2024, QPC. 01/25 of FARM ASSISTANT GRADE II (AGRI)."
+  },
+  {
+    "testid": "AGRO23",
+    "category": "Disciplinary",
+    "testtitle": "AGRONOMY DISCIPLINE QUESTIONS",
+    "testquestions": "N/A",
+    "correctmark": "1",
+    "wrongmark": "0.33",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/gen/agro23.json",
+    "testnote": ""
+  },
+  {
+    "testid": "ICARPGPATH01",
+    "category": "Plant Pathology",
+    "testtitle": "ICAR PLANT PATHOLOGY PREPARATION SERIES 01",
+    "testquestions": "100",
+    "correctmark": "4",
+    "wrongmark": "1",
+    "testlink": "https://enscygen.github.io/enscygenopenserver/files/tests/agri/ICARPGPATH01.json",
+    "testnote": ""
+  }
+]
