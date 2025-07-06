@@ -2,7 +2,10 @@
     {
         "id": "scenario_001_tomato_late_blight",
         "name": "Late Blight on Tomato Plant",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_late_blight.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_late_blight_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_late_blight_2.jpg"
+        ],
         "description": "The tomato plant leaves show dark, water-soaked spots with fuzzy, white fungal growth on the underside. Some stems and fruits also appear to be affected. The plant appears to be wilting rapidly in some areas, especially after cool, humid periods.",
         "correct_diagnosis": "Late Blight (Phytophthora infestans)",
         "resource_points": 50,
@@ -50,7 +53,9 @@
     {
         "id": "scenario_002_corn_nitrogen_deficiency",
         "name": "Nitrogen Deficiency in Corn",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/corn_nitrogen_deficiency.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/corn_nitrogen_deficiency_1.jpg"
+        ],
         "description": "The corn leaves are uniformly yellowing, especially the older leaves, and growth appears stunted. The yellowing starts from the leaf tip and moves down the midrib, forming a 'V' shape.",
         "correct_diagnosis": "Nitrogen Deficiency",
         "resource_points": 40,
@@ -88,7 +93,10 @@
     {
         "id": "scenario_003_cucumber_powdery_mildew",
         "name": "Powdery Mildew on Cucumber",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cucumber_powdery_mildew.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cucumber_powdery_mildew_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cucumber_powdery_mildew_2.jpg"
+        ],
         "description": "White, powdery patches are visible on the upper and lower surfaces of cucumber leaves, as well as on stems. Affected leaves may turn yellow and shrivel.",
         "correct_diagnosis": "Powdery Mildew (Podosphaera xanthii)",
         "resource_points": 35,
@@ -123,7 +131,9 @@
     {
         "id": "scenario_004_tomato_bacterial_wilt",
         "name": "Bacterial Wilt on Tomato",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_bacterial_wilt.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_bacterial_wilt_1.jpg"
+        ],
         "description": "Tomato plant suddenly wilts during the day and recovers at night initially. Over time, wilting becomes permanent and the plant dies. When stems are cut, a milky ooze is visible.",
         "correct_diagnosis": "Bacterial Wilt (Ralstonia solanacearum)",
         "resource_points": 60,
@@ -163,7 +173,9 @@
     {
         "id": "scenario_005_rose_black_spot",
         "name": "Black Spot on Rose",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/rose_black_spot.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/rose_black_spot_1.jpg"
+        ],
         "description": "Rose leaves exhibit circular black spots with fringed or feathery margins, often surrounded by a yellow halo. Heavily infected leaves are prematurely falling off, starting from the bottom of the plant.",
         "correct_diagnosis": "Black Spot (Diplocarpon rosae)",
         "resource_points": 45,
@@ -198,7 +210,10 @@
     {
         "id": "scenario_006_potato_common_scab",
         "name": "Common Scab on Potato",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/potato_common_scab.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/potato_common_scab_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/potato_common_scab_2.jpg"
+        ],
         "description": "Potato tubers show rough, corky, irregularly shaped lesions that can be superficial, raised, or pitted. The lesions do not typically affect eating quality but reduce marketability. Foliage appears healthy.",
         "correct_diagnosis": "Common Scab (Streptomyces scabies)",
         "resource_points": 30,
@@ -228,7 +243,9 @@
     {
         "id": "scenario_007_cabbage_clubroot",
         "name": "Clubroot of Cabbage",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cabbage_clubroot.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cabbage_clubroot_1.jpg"
+        ],
         "description": "Cabbage plants are severely stunted and wilt during warm parts of the day, even with adequate soil moisture. Leaves turn yellowish or purplish. When plants are pulled, roots are swollen and distorted, forming 'clubs'.",
         "correct_diagnosis": "Clubroot (Plasmodiophora brassicae)",
         "resource_points": 55,
@@ -264,7 +281,10 @@
     {
         "id": "scenario_008_aphid_infestation_pepper",
         "name": "Aphid Infestation on Pepper",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/pepper_aphids.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/pepper_aphids_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/pepper_aphids_2.jpg"
+        ],
         "description": "Pepper plants show curled, distorted, and yellowed leaves, especially on new growth. Sticky, shiny residue (honeydew) is visible on leaves and stems, and small, pear-shaped insects are present on the undersides of leaves and growing tips.",
         "correct_diagnosis": "Aphid Infestation",
         "resource_points": 30,
@@ -295,7 +315,10 @@
     {
         "id": "scenario_009_grape_downy_mildew",
         "name": "Downy Mildew on Grapevine",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/grape_downy_mildew.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/grape_downy_mildew_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/grape_downy_mildew_2.jpg"
+        ],
         "description": "Grape leaves show irregular, yellowish-green spots on the upper surface, often appearing oily. On the corresponding lower surface, a white, cottony fungal growth is visible, particularly after humid nights. Infected leaves turn brown and fall off prematurely.",
         "correct_diagnosis": "Downy Mildew (Plasmopara viticola)",
         "resource_points": 48,
@@ -330,7 +353,10 @@
     {
         "id": "scenario_010_wheat_rust",
         "name": "Wheat Rust",
-        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/wheat_rust.jpg",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/wheat_rust_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/wheat_rust_2.jpg"
+        ],
         "description": "Wheat leaves and stems show small, raised, reddish-brown pustules that rupture the epidermis. When rubbed, an orange-brown powder comes off. Severe infections lead to yellowing, drying, and significant yield loss.",
         "correct_diagnosis": "Wheat Rust (Puccinia spp.)",
         "resource_points": 42,
@@ -359,6 +385,75 @@
             "pcr_test_general": {
                 "type": "text",
                 "text": "PCR test on infected tissue confirms the presence of Puccinia DNA."
+            }
+        }
+    },
+    {
+        "id": "scenario_011_cucumber_bacterial_blight",
+        "name": "Angular Leaf Spot on Cucumber",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cucumber_bacterial_blight_1.jpg"
+        ],
+        "description": "Cucumber leaves show small, water-soaked spots that become angular as they are restricted by leaf veins. These spots turn brown and may dry out, leaving irregular holes. Under high humidity, a white, milky exudate may be visible on the underside of the leaves.",
+        "correct_diagnosis": "Angular Leaf Spot (Pseudomonas syringae pv. lachrymans)",
+        "resource_points": 40,
+        "diagnostic_results": {
+            "visual_inspection_uppersurface": {
+                "type": "text",
+                "text": "Small, angular, water-soaked lesions visible, turning tan to brown, often bounded by veins."
+            },
+            "visual_inspection_lowersurface": {
+                "type": "text",
+                "text": "Under humid conditions, a whitish, bacterial exudate may be visible on the underside of lesions. Leaves are beginning to tear at dried lesions."
+            },
+            "ooze_test": {
+                "type": "text",
+                "text": "A faint bacterial ooze can be observed from cut sections of heavily infected petioles, but less pronounced than in bacterial wilt."
+            },
+            "microscopic_view_bacterial_cells": {
+                "type": "text",
+                "text": "Microscopic examination of exudate confirms numerous rod-shaped bacterial cells."
+            },
+            "culture_na": {
+                "type": "text",
+                "text": "Culture on Nutrient Agar (NA) produces white to cream-colored, circular bacterial colonies, typical of Pseudomonas species."
+            }
+        }
+    },
+    {
+        "id": "scenario_012_citrus_greening",
+        "name": "Citrus Greening (HLB)",
+        "images": [
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/citrus_greening_1.jpg",
+            "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/citrus_greening_2.jpg"
+        ],
+        "description": "Citrus tree shows blotchy mottle leaf patterns, asymmetrical yellowing of leaves (often on one side of the midrib), and small, lopsided, green-colored fruits that taste bitter. Some branches are dying back, and overall tree vigor is declining.",
+        "correct_diagnosis": "Citrus Greening (Candidatus Liberibacter asiaticus)",
+        "resource_points": 70,
+        "diagnostic_results": {
+            "visual_inspection_general": {
+                "type": "text",
+                "text": "Overall decline in tree health, with sparse canopy and some branch dieback. Fruits are abnormally small and misshapen."
+            },
+            "visual_inspection_uppersurface": {
+                "type": "text",
+                "text": "Leaves exhibit asymmetrical, blotchy yellowing (blotchy mottle) where one side of the leaf's midrib is yellow and the other is green. Veins may appear swollen."
+            },
+            "visual_inspection_fruit_flower": {
+                "type": "text",
+                "text": "Fruits are small, lopsided, and retain green color at the bottom, even when mature. Seeds are aborted and fruit taste is bitter."
+            },
+            "stem_split_test": {
+                "type": "text",
+                "text": "Splitting small twigs may reveal faint, irregular, brownish streaks in the phloem tissue, but often inconsistent."
+            },
+            "pcr_test_specific": {
+                "type": "text",
+                "text": "PCR amplification using specific primers for 'Candidatus Liberibacter asiaticus' (CLas) yields a strong positive result, confirming the presence of the pathogen's DNA."
+            },
+            "dna_sequencing": {
+                "type": "text",
+                "text": "DNA sequencing of the PCR product confirms the specific identity of Candidatus Liberibacter asiaticus."
             }
         }
     }
