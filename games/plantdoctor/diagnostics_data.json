@@ -1,0 +1,252 @@
+{
+    "groups": [
+        {
+            "group_id": "group_visual_examination",
+            "group_name": "Visual Examination",
+            "category": "Field Observations",
+            "procedures": [
+                {
+                    "id": "visual_inspection_general",
+                    "display_name": "General Plant Inspection",
+                    "cost": 3
+                },
+                {
+                    "id": "visual_inspection_uppersurface",
+                    "display_name": "Upper Leaf Surface",
+                    "cost": 5
+                },
+                {
+                    "id": "visual_inspection_lowersurface",
+                    "display_name": "Lower Leaf Surface",
+                    "cost": 5
+                },
+                {
+                    "id": "visual_inspection_stem",
+                    "display_name": "Stem & Branch Inspection",
+                    "cost": 4
+                },
+                {
+                    "id": "visual_inspection_fruit_flower",
+                    "display_name": "Fruit & Flower Inspection",
+                    "cost": 4
+                }
+            ]
+        },
+        {
+            "group_id": "group_physical_assessment",
+            "group_name": "Physical Assessment",
+            "category": "Field Observations",
+            "procedures": [
+                {
+                    "id": "root_examination",
+                    "display_name": "Root & Stem Base Examination",
+                    "cost": 7
+                },
+                {
+                    "id": "stem_split_test",
+                    "display_name": "Split Stem Examination",
+                    "cost": 6
+                },
+                {
+                    "id": "ooze_test",
+                    "display_name": "Bacterial Ooze Test",
+                    "cost": 8
+                },
+                {
+                    "id": "turgidity_test",
+                    "display_name": "Turgidity Test",
+                    "cost": 3
+                }
+            ]
+        },
+        {
+            "group_id": "group_quick_field_tests",
+            "group_name": "Quick Field Tests",
+            "category": "Field Observations",
+            "procedures": [
+                {
+                    "id": "starch_test",
+                    "display_name": "Starch Test (Iodine)",
+                    "cost": 9
+                },
+                {
+                    "id": "bacterial_stream_test",
+                    "display_name": "Bacterial Stream Test",
+                    "cost": 10
+                },
+                {
+                    "id": "leaf_press_test",
+                    "display_name": "Leaf Press Test (Mites)",
+                    "cost": 5
+                }
+            ]
+        },
+        {
+            "group_id": "group_microscopic_analysis",
+            "group_name": "Microscopic Studies",
+            "category": "Lab Analysis",
+            "procedures": [
+                {
+                    "id": "microscopic_view_fungal_spores",
+                    "display_name": "Microscopic View (Fungal Spores/Mycelia)",
+                    "cost": 15
+                },
+                {
+                    "id": "microscopic_view_bacterial_cells",
+                    "display_name": "Microscopic View (Bacterial Cells)",
+                    "cost": 15
+                },
+                {
+                    "id": "microscopic_view_nematodes",
+                    "display_name": "Microscopic View (Nematodes)",
+                    "cost": 18
+                },
+                {
+                    "id": "microscopic_view_section",
+                    "display_name": "Microscopic View (Tissue Section)",
+                    "cost": 20
+                },
+                {
+                    "id": "microscopic_view_mites_insects",
+                    "display_name": "Microscopic View (Mites/Small Insects)",
+                    "cost": 12
+                }
+            ]
+        },
+        {
+            "group_id": "group_cultural_studies",
+            "group_name": "Cultural Studies",
+            "category": "Lab Analysis",
+            "procedures": [
+                {
+                    "id": "culture_na",
+                    "display_name": "Bacterial Culture (Nutrient Agar)",
+                    "cost": 18
+                },
+                {
+                    "id": "culture_pda",
+                    "display_name": "Fungal Culture (Potato Dextrose Agar)",
+                    "cost": 18
+                },
+                {
+                    "id": "culture_pspa",
+                    "display_name": "Phytophthora/Pythium Culture (PSPA)",
+                    "cost": 20
+                },
+                {
+                    "id": "culture_selective_media",
+                    "display_name": "Pathogen-Specific Selective Media Culture",
+                    "cost": 22
+                }
+            ]
+        },
+        {
+            "group_id": "group_molecular_studies",
+            "group_name": "Molecular Studies",
+            "category": "Lab Analysis",
+            "procedures": [
+                {
+                    "id": "pcr_test_general",
+                    "display_name": "PCR Test (General Pathogen Detection)",
+                    "cost": 25
+                },
+                {
+                    "id": "pcr_test_specific",
+                    "display_name": "PCR Test (Species-Specific)",
+                    "cost": 30
+                },
+                {
+                    "id": "qpcr_test",
+                    "display_name": "qPCR Test (Quantitation)",
+                    "cost": 35
+                },
+                {
+                    "id": "elisa_test_antigen",
+                    "display_name": "ELISA Test (Antigen Detection)",
+                    "cost": 20
+                },
+                {
+                    "id": "elisa_test_antibody",
+                    "display_name": "ELISA Test (Antibody Detection)",
+                    "cost": 20
+                },
+                {
+                    "id": "dna_sequencing",
+                    "display_name": "DNA Sequencing (Pathogen Identification)",
+                    "cost": 50
+                }
+            ]
+        },
+        {
+            "group_id": "group_serological_tests",
+            "group_name": "Serological Tests",
+            "category": "Lab Analysis",
+            "procedures": [
+                {
+                    "id": "lateral_flow_immunoassay",
+                    "display_name": "Lateral Flow Immunoassay (Rapid Test Strip)",
+                    "cost": 15
+                }
+            ]
+        },
+        {
+            "group_id": "group_soil_environment",
+            "group_name": "Soil & Environmental Analysis",
+            "category": "Environmental Factors",
+            "procedures": [
+                {
+                    "id": "soil_ph_test",
+                    "display_name": "Soil pH Test",
+                    "cost": 7
+                },
+                {
+                    "id": "soil_nutrient_test",
+                    "display_name": "Soil Nutrient Analysis",
+                    "cost": 12
+                },
+                {
+                    "id": "soil_moisture_test",
+                    "display_name": "Soil Moisture Measurement",
+                    "cost": 5
+                },
+                {
+                    "id": "ambient_temperature_measurement",
+                    "display_name": "Ambient Temperature Measurement",
+                    "cost": 2
+                },
+                {
+                    "id": "humidity_measurement",
+                    "display_name": "Ambient Humidity Measurement",
+                    "cost": 2
+                }
+            ]
+        },
+        {
+            "group_id": "group_plant_tissue_analysis",
+            "group_name": "Plant Tissue Analysis",
+            "category": "Plant Analysis",
+            "procedures": [
+                {
+                    "id": "tissue_analysis_macronutrients",
+                    "display_name": "Tissue Macronutrient Analysis",
+                    "cost": 15
+                },
+                {
+                    "id": "tissue_analysis_micronutrients",
+                    "display_name": "Tissue Micronutrient Analysis",
+                    "cost": 15
+                },
+                {
+                    "id": "foliar_spray_residue_analysis",
+                    "display_name": "Residual Foliar Spray Analysis",
+                    "cost": 15
+                },
+                {
+                    "id": "chlorophyll_content_measurement",
+                    "display_name": "Chlorophyll Content Measurement",
+                    "cost": 10
+                }
+            ]
+        }
+    ]
+}
