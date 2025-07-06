@@ -2,7 +2,7 @@
     {
         "id": "scenario_001_tomato_late_blight",
         "name": "Late Blight on Tomato Plant",
-        "image": "/games/plantdoctor/images/tomato_late_blight.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_late_blight.jpg",
         "description": "The tomato plant leaves show dark, water-soaked spots with fuzzy, white fungal growth on the underside. Some stems and fruits also appear to be affected. The plant appears to be wilting rapidly in some areas, especially after cool, humid periods.",
         "correct_diagnosis": "Late Blight (Phytophthora infestans)",
         "resource_points": 50,
@@ -21,12 +21,12 @@
             },
             "microscopic_view_fungal_spores": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_phytophthora_sporangia.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_phytophthora_sporangia.jpg",
                 "text": "Microscopic examination reveals characteristic lemon-shaped sporangia and branched sporangiophores of Phytophthora infestans."
             },
             "culture_pspa": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/culture_phytophthora.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/culture_phytophthora.jpg",
                 "text": "Culture on PSPA selective media shows rapid, cottony growth with irregular margins, typical of Phytophthora species colonies."
             },
             "elisa_test_antigen": {
@@ -50,7 +50,7 @@
     {
         "id": "scenario_002_corn_nitrogen_deficiency",
         "name": "Nitrogen Deficiency in Corn",
-        "image": "/games/plantdoctor/images/corn_nitrogen_deficiency.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/corn_nitrogen_deficiency.jpg",
         "description": "The corn leaves are uniformly yellowing, especially the older leaves, and growth appears stunted. The yellowing starts from the leaf tip and moves down the midrib, forming a 'V' shape.",
         "correct_diagnosis": "Nitrogen Deficiency",
         "resource_points": 40,
@@ -88,7 +88,7 @@
     {
         "id": "scenario_003_cucumber_powdery_mildew",
         "name": "Powdery Mildew on Cucumber",
-        "image": "/games/plantdoctor/images/cucumber_powdery_mildew.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cucumber_powdery_mildew.jpg",
         "description": "White, powdery patches are visible on the upper and lower surfaces of cucumber leaves, as well as on stems. Affected leaves may turn yellow and shrivel.",
         "correct_diagnosis": "Powdery Mildew (Podosphaera xanthii)",
         "resource_points": 35,
@@ -103,7 +103,7 @@
             },
             "microscopic_view_fungal_spores": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_powdery_mildew.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_powdery_mildew.jpg",
                 "text": "Microscopic examination reveals chains of conidia (spores) and superficial mycelial growth characteristic of powdery mildew fungi, without internal hyphae."
             },
             "culture_pda": {
@@ -123,7 +123,7 @@
     {
         "id": "scenario_004_tomato_bacterial_wilt",
         "name": "Bacterial Wilt on Tomato",
-        "image": "/games/plantdoctor/images/tomato_bacterial_wilt.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/tomato_bacterial_wilt.jpg",
         "description": "Tomato plant suddenly wilts during the day and recovers at night initially. Over time, wilting becomes permanent and the plant dies. When stems are cut, a milky ooze is visible.",
         "correct_diagnosis": "Bacterial Wilt (Ralstonia solanacearum)",
         "resource_points": 60,
@@ -142,12 +142,12 @@
             },
             "microscopic_view_section": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_bacterial_wilt_section.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_bacterial_wilt_section.jpg",
                 "text": "Microscopic examination of a stem cross-section shows bacterial cells abundantly plugging xylem vessels."
             },
             "culture_na": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/culture_ralstonia.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/culture_ralstonia.jpg",
                 "text": "Culture on Nutrient Agar (NA) shows characteristic red-centered, irregular, fluidal colonies of Ralstonia solanacearum after 24-48 hours."
             },
             "pcr_test_specific": {
@@ -163,7 +163,7 @@
     {
         "id": "scenario_005_rose_black_spot",
         "name": "Black Spot on Rose",
-        "image": "/games/plantdoctor/images/rose_black_spot.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/rose_black_spot.jpg",
         "description": "Rose leaves exhibit circular black spots with fringed or feathery margins, often surrounded by a yellow halo. Heavily infected leaves are prematurely falling off, starting from the bottom of the plant.",
         "correct_diagnosis": "Black Spot (Diplocarpon rosae)",
         "resource_points": 45,
@@ -182,7 +182,7 @@
             },
             "microscopic_view_fungal_spores": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_black_spot.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_black_spot.jpg",
                 "text": "Microscopic examination of black spots reveals acervuli (fruiting bodies) containing conidia (spores) of Diplocarpon rosae."
             },
             "culture_pda": {
@@ -198,7 +198,7 @@
     {
         "id": "scenario_006_potato_common_scab",
         "name": "Common Scab on Potato",
-        "image": "/games/plantdoctor/images/potato_common_scab.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/potato_common_scab.jpg",
         "description": "Potato tubers show rough, corky, irregularly shaped lesions that can be superficial, raised, or pitted. The lesions do not typically affect eating quality but reduce marketability. Foliage appears healthy.",
         "correct_diagnosis": "Common Scab (Streptomyces scabies)",
         "resource_points": 30,
@@ -228,7 +228,7 @@
     {
         "id": "scenario_007_cabbage_clubroot",
         "name": "Clubroot of Cabbage",
-        "image": "/games/plantdoctor/images/cabbage_clubroot.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/cabbage_clubroot.jpg",
         "description": "Cabbage plants are severely stunted and wilt during warm parts of the day, even with adequate soil moisture. Leaves turn yellowish or purplish. When plants are pulled, roots are swollen and distorted, forming 'clubs'.",
         "correct_diagnosis": "Clubroot (Plasmodiophora brassicae)",
         "resource_points": 55,
@@ -239,12 +239,12 @@
             },
             "root_examination": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/clubroot_roots.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/clubroot_roots.jpg",
                 "text": "Roots are grotesquely swollen, malformed, and distorted, forming characteristic 'clubs' or galls. Fine roots are often absent."
             },
             "microscopic_view_section": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_clubroot_section.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_clubroot_section.jpg",
                 "text": "Microscopic examination of a root section reveals large, multi-nucleate plasmodia and resting spores of Plasmodiophora brassicae within root cells."
             },
             "soil_ph_test": {
@@ -264,7 +264,7 @@
     {
         "id": "scenario_008_aphid_infestation_pepper",
         "name": "Aphid Infestation on Pepper",
-        "image": "/games/plantdoctor/images/pepper_aphids.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/pepper_aphids.jpg",
         "description": "Pepper plants show curled, distorted, and yellowed leaves, especially on new growth. Sticky, shiny residue (honeydew) is visible on leaves and stems, and small, pear-shaped insects are present on the undersides of leaves and growing tips.",
         "correct_diagnosis": "Aphid Infestation",
         "resource_points": 30,
@@ -275,7 +275,7 @@
             },
             "visual_inspection_lowersurface": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/aphids_underside.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/aphids_underside.jpg",
                 "text": "Numerous small, pear-shaped insects, green and black in color, are clustered on the undersides of leaves and on tender new shoots. Some winged forms are present."
             },
             "visual_inspection_stem": {
@@ -295,7 +295,7 @@
     {
         "id": "scenario_009_grape_downy_mildew",
         "name": "Downy Mildew on Grapevine",
-        "image": "/games/plantdoctor/images/grape_downy_mildew.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/grape_downy_mildew.jpg",
         "description": "Grape leaves show irregular, yellowish-green spots on the upper surface, often appearing oily. On the corresponding lower surface, a white, cottony fungal growth is visible, particularly after humid nights. Infected leaves turn brown and fall off prematurely.",
         "correct_diagnosis": "Downy Mildew (Plasmopara viticola)",
         "resource_points": 48,
@@ -314,7 +314,7 @@
             },
             "microscopic_view_fungal_spores": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_plasmopara.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_plasmopara.jpg",
                 "text": "Microscopic examination reveals characteristic tree-like or dichotomously branched sporangiophores bearing lemon-shaped sporangia, typical of Plasmopara viticola."
             },
             "culture_pspa": {
@@ -330,7 +330,7 @@
     {
         "id": "scenario_010_wheat_rust",
         "name": "Wheat Rust",
-        "image": "/games/plantdoctor/images/wheat_rust.jpg",
+        "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/wheat_rust.jpg",
         "description": "Wheat leaves and stems show small, raised, reddish-brown pustules that rupture the epidermis. When rubbed, an orange-brown powder comes off. Severe infections lead to yellowing, drying, and significant yield loss.",
         "correct_diagnosis": "Wheat Rust (Puccinia spp.)",
         "resource_points": 42,
@@ -349,7 +349,7 @@
             },
             "microscopic_view_fungal_spores": {
                 "type": "image_and_text",
-                "image": "/games/plantdoctor/images/microscope_rust_urediniospores.jpg",
+                "image": "https://enscygen.github.io/enscygenopenserver/games/plantdoctor/diseases/microscope_rust_urediniospores.jpg",
                 "text": "Microscopic examination reveals characteristic orange-brown, echinulate (spiny) urediniospores, confirming a rust fungus."
             },
             "culture_pda": {
