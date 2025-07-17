@@ -2693,6 +2693,11 @@
         }
         updateMeasurementsList(); // Refresh the UI to show the item is gone.
     }
+    
+    // After the action is done (or if there was no action), hide the modal.
+    // The hideMessageModal function will safely reset the state.
+    hideMessageModal(); 
+});
 
         // --- Common Modal Close Handlers ---
         scaleModalCloseButton.addEventListener('click', hideScaleModal);
