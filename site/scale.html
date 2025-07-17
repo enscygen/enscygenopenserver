@@ -1782,29 +1782,42 @@ margin-bottom:20px;
         /**
          * Activates drawing area mode (polygon).
          */
+        
         drawAreaBtn.addEventListener('click', () => {
-            if (!currentImage || pixelsPerMM === 0) {
-                showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
-                return;
-            }
-            currentMode = 'drawingArea';
-            isDrawing = false;
-            currentDrawingLine = null;
-            isDrawingPolygon = true;
-            currentPolygonPoints = [];
-            setScaleBtn.classList.add('btn-primary');
-            setScaleBtn.classList.remove('btn-secondary');
-            setPixelScaleBtn.classList.add('btn-primary');
-            setPixelScaleBtn.classList.remove('btn-secondary');
-            drawLineBtn.classList.add('btn-primary');
-            drawLineBtn.classList.remove('btn-secondary');
-            drawAreaBtn.classList.remove('btn-primary');
-            drawAreaBtn.classList.add('btn-secondary');
-            addLineByValueBtn.classList.add('btn-primary');
-            addLineByValueBtn.classList.remove('btn-secondary');
-            drawCanvas();
-            console.log('Mode: Drawing Area - Click to add points, click near first point to complete.');
-        });
+    if (!currentImage || pixelsPerMM === 0) {
+        showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
+        return;
+    }
+
+    // NEW LOGIC: If already in drawingArea mode and a polygon is being drawn, complete it.
+    if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
+        completePolygon();
+        // After completing, you might want to remain in drawingArea mode
+        // or revert to idle, depending on desired UX.
+        // For this scenario, let's assume you want to remain in drawing mode
+        // to draw another area immediately. So, no change to currentMode here.
+    } else {
+        // Original logic for starting a new polygon drawing
+        currentMode = 'drawingArea';
+        isDrawing = false;
+        currentDrawingLine = null;
+        isDrawingPolygon = true;
+        currentPolygonPoints = []; // Start a new polygon
+        // Update button styles to reflect active mode
+        setScaleBtn.classList.add('btn-primary');
+        setScaleBtn.classList.remove('btn-secondary');
+        setPixelScaleBtn.classList.add('btn-primary');
+        setPixelScaleBtn.classList.remove('btn-secondary');
+        drawLineBtn.classList.add('btn-primary');
+        drawLineBtn.classList.remove('btn-secondary');
+        drawAreaBtn.classList.remove('btn-primary'); // Highlight "Draw Area" as active
+        drawAreaBtn.classList.add('btn-secondary');
+        addLineByValueBtn.classList.add('btn-primary');
+        addLineByValueBtn.classList.remove('btn-secondary');
+        console.log('Mode: Drawing Area - Click to add points, click near first point to complete.');
+    }
+    drawCanvas(); // Redraw to reflect changes
+});
 
         /**
          * Clears all lines and resets the scale.
@@ -2983,6 +2996,15 @@ margin-bottom:20px;
             // Convert millimeters to pixels
             return valueInMM * pixelsPerMM;
         }
+
+        document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault(); // Prevent default browser behavior (e.g., form submission)
+        if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
+            completePolygon();
+        }
+    }
+});
 
         // --- Initial Setup ---
         function resizeCanvasContainer() {
