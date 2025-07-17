@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Measurement Tool</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Universal box-sizing for consistent layout */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Custom CSS for the entire application */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            margin: 0;
+            padding: 20px; /* Add some padding around the app */
+            box-sizing: border-box;
+        }
+
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            overflow: hidden;
+            max-width: 1200px; /* Max width for larger screens */
+            width: 100%;
+            padding: 24px; /* Internal padding */
+            gap: 24px; /* Equivalent to gap-6 */
+        }
+
+        @media (min-width: 1024px) { /* Equivalent to lg breakpoint */
+            #app-container {
+                flex-direction: row;
+            }
+        }
+
+        .control-panel {
+            width: 100%;
+            background-color: #f8fafc; /* Equivalent to bg-gray-50 */
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06); /* Equivalent to shadow-inner */
+            display: flex;
+            flex-direction: column;
+            gap: 16px; /* Equivalent to gap-4 */
+        }
+
+        @media (min-width: 1024px) {
+            .control-panel {
+                width: 25%; /* Equivalent to lg:w-1/4 */
+            }
+        }
+
+        .control-panel h2 {
+            font-size: 1.5rem; /* Equivalent to text-2xl */
+            font-weight: 700; /* Equivalent to font-bold */
+            color: #1f2937; /* Equivalent to text-gray-800 */
+            margin-bottom: 16px; /* Equivalent to mb-4 */
+        }
+
+        .control-panel .mb-4 {
+            margin-bottom: 16px; /* Equivalent to mb-4 */
+        }
+
+        .control-panel label {
+            display: block;
+            font-size: 0.875rem; /* Equivalent to text-sm */
+            font-weight: 500; /* Equivalent to font-medium */
+            color: #374151; /* Equivalent to text-gray-700 */
+            margin-bottom: 8px; /* Equivalent to mb-2 */
+        }
+
+        .control-panel .flex-col-gap-3 {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Equivalent to gap-3 */
+        }
+
+        .control-panel .mt-4 {
+            margin-top: 16px; /* Equivalent to mt-4 */
+        }
+
+        .control-panel .mt-6 {
+            margin-top: 24px; /* Equivalent to mt-6 */
+        }
+
+        .control-panel .flex-grow {
+            flex-grow: 1;
+        }
+
+        .control-panel .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .control-panel .max-h-64 {
+            max-height: 16rem; /* Equivalent to max-h-64 (256px) */
+        }
+
+        .control-panel h3 {
+            font-size: 1.125rem; /* Equivalent to text-lg */
+            font-weight: 600; /* Equivalent to font-semibold */
+            color: #374151; /* Equivalent to text-gray-700 */
+            margin-bottom: 12px; /* Equivalent to mb-3 */
+        }
+
+        .control-panel .flex-col-gap-2 {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Equivalent to gap-2 */
+        }
+
+        .control-panel .text-gray-500 {
+            color: #6b7280; /* Equivalent to text-gray-500 */
+        }
+
+        .control-panel .text-sm {
+            font-size: 0.875rem; /* Equivalent to text-sm */
+        }
+
+        .control-panel .italic {
+            font-style: italic;
+        }
+
+        #canvas-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 1024px) {
+            #canvas-area {
+                width: 75%; /* Equivalent to lg:w-3/4 */
+            }
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e2e8f0; /* Lighter blue-gray for canvas background */
+            border-radius: 8px;
+            overflow: hidden; /* Reverted to hidden */
+        }
+
+        canvas {
+            display: block;
+            border-radius: 8px;
+            border: 2px dashed #d1d5db; /* Equivalent to border-2 border-dashed border-gray-300 */
+            max-width: 100%; /* Ensure canvas scales down if image is smaller than container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        #canvasPlaceholder {
+            position: absolute;
+            color: #9ca3af; /* Equivalent to text-gray-400 */
+            font-size: 1.125rem; /* Equivalent to text-lg */
+        }
+
+        #canvasPlaceholder.hidden {
+            display: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 100%; /* Equivalent to w-full */
+        }
+
+        .btn-primary {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca; /* Indigo 700 */
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0; /* Slate 200 */
+            color: #334155; /* Slate 700 */
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1; /* Slate 300 */
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #ef4444; /* Red 500 */
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626; /* Red 600 */
+            transform: translateY(-2px);
+        }
+
+        /* Input and select styling */
+        input[type="file"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1; /* Slate 300 */
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            background-color: #f8fafc; /* Slate 50 */
+            cursor: pointer;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background-color: #4338ca;
+        }
+
+        .measurement-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .measurement-item:last-child {
+            border-bottom: none;
+        }
+
+        .measurement-item span {
+            font-size: 0.9rem;
+            color: #475569; /* Slate 600 */
+        }
+
+        .measurement-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .measurement-item-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748b; /* Slate 500 */
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .measurement-item-actions button:hover {
+            color: #1e293b; /* Slate 900 */
+        }
+
+        /* Line Settings Modal */
+        #lineSettingsModal .modal-content,
+        #areaSettingsModal .modal-content,
+        #addLineModal .modal-content { /* Apply to all modals */
+            max-width: 350px;
+        }
+
+        #lineSettingsModal label,
+        #areaSettingsModal label,
+        #addLineModal label { /* Apply to all modals */
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            text-align: left;
+        }
+
+        #lineSettingsModal input[type="color"],
+        #lineSettingsModal input[type="number"],
+        #lineSettingsModal select,
+        #areaSettingsModal input[type="color"],
+        #areaSettingsModal input[type="number"],
+        #areaSettingsModal select,
+        #addLineModal input[type="number"],
+        #addLineModal select { /* Apply to all modals */
+            padding: 10px; /* Consistent padding */
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* Specific height for color inputs */
+        #lineSettingsModal input[type="color"],
+        #areaSettingsModal input[type="color"] {
+            height: 40px;
+        }
+
+        /* Message Modal */
+        #messageModal .modal-content {
+            max-width: 300px;
+            padding: 20px;
+        }
+        #messageModal p {
+            margin-bottom: 20px;
+        }
+        #messageModal button {
+            width: auto;
+            padding: 8px 15px;
+        }
+
+        #scaleInfo {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f2f7; /* Light cyan for info box */
+            border-radius: 8px;
+            border: 1px solid #b2ebf2; /* Cyan border */
+            font-size: 0.9rem;
+            color: #006064; /* Dark cyan text */
+        }
+        #scaleInfo p {
+            margin-bottom: 5px;
+        }
+        #scaleInfo p:last-child {
+            margin-bottom: 0;
+        }
+        #scaleInfo .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        #scaleInfo .checkbox-group input[type="checkbox"] {
+            width: auto; /* Override full width for checkbox */
+            margin-bottom: 0;
+        }
+        /* Style for the reset settings button in modals */
+        .modal-content .btn-reset {
+            background-color: #64748b; /* Slate 500 */
+            color: white;
+        }
+        .modal-content .btn-reset:hover {
+            background-color: #475569; /* Slate 600 */
+        }
+        .modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Image Measurement</h2>
+
+            <!-- Image Upload -->
+            <div class="mb-4">
+                <label for="imageInput">Upload Image:</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex-col-gap-3">
+                <button id="setScaleBtn" class="btn btn-primary" disabled>Set Scale (Draw Line)</button>
+                <button id="setPixelScaleBtn" class="btn btn-primary" disabled>Set Scale (1 Pixel)</button>
+                <button id="drawLineBtn" class="btn btn-primary" disabled>Draw Line</button>
+                <button id="drawAreaBtn" class="btn btn-primary" disabled>Draw Area</button>
+                <button id="clearAllBtn" class="btn btn-danger" disabled>Clear All</button>
+                <button id="saveImageBtn" class="btn btn-secondary" disabled>Save Image</button>
+            </div>
+
+            <!-- Display Unit Selection -->
+            <div class="mt-4">
+                <label for="displayUnitSelect">Display Units:</label>
+                <select id="displayUnitSelect" disabled>
+                    <option value="px">Pixels (px)</option>
+                    <option value="mm">Millimeters (mm)</option>
+                    <option value="cm">Centimeters (cm)</option>
+                    <option value="m">Meters (m)</option>
+                    <option value="um">Micrometers (µm)</option>
+                </select>
+            </div>
+
+            <!-- Scale Information -->
+            <div id="scaleInfo" style="display: none;">
+                <h3>Calibration Details:</h3>
+                <p id="imageWidthDisplay">Image Width: Not set</p>
+                <p id="imageHeightDisplay">Image Height: Not set</p>
+                <p id="calibrationRefDisplay">Reference: Not set</p>
+                <p id="pixelsPerCalibratedUnitDisplay">Pixels per Unit: Not set</p>
+                <p id="unitPerPixelDisplay">1 Image Pixel = Not set</p>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="toggleRefLine" checked>
+                    <label for="toggleRefLine">Show Reference Line</label>
+                </div>
+            </div>
+
+            <!-- Measurement List -->
+            <div class="mt-6 flex-grow overflow-y-auto max-h-64">
+                <h3>Measurements:</h3>
+                <div id="measurementsList" class="flex-col-gap-2">
+                    <p class="text-gray-500 text-sm italic">No measurements yet.</p>
+                </div>
+                <!-- NEW: Add Line by Value Button -->
+                <button id="addLineByValueBtn" class="btn btn-primary mt-4" disabled>
+                    <i class="fas fa-plus"></i> Add Line by Value
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div id="canvas-area">
+            <div id="canvas-container">
+                <canvas id="imageCanvas"></canvas>
+                <p id="canvasPlaceholder">Upload an image to begin</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scale Input Modal (for drawing reference line) -->
+    <div id="scaleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Set Reference Line Scale</h2>
+            <p class="mb-4 text-gray-700">Enter the real-world length of the line you just drew:</p>
+            <input type="number" id="scaleLengthInput" placeholder="Enter length" class="mb-3" step="any">
+            <select id="scaleUnitSelect" class="mb-5">
+                <option value="mm">Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+                <option value="m">Meters (m)</option>
+                <option value="um">Micrometers (µm)</option>
+            </select>
+            <button id="saveScaleBtn" class="btn btn-primary">Save Scale</button>
+        </div>
+    </div>
+
+    <!-- New: Pixel Scale Input Modal -->
+    <div id="pixelScaleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closePixelScaleModal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Set 1 Pixel Scale</h2>
+            <p class="mb-4 text-gray-700">Enter the real-world length that 1 image pixel represents:</p>
+            <input type="number" id="pixelLengthInput" placeholder="Enter length for 1 pixel" class="mb-3" step="any">
+            <select id="pixelUnitSelect" class="mb-5">
+                <option value="mm">Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+                <option value="m">Meters (m)</option>
+                <option value="um">Micrometers (µm)</option>
+            </select>
+            <button id="savePixelScaleBtn" class="btn btn-primary">Save Pixel Scale</button>
+        </div>
+    </div>
+
+    <!-- Line Settings Modal -->
+    <div id="lineSettingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeLineSettingsModal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Line Settings</h2>
+            <p class="mb-4 text-gray-700">Customize the selected line:</p>
+            <label for="lineColorPicker">Line Color:</label>
+            <input type="color" id="lineColorPicker" value="#ff0000" class="mb-3">
+            <label for="labelFontSizeInput">Label Font Size (px):</label>
+            <input type="number" id="labelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+            <label for="lineThicknessInput">Line Thickness (px):</label>
+            <input type="number" id="lineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+            <label for="labelFontColorPicker">Label Font Color:</label>
+            <input type="color" id="labelFontColorPicker" value="#000000" class="mb-3">
+            <label for="labelFontWeightSelect">Label Font Weight:</label>
+            <select id="labelFontWeightSelect" class="mb-3">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+                <option value="bolder">Bolder</option>
+                <option value="lighter">Lighter</option>
+            </select>
+            <label for="sideBarLengthInput">Side Bar Length (px):</label>
+            <input type="number" id="sideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
+            <!-- NEW: Label Vertical Offset -->
+            <label for="labelVerticalOffsetInput">Label Vertical Offset (px):</label>
+            <input type="number" id="labelVerticalOffsetInput" value="0" step="1" class="mb-3">
+            <!-- NEW: Rotate Label with Line Checkbox -->
+            <div class="checkbox-group mb-5">
+                <input type="checkbox" id="rotateLabelCheckbox">
+                <label for="rotateLabelCheckbox">Rotate Label with Line</label>
+            </div>
+            <div class="btn-group">
+                <button id="saveLineSettingsBtn" class="btn btn-primary">Save Settings</button>
+                <button id="resetLineSettingsBtn" class="btn btn-secondary btn-reset">Reset Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Settings Modal -->
+    <div id="areaSettingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAreaSettingsModal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Area Settings</h2>
+            <p class="mb-4 text-gray-700">Customize the selected area:</p>
+            <label for="areaStrokeColorPicker">Border Color:</label>
+            <input type="color" id="areaStrokeColorPicker" value="#0000ff" class="mb-3">
+            <label for="areaFillColorPicker">Fill Color:</label>
+            <input type="color" id="areaFillColorPicker" value="#0000ff80" class="mb-3"> <!-- Default semi-transparent blue -->
+            <label for="areaStrokeThicknessInput">Border Thickness (px):</label>
+            <input type="number" id="areaStrokeThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+            <label for="areaLabelFontSizeInput">Label Font Size (px):</label>
+            <input type="number" id="areaLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+            <label for="areaLabelFontColorPicker">Label Font Color:</label>
+            <input type="color" id="areaLabelFontColorPicker" value="#ffffff" class="mb-3">
+            <label for="areaLabelFontWeightSelect">Label Font Weight:</label>
+            <select id="areaLabelFontWeightSelect" class="mb-5">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+                <option value="bolder">Bolder</option>
+                <option value="lighter">Lighter</option>
+            </select>
+            <button id="saveAreaSettingsBtn" class="btn btn-primary">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- NEW: Add Line by Value Modal -->
+    <div id="addLineModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAddLineModal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Add Line by Value</h2>
+            <p class="mb-4 text-gray-700">Enter the desired length and orientation for the new line:</p>
+            <label for="newLineLengthInput">Line Length:</label>
+            <input type="number" id="newLineLengthInput" placeholder="Enter length" class="mb-3" step="any">
+            <label for="newLineUnitSelect">Unit:</label>
+            <select id="newLineUnitSelect" class="mb-3">
+                <option value="mm">Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+                <option value="m">Meters (m)</option>
+                <option value="um">Micrometers (µm)</option>
+            </select>
+            <label for="newLineOrientationSelect">Orientation:</label>
+            <select id="newLineOrientationSelect" class="mb-5">
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+            </select>
+            <button id="drawNewLineBtn" class="btn btn-primary">Draw Line</button>
+        </div>
+    </div>
+
+    <!-- Generic Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <p id="messageText"></p>
+            <button id="messageModalCloseBtn" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Global Variables ---
+        const imageInput = document.getElementById('imageInput');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const ctx = imageCanvas.getContext('2d');
+        const setScaleBtn = document.getElementById('setScaleBtn');
+        const setPixelScaleBtn = document.getElementById('setPixelScaleBtn');
+        const drawLineBtn = document = document.getElementById('drawLineBtn');
+        const drawAreaBtn = document.getElementById('drawAreaBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const saveImageBtn = document.getElementById('saveImageBtn');
+        const displayUnitSelect = document.getElementById('displayUnitSelect');
+        const measurementsList = document.getElementById('measurementsList');
+        const canvasPlaceholder = document.getElementById('canvasPlaceholder');
+        const canvasContainer = document.getElementById('canvas-container');
+
+        const scaleModal = document.getElementById('scaleModal');
+        const scaleModalCloseButton = scaleModal.querySelector('.close-button');
+        const scaleLengthInput = document.getElementById('scaleLengthInput');
+        const scaleUnitSelect = document.getElementById('scaleUnitSelect');
+        const saveScaleBtn = document.getElementById('saveScaleBtn');
+
+        const pixelScaleModal = document.getElementById('pixelScaleModal');
+        const closePixelScaleModalBtn = document.getElementById('closePixelScaleModal');
+        const pixelLengthInput = document.getElementById('pixelLengthInput');
+        const pixelUnitSelect = document.getElementById('pixelUnitSelect');
+        const savePixelScaleBtn = document.getElementById('savePixelScaleBtn');
+
+        const lineSettingsModal = document.getElementById('lineSettingsModal');
+        const closeLineSettingsModalBtn = document.getElementById('closeLineSettingsModal');
+        const lineColorPicker = document.getElementById('lineColorPicker');
+        const labelFontSizeInput = document.getElementById('labelFontSizeInput');
+        const lineThicknessInput = document.getElementById('lineThicknessInput');
+        const labelFontColorPicker = document.getElementById('labelFontColorPicker');
+        const labelFontWeightSelect = document.getElementById('labelFontWeightSelect');
+        const sideBarLengthInput = document.getElementById('sideBarLengthInput');
+        const labelVerticalOffsetInput = document.getElementById('labelVerticalOffsetInput');
+        const rotateLabelCheckbox = document.getElementById('rotateLabelCheckbox'); // NEW
+        const saveLineSettingsBtn = document.getElementById('saveLineSettingsBtn');
+        const resetLineSettingsBtn = document.getElementById('resetLineSettingsBtn'); // NEW
+
+        const areaSettingsModal = document.getElementById('areaSettingsModal');
+        const closeAreaSettingsModalBtn = document.getElementById('closeAreaSettingsModal');
+        const areaStrokeColorPicker = document.getElementById('areaStrokeColorPicker');
+        const areaFillColorPicker = document.getElementById('areaFillColorPicker');
+        const areaStrokeThicknessInput = document.getElementById('areaStrokeThicknessInput');
+        const areaLabelFontSizeInput = document.getElementById('areaLabelFontSizeInput');
+        const areaLabelFontColorPicker = document.getElementById('areaLabelFontColorPicker');
+        const areaLabelFontWeightSelect = document.getElementById('areaLabelFontWeightSelect');
+        const saveAreaSettingsBtn = document.getElementById('saveAreaSettingsBtn');
+
+        const addLineByValueBtn = document.getElementById('addLineByValueBtn');
+        const addLineModal = document.getElementById('addLineModal');
+        const closeAddLineModalBtn = document.getElementById('closeAddLineModal');
+        const newLineLengthInput = document.getElementById('newLineLengthInput');
+        const newLineUnitSelect = document.getElementById('newLineUnitSelect');
+        const newLineOrientationSelect = document.getElementById('newLineOrientationSelect');
+        const drawNewLineBtn = document.getElementById('drawNewLineBtn');
+
+        const messageModal = document.getElementById('messageModal');
+        const messageText = document.getElementById('messageText');
+        const messageModalCloseBtn = document.getElementById('messageModalCloseBtn');
+
+        const scaleInfoDiv = document.getElementById('scaleInfo');
+        const imageWidthDisplay = document.getElementById('imageWidthDisplay');
+        const imageHeightDisplay = document.getElementById('imageHeightDisplay');
+        const calibrationRefDisplay = document.getElementById('calibrationRefDisplay');
+        const pixelsPerCalibratedUnitDisplay = document.getElementById('pixelsPerCalibratedUnitDisplay');
+        const unitPerPixelDisplay = document.getElementById('unitPerPixelDisplay');
+        const toggleRefLineCheckbox = document.getElementById('toggleRefLine');
+
+        let originalImage = new Image();
+        let currentImage = null;
+        let imageAspectRatio = 1;
+
+        let currentMode = 'idle'; // 'idle', 'scaling', 'measuring', 'drawingArea'
+        let isDrawing = false; // For line drawing
+        let isDrawingPolygon = false; // For area drawing
+        let isDragging = false; // Flag for endpoint dragging (lines or polygon vertices)
+        let draggedLineIndex = -1; // -1 for no line, index for line
+        let draggedPolygonIndex = -1; // -1 for no polygon, index for polygon
+        let draggedPointType = ''; // 'start', 'end', 'vertex'
+        let draggedPolygonPointIndex = -1; // Index of the vertex being dragged
+
+        let isDraggingWholeShape = false; // Flag to indicate if an entire line/polygon is being dragged
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        let hoveredLineIndex = -1;
+        let hoveredPolygonIndex = -1;
+        let originalHoveredLineColor = '';
+        let originalHoveredLineFontColor = '';
+        let originalHoveredPolygonStrokeColor = '';
+        let originalHoveredPolygonFillColor = '';
+        let originalHoveredPolygonFontColor = '';
+
+
+        let pendingDeleteIndex = -1;
+        let pendingDeleteType = ''; // 'line' or 'area'
+
+        let referenceLine = null;
+        let measurementLines = [];
+        let measurementAreas = []; // array for polygons
+        let currentDrawingLine = null;
+        let currentPolygonPoints = []; // array for points of polygon being drawn
+
+        let pixelsPerMM = 0;
+        let scaleBaseUnit = 'mm';
+        let calibrationMethod = 'none';
+        let editingLineIndex = -1;
+        let editingAreaIndex = -1;
+        let showReferenceLine = true;
+
+        // NEW: Default and Current Line Settings for persistence
+        const defaultLineSettings = {
+            color: '#ff0000',
+            fontSize: 16,
+            thickness: 2,
+            fontColor: '#000000',
+            fontWeight: 'normal',
+            barLength: 10,
+            labelOffsetY: 0,
+            rotateLabel: false // NEW default
+        };
+
+        let currentLineSettings = { ...defaultLineSettings }; // Initialize with defaults
+
+        const unitConversionFactors = {
+            'um': 1000,
+            'mm': 1,
+            'cm': 0.1,
+            'm': 0.001,
+            'px': 1
+        };
+
+        // --- Utility Functions ---
+
+        /**
+         * Converts screen coordinates (from mouse/touch) to original image coordinates.
+         * This accounts for the image being scaled to fit the canvas.
+         * @param {Event} event - Mouse or Touch event.
+         * @returns {{x: number, y: number}} Original image coordinates.
+         */
+        function getCanvasCoordinates(event) {
+            const rect = imageCanvas.getBoundingClientRect(); // Get the current *display* size and position of the canvas
+            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+            const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+
+            // Calculate click position relative to the canvas element's top-left corner on screen
+            const xOnScreenCanvas = clientX - rect.left;
+            const yOnScreenCanvas = clientY - rect.top;
+
+            // Calculate the scale factor from the canvas's *display size* to its *internal drawing resolution*
+            // This is 1.0 if canvas.width matches rect.width, but important for high-DPI screens or CSS scaling
+            const scaleXInternal = imageCanvas.width / rect.width;
+            const scaleYInternal = imageCanvas.height / rect.height;
+
+            // Convert screen coordinates to internal canvas drawing coordinates
+            const internalCanvasX = xOnScreenCanvas * scaleXInternal;
+            const internalCanvasY = yOnScreenCanvas * scaleYInternal;
+
+            // Now, we need to convert these internal canvas coordinates back to the *original image's pixel space*.
+            // This requires reversing the transformation applied in drawCanvas for the image.
+            if (!originalImage || originalImage.width === 0 || originalImage.height === 0) return { x: 0, y: 0 }; // Handle case where no image is loaded or image is empty
+
+            const imgWidth = originalImage.width;
+            const imgHeight = originalImage.height;
+
+            let drawWidth = imageCanvas.width;
+            let drawHeight = imageCanvas.height;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            const canvasAspectRatio = imageCanvas.width / imageCanvas.height;
+            const imageAspectRatio = imgWidth / imgHeight;
+
+            if (imageAspectRatio > canvasAspectRatio) {
+                drawHeight = imageCanvas.width / imageAspectRatio;
+                offsetY = (imageCanvas.height - drawHeight) / 2;
+            } else {
+                drawWidth = imageCanvas.height * imageAspectRatio;
+                offsetX = (imageCanvas.width - drawWidth) / 2;
+            }
+
+            const scaleFactor = drawWidth / imgWidth;
+
+            // Reverse the translation and scaling applied to the image within drawCanvas
+            const originalImageX = (internalCanvasX - offsetX) / scaleFactor;
+            const originalImageY = (internalCanvasY - offsetY) / scaleFactor;
+
+            return {
+                x: originalImageX,
+                y: originalImageY
+            };
+        }
+
+        /**
+         * Checks if a point (in original image pixel coordinates) is within the bounds of the drawn image.
+         * @param {number} x - X coordinate in original image pixels.
+         * @param {number} y - Y coordinate in original image pixels.
+         * @returns {boolean} True if the point is within the image bounds, false otherwise.
+         */
+        function isPointWithinImage(x, y) {
+            if (!originalImage || originalImage.width === 0 || originalImage.height === 0) {
+                return false;
+            }
+            return x >= 0 && x <= originalImage.width && y >= 0 && y <= originalImage.height;
+        }
+
+        /**
+         * Calculates the Euclidean distance between two points.
+         * @param {{x: number, y: number}} p1
+         * @param {{x: number, y: number}} p2
+         * @returns {number} Distance in pixels.
+         */
+        function calculatePixelLength(p1, p2) {
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        }
+
+        /**
+         * Calculates the area of a polygon using the Shoelace formula.
+         * Points are expected in order (clockwise or counter-clockwise).
+         * @param {Array<Object>} points - An array of {x, y} objects representing polygon vertices.
+         * @returns {number} Area in square pixels.
+         */
+        function calculatePolygonArea(points) {
+            if (points.length < 3) return 0;
+            let area = 0;
+            for (let i = 0; i < points.length; i++) {
+                const p1 = points[i];
+                const p2 = points[(i + 1) % points.length]; // Wrap around to first point
+                area += (p1.x * p2.y - p1.y * p2.x);
+            }
+            return Math.abs(area / 2); // Area is always positive
+        }
+
+        /**
+         * Converts a pixel length to a specified real-world unit.
+         * @param {number} pixels - Length in pixels.
+         * @param {string} targetUnit - The unit to convert to ('mm', 'cm', 'm', 'um', 'px').
+         * @returns {number} Converted length.
+         */
+        function convertPixelsToUnit(pixels, targetUnit) {
+            if (targetUnit === 'px') {
+                return pixels;
+            }
+            if (pixelsPerMM === 0) {
+                return 0;
+            }
+
+            // Convert pixels to millimeters first
+            const lengthInMM = pixels / pixelsPerMM;
+
+            // Convert millimeters to the target unit
+            if (unitConversionFactors[targetUnit]) {
+                return lengthInMM * unitConversionFactors[targetUnit];
+            }
+            console.error('Unknown target unit:', targetUnit);
+            return 0;
+        }
+
+        /**
+         * Converts an area from square pixels to a specified real-world square unit.
+         * @param {number} areaInPx2 - Area in square pixels.
+         * @param {string} targetUnit - The base unit to convert to ('mm', 'cm', 'm', 'um', 'px').
+         * @returns {number} Converted area.
+         */
+        function convertAreaToUnit(areaInPx2, targetUnit) {
+            if (targetUnit === 'px') {
+                return areaInPx2;
+            }
+            if (pixelsPerMM === 0) {
+                return 0; // Cannot convert if scale not set
+            }
+            // Convert pixels^2 to mm^2 first
+            const areaInMM2 = areaInPx2 / (pixelsPerMM * pixelsPerMM);
+
+            // Convert mm^2 to target unit^2
+            const factor = unitConversionFactors[targetUnit];
+            if (factor) {
+                return areaInMM2 * (factor * factor);
+            }
+            console.error('Unknown target unit for area:', targetUnit);
+            return 0;
+        }
+
+        /**
+         * Draws a line with end bars on the canvas.
+         * Note: Line coordinates (line.start, line.end) and properties (width, barLength)
+         * are assumed to be in original image space. The canvas context is already scaled.
+         * @param {object} line - The line object {start: {x,y}, end: {x,y}}.
+         * @param {string} color - Line color.
+         * @param {number} width - Line width (in original image pixels).
+         * @param {number} barLength - Length of the end bars (in original image pixels).
+         */
+        function drawLine(line, color, width, barLength) {
+            if (!line || !line.start || !line.end) return;
+
+            ctx.beginPath();
+            ctx.moveTo(line.start.x, line.start.y);
+            ctx.lineTo(line.end.x, line.end.y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.stroke();
+
+            // Draw end bars
+            const angle = Math.atan2(line.end.y - line.start.y, line.end.x - line.start.x);
+            const currentBarLength = barLength;
+
+            // Start bar
+            ctx.beginPath();
+            ctx.moveTo(line.start.x - currentBarLength * Math.sin(angle), line.start.y + currentBarLength * Math.cos(angle));
+            ctx.lineTo(line.start.x + currentBarLength * Math.sin(angle), line.start.y - currentBarLength * Math.cos(angle));
+            ctx.stroke();
+
+            // End bar
+            ctx.beginPath();
+            ctx.moveTo(line.end.x - currentBarLength * Math.sin(angle), line.end.y + currentBarLength * Math.cos(angle));
+            ctx.lineTo(line.end.x + currentBarLength * Math.sin(angle), line.end.y - currentBarLength * Math.cos(angle));
+            ctx.stroke();
+        }
+
+        /**
+         * Draws text (length) near the center of a line, with optional vertical offset and rotation.
+         * Note: Text position is in original image space. Font size is given in original image pixels.
+         * @param {object} line - The line object.
+         * @param {string} text - The text to display.
+         * @param {string} fontColor - Text color.
+         * @param {number} fontSize - Font size in pixels (in original image pixels).
+         * @param {string} fontWeight - Font weight (e.g., 'normal', 'bold').
+         * @param {number} labelOffsetY - Vertical offset in pixels (positive for down, negative for up).
+         * @param {boolean} rotateLabel - If true, label rotates with the line.
+         */
+        function drawLineText(line, text, fontColor, fontSize, fontWeight, labelOffsetY = 0, rotateLabel = false) {
+            if (!line || !line.start || !line.end) return;
+
+            const midX = (line.start.x + line.end.x) / 2;
+            const midY = (line.start.y + line.end.y) / 2;
+
+            ctx.save(); // Save the current context state
+
+            ctx.translate(midX, midY); // Move origin to the center of the line
+
+            if (rotateLabel) {
+                const angle = Math.atan2(line.end.y - line.start.y, line.end.x - line.start.x);
+                ctx.rotate(angle); // Rotate to align with the line
+            }
+
+            ctx.fillStyle = fontColor;
+            ctx.font = `${fontWeight} ${fontSize}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle'; // Center vertically relative to the new origin
+
+            // Draw text with the vertical offset (now relative to the rotated/translated origin)
+            ctx.fillText(text, 0, labelOffsetY);
+
+            ctx.restore(); // Restore context to its previous state
+        }
+
+        /**
+         * Draws a polygon on the canvas.
+         * @param {object} polygon - The polygon object {points: Array<{x,y}>, strokeColor, fillColor, strokeThickness}.
+         */
+        function drawPolygon(polygon) {
+            if (!polygon || polygon.points.length < 2) return;
+
+            ctx.beginPath();
+            ctx.moveTo(polygon.points[0].x, polygon.points[0].y);
+            for (let i = 1; i < polygon.points.length; i++) {
+                ctx.lineTo(polygon.points[i].x, polygon.points[i].y);
+            }
+            if (polygon.points.length > 2) {
+                ctx.closePath(); // Close the path for a complete polygon
+            }
+
+            ctx.strokeStyle = polygon.strokeColor;
+            ctx.lineWidth = polygon.strokeThickness;
+            ctx.fillStyle = polygon.fillColor;
+
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw small circles at each vertex for better visibility/interactivity
+            polygon.points.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 3, 0, Math.PI * 2); // Radius in original image pixels
+                ctx.fillStyle = polygon.strokeColor;
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        /**
+         * Draws text (area) at the centroid of a polygon.
+         * @param {object} polygon - The polygon object.
+         * @param {string} text - The text to display (e.g., area value).
+         * @param {string} fontColor - Text color.
+         * @param {number} fontSize - Font size in pixels (in original image pixels).
+         * @param {string} fontWeight - Font weight.
+         */
+        function drawPolygonText(polygon, text, fontColor, fontSize, fontWeight) {
+            if (!polygon || polygon.points.length < 3) return;
+
+            // Calculate centroid for text placement
+            let centerX = 0;
+            let centerY = 0;
+            polygon.points.forEach(p => {
+                centerX += p.x;
+                centerY += p.y;
+            });
+            centerX /= polygon.points.length;
+            centerY /= polygon.points.length;
+
+            ctx.fillStyle = fontColor;
+            ctx.font = `${fontWeight} ${fontSize}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle'; // Center vertically
+            ctx.fillText(text, centerX, centerY);
+        }
+
+        /**
+         * Checks if a mouse click is near a line's endpoint or a polygon vertex for dragging.
+         * @param {object} shape - The line or polygon object.
+         * @param {number} mouseX - Mouse X coordinate (in original image pixels).
+         * @param {number} mouseY - Mouse Y coordinate (in original image pixels).
+         * @param {number} tolerance - Pixel tolerance for proximity (in original image pixels).
+         * @returns {string|null} 'start', 'end', 'vertex_N' (where N is index), or null.
+         */
+        function isNearEndpoint(shape, mouseX, mouseY, tolerance = 10) {
+            const effectiveTolerance = tolerance; // Tolerance is already in original image pixels
+
+            if (shape.type === 'line') {
+                const distToStart = calculatePixelLength({x: mouseX, y: mouseY}, shape.start);
+                const distToEnd = calculatePixelLength({x: mouseX, y: mouseY}, shape.end);
+
+                if (distToStart < effectiveTolerance) {
+                    return 'start';
+                } else if (distToEnd < effectiveTolerance) {
+                    return 'end';
+                }
+            } else if (shape.type === 'polygon') {
+                for (let i = 0; i < shape.points.length; i++) {
+                    const point = shape.points[i];
+                    const distToVertex = calculatePixelLength({x: mouseX, y: mouseY}, point);
+                    if (distToVertex < effectiveTolerance) {
+                        return `vertex_${i}`;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Checks if a point (mouseX, mouseY) is near a line segment or inside a polygon.
+         * @param {object} shape - The line or polygon object.
+         * @param {number} mouseX - Mouse X coordinate (in original image pixels).
+         * @param {number} mouseY - Mouse Y coordinate (in original image pixels).
+         * @param {number} tolerance - Pixel tolerance for proximity to the line (in original image pixels).
+         * @returns {boolean} True if the point is near the line segment or inside the polygon, false otherwise.
+         */
+        function isNearLineSegmentOrInsidePolygon(shape, mouseX, mouseY, tolerance = 5) {
+            const effectiveTolerance = tolerance; // Tolerance is already in original image pixels
+
+            if (shape.type === 'line') {
+                const x1 = shape.start.x;
+                const y1 = shape.start.y;
+                const x2 = shape.end.x;
+                const y2 = shape.end.y;
+
+                const L2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+                if (L2 === 0) {
+                    return calculatePixelLength({x: mouseX, y: mouseY}, shape.start) < effectiveTolerance;
+                }
+
+                const t = ((mouseX - x1) * (x2 - x1) + (mouseY - y1) * (y2 - y1)) / L2;
+                let closestX, closestY;
+                if (t < 0) {
+                    closestX = x1;
+                    closestY = y1;
+                } else if (t > 1) {
+                    closestX = x2;
+                    closestY = y2;
+                } else {
+                    closestX = x1 + t * (x2 - x1);
+                    closestY = y1 + t * (y2 - y1);
+                }
+                const distance = calculatePixelLength({x: mouseX, y: mouseY}, {x: closestX, y: closestY});
+                return distance < effectiveTolerance;
+            } else if (shape.type === 'polygon') {
+                // Point-in-polygon test for whole polygon drag
+                // Using ray-casting algorithm
+                let inside = false;
+                for (let i = 0, j = shape.points.length - 1; i < shape.points.length; j = i++) {
+                    let xi = shape.points[i].x, yi = shape.points[i].y;
+                    let xj = shape.points[j].x, yj = shape.points[j].y;
+
+                    let intersect = ((yi > mouseY) != (yj > mouseY)) &&
+                                    (mouseX < (xj - xi) * (mouseY - yi) / (yj - yi) + xi);
+                    if (intersect) inside = !inside;
+                }
+                // Also check if near any edge for easier grabbing
+                for (let i = 0; i < shape.points.length; i++) {
+                    const p1 = shape.points[i];
+                    const p2 = shape.points[(i + 1) % shape.points.length];
+                    // Use a slightly larger tolerance for edge detection for easier grabbing
+                    if (isNearLineSegmentOrInsidePolygon({start: p1, end: p2, type: 'line'}, mouseX, mouseY, tolerance * 2)) {
+                        return true; // Near an edge
+                    }
+                }
+                return inside; // Inside the polygon
+            }
+            return false;
+        }
+
+
+        /**
+         * Redraws the entire canvas content: image, reference line, and measurement lines/areas.
+         */
+        function drawCanvas() {
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+
+            if (currentImage) {
+                const imgWidth = originalImage.width;
+                const imgHeight = originalImage.height;
+
+                let drawWidth = imageCanvas.width;
+                let drawHeight = imageCanvas.height;
+                let offsetX = 0;
+                let offsetY = 0;
+
+                const canvasAspectRatio = imageCanvas.width / imageCanvas.height;
+                const imageAspectRatio = imgWidth / imgHeight;
+
+                if (imageAspectRatio > canvasAspectRatio) {
+                    // Image is wider relative to canvas, fit by width
+                    drawHeight = imageCanvas.width / imageAspectRatio;
+                    offsetY = (imageCanvas.height - drawHeight) / 2;
+                } else {
+                    // Image is taller relative to canvas, fit by height
+                    drawWidth = imageCanvas.height * imageAspectRatio;
+                    offsetX = (imageCanvas.width - drawWidth) / 2;
+                }
+
+                // Draw the image scaled to fit the canvas
+                ctx.drawImage(currentImage, offsetX, offsetY, drawWidth, drawHeight);
+
+                // Now, draw lines and polygons. Their coordinates are in original image space.
+                // We need to scale and translate the canvas context to match the drawn image.
+                ctx.save(); // Save the context state before applying transformations for drawings
+
+                const scaleFactor = drawWidth / imgWidth;
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scaleFactor, scaleFactor);
+
+                // Draw reference line
+                if (referenceLine && showReferenceLine) {
+                    const refLengthConverted = convertPixelsToUnit(referenceLine.lengthPx, displayUnitSelect.value);
+                    const refLengthFormatted = refLengthConverted.toFixed(2);
+                    const refDisplayText = `Scale: ${refLengthFormatted} ${displayUnitSelect.value}`;
+                    drawLine(referenceLine, 'blue', 2, 10); // Use original thickness/barLength
+                    drawLineText(referenceLine, refDisplayText, 'blue', 16, 'normal', 0, false); // Default offset and no rotation
+                }
+
+                // Draw measurement lines
+                measurementLines.forEach((line) => {
+                    drawLine(line, line.color, line.thickness, line.barLength);
+                    drawLineText(line, line.displayLength, line.fontColor, line.fontSize, line.fontWeight, line.labelOffsetY, line.rotateLabel);
+                });
+
+                // Draw measurement areas (polygons)
+                measurementAreas.forEach((area) => {
+                    drawPolygon({
+                        points: area.points,
+                        strokeColor: area.strokeColor,
+                        fillColor: area.fillColor,
+                        strokeThickness: area.strokeThickness
+                    });
+                    drawPolygonText(area, area.displayArea, area.fontColor, area.fontSize, area.fontWeight);
+                });
+
+                // Draw the line currently being drawn
+                if (isDrawing && currentDrawingLine) {
+                    drawLine(currentDrawingLine, 'green', 2, 10);
+                }
+
+                // Draw the polygon currently being drawn
+                if (isDrawingPolygon && currentPolygonPoints.length > 0) {
+                    drawPolygon({
+                        points: currentPolygonPoints,
+                        strokeColor: 'orange',
+                        fillColor: 'rgba(255,165,0,0.3)',
+                        strokeThickness: 2
+                    });
+                    // Draw temporary line from last point to mouse cursor (rubber band effect)
+                    if (currentPolygonPoints.length > 0 && currentDrawingLine) {
+                        ctx.beginPath();
+                        ctx.moveTo(currentPolygonPoints[currentPolygonPoints.length - 1].x, currentPolygonPoints[currentPolygonPoints.length - 1].y);
+                        ctx.lineTo(currentDrawingLine.end.x, currentDrawingLine.end.y);
+                        ctx.strokeStyle = 'orange';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.restore(); // Restore context to original state (before drawing lines/polygons)
+            }
+        }
+
+        /**
+         * Updates the list of measurements (lines and areas) displayed in the UI.
+         */
+        function updateMeasurementsList() {
+            measurementsList.innerHTML = '';
+            if (measurementLines.length === 0 && measurementAreas.length === 0) {
+                measurementsList.innerHTML = '<p class="text-gray-500 text-sm italic">No measurements yet.</p>';
+            } else {
+                const selectedUnit = displayUnitSelect.value;
+
+                // Add Lines to the list
+                measurementLines.forEach((line, index) => {
+                    const lengthPx = calculatePixelLength(line.start, line.end);
+                    const convertedLength = convertPixelsToUnit(lengthPx, selectedUnit);
+                    const formattedLength = convertedLength.toFixed(2);
+
+                    line.lengthPx = lengthPx;
+                    line.displayLength = `${formattedLength} ${selectedUnit}`;
+                    line.unit = selectedUnit;
+
+                    const listItem = document.createElement('div');
+                    listItem.className = 'measurement-item';
+                    listItem.innerHTML = `
+                        <span>Line ${index + 1}: ${line.displayLength}</span>
+                        <div class="measurement-item-actions">
+                            <button class="settings-btn" data-type="line" data-index="${index}" title="Line Settings">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="delete-btn" data-type="line" data-index="${index}" title="Delete Line">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    measurementsList.appendChild(listItem);
+                });
+
+                // Add Areas to the list
+                measurementAreas.forEach((area, index) => {
+                    const areaPx2 = calculatePolygonArea(area.points);
+                    const convertedArea = convertAreaToUnit(areaPx2, selectedUnit);
+                    const formattedArea = convertedArea.toFixed(2);
+                    const unitSymbol = selectedUnit === 'px' ? 'px²' : `${selectedUnit}²`;
+
+                    area.areaPx2 = areaPx2;
+                    area.displayArea = `${formattedArea} ${unitSymbol}`;
+                    area.unit = selectedUnit;
+
+                    const listItem = document.createElement('div');
+                    listItem.className = 'measurement-item';
+                    listItem.innerHTML = `
+                        <span>Area ${index + 1}: ${area.displayArea}</span>
+                        <div class="measurement-item-actions">
+                            <button class="settings-btn" data-type="area" data-index="${index}" title="Area Settings">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="delete-btn" data-type="area" data-index="${index}" title="Delete Area">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    measurementsList.appendChild(listItem);
+                });
+
+                addMeasurementListEventListeners();
+            }
+            drawCanvas(); // Always redraw the canvas after updating the list
+        }
+
+        /**
+         * Updates the scale information displayed in the control panel.
+         */
+        function updateScaleInfoDisplay() {
+            if (pixelsPerMM > 0) {
+                if (calibrationMethod === 'line') {
+                    calibrationRefDisplay.textContent = `Reference: ${parseFloat(scaleLengthInput.value)} ${scaleUnitSelect.value} (drawn line)`;
+                } else if (calibrationMethod === 'pixel') {
+                    calibrationRefDisplay.textContent = `Reference: 1 Image Pixel = ${parseFloat(pixelLengthInput.value)} ${pixelUnitSelect.value}`;
+                }
+
+                pixelsPerCalibratedUnitDisplay.textContent = `Pixels per ${scaleBaseUnit}: ${pixelsPerMM.toFixed(4)}`;
+
+                let unitPerPixel = (1 / pixelsPerMM);
+                let unitForDisplay = scaleBaseUnit;
+
+                unitPerPixelDisplay.textContent = `1 Image Pixel = ${unitPerPixel.toFixed(4)} ${unitForDisplay}`;
+
+                scaleInfoDiv.style.display = 'block';
+                toggleRefLineCheckbox.disabled = false;
+            } else {
+                calibrationRefDisplay.textContent = 'Reference: Not set';
+                pixelsPerCalibratedUnitDisplay.textContent = 'Pixels per Unit: Not set';
+                unitPerPixelDisplay.textContent = '1 Image Pixel = Not set';
+                scaleInfoDiv.style.display = 'none';
+                toggleRefLineCheckbox.disabled = true;
+            }
+        }
+
+        /**
+         * Adds event listeners to the settings and delete buttons in the measurement list.
+         */
+        function addMeasurementListEventListeners() {
+            document.querySelectorAll('.settings-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const index = parseInt(e.currentTarget.dataset.index);
+                    const type = e.currentTarget.dataset.type;
+                    if (type === 'line') {
+                        openLineSettingsModal(index);
+                    } else if (type === 'area') {
+                        openAreaSettingsModal(index);
+                    }
+                };
+            });
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.onclick = (e) => {
+                    const index = parseInt(e.currentTarget.dataset.index);
+                    const type = e.currentTarget.dataset.type;
+                    deleteShape(index, type); // Use a generic deleteShape function
+                };
+            });
+        }
+
+        /**
+         * Shows a generic message modal.
+         * @param {string} message - The message to display.
+         */
+        function showMessageModal(message) {
+            messageText.textContent = message;
+            messageModal.style.display = 'flex';
+        }
+
+        /**
+         * Hides the generic message modal.
+         */
+        function hideMessageModal() {
+            messageModal.style.display = 'none';
+        }
+
+        // --- Event Handlers ---
+
+        /**
+         * Handles image file selection.
+         */
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    originalImage.onload = () => {
+                        currentImage = originalImage;
+                        imageAspectRatio = originalImage.width / originalImage.height;
+
+                        imageCanvas.width = originalImage.width;
+                        imageCanvas.height = originalImage.height;
+
+                        canvasPlaceholder.classList.add('hidden');
+                        setScaleBtn.disabled = false;
+                        setPixelScaleBtn.disabled = false;
+                        drawLineBtn.disabled = true;
+                        drawAreaBtn.disabled = true;
+                        clearAllBtn.disabled = false;
+                        saveImageBtn.disabled = false;
+                        displayUnitSelect.disabled = false;
+                        toggleRefLineCheckbox.disabled = true;
+                        addLineByValueBtn.disabled = true; // Initially disabled until scale is set
+
+                        imageWidthDisplay.textContent = `Image Width: ${originalImage.width} px`;
+                        imageHeightDisplay.textContent = `Image Height: ${originalImage.height} px`;
+
+                        currentMode = 'idle';
+                        isDrawing = false;
+                        isDrawingPolygon = false;
+                        isDragging = false;
+                        isDraggingWholeShape = false;
+                        hoveredLineIndex = -1;
+                        hoveredPolygonIndex = -1;
+                        referenceLine = null;
+                        measurementLines = [];
+                        measurementAreas = [];
+                        currentPolygonPoints = [];
+                        pixelsPerMM = 0;
+                        calibrationMethod = 'none';
+                        updateMeasurementsList();
+                        updateScaleInfoDisplay();
+
+                        resizeCanvasContainer();
+                    };
+                    originalImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                currentImage = null;
+                imageCanvas.width = 0;
+                imageCanvas.height = 0;
+                canvasPlaceholder.classList.remove('hidden');
+                setScaleBtn.disabled = true;
+                setPixelScaleBtn.disabled = true;
+                drawLineBtn.disabled = true;
+                drawAreaBtn.disabled = true;
+                clearAllBtn.disabled = true;
+                saveImageBtn.disabled = true;
+                displayUnitSelect.disabled = true;
+                toggleRefLineCheckbox.disabled = true;
+                addLineByValueBtn.disabled = true;
+
+                imageWidthDisplay.textContent = 'Image Width: Not set';
+                imageHeightDisplay.textContent = 'Image Height: Not set';
+
+                measurementsList.innerHTML = '<p class="text-gray-500 text-sm italic">No measurements yet.</p>';
+                updateScaleInfoDisplay();
+
+                drawCanvas();
+            }
+        });
+
+        /**
+         * Activates scaling mode (draw line).
+         */
+        setScaleBtn.addEventListener('click', () => {
+            if (!currentImage) return;
+            currentMode = 'scaling';
+            referenceLine = null;
+            measurementLines = [];
+            measurementAreas = [];
+            pixelsPerMM = 0;
+            calibrationMethod = 'line';
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+            drawCanvas();
+            setScaleBtn.classList.remove('btn-primary');
+            setScaleBtn.classList.add('btn-secondary');
+            setPixelScaleBtn.classList.add('btn-primary');
+            setPixelScaleBtn.classList.remove('btn-secondary');
+            drawLineBtn.classList.add('btn-primary');
+            drawLineBtn.classList.remove('btn-secondary');
+            drawAreaBtn.classList.add('btn-primary');
+            drawAreaBtn.classList.remove('btn-secondary');
+            addLineByValueBtn.classList.add('btn-primary');
+            addLineByValueBtn.classList.remove('btn-secondary');
+            console.log('Mode: Scaling (Draw Line) - Draw your reference line.');
+        });
+
+        /**
+         * Activates pixel scale input mode.
+         */
+        setPixelScaleBtn.addEventListener('click', () => {
+            if (!currentImage) return;
+            currentMode = 'idle';
+            referenceLine = null;
+            measurementLines = [];
+            measurementAreas = [];
+            pixelsPerMM = 0;
+            calibrationMethod = 'pixel';
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+            drawCanvas();
+            showPixelScaleModal();
+            setPixelScaleBtn.classList.remove('btn-primary');
+            setPixelScaleBtn.classList.add('btn-secondary');
+            setScaleBtn.classList.add('btn-primary');
+            setScaleBtn.classList.remove('btn-secondary');
+            drawLineBtn.classList.add('btn-primary');
+            drawLineBtn.classList.remove('btn-secondary');
+            drawAreaBtn.classList.add('btn-primary');
+            drawAreaBtn.classList.remove('btn-secondary');
+            addLineByValueBtn.classList.add('btn-primary');
+            addLineByValueBtn.classList.remove('btn-secondary');
+            console.log('Mode: Setting Pixel Scale.');
+        });
+
+        /**
+         * Activates measuring mode (draw line).
+         */
+        drawLineBtn.addEventListener('click', () => {
+            if (!currentImage || pixelsPerMM === 0) {
+                showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
+                return;
+            }
+            currentMode = 'measuring';
+            isDrawingPolygon = false;
+            currentPolygonPoints = [];
+            setScaleBtn.classList.add('btn-primary');
+            setScaleBtn.classList.remove('btn-secondary');
+            setPixelScaleBtn.classList.add('btn-primary');
+            setPixelScaleBtn.classList.remove('btn-secondary');
+            drawLineBtn.classList.remove('btn-primary');
+            drawLineBtn.classList.add('btn-secondary');
+            drawAreaBtn.classList.add('btn-primary');
+            drawAreaBtn.classList.remove('btn-secondary');
+            addLineByValueBtn.classList.add('btn-primary');
+            addLineByValueBtn.classList.remove('btn-secondary');
+            drawCanvas();
+            console.log('Mode: Measuring - Draw your measurement lines.');
+        });
+
+        /**
+         * Activates drawing area mode (polygon).
+         */
+        drawAreaBtn.addEventListener('click', () => {
+            if (!currentImage || pixelsPerMM === 0) {
+                showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
+                return;
+            }
+            currentMode = 'drawingArea';
+            isDrawing = false;
+            currentDrawingLine = null;
+            isDrawingPolygon = true;
+            currentPolygonPoints = [];
+            setScaleBtn.classList.add('btn-primary');
+            setScaleBtn.classList.remove('btn-secondary');
+            setPixelScaleBtn.classList.add('btn-primary');
+            setPixelScaleBtn.classList.remove('btn-secondary');
+            drawLineBtn.classList.add('btn-primary');
+            drawLineBtn.classList.remove('btn-secondary');
+            drawAreaBtn.classList.remove('btn-primary');
+            drawAreaBtn.classList.add('btn-secondary');
+            addLineByValueBtn.classList.add('btn-primary');
+            addLineByValueBtn.classList.remove('btn-secondary');
+            drawCanvas();
+            console.log('Mode: Drawing Area - Click to add points, click near first point to complete.');
+        });
+
+        /**
+         * Clears all lines and resets the scale.
+         */
+        clearAllBtn.addEventListener('click', () => {
+            referenceLine = null;
+            measurementLines = [];
+            measurementAreas = [];
+            currentPolygonPoints = [];
+            isDrawingPolygon = false;
+            pixelsPerMM = 0;
+            calibrationMethod = 'none';
+            currentMode = 'idle';
+            isDrawing = false;
+            isDragging = false;
+            isDraggingWholeShape = false;
+            hoveredLineIndex = -1;
+            hoveredPolygonIndex = -1;
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+            drawCanvas();
+            setScaleBtn.classList.add('btn-primary');
+            setScaleBtn.classList.remove('btn-secondary');
+            setPixelScaleBtn.classList.add('btn-primary');
+            setPixelScaleBtn.classList.remove('btn-secondary');
+            drawLineBtn.classList.add('btn-primary');
+            drawLineBtn.classList.remove('btn-secondary');
+            drawAreaBtn.classList.add('btn-primary');
+            drawAreaBtn.classList.remove('btn-secondary');
+            addLineByValueBtn.classList.add('btn-primary');
+            addLineByValueBtn.classList.remove('btn-secondary');
+
+            drawLineBtn.disabled = true;
+            drawAreaBtn.disabled = true;
+            addLineByValueBtn.disabled = true;
+            toggleRefLineCheckbox.disabled = true;
+            toggleRefLineCheckbox.checked = true;
+            showReferenceLine = true;
+
+            imageWidthDisplay.textContent = 'Image Width: Not set';
+            imageHeightDisplay.textContent = 'Image Height: Not set';
+
+            // Reset currentLineSettings to default when clearing all
+            currentLineSettings = { ...defaultLineSettings };
+
+            console.log('All lines, areas, and scale cleared.');
+        });
+
+        /**
+         * Saves the current canvas content as a PNG image.
+         */
+        saveImageBtn.addEventListener('click', () => {
+            if (!currentImage) {
+                showMessageModal('No image to save. Please upload an image first.');
+                return;
+            }
+            const dataURL = imageCanvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'measured_image.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        /**
+         * Updates displayed lengths and areas when display unit changes.
+         */
+        displayUnitSelect.addEventListener('change', () => {
+            updateMeasurementsList();
+            if (pixelsPerMM > 0) {
+                updateScaleInfoDisplay();
+            }
+        });
+
+        toggleRefLineCheckbox.addEventListener('change', () => {
+            showReferenceLine = toggleRefLineCheckbox.checked;
+            drawCanvas();
+        });
+
+        // --- Mouse/Touch Event Handlers ---
+
+        function handleMouseDown(e) {
+            if (!currentImage) return;
+
+            const { x, y } = getCanvasCoordinates(e);
+
+            // Check if the click is within the image bounds before proceeding
+            if (!isPointWithinImage(x, y)) {
+                console.log('Click outside image bounds. Ignoring.');
+                return;
+            }
+
+            if (currentMode === 'scaling') {
+                isDrawing = true;
+                currentDrawingLine = { start: { x, y }, end: { x, y }, type: 'line' };
+            } else if (currentMode === 'measuring') {
+                // Check for dragging existing line endpoints
+                for (let i = 0; i < measurementLines.length; i++) {
+                    const line = measurementLines[i];
+                    const pointType = isNearEndpoint(line, x, y, 10);
+                    if (pointType) {
+                        isDragging = true;
+                        draggedLineIndex = i;
+                        draggedPointType = pointType;
+                        isDrawing = false;
+                        currentDrawingLine = null;
+                        return;
+                    }
+                }
+                // Check for dragging entire lines
+                for (let i = 0; i < measurementLines.length; i++) {
+                    const line = measurementLines[i];
+                    if (isNearLineSegmentOrInsidePolygon(line, x, y, 5)) {
+                        isDraggingWholeShape = true;
+                        draggedLineIndex = i;
+                        dragOffsetX = x - line.start.x;
+                        dragOffsetY = y - line.start.y;
+                        isDrawing = false;
+                        currentDrawingLine = null;
+                        return;
+                    }
+                }
+                // If not dragging existing, start drawing a new line
+                isDrawing = true;
+                currentDrawingLine = { start: { x, y }, end: { x, y }, type: 'line' };
+            } else if (currentMode === 'drawingArea') {
+                // Check for dragging existing polygon vertices
+                for (let i = 0; i < measurementAreas.length; i++) {
+                    const polygon = measurementAreas[i];
+                    const pointType = isNearEndpoint(polygon, x, y, 10);
+                    if (pointType && pointType.startsWith('vertex_')) {
+                        isDragging = true;
+                        draggedPolygonIndex = i;
+                        draggedPolygonPointIndex = parseInt(pointType.split('_')[1]);
+                        draggedPointType = 'vertex';
+                        isDrawingPolygon = false; // Stop drawing new polygon
+                        currentPolygonPoints = []; // Clear any partial polygon
+                        return;
+                    }
+                }
+                // Check for dragging entire polygons
+                for (let i = 0; i < measurementAreas.length; i++) {
+                    const polygon = measurementAreas[i];
+                    if (isNearLineSegmentOrInsidePolygon(polygon, x, y, 5)) {
+                        isDraggingWholeShape = true;
+                        draggedPolygonIndex = i;
+                        // Calculate offset from mouse to polygon's first point for dragging
+                        dragOffsetX = x - polygon.points[0].x;
+                        dragOffsetY = y - polygon.points[0].y;
+                        isDrawingPolygon = false; // Stop drawing new polygon
+                        currentPolygonPoints = []; // Clear any partial polygon
+                        return;
+                    }
+                }
+
+                // If not dragging existing, start/continue drawing a new polygon
+                if (!isDrawingPolygon) { // Start a new polygon
+                    isDrawingPolygon = true;
+                    currentPolygonPoints = [{ x, y }];
+                } else { // Add point to current polygon or complete it
+                    // Check if close to the first point to complete the polygon
+                    if (currentPolygonPoints.length > 0 && calculatePixelLength({ x, y }, currentPolygonPoints[0]) < 15) {
+                        completePolygon();
+                    } else {
+                        currentPolygonPoints.push({ x, y });
+                    }
+                }
+                drawCanvas();
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!currentImage) return;
+
+            const { x, y } = getCanvasCoordinates(e);
+
+            if (isDrawing && currentDrawingLine) {
+                currentDrawingLine.end = { x, y };
+                drawCanvas();
+            } else if (isDrawingPolygon && currentPolygonPoints.length > 0) {
+                currentDrawingLine = { start: currentPolygonPoints[currentPolygonPoints.length - 1], end: { x, y } };
+                drawCanvas();
+            } else if (isDragging && draggedLineIndex !== -1) {
+                const line = measurementLines[draggedLineIndex];
+                if (draggedPointType === 'start') {
+                    line.start = { x, y };
+                } else {
+                    line.end = { x, y };
+                }
+                updateMeasurementsList();
+                drawCanvas();
+            } else if (isDragging && draggedPolygonIndex !== -1 && draggedPointType === 'vertex') {
+                const polygon = measurementAreas[draggedPolygonIndex];
+                polygon.points[draggedPolygonPointIndex] = { x, y };
+                updateMeasurementsList();
+                drawCanvas();
+            } else if (isDraggingWholeShape && draggedLineIndex !== -1) {
+                const line = measurementLines[draggedLineIndex];
+                const newStartX = x - dragOffsetX;
+                const newStartY = y - dragOffsetY;
+                const deltaX = newStartX - line.start.x;
+                const deltaY = newStartY - line.start.y;
+
+                line.start.x += deltaX;
+                line.start.y += deltaY;
+                line.end.x += deltaX;
+                line.end.y += deltaY;
+
+                updateMeasurementsList();
+                drawCanvas();
+            } else if (isDraggingWholeShape && draggedPolygonIndex !== -1) {
+                const polygon = measurementAreas[draggedPolygonIndex];
+                const newFirstPointX = x - dragOffsetX;
+                const newFirstPointY = y - dragOffsetY;
+
+                const deltaX = newFirstPointX - polygon.points[0].x;
+                const deltaY = newFirstPointY - polygon.points[0].y;
+
+                polygon.points.forEach(p => {
+                    p.x += deltaX;
+                    p.y += deltaY;
+                });
+
+                updateMeasurementsList();
+                drawCanvas();
+            } else {
+                updateHoverState(x, y);
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (!currentImage) return;
+
+            if (isDrawing) {
+                isDrawing = false;
+                if (currentDrawingLine) {
+                    currentDrawingLine.lengthPx = calculatePixelLength(currentDrawingLine.start, currentDrawingLine.end);
+                    if (currentMode === 'scaling') {
+                        referenceLine = { ...currentDrawingLine, type: 'line' };
+                        showScaleModal();
+                    } else if (currentMode === 'measuring') {
+                        // Use currentLineSettings for new lines
+                        measurementLines.push({
+                            ...currentDrawingLine,
+                            ...currentLineSettings, // Apply current settings
+                            type: 'line'
+                        });
+                        updateMeasurementsList();
+                    }
+                }
+                currentDrawingLine = null;
+            } else if (isDragging || isDraggingWholeShape) {
+                if (draggedLineIndex !== -1) {
+                    measurementLines[draggedLineIndex].color = originalHoveredLineColor;
+                    measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
+                }
+                if (draggedPolygonIndex !== -1) {
+                    measurementAreas[draggedPolygonIndex].strokeColor = originalHoveredPolygonStrokeColor;
+                    measurementAreas[draggedPolygonIndex].fillColor = originalHoveredPolygonFillColor;
+                    measurementAreas[draggedPolygonIndex].fontColor = originalHoveredPolygonFontColor;
+                }
+                isDragging = false;
+                isDraggingWholeShape = false;
+                draggedLineIndex = -1;
+                draggedPolygonIndex = -1;
+                draggedPointType = '';
+                draggedPolygonPointIndex = -1;
+                dragOffsetX = 0;
+                dragOffsetY = 0;
+
+                const { x, y } = getCanvasCoordinates(e);
+                updateHoverState(x, y);
+                drawCanvas();
+            }
+        }
+
+        function handleMouseOut() {
+            if (isDrawing) {
+                isDrawing = false;
+                currentDrawingLine = null;
+                drawCanvas();
+            }
+            if (isDrawingPolygon && currentPolygonPoints.length > 0) {
+                currentDrawingLine = null;
+                drawCanvas();
+            }
+            if (isDragging || isDraggingWholeShape) {
+                if (draggedLineIndex !== -1) {
+                    measurementLines[draggedLineIndex].color = originalHoveredLineColor;
+                    measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
+                }
+                if (draggedPolygonIndex !== -1) {
+                    measurementAreas[draggedPolygonIndex].strokeColor = originalHoveredPolygonStrokeColor;
+                    measurementAreas[draggedPolygonIndex].fillColor = originalHoveredPolygonFillColor;
+                    measurementAreas[draggedPolygonIndex].fontColor = originalHoveredPolygonFontColor;
+                }
+                isDragging = false;
+                isDraggingWholeShape = false;
+                draggedLineIndex = -1;
+                draggedPolygonIndex = -1;
+                draggedPointType = '';
+                draggedPolygonPointIndex = -1;
+                dragOffsetX = 0;
+                dragOffsetY = 0;
+            }
+
+            if (hoveredLineIndex !== -1) {
+                measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
+                measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                drawCanvas();
+            }
+            if (hoveredPolygonIndex !== -1) {
+                measurementAreas[hoveredPolygonIndex].strokeColor = originalHoveredPolygonStrokeColor;
+                measurementAreas[hoveredPolygonIndex].fillColor = originalHoveredPolygonFillColor;
+                measurementAreas[hoveredPolygonIndex].fontColor = originalHoveredPolygonFontColor;
+                drawCanvas();
+            }
+            hoveredLineIndex = -1;
+            hoveredPolygonIndex = -1;
+            originalHoveredLineColor = '';
+            originalHoveredLineFontColor = '';
+            originalHoveredPolygonStrokeColor = '';
+            originalHoveredPolygonFillColor = '';
+            originalHoveredPolygonFontColor = '';
+            imageCanvas.style.cursor = 'default';
+        }
+
+        // --- Attach Mouse Events ---
+        imageCanvas.addEventListener('mousedown', handleMouseDown);
+        imageCanvas.addEventListener('mousemove', handleMouseMove);
+        imageCanvas.addEventListener('mouseup', handleMouseUp);
+        imageCanvas.addEventListener('mouseout', handleMouseOut);
+
+        // --- Attach Touch Events ---
+        imageCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleMouseDown(e);
+        });
+
+        imageCanvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            handleMouseMove(e);
+        });
+
+        imageCanvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleMouseUp(e);
+        });
+
+        imageCanvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            handleMouseOut();
+        });
+
+
+        /**
+         * Updates the hover state and cursor based on mouse position.
+         * @param {number} mouseX - Current mouse X coordinate on canvas (in original image pixels).
+         * @param {number} mouseY - Current mouse Y coordinate on canvas (in original image pixels).
+         */
+        function updateHoverState(mouseX, mouseY) {
+            if (isDrawing || isDrawingPolygon || isDragging || isDraggingWholeShape) {
+                return;
+            }
+
+            let newHoveredLineIndex = -1;
+            let newHoveredPolygonIndex = -1;
+            let newCursorStyle = 'default';
+
+            // Prioritize endpoint/vertex hover
+            for (let i = 0; i < measurementLines.length; i++) {
+                if (isNearEndpoint(measurementLines[i], mouseX, mouseY, 10)) {
+                    newHoveredLineIndex = i;
+                    newCursorStyle = 'pointer';
+                    break;
+                }
+            }
+            if (newHoveredLineIndex === -1) {
+                for (let i = 0; i < measurementAreas.length; i++) {
+                    if (isNearEndpoint(measurementAreas[i], mouseX, mouseY, 10)) {
+                        newHoveredPolygonIndex = i;
+                        newCursorStyle = 'pointer';
+                        break;
+                    }
+                }
+            }
+
+            // If no endpoint/vertex hovered, check whole shape hover
+            if (newHoveredLineIndex === -1 && newHoveredPolygonIndex === -1) {
+                for (let i = 0; i < measurementLines.length; i++) {
+                    if (isNearLineSegmentOrInsidePolygon(measurementLines[i], mouseX, mouseY, 5)) {
+                        newHoveredLineIndex = i;
+                        newCursorStyle = 'grab';
+                        break;
+                    }
+                }
+                if (newHoveredLineIndex === -1) {
+                    for (let i = 0; i < measurementAreas.length; i++) {
+                        if (isNearLineSegmentOrInsidePolygon(measurementAreas[i], mouseX, mouseY, 5)) {
+                            newHoveredPolygonIndex = i;
+                            newCursorStyle = 'grab';
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Apply/revert hover effects for lines
+            if (newHoveredLineIndex !== hoveredLineIndex) {
+                if (hoveredLineIndex !== -1) {
+                    measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
+                    measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                }
+                if (newHoveredLineIndex !== -1) {
+                    originalHoveredLineColor = measurementLines[newHoveredLineIndex].color;
+                    originalHoveredLineFontColor = measurementLines[newHoveredLineIndex].fontColor;
+                    measurementLines[newHoveredLineIndex].color = 'yellow';
+                    measurementLines[newHoveredLineIndex].fontColor = 'yellow';
+                }
+                hoveredLineIndex = newHoveredLineIndex;
+                drawCanvas();
+            }
+
+            // Apply/revert hover effects for polygons
+            if (newHoveredPolygonIndex !== hoveredPolygonIndex) {
+                if (hoveredPolygonIndex !== -1) {
+                    measurementAreas[hoveredPolygonIndex].strokeColor = originalHoveredPolygonStrokeColor;
+                    measurementAreas[hoveredPolygonIndex].fillColor = originalHoveredPolygonFillColor;
+                    measurementAreas[hoveredPolygonIndex].fontColor = originalHoveredPolygonFontColor;
+                }
+                if (newHoveredPolygonIndex !== -1) {
+                    originalHoveredPolygonStrokeColor = measurementAreas[newHoveredPolygonIndex].strokeColor;
+                    originalHoveredPolygonFillColor = measurementAreas[newHoveredPolygonIndex].fillColor;
+                    originalHoveredPolygonFontColor = measurementAreas[newHoveredPolygonIndex].fontColor;
+                    measurementAreas[newHoveredPolygonIndex].strokeColor = 'yellow';
+                    measurementAreas[newHoveredPolygonIndex].fillColor = 'rgba(255,255,0,0.4)';
+                    measurementAreas[newHoveredPolygonIndex].fontColor = 'yellow';
+                }
+                hoveredPolygonIndex = newHoveredPolygonIndex;
+                drawCanvas();
+            }
+
+            imageCanvas.style.cursor = newCursorStyle;
+        }
+
+        /**
+         * Completes the current polygon being drawn.
+         */
+        function completePolygon() {
+            if (currentPolygonPoints.length >= 3) {
+                const newPolygon = {
+                    points: [...currentPolygonPoints],
+                    strokeColor: '#0000ff',
+                    fillColor: 'rgba(0,0,255,0.3)',
+                    strokeThickness: 2,
+                    fontSize: 16,
+                    fontColor: '#ffffff',
+                    fontWeight: 'bold',
+                    type: 'polygon'
+                };
+                measurementAreas.push(newPolygon);
+                updateMeasurementsList();
+                console.log('Polygon completed and added to measurements.');
+            } else {
+                showMessageModal('A polygon requires at least 3 points to be completed. Drawing cancelled.');
+            }
+            isDrawingPolygon = false;
+            currentPolygonPoints = [];
+            currentDrawingLine = null;
+            currentMode = 'idle';
+            drawAreaBtn.classList.add('btn-primary');
+            drawAreaBtn.classList.remove('btn-secondary');
+            drawCanvas();
+        }
+
+
+        // --- Scale Modal Functions (for drawing reference line) ---
+
+        /**
+         * Displays the scale input modal.
+         */
+        function showScaleModal() {
+            scaleModal.style.display = 'flex';
+            scaleLengthInput.value = '';
+            scaleUnitSelect.value = 'mm';
+        }
+
+        /**
+         * Hides the scale input modal.
+         */
+        function hideScaleModal() {
+            scaleModal.style.display = 'none';
+        }
+
+        /**
+         * Handles saving the scale from the modal (for drawn reference line).
+         */
+        saveScaleBtn.addEventListener('click', () => {
+            const length = parseFloat(scaleLengthInput.value);
+            const unit = scaleUnitSelect.value;
+
+            if (isNaN(length) || length <= 0 || !referenceLine) {
+                showMessageModal('Please enter a valid positive length for the reference line.');
+                return;
+            }
+
+            let referenceLengthInMM;
+            switch (unit) {
+                case 'um': referenceLengthInMM = length / 1000; break;
+                case 'mm': referenceLengthInMM = length; break;
+                case 'cm': referenceLengthInMM = length * 10; break;
+                case 'm': referenceLengthInMM = length * 1000; break;
+                default: referenceLengthInMM = length;
+            }
+
+            pixelsPerMM = referenceLine.lengthPx / referenceLengthInMM;
+            scaleBaseUnit = unit;
+
+            console.log(`Scale set (Draw Line): ${pixelsPerMM.toFixed(2)} pixels per mm (based on ${length} ${unit} = ${referenceLine.lengthPx.toFixed(0)} px)`);
+
+            hideScaleModal();
+            drawLineBtn.disabled = false;
+            drawAreaBtn.disabled = false;
+            addLineByValueBtn.disabled = false;
+            currentMode = 'idle';
+            drawCanvas();
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+        });
+
+        // --- Pixel Scale Modal Functions (for 1 pixel value) ---
+
+        /**
+         * Displays the pixel scale input modal.
+         */
+        function showPixelScaleModal() {
+            pixelScaleModal.style.display = 'flex';
+            pixelLengthInput.value = '';
+            pixelUnitSelect.value = 'mm';
+        }
+
+        /**
+         * Hides the pixel scale input modal.
+         */
+        function hidePixelScaleModal() {
+            pixelScaleModal.style.display = 'none';
+        }
+
+        /**
+         * Handles saving the pixel scale from the modal.
+         */
+        savePixelScaleBtn.addEventListener('click', () => {
+            const length = parseFloat(pixelLengthInput.value);
+            const unit = pixelUnitSelect.value;
+
+            if (isNaN(length) || length <= 0) {
+                showMessageModal('Please enter a valid positive length for 1 image pixel.');
+                return;
+            }
+
+            let pixelLengthInMM;
+            switch (unit) {
+                case 'um': pixelLengthInMM = length / 1000; break;
+                case 'mm': pixelLengthInMM = length; break;
+                case 'cm': pixelLengthInMM = length * 10; break;
+                case 'm': pixelLengthInMM = length * 1000; break;
+                default: pixelLengthInMM = length;
+            }
+
+            pixelsPerMM = 1 / pixelLengthInMM;
+            scaleBaseUnit = unit;
+
+            console.log(`Scale set (1 Pixel): 1 pixel = ${length} ${unit} (${pixelsPerMM.toFixed(2)} pixels per mm)`);
+
+            hidePixelScaleModal();
+            drawLineBtn.disabled = false;
+            drawAreaBtn.disabled = false;
+            addLineByValueBtn.disabled = false;
+            currentMode = 'idle';
+            drawCanvas();
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+        });
+
+
+        // --- Common Modal Close Handlers ---
+        scaleModalCloseButton.addEventListener('click', hideScaleModal);
+        closePixelScaleModalBtn.addEventListener('click', hidePixelScaleModal);
+        closeAreaSettingsModalBtn.addEventListener('click', hideAreaSettingsModal);
+        closeAddLineModalBtn.addEventListener('click', hideAddLineModal);
+
+        window.addEventListener('click', (event) => {
+            if (event.target === scaleModal) {
+                hideScaleModal();
+            }
+            if (event.target === pixelScaleModal) {
+                hidePixelScaleModal();
+            }
+            if (event.target === lineSettingsModal) {
+                hideLineSettingsModal();
+            }
+            if (event.target === areaSettingsModal) {
+                hideAreaSettingsModal();
+            }
+            if (event.target === addLineModal) {
+                hideAddLineModal();
+            }
+            if (event.target === messageModal) {
+                if (pendingDeleteIndex !== -1) {
+                    if (pendingDeleteType === 'line') {
+                        measurementLines.splice(pendingDeleteIndex, 1);
+                    } else if (pendingDeleteType === 'area') {
+                        measurementAreas.splice(pendingDeleteIndex, 1);
+                    }
+                    updateMeasurementsList();
+                    pendingDeleteIndex = -1;
+                    pendingDeleteType = '';
+                }
+                hideMessageModal();
+            }
+        });
+
+        // --- Line Settings Modal Functions ---
+
+        /**
+         * Opens the line settings modal for a specific line.
+         * @param {number} index - The index of the line to edit.
+         */
+        function openLineSettingsModal(index) {
+            editingLineIndex = index;
+            const line = measurementLines[index];
+            if (line) {
+                lineColorPicker.value = line.color || defaultLineSettings.color;
+                labelFontSizeInput.value = line.fontSize || defaultLineSettings.fontSize;
+                lineThicknessInput.value = line.thickness || defaultLineSettings.thickness;
+                labelFontColorPicker.value = line.fontColor || defaultLineSettings.fontColor;
+                labelFontWeightSelect.value = line.fontWeight || defaultLineSettings.fontWeight;
+                sideBarLengthInput.value = line.barLength || defaultLineSettings.barLength;
+                labelVerticalOffsetInput.value = line.labelOffsetY || defaultLineSettings.labelOffsetY;
+                rotateLabelCheckbox.checked = line.rotateLabel !== undefined ? line.rotateLabel : defaultLineSettings.rotateLabel; // NEW
+                lineSettingsModal.style.display = 'flex';
+            }
+        }
+
+        /**
+         * Hides the line settings modal.
+         */
+        function hideLineSettingsModal() {
+            lineSettingsModal.style.display = 'none';
+            editingLineIndex = -1;
+        }
+
+        /**
+         * Handles saving line settings from the modal.
+         */
+        saveLineSettingsBtn.addEventListener('click', () => {
+            if (editingLineIndex !== -1) {
+                const line = measurementLines[editingLineIndex];
+                line.color = lineColorPicker.value;
+                line.fontSize = parseInt(labelFontSizeInput.value);
+                line.thickness = parseInt(lineThicknessInput.value);
+                line.fontColor = labelFontColorPicker.value;
+                line.fontWeight = labelFontWeightSelect.value;
+                line.barLength = parseInt(sideBarLengthInput.value);
+                line.labelOffsetY = parseInt(labelVerticalOffsetInput.value);
+                line.rotateLabel = rotateLabelCheckbox.checked; // NEW
+
+                if (isNaN(line.fontSize) || line.fontSize < 8 || line.fontSize > 48) {
+                    line.fontSize = 16;
+                    showMessageModal('Font size must be between 8 and 48 pixels. Resetting to 16px.');
+                }
+                if (isNaN(line.thickness) || line.thickness < 1 || line.thickness > 10) {
+                    line.thickness = 2;
+                    showMessageModal('Line thickness must be between 1 and 10 pixels. Resetting to 2px.');
+                }
+                if (isNaN(line.barLength) || line.barLength < 0 || line.barLength > 30) {
+                    line.barLength = 10;
+                    showMessageModal('Side bar length must be between 0 and 30 pixels. Resetting to 10px.');
+                }
+                if (isNaN(line.labelOffsetY)) {
+                    line.labelOffsetY = 0;
+                    showMessageModal('Label offset must be a number. Resetting to 0px.');
+                }
+
+                // Update currentLineSettings for persistence
+                currentLineSettings = {
+                    color: line.color,
+                    fontSize: line.fontSize,
+                    thickness: line.thickness,
+                    fontColor: line.fontColor,
+                    fontWeight: line.fontWeight,
+                    barLength: line.barLength,
+                    labelOffsetY: line.labelOffsetY,
+                    rotateLabel: line.rotateLabel
+                };
+
+                updateMeasurementsList();
+                hideLineSettingsModal();
+            }
+        });
+
+        // NEW: Reset Line Settings Button
+        resetLineSettingsBtn.addEventListener('click', () => {
+            if (editingLineIndex !== -1) {
+                const line = measurementLines[editingLineIndex];
+
+                // Apply default settings to the current line object
+                line.color = defaultLineSettings.color;
+                line.fontSize = defaultLineSettings.fontSize;
+                line.thickness = defaultLineSettings.thickness;
+                line.fontColor = defaultLineSettings.fontColor;
+                line.fontWeight = defaultLineSettings.fontWeight;
+                line.barLength = defaultLineSettings.barLength;
+                line.labelOffsetY = defaultLineSettings.labelOffsetY;
+                line.rotateLabel = defaultLineSettings.rotateLabel;
+
+                // Update modal inputs to reflect default settings
+                lineColorPicker.value = defaultLineSettings.color;
+                labelFontSizeInput.value = defaultLineSettings.fontSize;
+                lineThicknessInput.value = defaultLineSettings.thickness;
+                labelFontColorPicker.value = defaultLineSettings.fontColor;
+                labelFontWeightSelect.value = defaultLineSettings.fontWeight;
+                sideBarLengthInput.value = defaultLineSettings.barLength;
+                labelVerticalOffsetInput.value = defaultLineSettings.labelOffsetY;
+                rotateLabelCheckbox.checked = defaultLineSettings.rotateLabel;
+
+                // Also update currentLineSettings so subsequent new lines use defaults
+                currentLineSettings = { ...defaultLineSettings };
+
+                updateMeasurementsList(); // Redraw canvas and update list
+                showMessageModal('Line settings reset to default for this line.');
+            }
+        });
+
+        // --- Area Settings Modal Functions ---
+
+        /**
+         * Opens the area settings modal for a specific polygon.
+         * @param {number} index - The index of the polygon to edit.
+         */
+        function openAreaSettingsModal(index) {
+            editingAreaIndex = index;
+            const area = measurementAreas[index];
+            if (area) {
+                areaStrokeColorPicker.value = area.strokeColor || '#0000ff';
+                areaFillColorPicker.value = area.fillColor || '#0000ff80';
+                areaStrokeThicknessInput.value = area.strokeThickness || 2;
+                areaLabelFontSizeInput.value = area.fontSize || 16;
+                areaLabelFontColorPicker.value = area.fontColor || '#ffffff';
+                areaLabelFontWeightSelect.value = area.fontWeight || 'bold';
+                areaSettingsModal.style.display = 'flex';
+            }
+        }
+
+        /**
+         * Hides the area settings modal.
+         */
+        function hideAreaSettingsModal() {
+            areaSettingsModal.style.display = 'none';
+            editingAreaIndex = -1;
+        }
+
+        /**
+         * Handles saving area settings from the modal.
+         */
+        saveAreaSettingsBtn.addEventListener('click', () => {
+            if (editingAreaIndex !== -1) {
+                const area = measurementAreas[editingAreaIndex];
+                area.strokeColor = areaStrokeColorPicker.value;
+                area.fillColor = areaFillColorPicker.value;
+                area.strokeThickness = parseInt(areaStrokeThicknessInput.value);
+                area.fontSize = parseInt(areaLabelFontSizeInput.value);
+                area.fontColor = areaLabelFontColorPicker.value;
+                area.fontWeight = areaLabelFontWeightSelect.value;
+
+                if (isNaN(area.fontSize) || area.fontSize < 8 || area.fontSize > 48) {
+                    area.fontSize = 16;
+                    showMessageModal('Font size must be between 8 and 48 pixels. Resetting to 16px.');
+                }
+                if (isNaN(area.strokeThickness) || area.strokeThickness < 1 || area.strokeThickness > 10) {
+                    area.strokeThickness = 2;
+                    showMessageModal('Border thickness must be between 1 and 10 pixels. Resetting to 2px.');
+                }
+
+                updateMeasurementsList();
+                hideAreaSettingsModal();
+            }
+        });
+
+
+        /**
+         * Deletes a shape (line or area).
+         * @param {number} index - The index of the shape to delete.
+         * @param {string} type - The type of shape ('line' or 'area').
+         */
+        function deleteShape(index, type) {
+            pendingDeleteIndex = index;
+            pendingDeleteType = type;
+            showMessageModal(`Are you sure you want to delete this ${type} measurement?`);
+        }
+
+        // --- Add Line by Value Functions ---
+
+        /**
+         * Displays the Add Line by Value modal.
+         */
+        addLineByValueBtn.addEventListener('click', () => {
+            if (!currentImage || pixelsPerMM === 0) {
+                showMessageModal('Please upload an image and set the scale first.');
+                return;
+            }
+            addLineModal.style.display = 'flex';
+            newLineLengthInput.value = '';
+            newLineUnitSelect.value = displayUnitSelect.value; // Default to current display unit
+            newLineOrientationSelect.value = 'horizontal';
+        });
+
+        /**
+         * Hides the Add Line by Value modal.
+         */
+        function hideAddLineModal() {
+            addLineModal.style.display = 'none';
+        }
+
+        /**
+         * Handles drawing a new line based on user input from the modal.
+         */
+        drawNewLineBtn.addEventListener('click', () => {
+            const length = parseFloat(newLineLengthInput.value);
+            const unit = newLineUnitSelect.value;
+            const orientation = newLineOrientationSelect.value;
+
+            if (isNaN(length) || length <= 0) {
+                showMessageModal('Please enter a valid positive length for the new line.');
+                return;
+            }
+            if (pixelsPerMM === 0) {
+                showMessageModal('Scale is not set. Please set the image scale first.');
+                return;
+            }
+
+            // Convert the desired length to pixels based on the current scale
+            const lengthPx = convertUnitToPixels(length, unit);
+
+            // Calculate center of the image (in original image pixels)
+            const centerX = originalImage.width / 2;
+            const centerY = originalImage.height / 2;
+
+            let startX, startY, endX, endY;
+
+            if (orientation === 'horizontal') {
+                startX = centerX - (lengthPx / 2);
+                startY = centerY;
+                endX = centerX + (lengthPx / 2);
+                endY = centerY;
+            } else { // vertical
+                startX = centerX;
+                startY = centerY - (lengthPx / 2);
+                endX = centerX;
+                endY = centerY + (lengthPx / 2);
+            }
+
+            const newLine = {
+                start: { x: startX, y: startY },
+                end: { x: endX, y: endY },
+                ...currentLineSettings, // Apply current settings for new line
+                type: 'line'
+            };
+
+            measurementLines.push(newLine);
+            updateMeasurementsList();
+            hideAddLineModal();
+            console.log(`New ${orientation} line of ${length} ${unit} added.`);
+        });
+
+        /**
+         * Helper to convert a value from a given unit to pixels.
+         * @param {number} value - The value to convert.
+         * @param {string} unit - The unit of the value.
+         * @returns {number} The value in pixels.
+         */
+        function convertUnitToPixels(value, unit) {
+            if (unit === 'px') {
+                return value;
+            }
+            if (pixelsPerMM === 0) {
+                return 0; // Cannot convert if scale not set
+            }
+            // Convert value to millimeters first
+            let valueInMM;
+            switch (unit) {
+                case 'um': valueInMM = value / 1000; break;
+                case 'mm': valueInMM = value; break;
+                case 'cm': valueInMM = value * 10; break;
+                case 'm': valueInMM = value * 1000; break;
+                default: valueInMM = value;
+            }
+            // Convert millimeters to pixels
+            return valueInMM * pixelsPerMM;
+        }
+
+        // --- Initial Setup ---
+        function resizeCanvasContainer() {
+            const appContainer = document.getElementById('app-container');
+            // Set the canvas container's max height based on the app container
+            canvasContainer.style.maxHeight = `${appContainer.clientHeight - 50}px`;
+
+            // Set the internal drawing dimensions of the canvas to match its *display size*
+            imageCanvas.width = canvasContainer.clientWidth;
+            imageCanvas.height = canvasContainer.clientHeight;
+
+            drawCanvas(); // Redraw with new canvas dimensions
+        }
+
+        window.addEventListener('resize', resizeCanvasContainer);
+        resizeCanvasContainer(); // Initial call on load
+
+        // Initial disabled states
+        setScaleBtn.disabled = true;
+        setPixelScaleBtn.disabled = true;
+        drawLineBtn.disabled = true;
+        drawAreaBtn.disabled = true;
+        addLineByValueBtn.disabled = true;
+        clearAllBtn.disabled = true;
+        saveImageBtn.disabled = true;
+        displayUnitSelect.disabled = true;
+        toggleRefLineCheckbox.disabled = true;
+        imageWidthDisplay.textContent = 'Image Width: Not set';
+        imageHeightDisplay.textContent = 'Image Height: Not set';
+        updateScaleInfoDisplay();
+        drawCanvas();
+    </script>
+</body>
+</html>
