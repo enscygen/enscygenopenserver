@@ -2683,6 +2683,16 @@
             drawCanvas();
         });
 
+        messageModalCloseBtn.addEventListener('click', () => {
+    // Check if there is a pending deletion to process.
+    if (pendingDeleteIndex !== -1) {
+        if (pendingDeleteType === 'line') {
+            measurementLines.splice(pendingDeleteIndex, 1);
+        } else if (pendingDeleteType === 'area') {
+            measurementAreas.splice(pendingDeleteIndex, 1);
+        }
+        updateMeasurementsList(); // Refresh the UI to show the item is gone.
+    }
 
         // --- Common Modal Close Handlers ---
         scaleModalCloseButton.addEventListener('click', hideScaleModal);
@@ -2720,16 +2730,7 @@
             }
         });
 
-        messageModalCloseBtn.addEventListener('click', () => {
-    // Check if there is a pending deletion to process.
-    if (pendingDeleteIndex !== -1) {
-        if (pendingDeleteType === 'line') {
-            measurementLines.splice(pendingDeleteIndex, 1);
-        } else if (pendingDeleteType === 'area') {
-            measurementAreas.splice(pendingDeleteIndex, 1);
-        }
-        updateMeasurementsList(); // Refresh the UI to show the item is gone.
-    }
+        
 
         // --- Line Settings Modal Functions ---
 
