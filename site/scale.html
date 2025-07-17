@@ -1725,8 +1725,12 @@
         /**
          * Hides the generic message modal.
          */
+        
         function hideMessageModal() {
-            messageModal.style.display = 'none';
+    messageModal.style.display = 'none';
+    // Always reset pending deletion state when the modal is hidden.
+    pendingDeleteIndex = -1;
+    pendingDeleteType = '';
         }
 
         // --- Event Handlers ---
@@ -2711,19 +2715,21 @@
                 hideScaleLineSettingsModal();
             }
             if (event.target === messageModal) {
-                if (pendingDeleteIndex !== -1) {
-                    if (pendingDeleteType === 'line') {
-                        measurementLines.splice(pendingDeleteIndex, 1);
-                    } else if (pendingDeleteType === 'area') {
-                        measurementAreas.splice(pendingDeleteIndex, 1);
-                    }
-                    updateMeasurementsList();
-                    pendingDeleteIndex = -1;
-                    pendingDeleteType = '';
-                }
+                
                 hideMessageModal();
             }
         });
+
+        messageModalCloseBtn.addEventListener('click', () => {
+    // Check if there is a pending deletion to process.
+    if (pendingDeleteIndex !== -1) {
+        if (pendingDeleteType === 'line') {
+            measurementLines.splice(pendingDeleteIndex, 1);
+        } else if (pendingDeleteType === 'area') {
+            measurementAreas.splice(pendingDeleteIndex, 1);
+        }
+        updateMeasurementsList(); // Refresh the UI to show the item is gone.
+    }
 
         // --- Line Settings Modal Functions ---
 
