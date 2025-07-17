@@ -2566,7 +2566,8 @@ margin-bottom:20px;
         closeAddLineModalBtn.addEventListener('click', hideAddLineModal);
         closeScaleLineSettingsModalBtn.addEventListener('click', hideScaleLineSettingsModal);
         closeLineSettingsModalBtn.addEventListener('click', hideLineSettingsModal);
-
+messageModalCloseBtn.addEventListener('click', hideMessageModal);
+        
         window.addEventListener('click', (event) => {
             if (event.target === scaleModal) {
                 hideScaleModal();
