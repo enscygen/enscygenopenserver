@@ -329,13 +329,15 @@
         /* Line Settings Modal */
         #lineSettingsModal .modal-content,
         #areaSettingsModal .modal-content,
-        #addLineModal .modal-content { /* Apply to all modals */
+        #addLineModal .modal-content,
+        #scaleLineSettingsModal .modal-content { /* Apply to all modals */
             max-width: 350px;
         }
 
         #lineSettingsModal label,
         #areaSettingsModal label,
-        #addLineModal label { /* Apply to all modals */
+        #addLineModal label,
+        #scaleLineSettingsModal label { /* Apply to all modals */
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
@@ -350,7 +352,10 @@
         #areaSettingsModal input[type="number"],
         #areaSettingsModal select,
         #addLineModal input[type="number"],
-        #addLineModal select { /* Apply to all modals */
+        #addLineModal select,
+        #scaleLineSettingsModal input[type="color"],
+        #scaleLineSettingsModal input[type="number"],
+        #scaleLineSettingsModal select { /* Apply to all modals */
             padding: 10px; /* Consistent padding */
             border-radius: 8px;
             border: 1px solid #cbd5e1;
@@ -360,7 +365,8 @@
         }
         /* Specific height for color inputs */
         #lineSettingsModal input[type="color"],
-        #areaSettingsModal input[type="color"] {
+        #areaSettingsModal input[type="color"],
+        #scaleLineSettingsModal input[type="color"] {
             height: 40px;
         }
 
@@ -544,10 +550,8 @@
             </select>
             <label for="sideBarLengthInput">Side Bar Length (px):</label>
             <input type="number" id="sideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
-            <!-- NEW: Label Vertical Offset -->
             <label for="labelVerticalOffsetInput">Label Vertical Offset (px):</label>
             <input type="number" id="labelVerticalOffsetInput" value="0" step="1" class="mb-3">
-            <!-- NEW: Rotate Label with Line Checkbox -->
             <div class="checkbox-group mb-5">
                 <input type="checkbox" id="rotateLabelCheckbox">
                 <label for="rotateLabelCheckbox">Rotate Label with Line</label>
@@ -555,6 +559,53 @@
             <div class="btn-group">
                 <button id="saveLineSettingsBtn" class="btn btn-primary">Save Settings</button>
                 <button id="resetLineSettingsBtn" class="btn btn-secondary btn-reset">Reset Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Scale Line Settings Modal -->
+    <div id="scaleLineSettingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeScaleLineSettingsModal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Scale Line Settings</h2>
+            <p class="mb-4 text-gray-700">Customize the reference scale line:</p>
+
+            <label for="scaleLineLengthInput">Real-World Length:</label>
+            <input type="number" id="scaleLineLengthInput" placeholder="Length" class="mb-3" step="any">
+            <label for="scaleLineUnitSelect">Unit:</label>
+            <select id="scaleLineUnitSelect" class="mb-3">
+                <option value="mm">Millimeters (mm)</option>
+                <option value="cm">Centimeters (cm)</option>
+                <option value="m">Meters (m)</option>
+                <option value="um">Micrometers (µm)</option>
+            </select>
+
+            <label for="scaleLineColorPicker">Line Color:</label>
+            <input type="color" id="scaleLineColorPicker" value="#ff0000" class="mb-3">
+            <label for="scaleLabelFontSizeInput">Label Font Size (px):</label>
+            <input type="number" id="scaleLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+            <label for="scaleLineThicknessInput">Line Thickness (px):</label>
+            <input type="number" id="scaleLineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+            <label for="scaleLabelFontColorPicker">Label Font Color:</label>
+            <input type="color" id="scaleLabelFontColorPicker" value="#000000" class="mb-3">
+            <label for="scaleLabelFontWeightSelect">Label Font Weight:</label>
+            <select id="scaleLabelFontWeightSelect" class="mb-3">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+                <option value="bolder">Bolder</option>
+                <option value="lighter">Lighter</option>
+            </select>
+            <label for="scaleSideBarLengthInput">Side Bar Length (px):</label>
+            <input type="number" id="scaleSideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
+            <label for="scaleLabelVerticalOffsetInput">Label Vertical Offset (px):</label>
+            <input type="number" id="scaleLabelVerticalOffsetInput" value="0" step="1" class="mb-3">
+            <div class="checkbox-group mb-5">
+                <input type="checkbox" id="lockScaleLineCheckbox">
+                <label for="lockScaleLineCheckbox">Lock Scale Line</label>
+            </div>
+            <div class="btn-group">
+                <button id="saveScaleLineSettingsBtn" class="btn btn-primary">Save Settings</button>
+                <button id="resetScaleLineSettingsBtn" class="btn btn-secondary btn-reset">Reset Settings</button>
             </div>
         </div>
     </div>
@@ -603,7 +654,7 @@
             </select>
             <label for="newLineOrientationSelect">Orientation:</label>
             <select id="newLineOrientationSelect" class="mb-5">
-                <option value="horizontal">Horizontal</option>
+                <option value="horizontal">Horizontal</m>
                 <option value="vertical">Vertical</option>
             </select>
             <button id="drawNewLineBtn" class="btn btn-primary">Draw Line</button>
@@ -625,7 +676,7 @@
         const ctx = imageCanvas.getContext('2d');
         const setScaleBtn = document.getElementById('setScaleBtn');
         const setPixelScaleBtn = document.getElementById('setPixelScaleBtn');
-        const drawLineBtn = document = document.getElementById('drawLineBtn');
+        const drawLineBtn = document.getElementById('drawLineBtn');
         const drawAreaBtn = document.getElementById('drawAreaBtn');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const saveImageBtn = document.getElementById('saveImageBtn');
@@ -655,9 +706,26 @@
         const labelFontWeightSelect = document.getElementById('labelFontWeightSelect');
         const sideBarLengthInput = document.getElementById('sideBarLengthInput');
         const labelVerticalOffsetInput = document.getElementById('labelVerticalOffsetInput');
-        const rotateLabelCheckbox = document.getElementById('rotateLabelCheckbox'); // NEW
+        const rotateLabelCheckbox = document.getElementById('rotateLabelCheckbox');
         const saveLineSettingsBtn = document.getElementById('saveLineSettingsBtn');
-        const resetLineSettingsBtn = document.getElementById('resetLineSettingsBtn'); // NEW
+        const resetLineSettingsBtn = document.getElementById('resetLineSettingsBtn');
+
+        // NEW: Scale Line Settings Modal Elements
+        const scaleLineSettingsModal = document.getElementById('scaleLineSettingsModal');
+        const closeScaleLineSettingsModalBtn = document.getElementById('closeScaleLineSettingsModal');
+        const scaleLineLengthInput = document.getElementById('scaleLineLengthInput');
+        const scaleLineUnitSelect = document.getElementById('scaleLineUnitSelect');
+        const scaleLineColorPicker = document.getElementById('scaleLineColorPicker');
+        const scaleLabelFontSizeInput = document.getElementById('scaleLabelFontSizeInput');
+        const scaleLineThicknessInput = document.getElementById('scaleLineThicknessInput');
+        const scaleLabelFontColorPicker = document.getElementById('scaleLabelFontColorPicker');
+        const scaleLabelFontWeightSelect = document.getElementById('scaleLabelFontWeightSelect');
+        const scaleSideBarLengthInput = document.getElementById('scaleSideBarLengthInput');
+        const scaleLabelVerticalOffsetInput = document.getElementById('scaleLabelVerticalOffsetInput');
+        const lockScaleLineCheckbox = document.getElementById('lockScaleLineCheckbox');
+        const saveScaleLineSettingsBtn = document.getElementById('saveScaleLineSettingsBtn');
+        const resetScaleLineSettingsBtn = document.getElementById('resetScaleLineSettingsBtn');
+
 
         const areaSettingsModal = document.getElementById('areaSettingsModal');
         const closeAreaSettingsModalBtn = document.getElementById('closeAreaSettingsModal');
@@ -718,7 +786,8 @@
         let pendingDeleteIndex = -1;
         let pendingDeleteType = ''; // 'line' or 'area'
 
-        let referenceLine = null;
+        // Modified referenceLine structure to include real-world length and unit, and lock state
+        let referenceLine = null; // { start: {x,y}, end: {x,y}, lengthPx, realWorldLength, realWorldUnit, locked, type: 'line', ...lineSettings }
         let measurementLines = [];
         let measurementAreas = []; // array for polygons
         let currentDrawingLine = null;
@@ -731,7 +800,7 @@
         let editingAreaIndex = -1;
         let showReferenceLine = true;
 
-        // NEW: Default and Current Line Settings for persistence
+        // Default settings for regular measurement lines
         const defaultLineSettings = {
             color: '#ff0000',
             fontSize: 16,
@@ -740,10 +809,23 @@
             fontWeight: 'normal',
             barLength: 10,
             labelOffsetY: 0,
-            rotateLabel: false // NEW default
+            rotateLabel: false // Default to horizontal label
         };
 
-        let currentLineSettings = { ...defaultLineSettings }; // Initialize with defaults
+        // Default settings for the scale line (can be different from regular lines)
+        const defaultScaleLineSettings = {
+            color: 'blue',
+            fontSize: 16,
+            thickness: 2,
+            fontColor: 'blue',
+            fontWeight: 'normal',
+            barLength: 10,
+            labelOffsetY: -20, // Offset for better visibility
+            rotateLabel: false, // Default to horizontal label for scale
+            locked: true // Default to locked
+        };
+
+        let currentLineSettings = { ...defaultLineSettings }; // Settings for newly drawn measurement lines
 
         const unitConversionFactors = {
             'um': 1000,
@@ -762,26 +844,20 @@
          * @returns {{x: number, y: number}} Original image coordinates.
          */
         function getCanvasCoordinates(event) {
-            const rect = imageCanvas.getBoundingClientRect(); // Get the current *display* size and position of the canvas
+            const rect = imageCanvas.getBoundingClientRect();
             const clientX = event.touches ? event.touches[0].clientX : event.clientX;
             const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-            // Calculate click position relative to the canvas element's top-left corner on screen
             const xOnScreenCanvas = clientX - rect.left;
             const yOnScreenCanvas = clientY - rect.top;
 
-            // Calculate the scale factor from the canvas's *display size* to its *internal drawing resolution*
-            // This is 1.0 if canvas.width matches rect.width, but important for high-DPI screens or CSS scaling
             const scaleXInternal = imageCanvas.width / rect.width;
             const scaleYInternal = imageCanvas.height / rect.height;
 
-            // Convert screen coordinates to internal canvas drawing coordinates
             const internalCanvasX = xOnScreenCanvas * scaleXInternal;
             const internalCanvasY = yOnScreenCanvas * scaleYInternal;
 
-            // Now, we need to convert these internal canvas coordinates back to the *original image's pixel space*.
-            // This requires reversing the transformation applied in drawCanvas for the image.
-            if (!originalImage || originalImage.width === 0 || originalImage.height === 0) return { x: 0, y: 0 }; // Handle case where no image is loaded or image is empty
+            if (!originalImage || originalImage.width === 0 || originalImage.height === 0) return { x: 0, y: 0 };
 
             const imgWidth = originalImage.width;
             const imgHeight = originalImage.height;
@@ -804,7 +880,6 @@
 
             const scaleFactor = drawWidth / imgWidth;
 
-            // Reverse the translation and scaling applied to the image within drawCanvas
             const originalImageX = (internalCanvasX - offsetX) / scaleFactor;
             const originalImageY = (internalCanvasY - offsetY) / scaleFactor;
 
@@ -1177,8 +1252,8 @@
                     const refLengthConverted = convertPixelsToUnit(referenceLine.lengthPx, displayUnitSelect.value);
                     const refLengthFormatted = refLengthConverted.toFixed(2);
                     const refDisplayText = `Scale: ${refLengthFormatted} ${displayUnitSelect.value}`;
-                    drawLine(referenceLine, 'blue', 2, 10); // Use original thickness/barLength
-                    drawLineText(referenceLine, refDisplayText, 'blue', 16, 'normal', 0, false); // Default offset and no rotation
+                    drawLine(referenceLine, referenceLine.color, referenceLine.thickness, referenceLine.barLength);
+                    drawLineText(referenceLine, refDisplayText, referenceLine.fontColor, referenceLine.fontSize, referenceLine.fontWeight, referenceLine.labelOffsetY, referenceLine.rotateLabel);
                 }
 
                 // Draw measurement lines
@@ -1231,66 +1306,86 @@
          */
         function updateMeasurementsList() {
             measurementsList.innerHTML = '';
-            if (measurementLines.length === 0 && measurementAreas.length === 0) {
-                measurementsList.innerHTML = '<p class="text-gray-500 text-sm italic">No measurements yet.</p>';
-            } else {
-                const selectedUnit = displayUnitSelect.value;
+            const selectedUnit = displayUnitSelect.value;
+            let hasMeasurements = false;
 
-                // Add Lines to the list
-                measurementLines.forEach((line, index) => {
-                    const lengthPx = calculatePixelLength(line.start, line.end);
-                    const convertedLength = convertPixelsToUnit(lengthPx, selectedUnit);
-                    const formattedLength = convertedLength.toFixed(2);
-
-                    line.lengthPx = lengthPx;
-                    line.displayLength = `${formattedLength} ${selectedUnit}`;
-                    line.unit = selectedUnit;
-
-                    const listItem = document.createElement('div');
-                    listItem.className = 'measurement-item';
-                    listItem.innerHTML = `
-                        <span>Line ${index + 1}: ${line.displayLength}</span>
-                        <div class="measurement-item-actions">
-                            <button class="settings-btn" data-type="line" data-index="${index}" title="Line Settings">
-                                <i class="fas fa-cog"></i>
-                            </button>
-                            <button class="delete-btn" data-type="line" data-index="${index}" title="Delete Line">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    `;
-                    measurementsList.appendChild(listItem);
-                });
-
-                // Add Areas to the list
-                measurementAreas.forEach((area, index) => {
-                    const areaPx2 = calculatePolygonArea(area.points);
-                    const convertedArea = convertAreaToUnit(areaPx2, selectedUnit);
-                    const formattedArea = convertedArea.toFixed(2);
-                    const unitSymbol = selectedUnit === 'px' ? 'px²' : `${selectedUnit}²`;
-
-                    area.areaPx2 = areaPx2;
-                    area.displayArea = `${formattedArea} ${unitSymbol}`;
-                    area.unit = selectedUnit;
-
-                    const listItem = document.createElement('div');
-                    listItem.className = 'measurement-item';
-                    listItem.innerHTML = `
-                        <span>Area ${index + 1}: ${area.displayArea}</span>
-                        <div class="measurement-item-actions">
-                            <button class="settings-btn" data-type="area" data-index="${index}" title="Area Settings">
-                                <i class="fas fa-cog"></i>
-                            </button>
-                            <button class="delete-btn" data-type="area" data-index="${index}" title="Delete Area">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    `;
-                    measurementsList.appendChild(listItem);
-                });
-
-                addMeasurementListEventListeners();
+            // Add Scale Line to the list if it exists
+            if (referenceLine) {
+                hasMeasurements = true;
+                const listItem = document.createElement('div');
+                listItem.className = 'measurement-item';
+                listItem.innerHTML = `
+                    <span>Scale Line: ${referenceLine.displayLength}</span>
+                    <div class="measurement-item-actions">
+                        <button class="settings-btn" data-type="scaleLine" data-index="0" title="Scale Line Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <!-- Delete button intentionally omitted for scale line -->
+                    </div>
+                `;
+                measurementsList.appendChild(listItem);
             }
+
+            // Add Measurement Lines to the list
+            measurementLines.forEach((line, index) => {
+                hasMeasurements = true;
+                const lengthPx = calculatePixelLength(line.start, line.end);
+                const convertedLength = convertPixelsToUnit(lengthPx, selectedUnit);
+                const formattedLength = convertedLength.toFixed(2);
+
+                line.lengthPx = lengthPx;
+                line.displayLength = `${formattedLength} ${selectedUnit}`;
+                line.unit = selectedUnit;
+
+                const listItem = document.createElement('div');
+                listItem.className = 'measurement-item';
+                listItem.innerHTML = `
+                    <span>Line ${index + 1}: ${line.displayLength}</span>
+                    <div class="measurement-item-actions">
+                        <button class="settings-btn" data-type="line" data-index="${index}" title="Line Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="delete-btn" data-type="line" data-index="${index}" title="Delete Line">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                measurementsList.appendChild(listItem);
+            });
+
+            // Add Areas to the list
+            measurementAreas.forEach((area, index) => {
+                hasMeasurements = true;
+                const areaPx2 = calculatePolygonArea(area.points);
+                const convertedArea = convertAreaToUnit(areaPx2, selectedUnit);
+                const formattedArea = convertedArea.toFixed(2);
+                const unitSymbol = selectedUnit === 'px' ? 'px²' : `${selectedUnit}²`;
+
+                area.areaPx2 = areaPx2;
+                area.displayArea = `${formattedArea} ${unitSymbol}`;
+                area.unit = selectedUnit;
+
+                const listItem = document.createElement('div');
+                listItem.className = 'measurement-item';
+                listItem.innerHTML = `
+                    <span>Area ${index + 1}: ${area.displayArea}</span>
+                    <div class="measurement-item-actions">
+                        <button class="settings-btn" data-type="area" data-index="${index}" title="Area Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="delete-btn" data-type="area" data-index="${index}" title="Delete Area">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                measurementsList.appendChild(listItem);
+            });
+
+            if (!hasMeasurements) {
+                measurementsList.innerHTML = '<p class="text-gray-500 text-sm italic">No measurements yet.</p>';
+            }
+
+            addMeasurementListEventListeners();
             drawCanvas(); // Always redraw the canvas after updating the list
         }
 
@@ -1299,8 +1394,8 @@
          */
         function updateScaleInfoDisplay() {
             if (pixelsPerMM > 0) {
-                if (calibrationMethod === 'line') {
-                    calibrationRefDisplay.textContent = `Reference: ${parseFloat(scaleLengthInput.value)} ${scaleUnitSelect.value} (drawn line)`;
+                if (calibrationMethod === 'line' && referenceLine) {
+                    calibrationRefDisplay.textContent = `Reference: ${referenceLine.realWorldLength} ${referenceLine.realWorldUnit} (drawn line)`;
                 } else if (calibrationMethod === 'pixel') {
                     calibrationRefDisplay.textContent = `Reference: 1 Image Pixel = ${parseFloat(pixelLengthInput.value)} ${pixelUnitSelect.value}`;
                 }
@@ -1335,6 +1430,8 @@
                         openLineSettingsModal(index);
                     } else if (type === 'area') {
                         openAreaSettingsModal(index);
+                    } else if (type === 'scaleLine') { // NEW
+                        openScaleLineSettingsModal();
                     }
                 };
             });
@@ -1389,7 +1486,7 @@
                         saveImageBtn.disabled = false;
                         displayUnitSelect.disabled = false;
                         toggleRefLineCheckbox.disabled = true;
-                        addLineByValueBtn.disabled = true; // Initially disabled until scale is set
+                        addLineByValueBtn.disabled = true;
 
                         imageWidthDisplay.textContent = `Image Width: ${originalImage.width} px`;
                         imageHeightDisplay.textContent = `Image Height: ${originalImage.height} px`;
@@ -1401,7 +1498,7 @@
                         isDraggingWholeShape = false;
                         hoveredLineIndex = -1;
                         hoveredPolygonIndex = -1;
-                        referenceLine = null;
+                        referenceLine = null; // Ensure referenceLine is cleared on new image
                         measurementLines = [];
                         measurementAreas = [];
                         currentPolygonPoints = [];
@@ -1446,7 +1543,7 @@
         setScaleBtn.addEventListener('click', () => {
             if (!currentImage) return;
             currentMode = 'scaling';
-            referenceLine = null;
+            referenceLine = null; // Clear existing reference line to draw a new one
             measurementLines = [];
             measurementAreas = [];
             pixelsPerMM = 0;
@@ -1473,7 +1570,7 @@
         setPixelScaleBtn.addEventListener('click', () => {
             if (!currentImage) return;
             currentMode = 'idle';
-            referenceLine = null;
+            referenceLine = null; // Clear existing reference line
             measurementLines = [];
             measurementAreas = [];
             pixelsPerMM = 0;
@@ -1588,8 +1685,7 @@
             imageWidthDisplay.textContent = 'Image Width: Not set';
             imageHeightDisplay.textContent = 'Image Height: Not set';
 
-            // Reset currentLineSettings to default when clearing all
-            currentLineSettings = { ...defaultLineSettings };
+            currentLineSettings = { ...defaultLineSettings }; // Reset currentLineSettings to default
 
             console.log('All lines, areas, and scale cleared.');
         });
@@ -1641,9 +1737,32 @@
 
             if (currentMode === 'scaling') {
                 isDrawing = true;
-                currentDrawingLine = { start: { x, y }, end: { x, y }, type: 'line' };
+                // Apply defaultScaleLineSettings for the reference line
+                currentDrawingLine = {
+                    start: { x, y },
+                    end: { x, y },
+                    type: 'line',
+                    ...defaultScaleLineSettings // Apply default appearance for scale line
+                };
             } else if (currentMode === 'measuring') {
                 // Check for dragging existing line endpoints
+                // Check reference line first
+                if (referenceLine) {
+                    const pointType = isNearEndpoint(referenceLine, x, y, 10);
+                    if (pointType) {
+                        if (referenceLine.locked) {
+                            showMessageModal('The scale line is locked and cannot be dragged. Uncheck "Lock Scale Line" in its settings to adjust.');
+                            return;
+                        }
+                        isDragging = true;
+                        draggedLineIndex = -1; // Indicate reference line
+                        draggedPointType = pointType;
+                        isDrawing = false;
+                        currentDrawingLine = null;
+                        return;
+                    }
+                }
+                // Then check other measurement lines
                 for (let i = 0; i < measurementLines.length; i++) {
                     const line = measurementLines[i];
                     const pointType = isNearEndpoint(line, x, y, 10);
@@ -1657,6 +1776,23 @@
                     }
                 }
                 // Check for dragging entire lines
+                // Check reference line first
+                if (referenceLine) {
+                    if (isNearLineSegmentOrInsidePolygon(referenceLine, x, y, 5)) {
+                        if (referenceLine.locked) {
+                            showMessageModal('The scale line is locked and cannot be dragged. Uncheck "Lock Scale Line" in its settings to adjust.');
+                            return;
+                        }
+                        isDraggingWholeShape = true;
+                        draggedLineIndex = -1; // Indicate reference line
+                        draggedOffsetX = x - referenceLine.start.x;
+                        draggedOffsetY = y - referenceLine.start.y;
+                        isDrawing = false;
+                        currentDrawingLine = null;
+                        return;
+                    }
+                }
+                // Then check other measurement lines
                 for (let i = 0; i < measurementLines.length; i++) {
                     const line = measurementLines[i];
                     if (isNearLineSegmentOrInsidePolygon(line, x, y, 5)) {
@@ -1682,8 +1818,8 @@
                         draggedPolygonIndex = i;
                         draggedPolygonPointIndex = parseInt(pointType.split('_')[1]);
                         draggedPointType = 'vertex';
-                        isDrawingPolygon = false; // Stop drawing new polygon
-                        currentPolygonPoints = []; // Clear any partial polygon
+                        isDrawingPolygon = false;
+                        currentPolygonPoints = [];
                         return;
                     }
                 }
@@ -1693,21 +1829,19 @@
                     if (isNearLineSegmentOrInsidePolygon(polygon, x, y, 5)) {
                         isDraggingWholeShape = true;
                         draggedPolygonIndex = i;
-                        // Calculate offset from mouse to polygon's first point for dragging
                         dragOffsetX = x - polygon.points[0].x;
                         dragOffsetY = y - polygon.points[0].y;
-                        isDrawingPolygon = false; // Stop drawing new polygon
-                        currentPolygonPoints = []; // Clear any partial polygon
+                        isDrawingPolygon = false;
+                        currentPolygonPoints = [];
                         return;
                     }
                 }
 
                 // If not dragging existing, start/continue drawing a new polygon
-                if (!isDrawingPolygon) { // Start a new polygon
+                if (!isDrawingPolygon) {
                     isDrawingPolygon = true;
                     currentPolygonPoints = [{ x, y }];
-                } else { // Add point to current polygon or complete it
-                    // Check if close to the first point to complete the polygon
+                } else {
                     if (currentPolygonPoints.length > 0 && calculatePixelLength({ x, y }, currentPolygonPoints[0]) < 15) {
                         completePolygon();
                     } else {
@@ -1729,7 +1863,23 @@
             } else if (isDrawingPolygon && currentPolygonPoints.length > 0) {
                 currentDrawingLine = { start: currentPolygonPoints[currentPolygonPoints.length - 1], end: { x, y } };
                 drawCanvas();
-            } else if (isDragging && draggedLineIndex !== -1) {
+            } else if (isDragging && draggedLineIndex === -1 && referenceLine) { // Dragging reference line endpoint
+                if (referenceLine.locked) return; // Should already be caught in mousedown, but double-check
+                if (draggedPointType === 'start') {
+                    referenceLine.start = { x, y };
+                } else {
+                    referenceLine.end = { x, y };
+                }
+                referenceLine.lengthPx = calculatePixelLength(referenceLine.start, referenceLine.end);
+                // Recalculate pixelsPerMM based on new pixel length
+                if (referenceLine.realWorldLength && referenceLine.realWorldUnit) {
+                    const realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
+                    pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                }
+                updateMeasurementsList();
+                updateScaleInfoDisplay();
+                drawCanvas();
+            } else if (isDragging && draggedLineIndex !== -1) { // Dragging other line endpoint
                 const line = measurementLines[draggedLineIndex];
                 if (draggedPointType === 'start') {
                     line.start = { x, y };
@@ -1743,7 +1893,28 @@
                 polygon.points[draggedPolygonPointIndex] = { x, y };
                 updateMeasurementsList();
                 drawCanvas();
-            } else if (isDraggingWholeShape && draggedLineIndex !== -1) {
+            } else if (isDraggingWholeShape && draggedLineIndex === -1 && referenceLine) { // Dragging whole reference line
+                if (referenceLine.locked) return; // Should already be caught in mousedown
+                const newStartX = x - dragOffsetX;
+                const newStartY = y - dragOffsetY;
+                const deltaX = newStartX - referenceLine.start.x;
+                const deltaY = newStartY - referenceLine.start.y;
+
+                referenceLine.start.x += deltaX;
+                referenceLine.start.y += deltaY;
+                referenceLine.end.x += deltaX;
+                referenceLine.end.y += deltaY;
+
+                referenceLine.lengthPx = calculatePixelLength(referenceLine.start, referenceLine.end);
+                // Recalculate pixelsPerMM based on new pixel length
+                if (referenceLine.realWorldLength && referenceLine.realWorldUnit) {
+                    const realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
+                    pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                }
+                updateMeasurementsList();
+                updateScaleInfoDisplay();
+                drawCanvas();
+            } else if (isDraggingWholeShape && draggedLineIndex !== -1) { // Dragging whole other line
                 const line = measurementLines[draggedLineIndex];
                 const newStartX = x - dragOffsetX;
                 const newStartY = y - dragOffsetY;
@@ -1785,13 +1956,18 @@
                 if (currentDrawingLine) {
                     currentDrawingLine.lengthPx = calculatePixelLength(currentDrawingLine.start, currentDrawingLine.end);
                     if (currentMode === 'scaling') {
-                        referenceLine = { ...currentDrawingLine, type: 'line' };
+                        // When scale line is drawn, apply defaultScaleLineSettings and prepare for modal input
+                        referenceLine = {
+                            ...currentDrawingLine,
+                            ...defaultScaleLineSettings, // Apply default appearance for scale line
+                            realWorldLength: 0, // Will be set by modal
+                            realWorldUnit: 'mm' // Will be set by modal
+                        };
                         showScaleModal();
                     } else if (currentMode === 'measuring') {
-                        // Use currentLineSettings for new lines
                         measurementLines.push({
                             ...currentDrawingLine,
-                            ...currentLineSettings, // Apply current settings
+                            ...currentLineSettings, // Apply current settings for new line
                             type: 'line'
                         });
                         updateMeasurementsList();
@@ -1799,7 +1975,11 @@
                 }
                 currentDrawingLine = null;
             } else if (isDragging || isDraggingWholeShape) {
-                if (draggedLineIndex !== -1) {
+                // Revert color of the dragged line/polygon to its original state
+                if (draggedLineIndex === -1 && referenceLine) { // Reference line
+                    referenceLine.color = originalHoveredLineColor;
+                    referenceLine.fontColor = originalHoveredLineFontColor;
+                } else if (draggedLineIndex !== -1) { // Other line
                     measurementLines[draggedLineIndex].color = originalHoveredLineColor;
                     measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -1834,7 +2014,10 @@
                 drawCanvas();
             }
             if (isDragging || isDraggingWholeShape) {
-                if (draggedLineIndex !== -1) {
+                if (draggedLineIndex === -1 && referenceLine) { // Reference line
+                    referenceLine.color = originalHoveredLineColor;
+                    referenceLine.fontColor = originalHoveredLineFontColor;
+                } else if (draggedLineIndex !== -1) { // Other line
                     measurementLines[draggedLineIndex].color = originalHoveredLineColor;
                     measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -1853,6 +2036,13 @@
                 dragOffsetY = 0;
             }
 
+            if (hoveredLineIndex === -1 && hoveredPolygonIndex === -1 && referenceLine) { // Check reference line hover
+                if (referenceLine.color === 'yellow') { // If it was hovered
+                    referenceLine.color = defaultScaleLineSettings.color;
+                    referenceLine.fontColor = defaultScaleLineSettings.fontColor;
+                    drawCanvas();
+                }
+            }
             if (hoveredLineIndex !== -1) {
                 measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
                 measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
@@ -1912,19 +2102,26 @@
                 return;
             }
 
-            let newHoveredLineIndex = -1;
+            let newHoveredLineIndex = -2; // -2 for no hover, -1 for referenceLine, >=0 for measurementLines
             let newHoveredPolygonIndex = -1;
             let newCursorStyle = 'default';
 
-            // Prioritize endpoint/vertex hover
-            for (let i = 0; i < measurementLines.length; i++) {
-                if (isNearEndpoint(measurementLines[i], mouseX, mouseY, 10)) {
-                    newHoveredLineIndex = i;
-                    newCursorStyle = 'pointer';
-                    break;
+            // Check reference line first for endpoint hover
+            if (referenceLine && isNearEndpoint(referenceLine, mouseX, mouseY, 10)) {
+                newHoveredLineIndex = -1;
+                newCursorStyle = 'pointer';
+            } else {
+                // Prioritize endpoint/vertex hover for other lines
+                for (let i = 0; i < measurementLines.length; i++) {
+                    if (isNearEndpoint(measurementLines[i], mouseX, mouseY, 10)) {
+                        newHoveredLineIndex = i;
+                        newCursorStyle = 'pointer';
+                        break;
+                    }
                 }
             }
-            if (newHoveredLineIndex === -1) {
+
+            if (newHoveredLineIndex === -2) { // Only check polygons if no line endpoint is hovered
                 for (let i = 0; i < measurementAreas.length; i++) {
                     if (isNearEndpoint(measurementAreas[i], mouseX, mouseY, 10)) {
                         newHoveredPolygonIndex = i;
@@ -1935,15 +2132,22 @@
             }
 
             // If no endpoint/vertex hovered, check whole shape hover
-            if (newHoveredLineIndex === -1 && newHoveredPolygonIndex === -1) {
-                for (let i = 0; i < measurementLines.length; i++) {
-                    if (isNearLineSegmentOrInsidePolygon(measurementLines[i], mouseX, mouseY, 5)) {
-                        newHoveredLineIndex = i;
-                        newCursorStyle = 'grab';
-                        break;
+            if (newHoveredLineIndex === -2 && newHoveredPolygonIndex === -1) {
+                // Check reference line first for whole shape hover
+                if (referenceLine && isNearLineSegmentOrInsidePolygon(referenceLine, mouseX, mouseY, 5)) {
+                    newHoveredLineIndex = -1;
+                    newCursorStyle = 'grab';
+                } else {
+                    for (let i = 0; i < measurementLines.length; i++) {
+                        if (isNearLineSegmentOrInsidePolygon(measurementLines[i], mouseX, mouseY, 5)) {
+                            newHoveredLineIndex = i;
+                            newCursorStyle = 'grab';
+                            break;
+                        }
                     }
                 }
-                if (newHoveredLineIndex === -1) {
+
+                if (newHoveredLineIndex === -2) {
                     for (let i = 0; i < measurementAreas.length; i++) {
                         if (isNearLineSegmentOrInsidePolygon(measurementAreas[i], mouseX, mouseY, 5)) {
                             newHoveredPolygonIndex = i;
@@ -1954,21 +2158,64 @@
                 }
             }
 
-            // Apply/revert hover effects for lines
-            if (newHoveredLineIndex !== hoveredLineIndex) {
-                if (hoveredLineIndex !== -1) {
+            // Apply/revert hover effects for reference line
+            if (newHoveredLineIndex === -1 && hoveredLineIndex !== -1) { // Was hovering other line, now reference
+                measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
+                measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                originalHoveredLineColor = referenceLine.color;
+                originalHoveredLineFontColor = referenceLine.fontColor;
+                referenceLine.color = 'yellow';
+                referenceLine.fontColor = 'yellow';
+                hoveredLineIndex = -1;
+                drawCanvas();
+            } else if (newHoveredLineIndex !== -1 && hoveredLineIndex === -1) { // Was hovering reference, now other line
+                referenceLine.color = originalHoveredLineColor;
+                referenceLine.fontColor = originalHoveredLineFontColor;
+                originalHoveredLineColor = measurementLines[newHoveredLineIndex].color;
+                originalHoveredLineFontColor = measurementLines[newHoveredLineIndex].fontColor;
+                measurementLines[newHoveredLineIndex].color = 'yellow';
+                measurementLines[newHoveredLineIndex].fontColor = 'yellow';
+                hoveredLineIndex = newHoveredLineIndex;
+                drawCanvas();
+            } else if (newHoveredLineIndex === -1 && hoveredLineIndex === -2) { // Now hovering reference, was hovering nothing
+                 if (referenceLine) { // Ensure referenceLine exists before trying to access its properties
+                    originalHoveredLineColor = referenceLine.color;
+                    originalHoveredLineFontColor = referenceLine.fontColor;
+                    referenceLine.color = 'yellow';
+                    referenceLine.fontColor = 'yellow';
+                    hoveredLineIndex = -1;
+                    drawCanvas();
+                 }
+            } else if (newHoveredLineIndex === -2 && hoveredLineIndex === -1) { // Now hovering nothing, was hovering reference
+                if (referenceLine) { // Ensure referenceLine exists before trying to access its properties
+                    referenceLine.color = originalHoveredLineColor;
+                    referenceLine.fontColor = originalHoveredLineFontColor;
+                    hoveredLineIndex = -2;
+                    drawCanvas();
+                }
+            } else if (newHoveredLineIndex !== hoveredLineIndex && newHoveredLineIndex !== -1 && hoveredLineIndex !== -2) { // Switching between other lines
+                if (hoveredLineIndex !== -1) { // If there was a previously hovered line
                     measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
                     measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
                 }
-                if (newHoveredLineIndex !== -1) {
-                    originalHoveredLineColor = measurementLines[newHoveredLineIndex].color;
-                    originalHoveredLineFontColor = measurementLines[newHoveredLineIndex].fontColor;
-                    measurementLines[newHoveredLineIndex].color = 'yellow';
-                    measurementLines[newHoveredLineIndex].fontColor = 'yellow';
-                }
+                originalHoveredLineColor = measurementLines[newHoveredLineIndex].color;
+                originalHoveredLineFontColor = measurementLines[newHoveredLineIndex].fontColor;
+                measurementLines[newHoveredLineIndex].color = 'yellow';
+                measurementLines[newHoveredLineIndex].fontColor = 'yellow';
                 hoveredLineIndex = newHoveredLineIndex;
                 drawCanvas();
+            } else if (newHoveredLineIndex === -2 && hoveredLineIndex !== -2) { // Was hovering a line, now hovering nothing
+                if (hoveredLineIndex === -1 && referenceLine) { // Was hovering reference line
+                    referenceLine.color = originalHoveredLineColor;
+                    referenceLine.fontColor = originalHoveredLineFontColor;
+                } else if (hoveredLineIndex !== -1) { // Was hovering another line
+                    measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
+                    measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                }
+                hoveredLineIndex = -2;
+                drawCanvas();
             }
+
 
             // Apply/revert hover effects for polygons
             if (newHoveredPolygonIndex !== hoveredPolygonIndex) {
@@ -1991,6 +2238,7 @@
 
             imageCanvas.style.cursor = newCursorStyle;
         }
+
 
         /**
          * Completes the current polygon being drawn.
@@ -2042,6 +2290,23 @@
         }
 
         /**
+         * Helper to convert a value from a given unit to millimeters.
+         * @param {number} value - The value to convert.
+         * @param {string} unit - The unit of the value.
+         * @returns {number} The value in millimeters.
+         */
+        function convertUnitToMM(value, unit) {
+            switch (unit) {
+                case 'um': return value / 1000;
+                case 'mm': return value;
+                case 'cm': return value * 10;
+                case 'm': return value * 1000;
+                case 'px': return value / pixelsPerMM; // Convert px to mm if pixelsPerMM is set
+                default: return value;
+            }
+        }
+
+        /**
          * Handles saving the scale from the modal (for drawn reference line).
          */
         saveScaleBtn.addEventListener('click', () => {
@@ -2053,17 +2318,13 @@
                 return;
             }
 
-            let referenceLengthInMM;
-            switch (unit) {
-                case 'um': referenceLengthInMM = length / 1000; break;
-                case 'mm': referenceLengthInMM = length; break;
-                case 'cm': referenceLengthInMM = length * 10; break;
-                case 'm': referenceLengthInMM = length * 1000; break;
-                default: referenceLengthInMM = length;
-            }
-
+            const referenceLengthInMM = convertUnitToMM(length, unit);
             pixelsPerMM = referenceLine.lengthPx / referenceLengthInMM;
             scaleBaseUnit = unit;
+
+            // Store real-world length and unit in the referenceLine object
+            referenceLine.realWorldLength = length;
+            referenceLine.realWorldUnit = unit;
 
             console.log(`Scale set (Draw Line): ${pixelsPerMM.toFixed(2)} pixels per mm (based on ${length} ${unit} = ${referenceLine.lengthPx.toFixed(0)} px)`);
 
@@ -2072,12 +2333,12 @@
             drawAreaBtn.disabled = false;
             addLineByValueBtn.disabled = false;
             currentMode = 'idle';
-            drawCanvas();
-            updateMeasurementsList();
+            updateMeasurementsList(); // This will now display the scale line
             updateScaleInfoDisplay();
+            drawCanvas();
         });
 
-        // --- Pixel Scale Modal Functions (for 1 pixel value) ---
+        // --- Pixel Scale Input Modal Functions ---
 
         /**
          * Displays the pixel scale input modal.
@@ -2107,17 +2368,16 @@
                 return;
             }
 
-            let pixelLengthInMM;
-            switch (unit) {
-                case 'um': pixelLengthInMM = length / 1000; break;
-                case 'mm': pixelLengthInMM = length; break;
-                case 'cm': pixelLengthInMM = length * 10; break;
-                case 'm': pixelLengthInMM = length * 1000; break;
-                default: pixelLengthInMM = length;
-            }
-
+            const pixelLengthInMM = convertUnitToMM(length, unit);
             pixelsPerMM = 1 / pixelLengthInMM;
             scaleBaseUnit = unit;
+
+            // For pixel scale, we don't have a drawn referenceLine, but we can create a virtual one
+            // to display in the list if desired, or just rely on updateScaleInfoDisplay.
+            // For now, let's just update the info display.
+            referenceLine = null; // Ensure no drawn reference line exists if using pixel scale
+            updateMeasurementsList(); // Clear any old reference line from list
+            updateScaleInfoDisplay();
 
             console.log(`Scale set (1 Pixel): 1 pixel = ${length} ${unit} (${pixelsPerMM.toFixed(2)} pixels per mm)`);
 
@@ -2127,8 +2387,6 @@
             addLineByValueBtn.disabled = false;
             currentMode = 'idle';
             drawCanvas();
-            updateMeasurementsList();
-            updateScaleInfoDisplay();
         });
 
 
@@ -2137,6 +2395,7 @@
         closePixelScaleModalBtn.addEventListener('click', hidePixelScaleModal);
         closeAreaSettingsModalBtn.addEventListener('click', hideAreaSettingsModal);
         closeAddLineModalBtn.addEventListener('click', hideAddLineModal);
+        closeScaleLineSettingsModalBtn.addEventListener('click', hideScaleLineSettingsModal); // NEW
 
         window.addEventListener('click', (event) => {
             if (event.target === scaleModal) {
@@ -2153,6 +2412,9 @@
             }
             if (event.target === addLineModal) {
                 hideAddLineModal();
+            }
+            if (event.target === scaleLineSettingsModal) { // NEW
+                hideScaleLineSettingsModal();
             }
             if (event.target === messageModal) {
                 if (pendingDeleteIndex !== -1) {
@@ -2186,7 +2448,7 @@
                 labelFontWeightSelect.value = line.fontWeight || defaultLineSettings.fontWeight;
                 sideBarLengthInput.value = line.barLength || defaultLineSettings.barLength;
                 labelVerticalOffsetInput.value = line.labelOffsetY || defaultLineSettings.labelOffsetY;
-                rotateLabelCheckbox.checked = line.rotateLabel !== undefined ? line.rotateLabel : defaultLineSettings.rotateLabel; // NEW
+                rotateLabelCheckbox.checked = line.rotateLabel !== undefined ? line.rotateLabel : defaultLineSettings.rotateLabel;
                 lineSettingsModal.style.display = 'flex';
             }
         }
@@ -2212,7 +2474,7 @@
                 line.fontWeight = labelFontWeightSelect.value;
                 line.barLength = parseInt(sideBarLengthInput.value);
                 line.labelOffsetY = parseInt(labelVerticalOffsetInput.value);
-                line.rotateLabel = rotateLabelCheckbox.checked; // NEW
+                line.rotateLabel = rotateLabelCheckbox.checked;
 
                 if (isNaN(line.fontSize) || line.fontSize < 8 || line.fontSize > 48) {
                     line.fontSize = 16;
@@ -2248,20 +2510,13 @@
             }
         });
 
-        // NEW: Reset Line Settings Button
+        // Reset Line Settings Button
         resetLineSettingsBtn.addEventListener('click', () => {
             if (editingLineIndex !== -1) {
                 const line = measurementLines[editingLineIndex];
 
                 // Apply default settings to the current line object
-                line.color = defaultLineSettings.color;
-                line.fontSize = defaultLineSettings.fontSize;
-                line.thickness = defaultLineSettings.thickness;
-                line.fontColor = defaultLineSettings.fontColor;
-                line.fontWeight = defaultLineSettings.fontWeight;
-                line.barLength = defaultLineSettings.barLength;
-                line.labelOffsetY = defaultLineSettings.labelOffsetY;
-                line.rotateLabel = defaultLineSettings.rotateLabel;
+                Object.assign(line, defaultLineSettings);
 
                 // Update modal inputs to reflect default settings
                 lineColorPicker.value = defaultLineSettings.color;
@@ -2276,10 +2531,123 @@
                 // Also update currentLineSettings so subsequent new lines use defaults
                 currentLineSettings = { ...defaultLineSettings };
 
-                updateMeasurementsList(); // Redraw canvas and update list
+                updateMeasurementsList();
                 showMessageModal('Line settings reset to default for this line.');
             }
         });
+
+        // --- NEW: Scale Line Settings Modal Functions ---
+        function openScaleLineSettingsModal() {
+            if (!referenceLine) {
+                showMessageModal("No scale line has been set yet.");
+                return;
+            }
+            // Populate modal fields with current referenceLine properties
+            scaleLineLengthInput.value = referenceLine.realWorldLength;
+            scaleLineUnitSelect.value = referenceLine.realWorldUnit;
+            scaleLineColorPicker.value = referenceLine.color;
+            scaleLabelFontSizeInput.value = referenceLine.fontSize;
+            scaleLineThicknessInput.value = referenceLine.thickness;
+            scaleLabelFontColorPicker.value = referenceLine.fontColor;
+            scaleLabelFontWeightSelect.value = referenceLine.fontWeight;
+            scaleSideBarLengthInput.value = referenceLine.barLength;
+            scaleLabelVerticalOffsetInput.value = referenceLine.labelOffsetY;
+            lockScaleLineCheckbox.checked = referenceLine.locked;
+
+            scaleLineSettingsModal.style.display = 'flex';
+        }
+
+        function hideScaleLineSettingsModal() {
+            scaleLineSettingsModal.style.display = 'none';
+        }
+
+        saveScaleLineSettingsBtn.addEventListener('click', () => {
+            if (!referenceLine) return;
+
+            const newLength = parseFloat(scaleLineLengthInput.value);
+            const newUnit = scaleLineUnitSelect.value;
+            const newLockedState = lockScaleLineCheckbox.checked;
+
+            if (isNaN(newLength) || newLength <= 0) {
+                showMessageModal('Please enter a valid positive length for the scale line.');
+                return;
+            }
+
+            // Update appearance properties
+            referenceLine.color = scaleLineColorPicker.value;
+            referenceLine.fontSize = parseInt(scaleLabelFontSizeInput.value);
+            referenceLine.thickness = parseInt(scaleLineThicknessInput.value);
+            referenceLine.fontColor = scaleLabelFontColorPicker.value;
+            referenceLine.fontWeight = scaleLabelFontWeightSelect.value;
+            referenceLine.barLength = parseInt(scaleSideBarLengthInput.value);
+            referenceLine.labelOffsetY = parseInt(scaleLabelVerticalOffsetInput.value);
+            referenceLine.locked = newLockedState;
+
+            // Validate inputs
+            if (isNaN(referenceLine.fontSize) || referenceLine.fontSize < 8 || referenceLine.fontSize > 48) {
+                referenceLine.fontSize = defaultScaleLineSettings.fontSize;
+                showMessageModal('Font size must be between 8 and 48 pixels. Resetting to default.');
+            }
+            if (isNaN(referenceLine.thickness) || referenceLine.thickness < 1 || referenceLine.thickness > 10) {
+                referenceLine.thickness = defaultScaleLineSettings.thickness;
+                showMessageModal('Line thickness must be between 1 and 10 pixels. Resetting to default.');
+            }
+            if (isNaN(referenceLine.barLength) || referenceLine.barLength < 0 || referenceLine.barLength > 30) {
+                referenceLine.barLength = defaultScaleLineSettings.barLength;
+                showMessageModal('Side bar length must be between 0 and 30 pixels. Resetting to default.');
+            }
+            if (isNaN(referenceLine.labelOffsetY)) {
+                referenceLine.labelOffsetY = defaultScaleLineSettings.labelOffsetY;
+                showMessageModal('Label offset must be a number. Resetting to default.');
+            }
+
+
+            // Update real-world length and recalculate pixelsPerMM if changed
+            if (newLength !== referenceLine.realWorldLength || newUnit !== referenceLine.realWorldUnit) {
+                referenceLine.realWorldLength = newLength;
+                referenceLine.realWorldUnit = newUnit;
+                const realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
+                if (referenceLine.lengthPx > 0 && realWorldLengthInMM > 0) {
+                    pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                    scaleBaseUnit = referenceLine.realWorldUnit;
+                } else {
+                    pixelsPerMM = 0; // Cannot calculate if pixel length or real world length is zero
+                }
+            }
+
+            updateMeasurementsList();
+            updateScaleInfoDisplay();
+            hideScaleLineSettingsModal();
+        });
+
+        resetScaleLineSettingsBtn.addEventListener('click', () => {
+            if (!referenceLine) return;
+
+            // Reset only the appearance properties to defaultScaleLineSettings
+            referenceLine.color = defaultScaleLineSettings.color;
+            referenceLine.fontSize = defaultScaleLineSettings.fontSize;
+            referenceLine.thickness = defaultScaleLineSettings.thickness;
+            referenceLine.fontColor = defaultScaleLineSettings.fontColor;
+            referenceLine.fontWeight = defaultScaleLineSettings.fontWeight;
+            referenceLine.barLength = defaultScaleLineSettings.barLength;
+            referenceLine.labelOffsetY = defaultScaleLineSettings.labelOffsetY;
+            referenceLine.rotateLabel = defaultScaleLineSettings.rotateLabel;
+            referenceLine.locked = defaultScaleLineSettings.locked; // Reset lock state
+
+            // Update modal inputs to reflect these defaults
+            scaleLineColorPicker.value = defaultScaleLineSettings.color;
+            scaleLabelFontSizeInput.value = defaultScaleLineSettings.fontSize;
+            scaleLineThicknessInput.value = defaultScaleLineSettings.thickness;
+            scaleLabelFontColorPicker.value = defaultScaleLineSettings.fontColor;
+            scaleLabelFontWeightSelect.value = defaultScaleLineSettings.fontWeight;
+            scaleSideBarLengthInput.value = defaultScaleLineSettings.barLength;
+            scaleLabelVerticalOffsetInput.value = defaultScaleLineSettings.labelOffsetY;
+            lockScaleLineCheckbox.checked = defaultScaleLineSettings.locked;
+
+            updateMeasurementsList();
+            showMessageModal('Scale line appearance settings reset to default.');
+        });
+
 
         // --- Area Settings Modal Functions ---
 
@@ -2436,14 +2804,7 @@
                 return 0; // Cannot convert if scale not set
             }
             // Convert value to millimeters first
-            let valueInMM;
-            switch (unit) {
-                case 'um': valueInMM = value / 1000; break;
-                case 'mm': valueInMM = value; break;
-                case 'cm': valueInMM = value * 10; break;
-                case 'm': valueInMM = value * 1000; break;
-                default: valueInMM = value;
-            }
+            let valueInMM = convertUnitToMM(value, unit);
             // Convert millimeters to pixels
             return valueInMM * pixelsPerMM;
         }
@@ -2451,20 +2812,17 @@
         // --- Initial Setup ---
         function resizeCanvasContainer() {
             const appContainer = document.getElementById('app-container');
-            // Set the canvas container's max height based on the app container
             canvasContainer.style.maxHeight = `${appContainer.clientHeight - 50}px`;
 
-            // Set the internal drawing dimensions of the canvas to match its *display size*
             imageCanvas.width = canvasContainer.clientWidth;
             imageCanvas.height = canvasContainer.clientHeight;
 
-            drawCanvas(); // Redraw with new canvas dimensions
+            drawCanvas();
         }
 
         window.addEventListener('resize', resizeCanvasContainer);
-        resizeCanvasContainer(); // Initial call on load
+        resizeCanvasContainer();
 
-        // Initial disabled states
         setScaleBtn.disabled = true;
         setPixelScaleBtn.disabled = true;
         drawLineBtn.disabled = true;
