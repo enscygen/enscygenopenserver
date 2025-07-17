@@ -437,12 +437,18 @@
 
             <!-- Action Buttons -->
             <div class="flex-col-gap-3">
-                <button id="setScaleBtn" class="btn btn-primary" disabled>Set Scale (Draw Line)</button>
-                <button id="setPixelScaleBtn" class="btn btn-primary" disabled>Set Scale (1 Pixel)</button>
+                <div class="scaling-div">
+                    <span class="set-scaling-title">Set Scale Reference (Calibration)</span>
+                    <div class="scaling-options">
+                        <button id="setScaleBtn" class="btn btn-primary" disabled>Draw Line</button>
+                        <span class="sub-text-splitter">or</span>
+                        <button id="setPixelScaleBtn" class="btn btn-primary" disabled>Pixel Size</button>
+                    </div>
+                </div>
                 <button id="drawLineBtn" class="btn btn-primary" disabled>Draw Line</button>
                 <button id="drawAreaBtn" class="btn btn-primary" disabled>Draw Area</button>
                 <button id="clearAllBtn" class="btn btn-danger" disabled>Clear All</button>
-                <button id="saveImageBtn" class="btn btn-secondary" disabled>Save Image</button>
+                <button id="saveImageBtn" class="btn btn-primary" disabled>Save Image</button>
             </div>
 
             <!-- Display Unit Selection -->
