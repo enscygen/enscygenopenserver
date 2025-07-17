@@ -683,9 +683,11 @@ margin-bottom:20px;
             <span class="close-button" id="closeScaleLineSettingsModal">&times;</span>
             <h2 class="text-xl font-bold mb-4">Scale Line Settings</h2>
             <p class="mb-4 text-gray-700">Customize the reference scale line:</p>
-
+<div class="modal-contents-customize">
+                <div class="customize-line-group">
             <label for="scaleLineLengthInput">Real-World Length:</label>
             <input type="number" id="scaleLineLengthInput" placeholder="Length" class="mb-3" step="any">
+                </div><div class="customize-line-group">
             <label for="scaleLineUnitSelect">Unit:</label>
             <select id="scaleLineUnitSelect" class="mb-3">
                 <option value="mm">Millimeters (mm)</option>
@@ -693,15 +695,19 @@ margin-bottom:20px;
                 <option value="m">Meters (m)</option>
                 <option value="um">Micrometers (µm)</option>
             </select>
-
+</div><div class="customize-line-group">
             <label for="scaleLineColorPicker">Line Color:</label>
             <input type="color" id="scaleLineColorPicker" value="#ff0000" class="mb-3">
+    </div><div class="customize-line-group">
             <label for="scaleLabelFontSizeInput">Label Font Size (px):</label>
             <input type="number" id="scaleLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+        </div><div class="customize-line-group">
             <label for="scaleLineThicknessInput">Line Thickness (px):</label>
             <input type="number" id="scaleLineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+            </div><div class="customize-line-group">
             <label for="scaleLabelFontColorPicker">Label Font Color:</label>
             <input type="color" id="scaleLabelFontColorPicker" value="#000000" class="mb-3">
+                </div><div class="customize-line-group">
             <label for="scaleLabelFontWeightSelect">Label Font Weight:</label>
             <select id="scaleLabelFontWeightSelect" class="mb-3">
                 <option value="normal">Normal</option>
@@ -709,14 +715,19 @@ margin-bottom:20px;
                 <option value="bolder">Bolder</option>
                 <option value="lighter">Lighter</option>
             </select>
+                    </div><div class="customize-line-group">
             <label for="scaleSideBarLengthInput">Side Bar Length (px):</label>
             <input type="number" id="scaleSideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
+                        </div><div class="customize-line-group">
             <label for="scaleLabelVerticalOffsetInput">Label Vertical Offset (px):</label>
             <input type="number" id="scaleLabelVerticalOffsetInput" value="0" step="1" class="mb-3">
+                            </div><div class="customize-line-group">
             <div class="checkbox-group mb-5">
                 <input type="checkbox" id="lockScaleLineCheckbox">
                 <label for="lockScaleLineCheckbox">Lock Scale Line</label>
             </div>
+                            </div>
+                </div>
             <div class="btn-group">
                 <button id="saveScaleLineSettingsBtn" class="btn btn-primary">Save Settings</button>
                 <button id="resetScaleLineSettingsBtn" class="btn btn-secondary btn-reset">Reset Settings</button>
@@ -730,16 +741,23 @@ margin-bottom:20px;
             <span class="close-button" id="closeAreaSettingsModal">&times;</span>
             <h2 class="text-xl font-bold mb-4">Area Settings</h2>
             <p class="mb-4 text-gray-700">Customize the selected area:</p>
+            <div class="modal-contents-customize">
+                <div class="customize-line-group">
             <label for="areaStrokeColorPicker">Border Color:</label>
             <input type="color" id="areaStrokeColorPicker" value="#0000ff" class="mb-3">
+                    </div><div class="customize-line-group">
             <label for="areaFillColorPicker">Fill Color:</label>
             <input type="color" id="areaFillColorPicker" value="#0000ff80" class="mb-3"> <!-- Default semi-transparent blue -->
+                        </div><div class="customize-line-group">
             <label for="areaStrokeThicknessInput">Border Thickness (px):</label>
             <input type="number" id="areaStrokeThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+                            </div><div class="customize-line-group">
             <label for="areaLabelFontSizeInput">Label Font Size (px):</label>
             <input type="number" id="areaLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+                                </div><div class="customize-line-group">
             <label for="areaLabelFontColorPicker">Label Font Color:</label>
             <input type="color" id="areaLabelFontColorPicker" value="#ffffff" class="mb-3">
+                                    </div><div class="customize-line-group">
             <label for="areaLabelFontWeightSelect">Label Font Weight:</label>
             <select id="areaLabelFontWeightSelect" class="mb-5">
                 <option value="normal">Normal</option>
@@ -747,6 +765,7 @@ margin-bottom:20px;
                 <option value="bolder">Bolder</option>
                 <option value="lighter">Lighter</option>
             </select>
+                                    </div>
             <button id="saveAreaSettingsBtn" class="btn btn-primary">Save Settings</button>
         </div>
     </div>
