@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,9 +21,11 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f4f8; /* Light blue-gray background */
+            background-color: #f0f4f8;
+            /* Light blue-gray background */
             margin: 0;
-            padding: 20px; /* Add some padding around the app */
+            padding: 20px;
+            /* Add some padding around the app */
             box-sizing: border-box;
         }
 
@@ -30,16 +33,23 @@
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
-            border-radius: 16px; /* More rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            border-radius: 16px;
+            /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            /* Softer shadow */
             overflow: hidden;
-            max-width: 1200px; /* Max width for larger screens */
+            max-width: 1200px;
+            /* Max width for larger screens */
             width: 100%;
-            padding: 24px; /* Internal padding */
-            gap: 24px; /* Equivalent to gap-6 */
+            padding: 24px;
+            /* Internal padding */
+            gap: 24px;
+            /* Equivalent to gap-6 */
         }
 
-        @media (min-width: 1024px) { /* Equivalent to lg breakpoint */
+        @media (min-width: 1024px) {
+
+            /* Equivalent to lg breakpoint */
             #app-container {
                 flex-direction: row;
             }
@@ -47,52 +57,68 @@
 
         .control-panel {
             width: 100%;
-            background-color: #f8fafc; /* Equivalent to bg-gray-50 */
+            background-color: #f8fafc;
+            /* Equivalent to bg-gray-50 */
             padding: 24px;
             border-radius: 8px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06); /* Equivalent to shadow-inner */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            /* Equivalent to shadow-inner */
             display: flex;
             flex-direction: column;
-            gap: 16px; /* Equivalent to gap-4 */
+            gap: 16px;
+            /* Equivalent to gap-4 */
         }
 
         @media (min-width: 1024px) {
             .control-panel {
-                width: 25%; /* Equivalent to lg:w-1/4 */
+                width: 25%;
+                /* Equivalent to lg:w-1/4 */
             }
         }
 
         .control-panel h2 {
-            font-size: 1.5rem; /* Equivalent to text-2xl */
-            font-weight: 700; /* Equivalent to font-bold */
-            color: #1f2937; /* Equivalent to text-gray-800 */
-            margin-bottom: 16px; /* Equivalent to mb-4 */
+            font-size: 1.5rem;
+            /* Equivalent to text-2xl */
+            font-weight: 700;
+            /* Equivalent to font-bold */
+            color: #1f2937;
+            /* Equivalent to text-gray-800 */
+            margin-bottom: 16px;
+            /* Equivalent to mb-4 */
         }
 
         .control-panel .mb-4 {
-            margin-bottom: 16px; /* Equivalent to mb-4 */
+            margin-bottom: 16px;
+            /* Equivalent to mb-4 */
         }
 
         .control-panel label {
             display: block;
-            font-size: 0.875rem; /* Equivalent to text-sm */
-            font-weight: 500; /* Equivalent to font-medium */
-            color: #374151; /* Equivalent to text-gray-700 */
-            margin-bottom: 8px; /* Equivalent to mb-2 */
+            font-size: 0.875rem;
+            /* Equivalent to text-sm */
+            font-weight: 500;
+            /* Equivalent to font-medium */
+            color: #374151;
+            /* Equivalent to text-gray-700 */
+            margin-bottom: 8px;
+            /* Equivalent to mb-2 */
         }
 
         .control-panel .flex-col-gap-3 {
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Equivalent to gap-3 */
+            gap: 12px;
+            /* Equivalent to gap-3 */
         }
 
         .control-panel .mt-4 {
-            margin-top: 16px; /* Equivalent to mt-4 */
+            margin-top: 16px;
+            /* Equivalent to mt-4 */
         }
 
         .control-panel .mt-6 {
-            margin-top: 24px; /* Equivalent to mt-6 */
+            margin-top: 24px;
+            /* Equivalent to mt-6 */
         }
 
         .control-panel .flex-grow {
@@ -104,28 +130,36 @@
         }
 
         .control-panel .max-h-64 {
-            max-height: 16rem; /* Equivalent to max-h-64 (256px) */
+            max-height: 16rem;
+            /* Equivalent to max-h-64 (256px) */
         }
 
         .control-panel h3 {
-            font-size: 1.125rem; /* Equivalent to text-lg */
-            font-weight: 600; /* Equivalent to font-semibold */
-            color: #374151; /* Equivalent to text-gray-700 */
-            margin-bottom: 12px; /* Equivalent to mb-3 */
+            font-size: 1.125rem;
+            /* Equivalent to text-lg */
+            font-weight: 600;
+            /* Equivalent to font-semibold */
+            color: #374151;
+            /* Equivalent to text-gray-700 */
+            margin-bottom: 12px;
+            /* Equivalent to mb-3 */
         }
 
         .control-panel .flex-col-gap-2 {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Equivalent to gap-2 */
+            gap: 8px;
+            /* Equivalent to gap-2 */
         }
 
         .control-panel .text-gray-500 {
-            color: #6b7280; /* Equivalent to text-gray-500 */
+            color: #6b7280;
+            /* Equivalent to text-gray-500 */
         }
 
         .control-panel .text-sm {
-            font-size: 0.875rem; /* Equivalent to text-sm */
+            font-size: 0.875rem;
+            /* Equivalent to text-sm */
         }
 
         .control-panel .italic {
@@ -142,7 +176,8 @@
 
         @media (min-width: 1024px) {
             #canvas-area {
-                width: 75%; /* Equivalent to lg:w-3/4 */
+                width: 75%;
+                /* Equivalent to lg:w-3/4 */
             }
         }
 
@@ -154,23 +189,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #e2e8f0; /* Lighter blue-gray for canvas background */
+            background-color: #e2e8f0;
+            /* Lighter blue-gray for canvas background */
             border-radius: 8px;
-            overflow: hidden; /* Reverted to hidden */
+            overflow: hidden;
+            /* Reverted to hidden */
         }
 
         canvas {
             display: block;
             border-radius: 8px;
-            border: 2px dashed #d1d5db; /* Equivalent to border-2 border-dashed border-gray-300 */
-            max-width: 100%; /* Ensure canvas scales down if image is smaller than container */
-            height: auto; /* Maintain aspect ratio */
+            border: 2px dashed #d1d5db;
+            /* Equivalent to border-2 border-dashed border-gray-300 */
+            max-width: 100%;
+            /* Ensure canvas scales down if image is smaller than container */
+            height: auto;
+            /* Maintain aspect ratio */
         }
 
         #canvasPlaceholder {
             position: absolute;
-            color: #9ca3af; /* Equivalent to text-gray-400 */
-            font-size: 1.125rem; /* Equivalent to text-lg */
+            color: #9ca3af;
+            /* Equivalent to text-gray-400 */
+            font-size: 1.125rem;
+            /* Equivalent to text-lg */
         }
 
         #canvasPlaceholder.hidden {
@@ -179,15 +221,22 @@
 
         /* Modal styles */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Black w/ opacity */
             justify-content: center;
             align-items: center;
         }
@@ -197,7 +246,7 @@
             margin: auto;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 400px;
             text-align: center;
@@ -227,36 +276,44 @@
             transition: all 0.2s ease-in-out;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: none;
-            width: 100%; /* Equivalent to w-full */
+            width: 100%;
+            /* Equivalent to w-full */
         }
 
         .btn-primary {
-            background-color: #4f46e5; /* Indigo 600 */
+            background-color: #4f46e5;
+            /* Indigo 600 */
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: #4338ca; /* Indigo 700 */
+            background-color: #4338ca;
+            /* Indigo 700 */
             transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background-color: #e2e8f0; /* Slate 200 */
-            color: #334155; /* Slate 700 */
+            background-color: #e2e8f0;
+            /* Slate 200 */
+            color: #334155;
+            /* Slate 700 */
         }
 
         .btn-secondary:hover {
-            background-color: #cbd5e1; /* Slate 300 */
+            background-color: #cbd5e1;
+            /* Slate 300 */
             transform: translateY(-2px);
         }
 
         .btn-danger {
-            background-color: #ef4444; /* Red 500 */
+            background-color: #ef4444;
+            /* Red 500 */
             color: white;
         }
 
         .btn-danger:hover {
-            background-color: #dc2626; /* Red 600 */
+            background-color: #dc2626;
+            /* Red 600 */
             transform: translateY(-2px);
         }
 
@@ -266,14 +323,16 @@
         select {
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid #cbd5e1; /* Slate 300 */
+            border: 1px solid #cbd5e1;
+            /* Slate 300 */
             margin-bottom: 15px;
             width: 100%;
             box-sizing: border-box;
         }
 
         input[type="file"] {
-            background-color: #f8fafc; /* Slate 50 */
+            background-color: #f8fafc;
+            /* Slate 50 */
             cursor: pointer;
         }
 
@@ -306,7 +365,8 @@
 
         .measurement-item span {
             font-size: 0.9rem;
-            color: #475569; /* Slate 600 */
+            color: #475569;
+            /* Slate 600 */
         }
 
         .measurement-item-actions {
@@ -318,27 +378,31 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #64748b; /* Slate 500 */
+            color: #64748b;
+            /* Slate 500 */
             font-size: 1rem;
             transition: color 0.2s;
         }
 
         .measurement-item-actions button:hover {
-            color: #1e293b; /* Slate 900 */
+            color: #1e293b;
+            /* Slate 900 */
         }
 
         /* Line Settings Modal */
         #lineSettingsModal .modal-content,
         #areaSettingsModal .modal-content,
         #addLineModal .modal-content,
-        #scaleLineSettingsModal .modal-content { /* Apply to all modals */
+        #scaleLineSettingsModal .modal-content {
+            /* Apply to all modals */
             max-width: 350px;
         }
 
         #lineSettingsModal label,
         #areaSettingsModal label,
         #addLineModal label,
-        #scaleLineSettingsModal label { /* Apply to all modals */
+        #scaleLineSettingsModal label {
+            /* Apply to all modals */
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
@@ -356,14 +420,17 @@
         #addLineModal select,
         #scaleLineSettingsModal input[type="color"],
         #scaleLineSettingsModal input[type="number"],
-        #scaleLineSettingsModal select { /* Apply to all modals */
-            padding: 10px; /* Consistent padding */
+        #scaleLineSettingsModal select {
+            /* Apply to all modals */
+            padding: 10px;
+            /* Consistent padding */
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             margin-bottom: 15px;
             width: 100%;
             box-sizing: border-box;
         }
+
         /* Specific height for color inputs */
         #lineSettingsModal input[type="color"],
         #areaSettingsModal input[type="color"],
@@ -376,9 +443,11 @@
             max-width: 300px;
             padding: 20px;
         }
+
         #messageModal p {
             margin-bottom: 20px;
         }
+
         #messageModal button {
             width: auto;
             padding: 8px 15px;
@@ -400,9 +469,11 @@
             margin-bottom: 5px;
             margin-top: 0px;
         }
+
         #scaleInfo p:last-child {
             margin-bottom: 0;
         }
+
         #scaleInfo .checkbox-group {
             display: flex;
             align-items: center;
@@ -412,6 +483,7 @@
             border-radius: 4px;
             padding: 5px;
         }
+
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -421,26 +493,35 @@
             border-radius: 4px;
             padding: 5px;
         }
+
         input#toggleRefLine {
             margin: 0px !important;
         }
+
         #scaleInfo .checkbox-group input[type="checkbox"] {
-            width: auto; /* Override full width for checkbox */
+            width: auto;
+            /* Override full width for checkbox */
             margin-bottom: 0;
         }
+
         /* Style for the reset settings button in modals */
         .modal-content .btn-reset {
-            background-color: #64748b; /* Slate 500 */
+            background-color: #64748b;
+            /* Slate 500 */
             color: white;
         }
+
         .modal-content .btn-reset:hover {
-            background-color: #475569; /* Slate 600 */
+            background-color: #475569;
+            /* Slate 600 */
         }
+
         .modal-content .btn-group {
             display: flex;
             gap: 10px;
             margin-top: 20px;
         }
+
         .scaling-options {
             display: flex;
             align-items: center;
@@ -475,6 +556,7 @@
         .scalelab-image {
             padding: 10px 0px;
         }
+
         #measurement-display-area {
             width: 100%;
             background-color: #f8fafc;
@@ -483,6 +565,7 @@
             border-radius: 8px;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
         }
+
         #scaleInfo .checkbox-group {
             display: flex;
             align-items: center;
@@ -492,6 +575,7 @@
             border-radius: 4px;
             padding: 5px;
         }
+
         .modal-contents-customize {
             font-size: 0.8rem;
             display: flex;
@@ -518,13 +602,15 @@
             align-items: center;
             gap: 10px;
         }
-        #measurementsList{
-margin-bottom:20px;
+
+        #measurementsList {
+            margin-bottom: 20px;
             max-height: 300px;
             overflow-y: auto;
         }
     </style>
 </head>
+
 <body>
     <div id="app-container">
         <!-- Control Panel -->
@@ -569,7 +655,7 @@ margin-bottom:20px;
                 </select>
             </div>
 
-            
+
         </div>
 
         <!-- Canvas Area -->
@@ -607,7 +693,7 @@ margin-bottom:20px;
                 </button>
             </div>
         </div>
-        
+
     </div>
 
     <!-- Scale Input Modal (for drawing reference line) -->
@@ -652,38 +738,44 @@ margin-bottom:20px;
             <p class="mb-4 text-gray-700">Customize the selected line</p>
             <div class="modal-contents-customize">
                 <div class="customize-line-group">
-            <label for="lineColorPicker">Line Color:</label>
-            <input type="color" id="lineColorPicker" value="#ff0000" class="mb-3">
+                    <label for="lineColorPicker">Line Color:</label>
+                    <input type="color" id="lineColorPicker" value="#ff0000" class="mb-3">
                 </div>
                 <div class="customize-line-group">
-            <label for="labelFontSizeInput">Label Font Size (px):</label>
-            <input type="number" id="labelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
-                </div> <div class="customize-line-group">
-            <label for="lineThicknessInput">Line Thickness (px):</label>
-            <input type="number" id="lineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
-                    </div> <div class="customize-line-group">
-            <label for="labelFontColorPicker">Label Font Color:</label>
-            <input type="color" id="labelFontColorPicker" value="#000000" class="mb-3">
-                        </div> <div class="customize-line-group">
-            <label for="labelFontWeightSelect">Label Font Weight:</label>
-            <select id="labelFontWeightSelect" class="mb-3">
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="bolder">Bolder</option>
-                <option value="lighter">Lighter</option>
-            </select>
-                            </div> <div class="customize-line-group">
-            <label for="sideBarLengthInput">Side Bar Length (px):</label>
-            <input type="number" id="sideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
-                                </div> <div class="customize-line-group">
-            <label for="labelVerticalOffsetInput">Label Vertical Offset (px):</label>
-            <input type="number" id="labelVerticalOffsetInput" value="0" step="1" class="mb-3">
-                                    </div> <div class="customize-line-group">
-            <div class="checkbox-group mb-5">
-                <input type="checkbox" id="rotateLabelCheckbox">
-                <label for="rotateLabelCheckbox">Rotate Label with Line</label>
-            </div>
-                                    </div>
+                    <label for="labelFontSizeInput">Label Font Size (px):</label>
+                    <input type="number" id="labelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="lineThicknessInput">Line Thickness (px):</label>
+                    <input type="number" id="lineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="labelFontColorPicker">Label Font Color:</label>
+                    <input type="color" id="labelFontColorPicker" value="#000000" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="labelFontWeightSelect">Label Font Weight:</label>
+                    <select id="labelFontWeightSelect" class="mb-3">
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="bolder">Bolder</option>
+                        <option value="lighter">Lighter</option>
+                    </select>
+                </div>
+                <div class="customize-line-group">
+                    <label for="sideBarLengthInput">Side Bar Length (px):</label>
+                    <input type="number" id="sideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="labelVerticalOffsetInput">Label Vertical Offset (px):</label>
+                    <input type="number" id="labelVerticalOffsetInput" value="0" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <div class="checkbox-group mb-5">
+                        <input type="checkbox" id="rotateLabelCheckbox">
+                        <label for="rotateLabelCheckbox">Rotate Label with Line</label>
+                    </div>
+                </div>
             </div>
             <div class="btn-group">
                 <button id="saveLineSettingsBtn" class="btn btn-primary">Save Settings</button>
@@ -698,51 +790,60 @@ margin-bottom:20px;
             <span class="close-button" id="closeScaleLineSettingsModal">&times;</span>
             <h2 class="text-xl font-bold mb-4">Scale Line Settings</h2>
             <p class="mb-4 text-gray-700">Customize the reference scale line</p>
-<div class="modal-contents-customize">
+            <div class="modal-contents-customize">
                 <div class="customize-line-group">
-            <label for="scaleLineLengthInput">Real-World Length:</label>
-            <input type="number" id="scaleLineLengthInput" placeholder="Length" class="mb-3" step="any">
-                </div><div class="customize-line-group">
-            <label for="scaleLineUnitSelect">Unit:</label>
-            <select id="scaleLineUnitSelect" class="mb-3">
-                <option value="mm">Millimeters (mm)</option>
-                <option value="cm">Centimeters (cm)</option>
-                <option value="m">Meters (m)</option>
-                <option value="um">Micrometers (µm)</option>
-            </select>
-</div><div class="customize-line-group">
-            <label for="scaleLineColorPicker">Line Color:</label>
-            <input type="color" id="scaleLineColorPicker" value="#ff0000" class="mb-3">
-    </div><div class="customize-line-group">
-            <label for="scaleLabelFontSizeInput">Label Font Size (px):</label>
-            <input type="number" id="scaleLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
-        </div><div class="customize-line-group">
-            <label for="scaleLineThicknessInput">Line Thickness (px):</label>
-            <input type="number" id="scaleLineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
-            </div><div class="customize-line-group">
-            <label for="scaleLabelFontColorPicker">Label Font Color:</label>
-            <input type="color" id="scaleLabelFontColorPicker" value="#000000" class="mb-3">
-                </div><div class="customize-line-group">
-            <label for="scaleLabelFontWeightSelect">Label Font Weight:</label>
-            <select id="scaleLabelFontWeightSelect" class="mb-3">
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="bolder">Bolder</option>
-                <option value="lighter">Lighter</option>
-            </select>
-                    </div><div class="customize-line-group">
-            <label for="scaleSideBarLengthInput">Side Bar Length (px):</label>
-            <input type="number" id="scaleSideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
-                        </div><div class="customize-line-group">
-            <label for="scaleLabelVerticalOffsetInput">Label Vertical Offset (px):</label>
-            <input type="number" id="scaleLabelVerticalOffsetInput" value="0" step="1" class="mb-3">
-                            </div><div class="customize-line-group">
-            <div class="checkbox-group mb-5">
-                <input type="checkbox" id="lockScaleLineCheckbox">
-                <label for="lockScaleLineCheckbox">Lock Scale Line</label>
-            </div>
-                            </div>
+                    <label for="scaleLineLengthInput">Real-World Length:</label>
+                    <input type="number" id="scaleLineLengthInput" placeholder="Length" class="mb-3" step="any">
                 </div>
+                <div class="customize-line-group">
+                    <label for="scaleLineUnitSelect">Unit:</label>
+                    <select id="scaleLineUnitSelect" class="mb-3">
+                        <option value="mm">Millimeters (mm)</option>
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="um">Micrometers (µm)</option>
+                    </select>
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLineColorPicker">Line Color:</label>
+                    <input type="color" id="scaleLineColorPicker" value="#ff0000" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLabelFontSizeInput">Label Font Size (px):</label>
+                    <input type="number" id="scaleLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLineThicknessInput">Line Thickness (px):</label>
+                    <input type="number" id="scaleLineThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLabelFontColorPicker">Label Font Color:</label>
+                    <input type="color" id="scaleLabelFontColorPicker" value="#000000" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLabelFontWeightSelect">Label Font Weight:</label>
+                    <select id="scaleLabelFontWeightSelect" class="mb-3">
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="bolder">Bolder</option>
+                        <option value="lighter">Lighter</option>
+                    </select>
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleSideBarLengthInput">Side Bar Length (px):</label>
+                    <input type="number" id="scaleSideBarLengthInput" value="10" min="0" max="30" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="scaleLabelVerticalOffsetInput">Label Vertical Offset (px):</label>
+                    <input type="number" id="scaleLabelVerticalOffsetInput" value="0" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <div class="checkbox-group mb-5">
+                        <input type="checkbox" id="lockScaleLineCheckbox">
+                        <label for="lockScaleLineCheckbox">Lock Scale Line</label>
+                    </div>
+                </div>
+            </div>
             <div class="btn-group">
                 <button id="saveScaleLineSettingsBtn" class="btn btn-primary">Save Settings</button>
                 <button id="resetScaleLineSettingsBtn" class="btn btn-secondary btn-reset">Reset Settings</button>
@@ -758,30 +859,37 @@ margin-bottom:20px;
             <p class="mb-4 text-gray-700">Customize the selected area</p>
             <div class="modal-contents-customize">
                 <div class="customize-line-group">
-            <label for="areaStrokeColorPicker">Border Color:</label>
-            <input type="color" id="areaStrokeColorPicker" value="#0000ff" class="mb-3">
-                    </div><div class="customize-line-group">
-            <label for="areaFillColorPicker">Fill Color:</label>
-            <input type="color" id="areaFillColorPicker" value="#0000ff80" class="mb-3"> <!-- Default semi-transparent blue -->
-                        </div><div class="customize-line-group">
-            <label for="areaStrokeThicknessInput">Border Thickness (px):</label>
-            <input type="number" id="areaStrokeThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
-                            </div><div class="customize-line-group">
-            <label for="areaLabelFontSizeInput">Label Font Size (px):</label>
-            <input type="number" id="areaLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
-                                </div><div class="customize-line-group">
-            <label for="areaLabelFontColorPicker">Label Font Color:</label>
-            <input type="color" id="areaLabelFontColorPicker" value="#ffffff" class="mb-3">
-                                    </div><div class="customize-line-group">
-            <label for="areaLabelFontWeightSelect">Label Font Weight:</label>
-            <select id="areaLabelFontWeightSelect" class="mb-5">
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="bolder">Bolder</option>
-                <option value="lighter">Lighter</option>
-            </select>
-                                    </div>
-            <button id="saveAreaSettingsBtn" class="btn btn-primary">Save Settings</button>
+                    <label for="areaStrokeColorPicker">Border Color:</label>
+                    <input type="color" id="areaStrokeColorPicker" value="#0000ff" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="areaFillColorPicker">Fill Color:</label>
+                    <input type="color" id="areaFillColorPicker" value="#0000ff80" class="mb-3">
+                    <!-- Default semi-transparent blue -->
+                </div>
+                <div class="customize-line-group">
+                    <label for="areaStrokeThicknessInput">Border Thickness (px):</label>
+                    <input type="number" id="areaStrokeThicknessInput" value="2" min="1" max="10" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="areaLabelFontSizeInput">Label Font Size (px):</label>
+                    <input type="number" id="areaLabelFontSizeInput" value="16" min="8" max="48" step="1" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="areaLabelFontColorPicker">Label Font Color:</label>
+                    <input type="color" id="areaLabelFontColorPicker" value="#ffffff" class="mb-3">
+                </div>
+                <div class="customize-line-group">
+                    <label for="areaLabelFontWeightSelect">Label Font Weight:</label>
+                    <select id="areaLabelFontWeightSelect" class="mb-5">
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="bolder">Bolder</option>
+                        <option value="lighter">Lighter</option>
+                    </select>
+                </div>
+                <button id="saveAreaSettingsBtn" class="btn btn-primary">Save Settings</button>
+            </div>
         </div>
     </div>
 
@@ -1275,8 +1383,8 @@ margin-bottom:20px;
             const effectiveTolerance = tolerance; // Tolerance is already in original image pixels
 
             if (shape.type === 'line') {
-                const distToStart = calculatePixelLength({x: mouseX, y: mouseY}, shape.start);
-                const distToEnd = calculatePixelLength({x: mouseX, y: mouseY}, shape.end);
+                const distToStart = calculatePixelLength({ x: mouseX, y: mouseY }, shape.start);
+                const distToEnd = calculatePixelLength({ x: mouseX, y: mouseY }, shape.end);
 
                 if (distToStart < effectiveTolerance) {
                     return 'start';
@@ -1286,7 +1394,7 @@ margin-bottom:20px;
             } else if (shape.type === 'polygon') {
                 for (let i = 0; i < shape.points.length; i++) {
                     const point = shape.points[i];
-                    const distToVertex = calculatePixelLength({x: mouseX, y: mouseY}, point);
+                    const distToVertex = calculatePixelLength({ x: mouseX, y: mouseY }, point);
                     if (distToVertex < effectiveTolerance) {
                         return `vertex_${i}`;
                     }
@@ -1314,7 +1422,7 @@ margin-bottom:20px;
 
                 const L2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
                 if (L2 === 0) {
-                    return calculatePixelLength({x: mouseX, y: mouseY}, shape.start) < effectiveTolerance;
+                    return calculatePixelLength({ x: mouseX, y: mouseY }, shape.start) < effectiveTolerance;
                 }
 
                 const t = ((mouseX - x1) * (x2 - x1) + (mouseY - y1) * (y2 - y1)) / L2;
@@ -1329,7 +1437,7 @@ margin-bottom:20px;
                     closestX = x1 + t * (x2 - x1);
                     closestY = y1 + t * (y2 - y1);
                 }
-                const distance = calculatePixelLength({x: mouseX, y: mouseY}, {x: closestX, y: closestY});
+                const distance = calculatePixelLength({ x: mouseX, y: mouseY }, { x: closestX, y: closestY });
                 return distance < effectiveTolerance;
             } else if (shape.type === 'polygon') {
                 // Point-in-polygon test for whole polygon drag
@@ -1340,7 +1448,7 @@ margin-bottom:20px;
                     let xj = shape.points[j].x, yj = shape.points[j].y;
 
                     let intersect = ((yi > mouseY) != (yj > mouseY)) &&
-                                    (mouseX < (xj - xi) * (mouseY - yi) / (yj - yi) + xi);
+                        (mouseX < (xj - xi) * (mouseY - yi) / (yj - yi) + xi);
                     if (intersect) inside = !inside;
                 }
                 // Also check if near any edge for easier grabbing
@@ -1348,7 +1456,7 @@ margin-bottom:20px;
                     const p1 = shape.points[i];
                     const p2 = shape.points[(i + 1) % shape.points.length];
                     // Use a slightly larger tolerance for edge detection for easier grabbing
-                    if (isNearLineSegmentOrInsidePolygon({start: p1, end: p2, type: 'line'}, mouseX, mouseY, tolerance * 2)) {
+                    if (isNearLineSegmentOrInsidePolygon({ start: p1, end: p2, type: 'line' }, mouseX, mouseY, tolerance * 2)) {
                         return true; // Near an edge
                     }
                 }
@@ -1782,42 +1890,42 @@ margin-bottom:20px;
         /**
          * Activates drawing area mode (polygon).
          */
-        
-        drawAreaBtn.addEventListener('click', () => {
-    if (!currentImage || pixelsPerMM === 0) {
-        showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
-        return;
-    }
 
-    // NEW LOGIC: If already in drawingArea mode and a polygon is being drawn, complete it.
-    if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
-        completePolygon();
-        // After completing, you might want to remain in drawingArea mode
-        // or revert to idle, depending on desired UX.
-        // For this scenario, let's assume you want to remain in drawing mode
-        // to draw another area immediately. So, no change to currentMode here.
-    } else {
-        // Original logic for starting a new polygon drawing
-        currentMode = 'drawingArea';
-        isDrawing = false;
-        currentDrawingLine = null;
-        isDrawingPolygon = true;
-        currentPolygonPoints = []; // Start a new polygon
-        // Update button styles to reflect active mode
-        setScaleBtn.classList.add('btn-primary');
-        setScaleBtn.classList.remove('btn-secondary');
-        setPixelScaleBtn.classList.add('btn-primary');
-        setPixelScaleBtn.classList.remove('btn-secondary');
-        drawLineBtn.classList.add('btn-primary');
-        drawLineBtn.classList.remove('btn-secondary');
-        drawAreaBtn.classList.remove('btn-primary'); // Highlight "Draw Area" as active
-        drawAreaBtn.classList.add('btn-secondary');
-        addLineByValueBtn.classList.add('btn-primary');
-        addLineByValueBtn.classList.remove('btn-secondary');
-        console.log('Mode: Drawing Area - Click to add points, click near first point to complete.');
-    }
-    drawCanvas(); // Redraw to reflect changes
-});
+        drawAreaBtn.addEventListener('click', () => {
+            if (!currentImage || pixelsPerMM === 0) {
+                showMessageModal('Please set the scale first using either "Set Scale (Draw Line)" or "Set Scale (1 Pixel)".');
+                return;
+            }
+
+            // NEW LOGIC: If already in drawingArea mode and a polygon is being drawn, complete it.
+            if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
+                completePolygon();
+                // After completing, you might want to remain in drawingArea mode
+                // or revert to idle, depending on desired UX.
+                // For this scenario, let's assume you want to remain in drawing mode
+                // to draw another area immediately. So, no change to currentMode here.
+            } else {
+                // Original logic for starting a new polygon drawing
+                currentMode = 'drawingArea';
+                isDrawing = false;
+                currentDrawingLine = null;
+                isDrawingPolygon = true;
+                currentPolygonPoints = []; // Start a new polygon
+                // Update button styles to reflect active mode
+                setScaleBtn.classList.add('btn-primary');
+                setScaleBtn.classList.remove('btn-secondary');
+                setPixelScaleBtn.classList.add('btn-primary');
+                setPixelScaleBtn.classList.remove('btn-secondary');
+                drawLineBtn.classList.add('btn-primary');
+                drawLineBtn.classList.remove('btn-secondary');
+                drawAreaBtn.classList.remove('btn-primary'); // Highlight "Draw Area" as active
+                drawAreaBtn.classList.add('btn-secondary');
+                addLineByValueBtn.classList.add('btn-primary');
+                addLineByValueBtn.classList.remove('btn-secondary');
+                console.log('Mode: Drawing Area - Click to add points, click near first point to complete.');
+            }
+            drawCanvas(); // Redraw to reflect changes
+        });
 
         /**
          * Clears all lines and resets the scale.
@@ -2360,14 +2468,14 @@ margin-bottom:20px;
                 hoveredLineIndex = newHoveredLineIndex;
                 drawCanvas();
             } else if (newHoveredLineIndex === -1 && hoveredLineIndex === -2) { // Now hovering reference, was hovering nothing
-                 if (referenceLine) {
+                if (referenceLine) {
                     originalHoveredLineColor = referenceLine.color;
                     originalHoveredLineFontColor = referenceLine.fontColor;
                     referenceLine.color = 'yellow';
                     referenceLine.fontColor = 'yellow';
                     hoveredLineIndex = -1;
                     drawCanvas();
-                 }
+                }
             } else if (newHoveredLineIndex === -2 && hoveredLineIndex === -1) { // Now hovering nothing, was hovering reference
                 if (referenceLine) {
                     referenceLine.color = originalHoveredLineColor;
@@ -2579,9 +2687,9 @@ margin-bottom:20px;
         closeAddLineModalBtn.addEventListener('click', hideAddLineModal);
         closeScaleLineSettingsModalBtn.addEventListener('click', hideScaleLineSettingsModal);
         closeLineSettingsModalBtn.addEventListener('click', hideLineSettingsModal);
-        
 
-        
+
+
         window.addEventListener('click', (event) => {
             if (event.target === scaleModal) {
                 hideScaleModal();
@@ -2874,22 +2982,22 @@ margin-bottom:20px;
                 const area = measurementAreas[editingAreaIndex];
                 const selectedHexColor = areaFillColorPicker.value;
                 function hexToRgba(hex, alpha) {
-    let r = 0, g = 0, b = 0;
+                    let r = 0, g = 0, b = 0;
 
-    // Handle #RRGGBB format
-    if (hex.length === 7) {
-        r = parseInt(hex.substring(1, 3), 16);
-        g = parseInt(hex.substring(3, 5), 16);
-        b = parseInt(hex.substring(5, 7), 16);
-    }
-    // Handle #RGB format (shorthand)
-    else if (hex.length === 4) {
-        r = parseInt(hex[1] + hex[1], 16);
-        g = parseInt(hex[2] + hex[2], 16);
-        b = parseInt(hex[3] + hex[3], 16);
-    }
+                    // Handle #RRGGBB format
+                    if (hex.length === 7) {
+                        r = parseInt(hex.substring(1, 3), 16);
+                        g = parseInt(hex.substring(3, 5), 16);
+                        b = parseInt(hex.substring(5, 7), 16);
+                    }
+                    // Handle #RGB format (shorthand)
+                    else if (hex.length === 4) {
+                        r = parseInt(hex[1] + hex[1], 16);
+                        g = parseInt(hex[2] + hex[2], 16);
+                        b = parseInt(hex[3] + hex[3], 16);
+                    }
 
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
                 }
                 area.strokeColor = areaStrokeColorPicker.value;
                 area.fillColor = hexToRgba(selectedHexColor, 0.2);
@@ -3018,13 +3126,13 @@ margin-bottom:20px;
         }
 
         document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.keyCode === 13) {
-        e.preventDefault(); // Prevent default browser behavior (e.g., form submission)
-        if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
-            completePolygon();
-        }
-    }
-});
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault(); // Prevent default browser behavior (e.g., form submission)
+                if (currentMode === 'drawingArea' && isDrawingPolygon && currentPolygonPoints.length > 0) {
+                    completePolygon();
+                }
+            }
+        });
 
         // --- Initial Setup ---
         function resizeCanvasContainer() {
@@ -3058,4 +3166,5 @@ margin-bottom:20px;
         drawCanvas();
     </script>
 </body>
+
 </html>
