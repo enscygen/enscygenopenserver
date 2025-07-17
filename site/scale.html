@@ -473,6 +473,32 @@
             border-radius: 4px;
             padding: 5px;
         }
+        .modal-contents-customize {
+            font-size: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 0px;
+        }
+
+
+        .customize-line-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        span.sl-no {
+            font-weight: bold;
+            font-family: monospace;
+            background: #efefef;
+            padding: 5px;
+        }
+
+        span.mes-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1420,7 +1446,7 @@
                 const listItem = document.createElement('div');
                 listItem.className = 'measurement-item';
                 listItem.innerHTML = `
-                    <span>Line ${index + 1}: ${line.displayLength}</span>
+                    <span class="mes-item"><span class="sl-no">L${index + 1}</span> ${line.displayLength}</span>
                     <div class="measurement-item-actions">
                         <button class="settings-btn" data-type="line" data-index="${index}" title="Line Settings">
                             <i class="fas fa-cog"></i>
@@ -1448,7 +1474,7 @@
                 const listItem = document.createElement('div');
                 listItem.className = 'measurement-item';
                 listItem.innerHTML = `
-                    <span>Area ${index + 1}: ${area.displayArea}</span>
+                    <span class="mes-item"><span class="sl-no">A${index + 1}</span> ${area.displayArea}</span>
                     <div class="measurement-item-actions">
                         <button class="settings-btn" data-type="area" data-index="${index}" title="Area Settings">
                             <i class="fas fa-cog"></i>
