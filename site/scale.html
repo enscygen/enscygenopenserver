@@ -765,7 +765,7 @@
         let isDrawing = false; // For line drawing
         let isDrawingPolygon = false; // For area drawing
         let isDragging = false; // Flag for endpoint dragging (lines or polygon vertices)
-        let draggedLineIndex = -1; // -1 for no line, index for line
+        let draggedLineIndex = -2; // -2 for no line, -1 for reference line, >=0 for measurement lines
         let draggedPolygonIndex = -1; // -1 for no polygon, index for polygon
         let draggedPointType = ''; // 'start', 'end', 'vertex'
         let draggedPolygonPointIndex = -1; // Index of the vertex being dragged
@@ -774,7 +774,7 @@
         let dragOffsetX = 0;
         let dragOffsetY = 0;
 
-        let hoveredLineIndex = -1;
+        let hoveredLineIndex = -2; // -2 for no hover, -1 for referenceLine, >=0 for measurementLines
         let hoveredPolygonIndex = -1;
         let originalHoveredLineColor = '';
         let originalHoveredLineFontColor = '';
@@ -851,6 +851,8 @@
             const xOnScreenCanvas = clientX - rect.left;
             const yOnScreenCanvas = clientY - rect.top;
 
+            // Calculate the scale factor from the canvas's *display size* to its *internal drawing resolution*
+            // This is crucial for accurate coordinate mapping when the canvas is scaled by CSS.
             const scaleXInternal = imageCanvas.width / rect.width;
             const scaleYInternal = imageCanvas.height / rect.height;
 
@@ -1249,9 +1251,13 @@
 
                 // Draw reference line
                 if (referenceLine && showReferenceLine) {
-                    const refLengthConverted = convertPixelsToUnit(referenceLine.lengthPx, displayUnitSelect.value);
-                    const refLengthFormatted = refLengthConverted.toFixed(2);
-                    const refDisplayText = `Scale: ${refLengthFormatted} ${displayUnitSelect.value}`;
+                    // For the reference line, display its real-world length if available, otherwise pixel length
+                    let refDisplayText;
+                    if (referenceLine.realWorldLength && referenceLine.realWorldUnit) {
+                        refDisplayText = `Scale: ${referenceLine.realWorldLength.toFixed(2)} ${referenceLine.realWorldUnit}`;
+                    } else {
+                        refDisplayText = `Scale: ${referenceLine.lengthPx.toFixed(2)} px`;
+                    }
                     drawLine(referenceLine, referenceLine.color, referenceLine.thickness, referenceLine.barLength);
                     drawLineText(referenceLine, refDisplayText, referenceLine.fontColor, referenceLine.fontSize, referenceLine.fontWeight, referenceLine.labelOffsetY, referenceLine.rotateLabel);
                 }
@@ -1314,8 +1320,15 @@
                 hasMeasurements = true;
                 const listItem = document.createElement('div');
                 listItem.className = 'measurement-item';
+                // Display real-world length if available, otherwise pixel length
+                let displayLength = referenceLine.realWorldLength && referenceLine.realWorldUnit
+                    ? `${referenceLine.realWorldLength.toFixed(2)} ${referenceLine.realWorldUnit}`
+                    : `${referenceLine.lengthPx.toFixed(2)} px`;
+
+                referenceLine.displayLength = displayLength; // Store for consistent display
+
                 listItem.innerHTML = `
-                    <span>Scale Line: ${referenceLine.displayLength}</span>
+                    <span>Scale Line: ${displayLength}</span>
                     <div class="measurement-item-actions">
                         <button class="settings-btn" data-type="scaleLine" data-index="0" title="Scale Line Settings">
                             <i class="fas fa-cog"></i>
@@ -1395,9 +1408,9 @@
         function updateScaleInfoDisplay() {
             if (pixelsPerMM > 0) {
                 if (calibrationMethod === 'line' && referenceLine) {
-                    calibrationRefDisplay.textContent = `Reference: ${referenceLine.realWorldLength} ${referenceLine.realWorldUnit} (drawn line)`;
+                    calibrationRefDisplay.textContent = `Reference: ${referenceLine.realWorldLength.toFixed(2)} ${referenceLine.realWorldUnit} (drawn line)`;
                 } else if (calibrationMethod === 'pixel') {
-                    calibrationRefDisplay.textContent = `Reference: 1 Image Pixel = ${parseFloat(pixelLengthInput.value)} ${pixelUnitSelect.value}`;
+                    calibrationRefDisplay.textContent = `Reference: 1 Image Pixel = ${parseFloat(pixelLengthInput.value).toFixed(4)} ${pixelUnitSelect.value}`;
                 }
 
                 pixelsPerCalibratedUnitDisplay.textContent = `Pixels per ${scaleBaseUnit}: ${pixelsPerMM.toFixed(4)}`;
@@ -1430,7 +1443,7 @@
                         openLineSettingsModal(index);
                     } else if (type === 'area') {
                         openAreaSettingsModal(index);
-                    } else if (type === 'scaleLine') { // NEW
+                    } else if (type === 'scaleLine') {
                         openScaleLineSettingsModal();
                     }
                 };
@@ -1439,7 +1452,7 @@
                 button.onclick = (e) => {
                     const index = parseInt(e.currentTarget.dataset.index);
                     const type = e.currentTarget.dataset.type;
-                    deleteShape(index, type); // Use a generic deleteShape function
+                    deleteShape(index, type);
                 };
             });
         }
@@ -1474,6 +1487,7 @@
                         currentImage = originalImage;
                         imageAspectRatio = originalImage.width / originalImage.height;
 
+                        // Set canvas dimensions to ORIGINAL IMAGE DIMENSIONS
                         imageCanvas.width = originalImage.width;
                         imageCanvas.height = originalImage.height;
 
@@ -1496,9 +1510,9 @@
                         isDrawingPolygon = false;
                         isDragging = false;
                         isDraggingWholeShape = false;
-                        hoveredLineIndex = -1;
+                        hoveredLineIndex = -2;
                         hoveredPolygonIndex = -1;
-                        referenceLine = null; // Ensure referenceLine is cleared on new image
+                        referenceLine = null;
                         measurementLines = [];
                         measurementAreas = [];
                         currentPolygonPoints = [];
@@ -1507,7 +1521,7 @@
                         updateMeasurementsList();
                         updateScaleInfoDisplay();
 
-                        resizeCanvasContainer();
+                        resizeCanvasContainer(); // Call to adjust CSS display size
                     };
                     originalImage.src = event.target.result;
                 };
@@ -1543,7 +1557,7 @@
         setScaleBtn.addEventListener('click', () => {
             if (!currentImage) return;
             currentMode = 'scaling';
-            referenceLine = null; // Clear existing reference line to draw a new one
+            referenceLine = null;
             measurementLines = [];
             measurementAreas = [];
             pixelsPerMM = 0;
@@ -1570,7 +1584,7 @@
         setPixelScaleBtn.addEventListener('click', () => {
             if (!currentImage) return;
             currentMode = 'idle';
-            referenceLine = null; // Clear existing reference line
+            referenceLine = null;
             measurementLines = [];
             measurementAreas = [];
             pixelsPerMM = 0;
@@ -1659,7 +1673,7 @@
             isDrawing = false;
             isDragging = false;
             isDraggingWholeShape = false;
-            hoveredLineIndex = -1;
+            hoveredLineIndex = -2;
             hoveredPolygonIndex = -1;
             updateMeasurementsList();
             updateScaleInfoDisplay();
@@ -1698,6 +1712,8 @@
                 showMessageModal('No image to save. Please upload an image first.');
                 return;
             }
+            // The canvas width/height are already set to originalImage.width/height
+            // so toDataURL will capture the full resolution.
             const dataURL = imageCanvas.toDataURL('image/png');
             const a = document.createElement('a');
             a.href = dataURL;
@@ -1785,8 +1801,8 @@
                         }
                         isDraggingWholeShape = true;
                         draggedLineIndex = -1; // Indicate reference line
-                        draggedOffsetX = x - referenceLine.start.x;
-                        draggedOffsetY = y - referenceLine.start.y;
+                        dragOffsetX = x - referenceLine.start.x;
+                        dragOffsetY = y - referenceLine.start.y;
                         isDrawing = false;
                         currentDrawingLine = null;
                         return;
@@ -1864,22 +1880,25 @@
                 currentDrawingLine = { start: currentPolygonPoints[currentPolygonPoints.length - 1], end: { x, y } };
                 drawCanvas();
             } else if (isDragging && draggedLineIndex === -1 && referenceLine) { // Dragging reference line endpoint
-                if (referenceLine.locked) return; // Should already be caught in mousedown, but double-check
+                if (referenceLine.locked) return;
                 if (draggedPointType === 'start') {
                     referenceLine.start = { x, y };
                 } else {
                     referenceLine.end = { x, y };
                 }
                 referenceLine.lengthPx = calculatePixelLength(referenceLine.start, referenceLine.end);
-                // Recalculate pixelsPerMM based on new pixel length
+                let realWorldLengthInMM = 0; // Declare and initialize
                 if (referenceLine.realWorldLength && referenceLine.realWorldUnit) {
-                    const realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
-                    pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                    realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
+                    if (realWorldLengthInMM > 0) {
+                        pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                        scaleBaseUnit = referenceLine.realWorldUnit;
+                    }
                 }
                 updateMeasurementsList();
                 updateScaleInfoDisplay();
                 drawCanvas();
-            } else if (isDragging && draggedLineIndex !== -1) { // Dragging other line endpoint
+            } else if (isDragging && draggedLineIndex !== -2 && draggedLineIndex !== -1) { // Dragging other line endpoint
                 const line = measurementLines[draggedLineIndex];
                 if (draggedPointType === 'start') {
                     line.start = { x, y };
@@ -1894,7 +1913,7 @@
                 updateMeasurementsList();
                 drawCanvas();
             } else if (isDraggingWholeShape && draggedLineIndex === -1 && referenceLine) { // Dragging whole reference line
-                if (referenceLine.locked) return; // Should already be caught in mousedown
+                if (referenceLine.locked) return;
                 const newStartX = x - dragOffsetX;
                 const newStartY = y - dragOffsetY;
                 const deltaX = newStartX - referenceLine.start.x;
@@ -1906,15 +1925,18 @@
                 referenceLine.end.y += deltaY;
 
                 referenceLine.lengthPx = calculatePixelLength(referenceLine.start, referenceLine.end);
-                // Recalculate pixelsPerMM based on new pixel length
+                let realWorldLengthInMM = 0; // Declare and initialize
                 if (referenceLine.realWorldLength && referenceLine.realWorldUnit) {
-                    const realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
-                    pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                    realWorldLengthInMM = convertUnitToMM(referenceLine.realWorldLength, referenceLine.realWorldUnit);
+                    if (realWorldLengthInMM > 0) {
+                        pixelsPerMM = referenceLine.lengthPx / realWorldLengthInMM;
+                        scaleBaseUnit = referenceLine.realWorldUnit;
+                    }
                 }
                 updateMeasurementsList();
                 updateScaleInfoDisplay();
                 drawCanvas();
-            } else if (isDraggingWholeShape && draggedLineIndex !== -1) { // Dragging whole other line
+            } else if (isDraggingWholeShape && draggedLineIndex !== -2 && draggedLineIndex !== -1) { // Dragging whole other line
                 const line = measurementLines[draggedLineIndex];
                 const newStartX = x - dragOffsetX;
                 const newStartY = y - dragOffsetY;
@@ -1979,7 +2001,7 @@
                 if (draggedLineIndex === -1 && referenceLine) { // Reference line
                     referenceLine.color = originalHoveredLineColor;
                     referenceLine.fontColor = originalHoveredLineFontColor;
-                } else if (draggedLineIndex !== -1) { // Other line
+                } else if (draggedLineIndex !== -2 && draggedLineIndex !== -1) { // Other line
                     measurementLines[draggedLineIndex].color = originalHoveredLineColor;
                     measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -1990,7 +2012,7 @@
                 }
                 isDragging = false;
                 isDraggingWholeShape = false;
-                draggedLineIndex = -1;
+                draggedLineIndex = -2;
                 draggedPolygonIndex = -1;
                 draggedPointType = '';
                 draggedPolygonPointIndex = -1;
@@ -2017,7 +2039,7 @@
                 if (draggedLineIndex === -1 && referenceLine) { // Reference line
                     referenceLine.color = originalHoveredLineColor;
                     referenceLine.fontColor = originalHoveredLineFontColor;
-                } else if (draggedLineIndex !== -1) { // Other line
+                } else if (draggedLineIndex !== -2 && draggedLineIndex !== -1) { // Other line
                     measurementLines[draggedLineIndex].color = originalHoveredLineColor;
                     measurementLines[draggedLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -2028,7 +2050,7 @@
                 }
                 isDragging = false;
                 isDraggingWholeShape = false;
-                draggedLineIndex = -1;
+                draggedLineIndex = -2;
                 draggedPolygonIndex = -1;
                 draggedPointType = '';
                 draggedPolygonPointIndex = -1;
@@ -2036,14 +2058,11 @@
                 dragOffsetY = 0;
             }
 
-            if (hoveredLineIndex === -1 && hoveredPolygonIndex === -1 && referenceLine) { // Check reference line hover
-                if (referenceLine.color === 'yellow') { // If it was hovered
-                    referenceLine.color = defaultScaleLineSettings.color;
-                    referenceLine.fontColor = defaultScaleLineSettings.fontColor;
-                    drawCanvas();
-                }
-            }
-            if (hoveredLineIndex !== -1) {
+            if (hoveredLineIndex === -1 && referenceLine) { // If reference line was hovered
+                referenceLine.color = originalHoveredLineColor;
+                referenceLine.fontColor = originalHoveredLineFontColor;
+                drawCanvas();
+            } else if (hoveredLineIndex !== -2 && hoveredLineIndex !== -1) { // If another line was hovered
                 measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
                 measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
                 drawCanvas();
@@ -2054,7 +2073,7 @@
                 measurementAreas[hoveredPolygonIndex].fontColor = originalHoveredPolygonFontColor;
                 drawCanvas();
             }
-            hoveredLineIndex = -1;
+            hoveredLineIndex = -2;
             hoveredPolygonIndex = -1;
             originalHoveredLineColor = '';
             originalHoveredLineFontColor = '';
@@ -2160,15 +2179,17 @@
 
             // Apply/revert hover effects for reference line
             if (newHoveredLineIndex === -1 && hoveredLineIndex !== -1) { // Was hovering other line, now reference
-                measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
-                measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                if (hoveredLineIndex !== -2) { // Ensure it was a valid line index
+                    measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
+                    measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
+                }
                 originalHoveredLineColor = referenceLine.color;
                 originalHoveredLineFontColor = referenceLine.fontColor;
                 referenceLine.color = 'yellow';
                 referenceLine.fontColor = 'yellow';
                 hoveredLineIndex = -1;
                 drawCanvas();
-            } else if (newHoveredLineIndex !== -1 && hoveredLineIndex === -1) { // Was hovering reference, now other line
+            } else if (newHoveredLineIndex !== -2 && newHoveredLineIndex !== -1 && hoveredLineIndex === -1) { // Was hovering reference, now other line
                 referenceLine.color = originalHoveredLineColor;
                 referenceLine.fontColor = originalHoveredLineFontColor;
                 originalHoveredLineColor = measurementLines[newHoveredLineIndex].color;
@@ -2178,7 +2199,7 @@
                 hoveredLineIndex = newHoveredLineIndex;
                 drawCanvas();
             } else if (newHoveredLineIndex === -1 && hoveredLineIndex === -2) { // Now hovering reference, was hovering nothing
-                 if (referenceLine) { // Ensure referenceLine exists before trying to access its properties
+                 if (referenceLine) {
                     originalHoveredLineColor = referenceLine.color;
                     originalHoveredLineFontColor = referenceLine.fontColor;
                     referenceLine.color = 'yellow';
@@ -2187,14 +2208,14 @@
                     drawCanvas();
                  }
             } else if (newHoveredLineIndex === -2 && hoveredLineIndex === -1) { // Now hovering nothing, was hovering reference
-                if (referenceLine) { // Ensure referenceLine exists before trying to access its properties
+                if (referenceLine) {
                     referenceLine.color = originalHoveredLineColor;
                     referenceLine.fontColor = originalHoveredLineFontColor;
                     hoveredLineIndex = -2;
                     drawCanvas();
                 }
-            } else if (newHoveredLineIndex !== hoveredLineIndex && newHoveredLineIndex !== -1 && hoveredLineIndex !== -2) { // Switching between other lines
-                if (hoveredLineIndex !== -1) { // If there was a previously hovered line
+            } else if (newHoveredLineIndex !== hoveredLineIndex && newHoveredLineIndex !== -2 && newHoveredLineIndex !== -1 && hoveredLineIndex !== -2 && hoveredLineIndex !== -1) { // Switching between other lines
+                if (hoveredLineIndex !== -2) {
                     measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
                     measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -2205,10 +2226,10 @@
                 hoveredLineIndex = newHoveredLineIndex;
                 drawCanvas();
             } else if (newHoveredLineIndex === -2 && hoveredLineIndex !== -2) { // Was hovering a line, now hovering nothing
-                if (hoveredLineIndex === -1 && referenceLine) { // Was hovering reference line
+                if (hoveredLineIndex === -1 && referenceLine) {
                     referenceLine.color = originalHoveredLineColor;
                     referenceLine.fontColor = originalHoveredLineFontColor;
-                } else if (hoveredLineIndex !== -1) { // Was hovering another line
+                } else if (hoveredLineIndex !== -2) {
                     measurementLines[hoveredLineIndex].color = originalHoveredLineColor;
                     measurementLines[hoveredLineIndex].fontColor = originalHoveredLineFontColor;
                 }
@@ -2395,7 +2416,7 @@
         closePixelScaleModalBtn.addEventListener('click', hidePixelScaleModal);
         closeAreaSettingsModalBtn.addEventListener('click', hideAreaSettingsModal);
         closeAddLineModalBtn.addEventListener('click', hideAddLineModal);
-        closeScaleLineSettingsModalBtn.addEventListener('click', hideScaleLineSettingsModal); // NEW
+        closeScaleLineSettingsModalBtn.addEventListener('click', hideScaleLineSettingsModal);
 
         window.addEventListener('click', (event) => {
             if (event.target === scaleModal) {
@@ -2413,7 +2434,7 @@
             if (event.target === addLineModal) {
                 hideAddLineModal();
             }
-            if (event.target === scaleLineSettingsModal) { // NEW
+            if (event.target === scaleLineSettingsModal) {
                 hideScaleLineSettingsModal();
             }
             if (event.target === messageModal) {
@@ -2617,6 +2638,7 @@
 
             updateMeasurementsList();
             updateScaleInfoDisplay();
+            drawCanvas(); // Redraw immediately to reflect changes
             hideScaleLineSettingsModal();
         });
 
@@ -2624,15 +2646,17 @@
             if (!referenceLine) return;
 
             // Reset only the appearance properties to defaultScaleLineSettings
-            referenceLine.color = defaultScaleLineSettings.color;
-            referenceLine.fontSize = defaultScaleLineSettings.fontSize;
-            referenceLine.thickness = defaultScaleLineSettings.thickness;
-            referenceLine.fontColor = defaultScaleLineSettings.fontColor;
-            referenceLine.fontWeight = defaultScaleLineSettings.fontWeight;
-            referenceLine.barLength = defaultScaleLineSettings.barLength;
-            referenceLine.labelOffsetY = defaultScaleLineSettings.labelOffsetY;
-            referenceLine.rotateLabel = defaultScaleLineSettings.rotateLabel;
-            referenceLine.locked = defaultScaleLineSettings.locked; // Reset lock state
+            Object.assign(referenceLine, {
+                color: defaultScaleLineSettings.color,
+                fontSize: defaultScaleLineSettings.fontSize,
+                thickness: defaultScaleLineSettings.thickness,
+                fontColor: defaultScaleLineSettings.fontColor,
+                fontWeight: defaultScaleLineSettings.fontWeight,
+                barLength: defaultScaleLineSettings.barLength,
+                labelOffsetY: defaultScaleLineSettings.labelOffsetY,
+                rotateLabel: defaultScaleLineSettings.rotateLabel,
+                locked: defaultScaleLineSettings.locked
+            });
 
             // Update modal inputs to reflect these defaults
             scaleLineColorPicker.value = defaultScaleLineSettings.color;
@@ -2645,6 +2669,7 @@
             lockScaleLineCheckbox.checked = defaultScaleLineSettings.locked;
 
             updateMeasurementsList();
+            drawCanvas(); // Redraw immediately to reflect changes
             showMessageModal('Scale line appearance settings reset to default.');
         });
 
@@ -2812,12 +2837,15 @@
         // --- Initial Setup ---
         function resizeCanvasContainer() {
             const appContainer = document.getElementById('app-container');
+            // Set the canvas container's max height based on the app container
+            // This controls the *display size* of the canvas element via CSS.
             canvasContainer.style.maxHeight = `${appContainer.clientHeight - 50}px`;
 
-            imageCanvas.width = canvasContainer.clientWidth;
-            imageCanvas.height = canvasContainer.clientHeight;
+            // IMPORTANT: Do NOT set imageCanvas.width/height here based on clientWidth/clientHeight.
+            // imageCanvas.width and imageCanvas.height should remain at the original image's resolution.
+            // The CSS will handle scaling the canvas for display.
 
-            drawCanvas();
+            drawCanvas(); // Redraw with potentially new CSS display dimensions
         }
 
         window.addEventListener('resize', resizeCanvasContainer);
