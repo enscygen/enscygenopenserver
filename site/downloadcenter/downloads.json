@@ -1,0 +1,74 @@
+[
+    {
+        "id": 1,
+        "title": "Quantum Image Editor Pro",
+        "thumbnail": "https://placehold.co/600x400/007BFF/FFFFFF?text=Quantum+Editor",
+        "category": "Software",
+        "description": "A professional-grade image editor with AI-powered tools for stunning results. Perfect for photographers and designers.",
+        "version": "v3.2.1",
+        "variations": [
+            { "variantTitle": "Windows (64-bit)", "variantDescription": "Installer for Windows 10/11", "downloadLink": "downloads/quantum-editor-win64.exe" },
+            { "variantTitle": "macOS (Apple Silicon)", "variantDescription": "For M1/M2/M3 Macs", "downloadLink": "downloads/quantum-editor-macos-arm.dmg" },
+            { "variantTitle": "Linux (Debian)", "variantDescription": "Debian package", "downloadLink": "downloads/quantum-editor-linux.deb" }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Cybernetic Sound Pack",
+        "thumbnail": "https://placehold.co/600x400/28A745/FFFFFF?text=Sound+Pack",
+        "category": "Assets",
+        "description": "A collection of 500+ high-quality futuristic sound effects for games and video projects.",
+        "version": "v1.5",
+        "variations": [
+            { "variantTitle": "WAV Format", "variantDescription": "Uncompressed high quality audio", "downloadLink": "downloads/cyber-sounds.zip" },
+            { "variantTitle": "MP3 Format", "variantDescription": "Compressed for smaller file size", "downloadLink": "downloads/cyber-sounds-mp3.zip" }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Project Management Guide",
+        "thumbnail": "https://placehold.co/600x400/FFC107/343A40?text=PM+Guide",
+        "category": "Documents",
+        "description": "An in-depth guide to agile project management methodologies, including templates and best practices.",
+        "version": "2024 Edition",
+        "variations": [
+            { "variantTitle": "PDF Document", "variantDescription": "Standard PDF for all devices", "downloadLink": "downloads/pm-guide-2024.pdf" }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Nebula UI Kit",
+        "thumbnail": "https://placehold.co/600x400/DC3545/FFFFFF?text=Nebula+UI",
+        "category": "Assets",
+        "description": "A comprehensive UI kit for Figma and Sketch, featuring hundreds of components for modern web and mobile apps.",
+        "version": "v2.0",
+        "variations": [
+            { "variantTitle": "Figma File", "variantDescription": "For use in Figma design tool", "downloadLink": "downloads/nebula-ui.fig" },
+            { "variantTitle": "Sketch File", "variantDescription": "For use in Sketch app", "downloadLink": "downloads/nebula-ui.sketch" }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "CodeFlow IDE",
+        "thumbnail": "https://placehold.co/600x400/17A2B8/FFFFFF?text=CodeFlow",
+        "category": "Software",
+        "description": "A lightweight and powerful Integrated Development Environment for web developers.",
+        "version": "v1.8.0",
+        "variations": [
+            { "variantTitle": "Windows Installer", "variantDescription": "Executable for Windows", "downloadLink": "downloads/codeflow.exe" },
+            { "variantTitle": "macOS App", "variantDescription": "Application for macOS", "downloadLink": "downloads/codeflow.dmg" }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Annual Financial Report",
+        "thumbnail": "https://placehold.co/600x400/6C757D/FFFFFF?text=Report",
+        "category": "Documents",
+        "description": "The official financial report for the last fiscal year, detailing performance and outlook.",
+        "version": "FY 2023",
+        "variations": [
+            { "variantTitle": "High-Resolution PDF", "variantDescription": "For printing and detailed viewing", "downloadLink": "downloads/financial-report-2023-hq.pdf" },
+            { "variantTitle": "Compressed PDF", "variantDescription": "Optimized for web and email", "downloadLink": "downloads/financial-report-2023-web.pdf" }
+        ]
+    }
+]
