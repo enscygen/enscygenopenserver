@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STV Voting Interface</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Papa Parse for robust CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn { transition: all 0.2s ease-in-out; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn:disabled {
+            background-color: #94a3b8; /* slate-400 */
+            cursor: not-allowed;
+        }
+        input[type="file"]::file-selector-button {
+            @apply font-semibold bg-indigo-50 text-indigo-700 border-0 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-100 transition-colors;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        
+        /* New styles for the on-page log */
+        #status-log-container {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.875rem;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #334155; /* slate-700 */
+        }
+        #status-log-container p {
+            margin: 0;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #1e293b; /* slate-800 */
+        }
+        #status-log-container p:last-child {
+            border-bottom: none;
+        }
+        .log-error { color: #f87171; /* red-400 */ }
+        .log-success { color: #4ade80; /* green-400 */ }
+        .log-warn { color: #facc15; /* yellow-400 */ }
+        .log-info { color: #60a5fa; /* blue-400 */ }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <div id="app-container" class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ===== SETUP SCREEN ===== -->
+        <div id="setup-screen" class="screen active fade-in">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-slate-900">Election Setup</h1>
+                <p class="text-lg text-slate-600 mt-2">Prepare the ballot for voting</p>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- File Uploads -->
+                <div class="card p-6 space-y-4">
+                    <h2 class="text-xl font-bold border-b pb-2">1. Upload Data Files</h2>
+                    <div>
+                        <label for="voters-file" class="block text-sm font-medium text-slate-700 mb-1">Voters List (CSV)</label>
+                        <input type="file" id="voters-file" accept=".csv" class="input-file">
+                    </div>
+                    <div>
+                        <label for="candidates-file" class="block text-sm font-medium text-slate-700 mb-1">Candidates List (CSV)</label>
+                        <input type="file" id="candidates-file" accept=".csv" class="input-file">
+                    </div>
+                </div>
+                <!-- Election Settings -->
+                <div class="card p-6 space-y-4">
+                     <h2 class="text-xl font-bold border-b pb-2">2. Configure Ballot</h2>
+                    <div>
+                        <label for="post-name" class="block text-sm font-medium text-slate-700 mb-1">Post Name</label>
+                        <input type="text" id="post-name" placeholder="e.g., President" class="form-input">
+                    </div>
+                    <div>
+                        <label for="num-preferences" class="block text-sm font-medium text-slate-700 mb-1">Number of Preferences</label>
+                        <input type="number" id="num-preferences" value="3" min="1" class="form-input">
+                    </div>
+                    <div>
+                        <label for="ballot-password" class="block text-sm font-medium text-slate-700 mb-1">Password to Close Ballot</label>
+                        <input type="password" id="ballot-password" placeholder="Enter a secure password" class="form-input">
+                    </div>
+                </div>
+            </div>
+            <!-- Data Preview -->
+            <div id="data-preview" class="mt-6 card p-6 hidden">
+                 <h2 class="text-xl font-bold border-b pb-2 mb-4">Data Preview</h2>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h3 id="voters-count" class="font-semibold mb-2">Voters</h3>
+                        <div class="h-48 overflow-auto border rounded-lg" id="voters-table-container"></div>
+                    </div>
+                    <div>
+                        <h3 id="candidates-count" class="font-semibold mb-2">Candidates</h3>
+                        <div class="h-48 overflow-auto border rounded-lg" id="candidates-table-container"></div>
+                    </div>
+                 </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button id="start-voting-btn" class="btn bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg" disabled>Start Voting</button>
+            </div>
+            
+            <!-- NEW: Status Log Display -->
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold text-slate-700 mb-2">Status Log</h3>
+                <div id="status-log-container"></div>
+            </div>
+        </div>
+
+        <!-- ===== VOTING IN PROGRESS SCREEN ===== -->
+        <div id="voting-screen" class="screen fade-in">
+            <header class="text-center mb-6 relative">
+                <h1 id="voting-post-name" class="text-3xl font-bold text-slate-900"></h1>
+                <p class="text-md text-slate-500">Voting in Progress</p>
+                <button id="close-ballot-btn" class="absolute top-0 right-0 btn bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md">Close Ballot</button>
+            </header>
+
+            <div id="voter-selection-subscreen" class="card p-8 text-center">
+                <h2 class="text-2xl font-bold mb-4">Select Voter</h2>
+                <input type="text" id="voter-search" placeholder="Search by name or ID..." class="form-input max-w-lg mx-auto mb-4">
+                <div id="voter-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 text-left"></div>
+                <button id="select-voter-btn" class="mt-6 btn bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-lg" disabled>Voter Verified</button>
+            </div>
+
+            <div id="voter-details-subscreen" class="hidden card p-8 text-center">
+                <h2 class="text-2xl font-bold mb-4">Voter Details</h2>
+                <div id="voter-info-display" class="text-lg bg-slate-100 p-4 rounded-lg inline-block"></div>
+                <button id="proceed-to-vote-btn" class="mt-6 btn bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg">Proceed to Vote</button>
+            </div>
+            
+            <div id="preference-selection-subscreen" class="hidden card p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">Cast Your Vote</h2>
+                <div id="preferences-container" class="space-y-4 max-w-md mx-auto"></div>
+                <div class="text-center mt-8">
+                    <button id="preview-vote-btn" class="btn bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg" disabled>Preview Vote</button>
+                </div>
+            </div>
+
+            <div id="preview-subscreen" class="hidden card p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">Confirm Your Vote</h2>
+                <div id="preview-table-container" class="max-w-md mx-auto border rounded-lg p-4"></div>
+                <div class="flex justify-center gap-4 mt-8">
+                    <button id="edit-vote-btn" class="btn bg-slate-500 text-white font-bold py-3 px-6 rounded-lg text-lg">Edit</button>
+                    <button id="confirm-vote-btn" class="btn bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg">Confirm & Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== BALLOT CLOSED SCREEN ===== -->
+        <div id="closed-screen" class="screen fade-in text-center card p-12">
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">Voting Closed</h1>
+            <p class="text-lg text-slate-600 mb-8">The ballot is now closed. Download the results file for counting.</p>
+            <div id="final-stats" class="text-xl mb-8"></div>
+            <button id="download-results-btn" class="btn bg-indigo-600 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg">Download Ballot Data (.csv)</button>
+        </div>
+    </div>
+    
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal-overlay hidden">
+        <div class="card p-8 text-center w-full max-w-sm">
+            <h2 class="text-xl font-bold mb-4">Enter Password</h2>
+            <p class="text-sm text-slate-500 mb-4">Enter the password to close the ballot.</p>
+            <input type="password" id="password-input" class="form-input mb-4">
+            <div id="password-error" class="text-red-500 text-sm mb-4 h-4"></div>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-close-btn" class="btn bg-slate-200 text-slate-800 font-bold py-2 px-4 rounded-lg">Cancel</button>
+                <button id="confirm-close-btn" class="btn bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Confirm Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- UTILITY CLASSES & FUNCTIONS ---
+        class AudioEngine {
+            constructor() { this.audioCtx = null; this.repeatingBeepNode = null; }
+            _init() { if (!this.audioCtx) { this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } }
+            beep(duration = 0.1, frequency = 440, type = 'sine') {
+                this._init();
+                const oscillator = this.audioCtx.createOscillator();
+                const gainNode = this.audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+                oscillator.type = type;
+                oscillator.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(1, this.audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + duration);
+                oscillator.start();
+                oscillator.stop(this.audioCtx.currentTime + duration);
+            }
+            longBeep() { this.beep(0.5, 523); }
+            startRepeatingBeep() {
+                if (this.repeatingBeepNode) return;
+                this._init();
+                this.repeatingBeepNode = this.audioCtx.createOscillator();
+                this.repeatingBeepNode.frequency.setValueAtTime(880, this.audioCtx.currentTime);
+                this.repeatingBeepNode.connect(this.audioCtx.destination);
+                this.repeatingBeepNode.start();
+                setTimeout(() => this.stopRepeatingBeep(), 2000);
+            }
+            stopRepeatingBeep() {
+                if (this.repeatingBeepNode) {
+                    this.repeatingBeepNode.stop();
+                    this.repeatingBeepNode.disconnect();
+                    this.repeatingBeepNode = null;
+                }
+            }
+        }
+
+        // --- GLOBAL STATE & CONSTANTS ---
+        const AppState = {
+            voters: [], candidates: [], postName: '', numPreferences: 0, password: '',
+            ballots: [], currentVoter: null, currentPreferences: {}, activeScreen: 'setup-screen',
+        };
+        const audioEngine = new AudioEngine();
+
+        // --- DOM ELEMENT REFERENCES ---
+        const screens = document.querySelectorAll('.screen');
+        const setupScreen = {
+            votersFile: document.getElementById('voters-file'),
+            candidatesFile: document.getElementById('candidates-file'),
+            postName: document.getElementById('post-name'),
+            numPreferences: document.getElementById('num-preferences'),
+            password: document.getElementById('ballot-password'),
+            dataPreview: document.getElementById('data-preview'),
+            votersCount: document.getElementById('voters-count'),
+            candidatesCount: document.getElementById('candidates-count'),
+            votersTable: document.getElementById('voters-table-container'),
+            candidatesTable: document.getElementById('candidates-table-container'),
+            startBtn: document.getElementById('start-voting-btn'),
+            logContainer: document.getElementById('status-log-container'),
+        };
+        const votingScreen = {
+            container: document.getElementById('voting-screen'),
+            postName: document.getElementById('voting-post-name'),
+            closeBallotBtn: document.getElementById('close-ballot-btn'),
+            voterSelection: document.getElementById('voter-selection-subscreen'),
+            voterSearch: document.getElementById('voter-search'),
+            voterList: document.getElementById('voter-list-container'),
+            selectVoterBtn: document.getElementById('select-voter-btn'),
+            voterDetails: document.getElementById('voter-details-subscreen'),
+            voterInfo: document.getElementById('voter-info-display'),
+            proceedToVoteBtn: document.getElementById('proceed-to-vote-btn'),
+            preferenceSelection: document.getElementById('preference-selection-subscreen'),
+            preferencesContainer: document.getElementById('preferences-container'),
+            previewVoteBtn: document.getElementById('preview-vote-btn'),
+            preview: document.getElementById('preview-subscreen'),
+            previewTable: document.getElementById('preview-table-container'),
+            editVoteBtn: document.getElementById('edit-vote-btn'),
+            confirmVoteBtn: document.getElementById('confirm-vote-btn'),
+        };
+        const closedScreen = {
+            container: document.getElementById('closed-screen'),
+            stats: document.getElementById('final-stats'),
+            downloadBtn: document.getElementById('download-results-btn'),
+        };
+        const passwordModal = {
+            container: document.getElementById('password-modal'),
+            input: document.getElementById('password-input'),
+            error: document.getElementById('password-error'),
+            cancelBtn: document.getElementById('cancel-close-btn'),
+            confirmBtn: document.getElementById('confirm-close-btn'),
+        };
+
+        // --- CORE LOGIC ---
+        function logMessage(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            p.className = `log-${type}`;
+            setupScreen.logContainer.appendChild(p);
+            setupScreen.logContainer.scrollTop = setupScreen.logContainer.scrollHeight;
+        }
+
+        function switchScreen(screenId) {
+            AppState.activeScreen = screenId;
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function switchSubScreen(subscreenToShow) {
+            const subscreens = [
+                votingScreen.voterSelection, votingScreen.voterDetails,
+                votingScreen.preferenceSelection, votingScreen.preview
+            ];
+            subscreens.forEach(s => s.style.display = 'none');
+            if (subscreenToShow) { subscreenToShow.style.display = 'block'; }
+        }
+
+        function validateSetup() {
+            const { voters, candidates, postName, numPreferences, password } = AppState;
+            const isVotersValid = voters.length > 0;
+            const isCandidatesValid = candidates.length > 0;
+            const isPostNameValid = postName.trim() !== '';
+            const isPrefsValid = numPreferences > 0;
+            const isPasswordValid = password.trim() !== '';
+
+            const isValid = isVotersValid && isCandidatesValid && isPostNameValid && isPrefsValid && isPasswordValid;
+            setupScreen.startBtn.disabled = !isValid;
+            
+            if (isValid) {
+                logMessage('All setup conditions met. Ready to start voting.', 'success');
+            }
+        }
+
+        function parseFile(file, callback) {
+            if (!file) {
+                callback({ error: "No file selected." });
+                return;
+            }
+            try {
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => callback({ data: results.data }),
+                    error: (err) => callback({ error: err.message }),
+                });
+            } catch (e) {
+                callback({ error: e.message });
+            }
+        }
+
+        function renderTable(data, container) {
+            if (!data || data.length === 0) {
+                container.innerHTML = `<p class="p-4 text-slate-500">No data loaded.</p>`;
+                return;
+            }
+            const headers = Object.keys(data[0]);
+            container.innerHTML = `
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase">
+                        <tr>${headers.map(h => `<th class="p-2">${h}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        ${data.map(row => `<tr>${headers.map(h => `<td class="p-2">${row[h]}</td>`).join('')}</tr>`).join('')}
+                    </tbody>
+                </table>`;
+        }
+        
+        function renderVoterList(filter = '') {
+            const filteredVoters = AppState.voters.filter(v => 
+                (v.name.toLowerCase().includes(filter.toLowerCase()) || v.voters_id.includes(filter))
+            );
+            votingScreen.voterList.innerHTML = filteredVoters.map(voter => `
+                <div class="p-2 border-b hover:bg-slate-100 rounded-md">
+                    <label class="flex items-center w-full cursor-pointer">
+                        <input type="radio" name="voter" value="${voter.voters_id}" class="mr-3" ${voter.hasVoted ? 'disabled' : ''}>
+                        <span class="flex-grow ${voter.hasVoted ? 'text-slate-400 line-through' : ''}">${voter.name} <span class="text-xs text-slate-500">(${voter.voters_id})</span></span>
+                        ${voter.hasVoted ? '<span class="text-xs font-bold text-green-600">VOTED</span>' : ''}
+                    </label>
+                </div>`).join('');
+        }
+
+        function renderPreferenceDropdowns() {
+            const allSelectedCandidates = Object.values(AppState.currentPreferences);
+            let dropdownsHTML = '';
+            for (let i = 1; i <= AppState.numPreferences; i++) {
+                const currentSelection = AppState.currentPreferences[i];
+                const options = AppState.candidates
+                    .filter(c => !allSelectedCandidates.includes(c.name) || c.name === currentSelection)
+                    .map(c => `<option value="${c.name}" ${c.name === currentSelection ? 'selected' : ''}>${c.name}</option>`).join('');
+                dropdownsHTML += `
+                    <div class="flex items-center gap-2">
+                        <label for="pref-${i}" class="font-semibold w-28">Preference ${i}:</label>
+                        <select id="pref-${i}" data-pref-index="${i}" class="form-input flex-grow preference-select">
+                            <option value="">-- Select Candidate --</option>${options}
+                        </select>
+                    </div>`;
+            }
+            votingScreen.preferencesContainer.innerHTML = dropdownsHTML;
+            validatePreviewButton();
+        }
+        
+        function validatePreviewButton() {
+            const selectedCount = Object.values(AppState.currentPreferences).filter(Boolean).length;
+            votingScreen.previewVoteBtn.disabled = selectedCount === 0;
+        }
+
+        function resetVotingProcess() {
+            AppState.currentVoter = null;
+            AppState.currentPreferences = {};
+            votingScreen.voterSearch.value = '';
+            renderVoterList();
+            switchSubScreen(votingScreen.voterSelection);
+        }
+
+        // --- EVENT HANDLERS ---
+        function setupEventListeners() {
+            [setupScreen.votersFile, setupScreen.candidatesFile].forEach(input => {
+                input.addEventListener('change', handleFileUpload);
+            });
+            [setupScreen.postName, setupScreen.numPreferences, setupScreen.password].forEach(input => {
+                input.addEventListener('input', handleFormInput);
+            });
+            setupScreen.startBtn.addEventListener('click', handleStartVoting);
+            votingScreen.voterSearch.addEventListener('input', (e) => renderVoterList(e.target.value));
+            votingScreen.voterList.addEventListener('change', () => { votingScreen.selectVoterBtn.disabled = false; });
+            votingScreen.selectVoterBtn.addEventListener('click', handleVoterSelect);
+            votingScreen.proceedToVoteBtn.addEventListener('click', handleProceedToVote);
+            votingScreen.preferencesContainer.addEventListener('change', handlePreferenceChange);
+            votingScreen.previewVoteBtn.addEventListener('click', handlePreviewVote);
+            votingScreen.editVoteBtn.addEventListener('click', handleEditVote);
+            votingScreen.confirmVoteBtn.addEventListener('click', handleConfirmVote);
+            votingScreen.closeBallotBtn.addEventListener('click', () => passwordModal.container.classList.remove('hidden'));
+            passwordModal.cancelBtn.addEventListener('click', () => passwordModal.container.classList.add('hidden'));
+            passwordModal.confirmBtn.addEventListener('click', handleConfirmClose);
+            closedScreen.downloadBtn.addEventListener('click', handleDownload);
+            window.addEventListener('beforeunload', (e) => {
+                if (AppState.activeScreen === 'voting-screen') {
+                    e.preventDefault();
+                    e.returnValue = 'Are you sure you want to leave? Voting progress will be lost.';
+                }
+            });
+        }
+
+        function handleFormInput(e) {
+            const { id, value } = e.target;
+            switch (id) {
+                case 'post-name': AppState.postName = value; break;
+                case 'num-preferences': AppState.numPreferences = parseInt(value, 10) || 0; break;
+                case 'ballot-password': AppState.password = value; break;
+            }
+            logMessage(`Updated ${id}: ${value}`, 'info');
+            validateSetup();
+        }
+
+        function handleFileUpload(e) {
+            const isVotersFile = e.target.id === 'voters-file';
+            const file = e.target.files[0];
+            if (!file) return;
+
+            logMessage(`Reading ${isVotersFile ? 'voters' : 'candidates'} file: ${file.name}...`);
+            setupScreen.dataPreview.classList.remove('hidden');
+
+            parseFile(file, (result) => {
+                if (result.error) {
+                    logMessage(`Error parsing ${file.name}: ${result.error}`, 'error');
+                    return;
+                }
+                const data = result.data;
+                if (isVotersFile) {
+                    AppState.voters = data.map(v => ({...v, hasVoted: false}));
+                    setupScreen.votersCount.textContent = `Voters (${AppState.voters.length})`;
+                    renderTable(AppState.voters, setupScreen.votersTable);
+                    logMessage(`Successfully loaded ${AppState.voters.length} voters.`, 'success');
+                } else {
+                    AppState.candidates = data;
+                    setupScreen.candidatesCount.textContent = `Candidates (${AppState.candidates.length})`;
+                    renderTable(AppState.candidates, setupScreen.candidatesTable);
+                    logMessage(`Successfully loaded ${AppState.candidates.length} candidates.`, 'success');
+                }
+                validateSetup();
+            });
+        }
+
+        function handleStartVoting() {
+            logMessage('Starting voting process...', 'success');
+            votingScreen.postName.textContent = AppState.postName;
+            renderVoterList();
+            switchScreen('voting-screen');
+            switchSubScreen(votingScreen.voterSelection);
+        }
+
+        function handleVoterSelect() {
+            const selectedId = document.querySelector('input[name="voter"]:checked').value;
+            AppState.currentVoter = AppState.voters.find(v => v.voters_id === selectedId);
+            audioEngine.beep(0.1, 300);
+            votingScreen.voterInfo.innerHTML = `<p><strong>Name:</strong> ${AppState.currentVoter.name}</p><p><strong>Voter ID:</strong> ${AppState.currentVoter.voters_id}</p><p><strong>DoB:</strong> ${AppState.currentVoter.dob}</p>`;
+            switchSubScreen(votingScreen.voterDetails);
+        }
+        
+        function handleProceedToVote() {
+            audioEngine.beep(0.1, 600);
+            renderPreferenceDropdowns();
+            switchSubScreen(votingScreen.preferenceSelection);
+        }
+        
+        function handlePreferenceChange(e) {
+            if (e.target.matches('.preference-select')) {
+                const index = e.target.dataset.prefIndex;
+                const value = e.target.value;
+                AppState.currentPreferences[index] = value;
+                Object.keys(AppState.currentPreferences).forEach(key => {
+                    if (!AppState.currentPreferences[key]) delete AppState.currentPreferences[key];
+                });
+                renderPreferenceDropdowns();
+            }
+        }
+        
+        function handlePreviewVote() {
+            let previewHTML = `<table class="w-full text-left">`;
+            for(let i=1; i<=AppState.numPreferences; i++) {
+                const candidate = AppState.currentPreferences[i];
+                if (candidate) { previewHTML += `<tr><th class="p-2 font-semibold">Preference ${i}</th><td class="p-2">${candidate}</td></tr>`; }
+            }
+            previewHTML += `</table>`;
+            votingScreen.previewTable.innerHTML = previewHTML;
+            switchSubScreen(votingScreen.preview);
+        }
+
+        function handleEditVote() { switchSubScreen(votingScreen.preferenceSelection); }
+
+        function handleConfirmVote() {
+            audioEngine.longBeep();
+            const preferences = [];
+            for (let i = 1; i <= AppState.numPreferences; i++) { preferences.push(AppState.currentPreferences[i] || ''); }
+            AppState.ballots.push({ ballotId: AppState.ballots.length + 1, preferences: preferences });
+            const voter = AppState.voters.find(v => v.voters_id === AppState.currentVoter.voters_id);
+            voter.hasVoted = true;
+            resetVotingProcess();
+        }
+        
+        function handleConfirmClose() {
+            if (passwordModal.input.value === AppState.password) {
+                passwordModal.container.classList.add('hidden');
+                audioEngine.startRepeatingBeep();
+                closedScreen.stats.textContent = `Total Votes Cast: ${AppState.ballots.length}`;
+                switchScreen('closed-screen');
+            } else {
+                passwordModal.error.textContent = "Incorrect password.";
+                passwordModal.input.value = '';
+            }
+        }
+
+        function handleDownload() {
+            const header = Array.from({ length: AppState.numPreferences }, (_, i) => `Preference ${i + 1}`).join(',');
+            const rows = AppState.ballots.map(ballot => ballot.preferences.join(','));
+            const csvContent = [header, ...rows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `ballot_data_${AppState.postName.replace(/\s+/g, '_')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- INITIALIZATION ---
+        function initializeApp() {
+            logMessage('Application initialized. Please complete all setup steps.');
+            document.querySelectorAll('input[type="text"], input[type="number"], input[type="password"], select').forEach(el => {
+                el.classList.add('mt-1', 'block', 'w-full', 'px-3', 'py-2', 'bg-white', 'border', 'border-slate-300', 'rounded-lg', 'text-sm', 'shadow-sm', 'placeholder-slate-400', 'focus:outline-none', 'focus:border-indigo-500', 'focus:ring-1', 'focus:ring-indigo-500');
+            });
+            document.querySelectorAll('.input-file').forEach(el => {
+                el.classList.add('block', 'w-full', 'text-sm', 'text-slate-500', 'file:mr-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-indigo-50', 'file:text-indigo-700', 'hover:file:bg-indigo-100', 'cursor-pointer');
+            });
+            
+            // *** BUG FIX: Initialize state from default form values ***
+            AppState.numPreferences = parseInt(setupScreen.numPreferences.value, 10) || 0;
+            AppState.postName = setupScreen.postName.value;
+            AppState.password = setupScreen.password.value;
+            logMessage(`Default preferences set to: ${AppState.numPreferences}`);
+
+            setupEventListeners();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
+
