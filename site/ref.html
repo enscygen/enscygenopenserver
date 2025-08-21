@@ -177,6 +177,28 @@
             margin-right: 6px;
         }
 
+        #bookmarklet-code {
+            width: 100%;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--light-color);
+            resize: none;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        #copy-code-btn {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+        #copy-code-btn:hover {
+            background-color: #5a6268;
+        }
+
+
         /* --- Controls Section --- */
         .controls {
             display: flex;
@@ -370,10 +392,20 @@
 
         <main class="app-main">
             <section class="app-section">
-                <div class="app-section-header"><i class="bi bi-magic"></i> Bookmarklet Setup</div>
+                <div class="app-section-header"><i class="bi bi-magic"></i> Desktop Setup</div>
                 <div class="app-section-body bookmarklet-info">
                     <p>Drag the link below to your bookmarks bar. Click it on an article page to save the reference.</p>
                     <a id="bookmarklet" href="" class="bookmarklet-link"><i class="bi bi-plus-circle-dotted"></i> Save to Manager</a>
+                </div>
+            </section>
+
+            <!-- NEW SECTION FOR MOBILE -->
+            <section class="app-section">
+                <div class="app-section-header"><i class="bi bi-phone"></i> Mobile Setup</div>
+                <div class="app-section-body bookmarklet-info">
+                    <p>On mobile, copy the code below. Then, create a new bookmark and paste this code into the URL/address field.</p>
+                    <textarea id="bookmarklet-code" readonly rows="4"></textarea>
+                    <button id="copy-code-btn" class="btn"><i class="bi bi-clipboard"></i> Copy Code</button>
                 </div>
             </section>
 
@@ -433,6 +465,9 @@
         const deleteSelectedBtn = document.getElementById('delete-selected-btn');
         const clearAllBtn = document.getElementById('clear-all-btn');
         const bookmarkletLink = document.getElementById('bookmarklet');
+        // NEW MOBILE ELEMENTS
+        const bookmarkletCode = document.getElementById('bookmarklet-code');
+        const copyCodeBtn = document.getElementById('copy-code-btn');
 
         const confirmModal = document.getElementById('confirm-modal');
         const modalTitle = document.getElementById('modal-title');
@@ -566,6 +601,16 @@
             
             exportTxtBtn.addEventListener('click', () => exportReferences('txt'));
             exportDocBtn.addEventListener('click', () => exportReferences('doc'));
+
+            // NEW EVENT LISTENER FOR MOBILE COPY BUTTON
+            copyCodeBtn.addEventListener('click', () => {
+                bookmarkletCode.select();
+                // Use execCommand for better mobile compatibility
+                document.execCommand('copy');
+                const originalText = copyCodeBtn.innerHTML;
+                copyCodeBtn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+                setTimeout(() => { copyCodeBtn.innerHTML = originalText; }, 2500);
+            });
         }
         
         function getSelectedIds() {
@@ -575,8 +620,9 @@
 
         // --- 5. BOOKMARKLET LOGIC ---
         function generateBookmarkletCode() {
+            // Minified code to be used in the bookmarklet
             const code = `(function(){function getMeta(name){const meta=document.querySelector('meta[name="'+name+'"]')||document.querySelector('meta[property="'+name+'"]');return meta?meta.content:''}const data={title:getMeta('citation_title')||getMeta('og:title')||document.title,authors:(getMeta('citation_author')||'').split(';').map(a=>a.trim()),journal:getMeta('citation_journal_title')||getMeta('og:site_name'),year:getMeta('citation_publication_date')?new Date(getMeta('citation_publication_date')).getFullYear():'',url:window.location.href};localStorage.setItem('newReferenceData',JSON.stringify(data));window.open('${window.location.href.split('?')[0]}','_blank');})();`;
-            return `javascript:${encodeURIComponent(code)}`;
+            return `javascript:${code}`;
         }
         
         function checkForBookmarkletData() {
@@ -630,7 +676,7 @@
             confirmModal.classList.add('visible');
         }
 
--        function hideConfirmation() {
+        function hideConfirmation() {
             confirmModal.classList.remove('visible');
             currentConfirmationCallback = null;
         }
@@ -645,7 +691,10 @@
         function init() {
             initDB();
             setupEventListeners();
-            bookmarkletLink.href = generateBookmarkletCode();
+            const rawCode = generateBookmarkletCode();
+            bookmarkletLink.href = rawCode;
+            // NEW: Populate the mobile textarea
+            bookmarkletCode.value = rawCode;
         }
 
         init();
@@ -653,4 +702,6 @@
     </script>
 </body>
 </html>
+
+
 
