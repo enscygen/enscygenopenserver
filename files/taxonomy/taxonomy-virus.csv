@@ -1,0 +1,34 @@
+Group,Family,Genus,Species
+(+) ssRNA,Potyviridae,Potyvirus,Banana bract mosaic virus (BBrMV)
+(+) ssRNA,Potyviridae,Potyvirus,Sweet potato feathery mottle virus (SPFMV)
+(+) ssRNA,Potyviridae,Potyvirus,Tulip breaking virus (TBV)
+(+) ssRNA,Potyviridae,Potyvirus,Cowpea aphid-borne mosaic virus (CABMV)
+(+) ssRNA,Potyviridae,Potyvirus,Blackeye cowpea mosaic virus (BICMV)
+(+) ssRNA,Potyviridae,Potyvirus,Papaya ring spot virus
+(+) ssRNA,Potyviridae,Potyvirus,Potato virus Y
+(+) ssRNA,Luteoviridae,Polerovirus,Potato leaf roll virus
+(+) ssRNA,Luteoviridae,Luteovirus,Barley yellow dwarf virus
+(+) ssRNA,Bromoviridae,Cucumovirus,Cucumber mosaic virus (CMV)
+(+) ssRNA,Closteroviridae,Closterovirus,Citrus tristeza virus
+(+) ssRNA,Sesquiviridae,Waikavirus,Rice tungro spherical virus (RTSV)
+(+) ssRNA,Comoviridae,Nepovirus,Grapevine fan leaf virus
+(+) ssRNA,Un-assigned,Potexvirus,Potato virus X
+(+) ssRNA,Un-assigned,Tobravirus,Tobacco rattle virus
+(-) ssRNA,Bunyaviridae,Tospovirus,Tomato spotted wilt virus
+(-) ssRNA,Fimoviridae,Emaravirus,Pigeonpea sterility mosaic virus
+(-) ssRNA,Rhabdoviridae,Nucleorhabdovirus,
+(-) ssRNA,Rhabdoviridae,Cytorhabdovirus,
+(-) ssRNA,Un-assigned,Tenuivirus,Rice grassy stunt virus
+dsRNA,Reoviridae,Phytoreovirus,
+dsRNA,Reoviridae,Fijivirus,
+dsRNA,Reoviridae,Oryzavirus,
+dsRNA,Partitiviridae,Alphacryptovirus,
+dsRNA,Partitiviridae,Betacryptovirus,
+ssDNA,Geminiviridae,Mastrevirus,Maize streak virus
+ssDNA,Geminiviridae,Begomovirus,Bhendi yellow vein mosaic virus
+ssDNA,Geminiviridae,Begomovirus,Cassava mosaic virus
+ssDNA,Geminiviridae,Curtovirus,Beet curly top virus
+ssDNA,Nanoviridae,Babuvirus,Banana bunchy top virus
+dsDNA,Caulimoviridae,Caulimovirus,Cauliflower mosaic virus (CaMV)
+dsDNA,Caulimoviridae,Tungrovirus,Rice tungro bacilliform virus (RTBV)
+dsDNA,Caulimoviridae,Badnavirus,Banana streak mosaic virus
