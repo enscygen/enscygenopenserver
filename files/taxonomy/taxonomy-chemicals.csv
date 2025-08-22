@@ -1,0 +1,135 @@
+Group,Chemical,Compound,Class,Subclass,TradeName
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper sulphate,CL: Bordeux Mixture,,
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper sulphate,CL: Bordeux Paste,,
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper sulphate,CL: Burgundy Mixture,,
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper sulphate,CL: Cheshunt Compound,,
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper carbonate,CL: Chaubattia Paste,,
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Fungimar
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Perenox
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Copper Sandoz
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Copper 4% dust
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Perecot
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Cuproxd
+GR: Contact Fungicides,CH: Copper compounds,CP: Cuprous oxide,,,TN: Kirt i copper
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Blitox
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Fytolan
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Blue copper 50
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Cupravit
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Cobox
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Cuprax
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper oxychloride,,,TN: Mycop
+GR: Contact Fungicides,CH: Copper compounds,CP: Copper hydroxide,,,TN: Kocide
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Elemental Sulphur,SC: Sulphur dust,TN: Sulphur dust
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Elemental Sulphur,SC: Wettable Sulphur,TN: Cosan
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Elemental Sulphur,SC: Wettable Sulphur,TN: Wetsulf
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Elemental Sulphur,SC: Wettable Sulphur,TN: Microsul
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Elemental Sulphur,SC: Wettable Sulphur,TN: Sulfux
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Inorganic Sulphur,CL: Lime Sulphur,,
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Monoalkyl dithiocarbamates,SC: Zineb (Zinc ethylene bisdithiocarbamate),TN: Hexathane
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Monoalkyl dithiocarbamates,SC: Maneb (Manganese ethylene bisdithiocarbamate),TN: Dithane M22
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Monoalkyl dithiocarbamates,SC: Mancozeb (Maneb + Zinc ion),TN: Indofil M45
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Monoalkyl dithiocarbamates,SC: Nabam (DSE) (Di Sodium ethylene bisdithiocarbamate),TN: Dithane A-40
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Monoalkyl dithiocarbamates,SC: Vapam (SMDC) (Sodium methyl dithiocarbamate),TN: Vapam
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ziram (Zinc dimethyl dithiocarbamate),TN: Ziram
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ziram (Zinc dimethyl dithiocarbamate),TN: Cuman
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ziram (Zinc dimethyl dithiocarbamate),TN: Milbam
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ferbam (Ferric dimethyl dithiocarbamate),TN: Coromat
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ferbam (Ferric dimethyl dithiocarbamate),TN: Febam
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Ferbam (Ferric dimethyl dithiocarbamate),TN: Ferberk
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Thiram (Tetra methyl thiram disulphide),TN: Thiram
+GR: Contact Fungicides,CH: Sulphur compounds,CP: Organic Sulphur,CL: Dialkyl dithiocarbamates,SC: Thiram (Tetra methyl thiram disulphide),TN: TMTD
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Inorganic Mercury,CL: Mercuric chloride,,TN: Merfusan
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Inorganic Mercury,CL: Mercuric chloride,,TN: Mersil
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Inorganic Mercury,CL: Mercurous chloride,,TN: Cyclosan
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Inorganic Mercury,CL: Mercurous chloride,,TN: M-C Turf fungicide
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Methoxy ethyl mercury Chloride,,TN: Agallol
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Methoxy ethyl mercury Chloride,,TN: Emisan
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Methoxy ethyl mercury Chloride,,TN: Ceresan wet (India)
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Phenyl mercury chloride,,TN: Ceresan Dry (India)
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Phenyl mercury chloride,,TN: Ceresol
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Phenyl mercury chloride,,TN: Leytosan
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Ethyl Mercury Chloride,,TN: Ceresan (USA)
+GR: Contact Fungicides,CH: Mercuric compounds,CP: Organomercurials,CL: Tolyl mercury acetate,,TN: Agrosan
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Captan (Kittleson's Killer),,,TN: Captan 50W
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Captan (Kittleson's Killer),,,TN: Hexacap
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Captafol,,,TN: Foltaf
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Captafol,,,TN: Difolaton
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Glyodin,,,TN: Glyoxide
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Glyodin,,,TN: Glyoxaliadine
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Folpet,,,TN: Phaltan
+GR: Contact Fungicides,CH: Heterocyclic Nitrogen Compounds,CP: Folpet,,,TN: Folpan
+GR: Contact Fungicides,CH: Benzene compounds,CP: Quintozene (PCNB),,,TN: Brassicol
+GR: Contact Fungicides,CH: Benzene compounds,CP: Quintozene (PCNB),,,TN: Terraclor
+GR: Contact Fungicides,CH: Benzene compounds,CP: Dichloran,,,TN: Botran
+GR: Contact Fungicides,CH: Benzene compounds,CP: Fenaminsosuplh,,,TN: Dexon
+GR: Contact Fungicides,CH: Benzene compounds,"CP: Dinocap (2,4-dinitro-6- octyl phenylcrotonate)",,,TN: Karathane
+GR: Contact Fungicides,CH: Benzene compounds,"CP: Dinocap (2,4-dinitro-6- octyl phenylcrotonate)",,,TN: Arathane
+GR: Contact Fungicides,CH: Benzene compounds,"CP: Dinocap (2,4-dinitro-6- octyl phenylcrotonate)",,,TN: Crotothane
+GR: Contact Fungicides,CH: Benzene compounds,"CP: Dinocap (2,4-dinitro-6- octyl phenylcrotonate)",,,TN: Mildex
+GR: Contact Fungicides,CH: Quinone compounds,"CP: Chloranil (2,3,5,6- tetrachlora-1,4-benzoquinone)",,,TN: Spergon
+GR: Contact Fungicides,CH: Quinone compounds,"CP: Dichlone (2,3-dichloro- 1,4-napthoquinone)",,,TN: Phygon
+GR: Contact Fungicides,CH: Organo-Phosphorous compounds,CP: Ediphenphos,,,TN: Hinosan
+GR: Contact Fungicides,CH: Organo Tin compounds,CP: Triphenyl tin acetate/Fentin acetate,,,TN: Brestan
+GR: Contact Fungicides,CH: Organo Tin compounds,CP: Triphenyl tin hydroxide/Fentin hydroxide,,,TN: Du-Ter
+GR: Contact Fungicides,CH: Organo Tin compounds,CP: Triphenyl tin chloride/Fentin chloride,,,TN: Brestanol
+GR: Systemic Fungicides ,CH: Oxathilin and related compounds,"CP: Carboxin (5,6-dinydro-2 methyl-1-4-oxanthin-3 carboxanlido)",,,TN: Vitavax
+GR: Systemic Fungicides ,CH: Oxathilin and related compounds,"CP: Oxycarboxin (5,6- dihydro-2-methyl- 1,4-oxathin-3-carboxianilid-4,4- dioxide)",,,TN: Plantvax
+GR: Systemic Fungicides ,CH: Oxathilin and related compounds,"CP: Pyracarbolid (2-methyl-5,6-dihydro-4H-Pyran-3-carboxylic acid anilide)",,,TN: Sicarol
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Benomyl,,,TN: Benlate
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Carbendazim (MBC) (Methyl-2-benzimidazole carbamate),,,TN: Jkenstin
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Carbendazim (MBC) (Methyl-2-benzimidazole carbamate),,,TN: Tagstin
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Carbendazim (MBC) (Methyl-2-benzimidazole carbamate),,,TN: Bavistin
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Thiabendazole,,,TN: Mertect
+GR: Systemic Fungicides ,CH: Benzimidazoles,CP: Fuberidazole,,,TN: Voronit
+GR: Systemic Fungicides ,CH: Thiophanates,CP: Thiophanate,,,TN: Topsin
+GR: Systemic Fungicides ,CH: Thiophanate-methyl,,,,TN: Topsin-M
+GR: Systemic Fungicides ,CH: Morpholines,CP: Tridemorph,,,TN: Calixin
+GR: Systemic Fungicides ,CH: Morpholines,CP: Tridemorph,,,TN: Beacon
+GR: Systemic Fungicides ,"CH: Pyrimidines, Pyridines, Piperidines and Imidazole",CP: Triadimefon,,,TN: Bayleton
+GR: Systemic Fungicides ,"CH: Pyrimidines, Pyridines, Piperidines and Imidazole",CP: Triadimenol,,,TN: Baytan
+GR: Systemic Fungicides ,"CH: Pyrimidines, Pyridines, Piperidines and Imidazole",CP: Bitertanal,,,TN: Baycor
+GR: Systemic Fungicides ,"CH: Pyrimidines, Pyridines, Piperidines and Imidazole",CP: Etridiazole,,,TN: Terracoat
+GR: Systemic Fungicides ,CH: Hydroxy Pyrimidines,CP: Ethirimol,,,TN: Milliatem
+GR: Systemic Fungicides ,CH: Hydroxy Pyrimidines,CP: Dimethirimol,,,TN: Milcurb
+GR: Systemic Fungicides ,CH: Furan derivatives,CP: Furcarbanil,,,
+GR: Systemic Fungicides ,CH: Furan derivatives,CP: Cyclafuramid,,,
+GR: Systemic Fungicides ,CH: Benzanilide derivative,CP: Mebenil,,,
+GR: Systemic Fungicides ,CH: Organo-Phosphorous compounds,CP: Pyrazophos,,,TN: Afugan
+GR: Systemic Fungicides ,CH: Organo-Phosphorous compounds,CP: Pyrazophos,,,TN: Curamil
+GR: Systemic Fungicides ,CH: Organo-Phosphorous compounds,CP: Pyrazophos,,,TN: Missile
+GR: Systemic Fungicides ,CH: Organo-Phosphorous compounds,CP: Iprobenphos,,,TN: Kitazin
+GR: Systemic Fungicides ,CH: Piperazine,CP: Triforine,,,TN: Saprol
+GR: Systemic Fungicides ,CH: Piperazine,CP: Triforine,,,TN: Fungitex
+GR: Systemic Fungicides ,CH: Phenol derivative,CP: Choloroneb,,,TN: Demonsan
+GR: Systemic Fungicides ,CH: Phenol derivative,CP: Choloroneb,,,TN: Turf fungicide
+GR: Systemic Fungicides ,CH: Phenol derivative,CP: Choloroneb,,,TN: Tersan
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Hexaconazole,,,TN: Contaf
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Hexaconazole,,,TN: Excel
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Propiconazole,,,TN: Tilt
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Tebuconazole,,,TN: Folicur
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Penconazole,,,TN: Topas
+GR: Systemic Fungicides ,CH: Triazole compounds,CP: Difenoconozole,,,TN: Score
+GR: Systemic Fungicides ,CH: Others,CP: Metalaxyl,,,TN: Ridomil
+GR: Systemic Fungicides ,CH: Others,CP: Metalaxyl,,,TN: Apron
+GR: Systemic Fungicides ,CH: Others,CP: Metalaxyl + Mancozeb,,,TN: Ridomil MZ 72
+GR: Systemic Fungicides ,CH: Others,CP: Tricyclazole,,,TN: Beam
+GR: Systemic Fungicides ,CH: Others,CP: Tricyclazole,,,TN: Gain
+GR: Systemic Fungicides ,CH: Others,CP: Tricyclazole,,,TN: Profit
+GR: Systemic Fungicides ,CH: Others,CP: FosetylAI,,,TN: Aliette
+GR: Systemic Fungicides ,CH: Others,CP: Pyroquilon,,,TN: Fongorene
+GR: Systemic Fungicides ,CH: Others,CP: Azoxystrobin,,,TN: Amistar
+GR: Antifungal Antibiotics,CH: Aureofungin ,,,,
+GR: Antifungal Antibiotics,CH: Griseofulvin,,,,TN: Griseofulvin
+GR: Antifungal Antibiotics,CH: Griseofulvin,,,,TN: Fulvicin
+GR: Antifungal Antibiotics,CH: Griseofulvin,,,,TN: Grisovin
+GR: Antifungal Antibiotics,CH: Cycloheximide ,,,,TN: Actidione
+GR: Antifungal Antibiotics,CH: Cycloheximide ,,,,TN: Actispray
+GR: Antifungal Antibiotics,CH: Blasticidin ,,,,TN: Blasticidin S
+GR: Antifungal Antibiotics,CH: Antimycin ,,,,TN: Antimycin
+GR: Antifungal Antibiotics,CH: Kasugamycin,,,,TN: Kasumin
+GR: Antifungal Antibiotics,CH: Thiolution,,,,
+GR: Antifungal Antibiotics,CH: Endomycin ,,,,
+GR: Antifungal Antibiotics,CH: Bulbiformin ,,,,
+GR: Antifungal Antibiotics,CH: Nystatin ,,,,TN: Mycostain
+GR: Antifungal Antibiotics,CH: Nystatin ,,,,TN: Fungicidin
+GR: Antifungal Antibiotics,CH: Eurocidin ,,,,TN: Pentaene G-8
