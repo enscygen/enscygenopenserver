@@ -1,707 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reference Manager</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        /* --- General Styling & Resets --- */
-        :root {
-            --primary-color: #4a69bd;
-            --primary-hover: #3c569a;
-            --secondary-color: #6c757d;
-            --danger-color: #e74c3c;
-            --danger-hover: #c0392b;
-            --light-color: #f8f9fa;
-            --border-color: #e9ecef;
-            --text-color: #343a40;
-            --text-muted: #6c757d;
-            --background-color: #f1f3f5;
-            --white-color: #ffffff;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-radius: 6px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reference Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    /* --- General Styling & Resets --- */
+    :root {
+      --primary-color: #4a69bd;
+      --primary-hover: #3c569a;
+      --secondary-color: #6c757d;
+      --danger-color: #e74c3c;
+      --danger-hover: #c0392b;
+      --light-color: #f8f9fa;
+      --border-color: #e9ecef;
+      --text-color: #343a40;
+      --text-muted: #6c757d;
+      --background-color: #f1f3f5;
+      --white-color: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --border-radius: 6px;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-size: 14px;
-            line-height: 1.5;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-        /* --- Main App Container --- */
-        .app-container {
-            width: 100%;
-            max-width: 800px;
-            height: 90vh;
-            max-height: 800px;
-            background-color: var(--white-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
+    /* --- Main App Container --- */
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      max-height: 840px;
+      background-color: var(--white-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
 
-        /* --- App Header --- */
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            background-color: var(--light-color);
-            border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0;
-        }
+    /* --- App Header --- */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background-color: var(--light-color);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
 
-        .app-header h1 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .app-header h1 i {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-        }
+    .app-header h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-header h1 i { font-size: 1.3rem; color: var(--primary-color); }
 
-        /* --- Buttons --- */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 5px;
-            border: 1px solid transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.25);
-        }
+    /* --- Buttons --- */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 5px; border: 1px solid transparent;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.25); }
+    .btn-danger { background-color: var(--danger-color); color: var(--white-color); border-color: var(--danger-color); }
+    .btn-danger:hover { background-color: var(--danger-hover); border-color: var(--danger-hover); }
+    .btn:disabled { background-color: #ced4da; border-color: #ced4da; cursor: not-allowed; opacity: 0.6; }
 
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: var(--white-color);
-            border-color: var(--danger-color);
-        }
+    /* --- Main Content --- */
+    .app-main { flex-grow: 1; overflow-y: auto; padding: 20px; }
 
-        .btn-danger:hover {
-            background-color: var(--danger-hover);
-            border-color: var(--danger-hover);
-        }
-        
-        .btn:disabled {
-            background-color: #ced4da;
-            border-color: #ced4da;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        /* --- Main Content --- */
-        .app-main {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        /* --- Section Styling --- */
-        .app-section {
-            background-color: var(--white-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-        }
+    /* --- Section Styling --- */
+    .app-section { background-color: var(--white-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 20px; }
+    .app-section-header { padding: 10px 15px; border-bottom: 1px solid var(--border-color); font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+    .app-section-body { padding: 15px; }
 
-        .app-section-header {
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-        }
-        
-        .app-section-body {
-            padding: 15px;
-        }
+    /* --- Bookmarklet Section --- */
+    .bookmarklet-info p { margin-bottom: 12px; color: var(--text-muted); }
+    .bookmarklet-link { display: inline-block; background-color: var(--primary-color); color: var(--white-color); padding: 8px 12px; border-radius: 5px; text-decoration: none; font-weight: 500; cursor: grab; transition: background-color 0.2s ease; }
+    .bookmarklet-link:hover { background-color: var(--primary-hover); }
+    .bookmarklet-link i { margin-right: 6px; }
 
-        /* --- Bookmarklet Section --- */
-        .bookmarklet-info p {
-            margin-bottom: 15px;
-            color: var(--text-muted);
-        }
+    #bookmarklet-code { width: 100%; padding: 8px; font-family: monospace; font-size: 11px; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--light-color); resize: none; margin-bottom: 10px; color: var(--text-muted); }
+    #copy-code-btn { background-color: var(--secondary-color); color: var(--white-color); }
+    #copy-code-btn:hover { background-color: #5a6268; }
 
-        .bookmarklet-link {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            padding: 8px 12px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: grab;
-            transition: background-color 0.2s ease;
-        }
-        
-        .bookmarklet-link:hover {
-            background-color: var(--primary-hover);
-        }
-        .bookmarklet-link i {
-            margin-right: 6px;
-        }
+    /* --- Controls Section --- */
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .control-group { display: flex; flex-direction: column; }
+    .control-group label { font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--text-muted); }
+    .select-style { height: 34px; padding: 0 10px; border-radius: 5px; border: 1px solid #ced4da; background-color: var(--white-color); font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s ease; }
+    .select-style:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.25); }
+    .action-buttons { display: flex; gap: 8px; margin-left: auto; }
 
-        #bookmarklet-code {
-            width: 100%;
-            padding: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            background-color: var(--light-color);
-            resize: none;
-            margin-bottom: 10px;
-            color: var(--text-muted);
-        }
+    /* --- Reference List --- */
+    #reference-list { list-style: none; }
+    .reference-item { display: flex; align-items: flex-start; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 10px; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+    .reference-item.selected { background-color: #eef2ff; border-color: var(--primary-color); }
+    .reference-item input[type="checkbox"] { margin: 3px 15px 0 0; width: 15px; height: 15px; cursor: pointer; }
+    .reference-content { flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+    .reference-text { font-size: 13px; }
+    .reference-text em { font-style: italic; }
+    .copy-btn { background: none; border: none; color: var(--secondary-color); cursor: pointer; font-size: 1.2rem; padding: 0; transition: color 0.2s ease; flex-shrink: 0; }
+    .copy-btn:hover { color: var(--primary-color); }
 
-        #copy-code-btn {
-            background-color: var(--secondary-color);
-            color: var(--white-color);
-        }
-        #copy-code-btn:hover {
-            background-color: #5a6268;
-        }
+    /* --- Empty State --- */
+    #empty-state { text-align: center; padding: 40px; border: 2px dashed var(--border-color); border-radius: var(--border-radius); }
+    #empty-state p { font-size: 1rem; color: var(--text-muted); }
+    #empty-state i { font-size: 2.5rem; margin-bottom: 15px; color: #ced4da; }
 
+    /* --- Modal --- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; z-index: 1000; }
+    .modal-overlay.visible { opacity: 1; visibility: visible; }
+    .modal-content { background: var(--white-color); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 90%; max-width: 420px; transform: scale(0.9); transition: transform 0.3s ease; }
+    .modal-overlay.visible .modal-content { transform: scale(1); }
+    .modal-content h2 { font-size: 1.2rem; margin-bottom: 10px; }
+    .modal-content p { margin-bottom: 20px; color: var(--text-muted); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-actions .btn-secondary { background-color: #e9ecef; border-color: #e9ecef; color: var(--text-color); }
+    .modal-actions .btn-secondary:hover { background-color: #dee2e6; }
 
-        /* --- Controls Section --- */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .control-group label {
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: var(--text-muted);
-        }
-
-        .select-style {
-            height: 34px;
-            padding: 0 10px;
-            border-radius: 5px;
-            border: 1px solid #ced4da;
-            background-color: var(--white-color);
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .select-style:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.25);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-        }
-
-        /* --- Reference List --- */
-        #reference-list {
-            list-style: none;
-        }
-
-        .reference-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            margin-bottom: 10px;
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-        
-        .reference-item.selected {
-            background-color: #eef2ff;
-            border-color: var(--primary-color);
-        }
-
-        .reference-item input[type="checkbox"] {
-            margin: 3px 15px 0 0;
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
-        }
-
-        .reference-content {
-            flex-grow: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        
-        .reference-text {
-            font-size: 13px;
-        }
-        
-        .reference-text em {
-            font-style: italic;
-        }
-
-        .copy-btn {
-            background: none;
-            border: none;
-            color: var(--secondary-color);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0;
-            transition: color 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .copy-btn:hover {
-            color: var(--primary-color);
-        }
-
-        /* --- Empty State --- */
-        #empty-state {
-            text-align: center;
-            padding: 40px;
-            border: 2px dashed var(--border-color);
-            border-radius: var(--border-radius);
-        }
-        
-        #empty-state p {
-            font-size: 1rem;
-            color: var(--text-muted);
-        }
-        #empty-state i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: #ced4da;
-        }
-
-        /* --- Modal --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .modal-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: var(--white-color);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            width: 90%;
-            max-width: 400px;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal-overlay.visible .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-content h2 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-        
-        .modal-content p {
-            margin-bottom: 20px;
-            color: var(--text-muted);
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-        
-        .modal-actions .btn-secondary {
-            background-color: #e9ecef;
-            border-color: #e9ecef;
-            color: var(--text-color);
-        }
-        .modal-actions .btn-secondary:hover {
-            background-color: #dee2e6;
-        }
-    </style>
+    /* --- Toast --- */
+    .toast { position: fixed; bottom: 18px; right: 18px; background: #222; color: #fff; padding: 10px 14px; border-radius: 8px; box-shadow: var(--shadow-md); opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; z-index: 1100; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
 <body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1><i class="bi bi-journal-bookmark-fill"></i>Reference Manager</h1>
+      <button id="clear-all-btn" class="btn btn-danger" disabled><i class="bi bi-trash3"></i> Clear All</button>
+    </header>
 
-    <div class="app-container">
-        <header class="app-header">
-            <h1><i class="bi bi-journal-bookmark-fill"></i>Reference Manager</h1>
-            <button id="clear-all-btn" class="btn btn-danger" disabled><i class="bi bi-trash3"></i> Clear All</button>
-        </header>
-
-        <main class="app-main">
-            <section class="app-section">
-                <div class="app-section-header"><i class="bi bi-magic"></i> Desktop Setup</div>
-                <div class="app-section-body bookmarklet-info">
-                    <p>Drag the link below to your bookmarks bar. Click it on an article page to save the reference.</p>
-                    <a id="bookmarklet" href="" class="bookmarklet-link"><i class="bi bi-plus-circle-dotted"></i> Save to Manager</a>
-                </div>
-            </section>
-
-            <!-- NEW SECTION FOR MOBILE -->
-            <section class="app-section">
-                <div class="app-section-header"><i class="bi bi-phone"></i> Mobile Setup</div>
-                <div class="app-section-body bookmarklet-info">
-                    <p>On mobile, copy the code below. Then, create a new bookmark and paste this code into the URL/address field.</p>
-                    <textarea id="bookmarklet-code" readonly rows="4"></textarea>
-                    <button id="copy-code-btn" class="btn"><i class="bi bi-clipboard"></i> Copy Code</button>
-                </div>
-            </section>
-
-            <section class="app-section">
-                <div class="app-section-header"><i class="bi bi-card-list"></i> My References</div>
-                <div class="app-section-body">
-                    <div class="controls">
-                        <div class="control-group">
-                            <label for="style-select">Citation Style</label>
-                            <select id="style-select" class="select-style">
-                                <option value="apa">APA 7th Edition</option>
-                                <option value="mla">MLA 9th Edition</option>
-                                <option value="harvard">Harvard</option>
-                                <option value="chicago">Chicago (Author-Date)</option>
-                            </select>
-                        </div>
-                        <div class="action-buttons">
-                            <button id="export-txt-btn" class="btn" disabled><i class="bi bi-file-earmark-text"></i> .txt</button>
-                            <button id="export-doc-btn" class="btn" disabled><i class="bi bi-file-earmark-word"></i> .doc</button>
-                            <button id="delete-selected-btn" class="btn" disabled><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="app-section-body" style="padding-top: 0;">
-                    <ul id="reference-list">
-                        <!-- Reference items will be injected here -->
-                    </ul>
-                    <div id="empty-state">
-                        <i class="bi bi-inbox"></i>
-                        <p>Your reference list is empty.</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 id="modal-title">Are you sure?</h2>
-            <p id="modal-text">This action cannot be undone.</p>
-            <div class="modal-actions">
-                <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
-                <button id="modal-confirm-btn" class="btn btn-danger">Confirm</button>
-            </div>
+    <main class="app-main">
+      <section class="app-section">
+        <div class="app-section-header"><i class="bi bi-magic"></i> Desktop Setup</div>
+        <div class="app-section-body bookmarklet-info">
+          <p>Drag the link below to your bookmarks bar. Click it on an article page to save the reference.</p>
+          <a id="bookmarklet" href="#" class="bookmarklet-link"><i class="bi bi-plus-circle-dotted"></i> Save to Manager</a>
         </div>
+      </section>
+
+      <section class="app-section">
+        <div class="app-section-header"><i class="bi bi-phone"></i> Mobile Setup</div>
+        <div class="app-section-body bookmarklet-info">
+          <p>On mobile, copy the code below. Then, create a new bookmark and paste this code into the URL/address field.</p>
+          <textarea id="bookmarklet-code" readonly rows="4"></textarea>
+          <button id="copy-code-btn" class="btn"><i class="bi bi-clipboard"></i> Copy Code</button>
+        </div>
+      </section>
+
+      <section class="app-section">
+        <div class="app-section-header"><i class="bi bi-card-list"></i> My References</div>
+        <div class="app-section-body">
+          <div class="controls">
+            <div class="control-group">
+              <label for="style-select">Citation Style</label>
+              <select id="style-select" class="select-style">
+                <option value="apa">APA 7th Edition</option>
+                <option value="mla">MLA 9th Edition</option>
+                <option value="harvard">Harvard</option>
+                <option value="chicago">Chicago (Author-Date)</option>
+              </select>
+            </div>
+            <div class="action-buttons">
+              <button id="export-txt-btn" class="btn" disabled><i class="bi bi-file-earmark-text"></i> .txt</button>
+              <button id="export-doc-btn" class="btn" disabled><i class="bi bi-file-earmark-word"></i> .doc</button>
+              <button id="delete-selected-btn" class="btn" disabled><i class="bi bi-trash"></i> Delete</button>
+            </div>
+          </div>
+        </div>
+        <div class="app-section-body" style="padding-top: 0;">
+          <ul id="reference-list"></ul>
+          <div id="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>Your reference list is empty.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirm-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">Are you sure?</h2>
+      <p id="modal-text">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="modal-confirm-btn" class="btn btn-danger">Confirm</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- 1. DOM ELEMENTS & STATE ---
-        const styleSelect = document.getElementById('style-select');
-        const referenceList = document.getElementById('reference-list');
-        const emptyState = document.getElementById('empty-state');
-        const exportTxtBtn = document.getElementById('export-txt-btn');
-        const exportDocBtn = document.getElementById('export-doc-btn');
-        const deleteSelectedBtn = document.getElementById('delete-selected-btn');
-        const clearAllBtn = document.getElementById('clear-all-btn');
-        const bookmarkletLink = document.getElementById('bookmarklet');
-        // NEW MOBILE ELEMENTS
-        const bookmarkletCode = document.getElementById('bookmarklet-code');
-        const copyCodeBtn = document.getElementById('copy-code-btn');
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-        const confirmModal = document.getElementById('confirm-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalText = document.getElementById('modal-text');
-        const modalCancelBtn = document.getElementById('modal-cancel-btn');
-        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+  <script>
+  (function(){
+    // === IMPORTANT: Set this to the public URL of THIS Reference Manager page ===
+    const MANAGER_URL = (()=>{
+      // Auto-detect current page URL without query/hash, as a sensible default
+      const loc = window.location;
+      return loc.origin + loc.pathname;
+    })();
 
-        let db;
-        let currentConfirmationCallback = null;
+    // --- Elements ---
+    const styleSelect = document.getElementById('style-select');
+    const referenceList = document.getElementById('reference-list');
+    const emptyState = document.getElementById('empty-state');
+    const exportTxtBtn = document.getElementById('export-txt-btn');
+    const exportDocBtn = document.getElementById('export-doc-btn');
+    const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const bookmarkletLink = document.getElementById('bookmarklet');
+    const bookmarkletCode = document.getElementById('bookmarklet-code');
+    const copyCodeBtn = document.getElementById('copy-code-btn');
 
-        // --- 2. INDEXEDDB LOGIC ---
-        function initDB() {
-            const request = indexedDB.open('ReferenceManagerDB_v2', 1);
-            request.onerror = (event) => console.error("Database error: ", event.target.errorCode);
-            request.onsuccess = (event) => {
-                db = event.target.result;
-                checkForBookmarkletData();
-                renderReferences();
-            };
-            request.onupgradeneeded = (event) => {
-                let db = event.target.result;
-                if (!db.objectStoreNames.contains('references')) {
-                    db.createObjectStore('references', { keyPath: 'id', autoIncrement: true });
-                }
-            };
+    const confirmModal = document.getElementById('confirm-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalText = document.getElementById('modal-text');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const toast = document.getElementById('toast');
+
+    let db; let currentConfirmationCallback = null;
+
+    // --- Utils ---
+    const showToast = (msg)=>{
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 2400);
+    };
+
+    // --- IndexedDB ---
+    function initDB() {
+      const request = indexedDB.open('ReferenceManagerDB_v2', 1);
+      request.onerror = (event) => console.error('Database error: ', event.target.errorCode);
+      request.onsuccess = (event) => { db = event.target.result; renderReferences(); };
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('references')) {
+          db.createObjectStore('references', { keyPath: 'id', autoIncrement: true });
         }
+      };
+    }
 
-        function addReference(ref) {
-            if (!db) return;
-            const transaction = db.transaction(['references'], 'readwrite');
-            const store = transaction.objectStore('references');
-            store.add(ref);
-            transaction.oncomplete = renderReferences;
-        }
+    function addReference(ref) {
+      return new Promise((resolve) => {
+        const tx = db.transaction(['references'], 'readwrite');
+        const store = tx.objectStore('references');
+        store.add(ref);
+        tx.oncomplete = () => { renderReferences(); resolve(); };
+      });
+    }
 
-        function getAllReferences(callback) {
-            if (!db) return;
-            const store = db.transaction(['references'], 'readonly').objectStore('references');
-            const request = store.getAll();
-            request.onsuccess = () => callback(request.result);
-        }
+    function getAllReferences() {
+      return new Promise((resolve) => {
+        const store = db.transaction(['references'], 'readonly').objectStore('references');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+      });
+    }
 
-        function deleteReferences(ids) {
-            if (!db) return;
-            const transaction = db.transaction(['references'], 'readwrite');
-            const store = transaction.objectStore('references');
-            ids.forEach(id => store.delete(id));
-            transaction.oncomplete = renderReferences;
-        }
+    function deleteReferences(ids) {
+      const tx = db.transaction(['references'], 'readwrite');
+      const store = tx.objectStore('references');
+      ids.forEach(id => store.delete(id));
+      tx.oncomplete = renderReferences;
+    }
 
-        function clearAllReferences() {
-            if (!db) return;
-            const store = db.transaction(['references'], 'readwrite').objectStore('references');
-            store.clear();
-            store.transaction.oncomplete = renderReferences;
-        }
+    function clearAllReferences() {
+      const tx = db.transaction(['references'], 'readwrite');
+      const store = tx.objectStore('references');
+      store.clear();
+      tx.oncomplete = renderReferences;
+    }
 
-        // --- 3. CITATION FORMATTING ---
-        function formatCitation(ref, style) {
-            const authors = ref.authors && ref.authors.length > 0 && ref.authors[0] ? ref.authors.join(', ') : 'N.A.';
-            const year = ref.year || 'n.d.';
-            const title = ref.title || 'Untitled';
-            const journal = ref.journal ? `<em>${ref.journal}</em>` : '';
-            
-            switch (style) {
-                case 'mla': return `${authors}. "${title}." ${journal}, ${year}.`;
-                case 'harvard': return `${authors} (${year}). '${title}'. ${journal}.`;
-                case 'chicago': return `${authors}. ${year}. "${title}." ${journal}.`;
-                case 'apa': default: return `${authors} (${year}). ${title}. ${journal}.`;
-            }
-        }
+    // --- Citation Formatting ---
+    function formatCitation(ref, style) {
+      const authors = (ref.authors && ref.authors.length > 0 && ref.authors[0]) ? ref.authors.join(', ') : 'N.A.';
+      const year = ref.year || 'n.d.';
+      const title = ref.title || 'Untitled';
+      const journal = ref.journal ? `<em>${ref.journal}</em>` : '';
+      switch (style) {
+        case 'mla':     return `${authors}. "${title}." ${journal}, ${year}.`;
+        case 'harvard': return `${authors} (${year}). '${title}'. ${journal}.`;
+        case 'chicago': return `${authors}. ${year}. "${title}." ${journal}.`;
+        case 'apa':
+        default:        return `${authors} (${year}). ${title}. ${journal}.`;
+      }
+    }
 
-        // --- 4. UI RENDERING & EVENT HANDLERS ---
-        function renderReferences() {
-            getAllReferences(refs => {
-                referenceList.innerHTML = '';
-                emptyState.style.display = refs.length === 0 ? 'block' : 'none';
-                
-                refs.forEach(ref => {
-                    const li = document.createElement('li');
-                    li.className = 'reference-item';
-                    li.dataset.id = ref.id;
-                    const formattedText = formatCitation(ref, styleSelect.value);
-                    li.innerHTML = `
-                        <input type="checkbox" class="ref-checkbox" id="ref-${ref.id}">
-                        <div class="reference-content">
-                            <div class="reference-text">${formattedText}</div>
-                            <button class="copy-btn" title="Copy Citation"><i class="bi bi-clipboard"></i></button>
-                        </div>
-                    `;
-                    referenceList.appendChild(li);
-                });
-                updateButtonStates();
-            });
-        }
-        
-        function updateButtonStates() {
-            const anyItems = referenceList.children.length > 0;
-            const anySelected = document.querySelectorAll('.ref-checkbox:checked').length > 0;
-            clearAllBtn.disabled = !anyItems;
-            [exportTxtBtn, exportDocBtn, deleteSelectedBtn].forEach(btn => btn.disabled = !anySelected);
-        }
-        
-        function setupEventListeners() {
-            styleSelect.addEventListener('change', renderReferences);
+    // --- Rendering ---
+    async function renderReferences() {
+      const refs = await getAllReferences();
+      referenceList.innerHTML = '';
+      emptyState.style.display = refs.length === 0 ? 'block' : 'none';
+      refs.forEach(ref => {
+        const li = document.createElement('li');
+        li.className = 'reference-item';
+        li.dataset.id = ref.id;
+        const formattedText = formatCitation(ref, styleSelect.value);
+        li.innerHTML = `
+          <input type="checkbox" class="ref-checkbox" id="ref-${ref.id}">
+          <div class="reference-content">
+            <div class="reference-text">${formattedText}</div>
+            <button class="copy-btn" title="Copy Citation"><i class="bi bi-clipboard"></i></button>
+          </div>`;
+        referenceList.appendChild(li);
+      });
+      updateButtonStates();
+    }
 
-            referenceList.addEventListener('click', (e) => {
-                const copyBtn = e.target.closest('.copy-btn');
-                if (copyBtn) {
-                    const textToCopy = copyBtn.closest('.reference-content').querySelector('.reference-text').innerText;
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
-                        setTimeout(() => { copyBtn.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000);
-                    });
-                }
-                
-                if (e.target.classList.contains('ref-checkbox')) {
-                    e.target.closest('.reference-item').classList.toggle('selected', e.target.checked);
-                    updateButtonStates();
-                }
-            });
+    function updateButtonStates() {
+      const anyItems = referenceList.children.length > 0;
+      const anySelected = document.querySelectorAll('.ref-checkbox:checked').length > 0;
+      clearAllBtn.disabled = !anyItems;
+      [exportTxtBtn, exportDocBtn, deleteSelectedBtn].forEach(btn => btn.disabled = !anySelected);
+    }
 
-            deleteSelectedBtn.addEventListener('click', () => {
-                const selectedIds = getSelectedIds();
-                if (selectedIds.length > 0) {
-                    showConfirmation('Delete Selected?', `You are about to delete ${selectedIds.length} reference(s).`, () => deleteReferences(selectedIds));
-                }
-            });
+    function getSelectedIds() {
+      return Array.from(document.querySelectorAll('.ref-checkbox:checked')).map(cb => parseInt(cb.closest('.reference-item').dataset.id));
+    }
 
-            clearAllBtn.addEventListener('click', () => showConfirmation('Clear All?', 'You are about to delete all references.', clearAllReferences));
-            
-            exportTxtBtn.addEventListener('click', () => exportReferences('txt'));
-            exportDocBtn.addEventListener('click', () => exportReferences('doc'));
+    // --- Export ---
+    async function exportReferences(format) {
+      const selectedIds = getSelectedIds();
+      if (selectedIds.length === 0) return;
+      const all = await getAllReferences();
+      const selected = all.filter(r => selectedIds.includes(r.id));
+      const style = styleSelect.value;
+      if (format === 'txt') {
+        const plain = selected.map(ref => formatCitation(ref, style).replace(/<[^>]*>?/gm, '')).join('\n\n');
+        downloadFile(plain, 'references.txt', 'text/plain');
+      } else if (format === 'doc') {
+        const html = selected.map(ref => `<p>${formatCitation(ref, style)}</p>`).join('');
+        const full = `<!DOCTYPE html><html><head><meta charset='utf-8'><title>References</title></head><body><h1>References (${style.toUpperCase()})</h1>${html}</body></html>`;
+        downloadFile(full, 'references.doc', 'application/msword');
+      }
+    }
 
-            // NEW EVENT LISTENER FOR MOBILE COPY BUTTON
-            copyCodeBtn.addEventListener('click', () => {
-                bookmarkletCode.select();
-                // Use execCommand for better mobile compatibility
-                document.execCommand('copy');
-                const originalText = copyCodeBtn.innerHTML;
-                copyCodeBtn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
-                setTimeout(() => { copyCodeBtn.innerHTML = originalText; }, 2500);
-            });
-        }
-        
-        function getSelectedIds() {
-            return Array.from(document.querySelectorAll('.ref-checkbox:checked'))
-                        .map(cb => parseInt(cb.closest('.reference-item').dataset.id));
-        }
+    function downloadFile(data, filename, type) {
+      const blob = new Blob([data], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
+    }
 
-        // --- 5. BOOKMARKLET LOGIC ---
-        function generateBookmarkletCode() {
-            // Minified code to be used in the bookmarklet
-            const code = `(function(){function getMeta(name){const meta=document.querySelector('meta[name="'+name+'"]')||document.querySelector('meta[property="'+name+'"]');return meta?meta.content:''}const data={title:getMeta('citation_title')||getMeta('og:title')||document.title,authors:(getMeta('citation_author')||'').split(';').map(a=>a.trim()),journal:getMeta('citation_journal_title')||getMeta('og:site_name'),year:getMeta('citation_publication_date')?new Date(getMeta('citation_publication_date')).getFullYear():'',url:window.location.href};localStorage.setItem('newReferenceData',JSON.stringify(data));window.open('${window.location.href.split('?')[0]}','_blank');})();`;
-            return `javascript:${code}`;
-        }
-        
-        function checkForBookmarkletData() {
-            const data = localStorage.getItem('newReferenceData');
-            if (data) {
-                try {
-                    addReference(JSON.parse(data));
-                } catch (e) {
-                    console.error("Error parsing bookmarklet data:", e);
-                } finally {
-                    localStorage.removeItem('newReferenceData');
-                }
-            }
-        }
-        
-        // --- 6. EXPORT LOGIC ---
-        function exportReferences(format) {
-            const selectedIds = getSelectedIds();
-            if (selectedIds.length === 0) return;
+    // --- Modal ---
+    function showConfirmation(title, text, callback) {
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      currentConfirmationCallback = callback;
+      confirmModal.classList.add('visible');
+    }
+    function hideConfirmation() { confirmModal.classList.remove('visible'); currentConfirmationCallback = null; }
 
-            getAllReferences(refs => {
-                const selectedRefs = refs.filter(ref => selectedIds.includes(ref.id));
-                const citationStyle = styleSelect.value;
-                
-                if (format === 'txt') {
-                    const content = selectedRefs.map(ref => formatCitation(ref, citationStyle).replace(/<[^>]*>?/gm, '')).join('\\n\\n');
-                    downloadFile(content, 'references.txt', 'text/plain');
-                } else if (format === 'doc') {
-                    const htmlContent = selectedRefs.map(ref => `<p>${formatCitation(ref, citationStyle)}</p>`).join('');
-                    const fullHtml = `<!DOCTYPE html><html><head><meta charset='utf-8'><title>References</title></head><body><h1>References (${citationStyle.toUpperCase()})</h1>${htmlContent}</body></html>`;
-                    downloadFile(fullHtml, 'references.doc', 'application/msword');
-                }
-            });
-        }
-        
-        function downloadFile(data, filename, type) {
-            const blob = new Blob([data], { type });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+    // --- Bookmarklet: cross-origin safe ---
+    // NOTE: localStorage is ORIGIN-SCOPED. We encode the data into the URL so this app can read it regardless of origin.
+    function encodeDataForUrl(obj){
+      try { return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(obj))))); } catch { return ''; }
+    }
+    function decodeDataFromUrl(str){
+      try { return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(str))))); } catch { return null; }
+    }
 
-        // --- 7. MODAL LOGIC ---
-        function showConfirmation(title, text, callback) {
-            modalTitle.textContent = title;
-            modalText.textContent = text;
-            currentConfirmationCallback = callback;
-            confirmModal.classList.add('visible');
-        }
+    function buildBookmarkletCode(){
+      // Minified, safe, and origin-agnostic: opens the manager with ?ref=<base64>
+      const code = `javascript:(function(){function g(n){var m=document.querySelector('meta[name="'+n+'"]')||document.querySelector('meta[property="'+n+'"]');return m?m.content:''}function A(){var a=[],t=document.querySelectorAll('meta[name="citation_author"]');if(t&&t.length){t.forEach(function(x){if(x.content)a.push(x.content.trim())});}else{var s=g('citation_author');if(s)a=s.split(/;|,/).map(function(z){return z.trim()}).filter(Boolean);}return a}var d={title:g('citation_title')||g('og:title')||document.title,authors:A(),journal:g('citation_journal_title')||g('og:site_name')||'',year:(function(){var p=g('citation_publication_date')||g('citation_date')||g('article:published_time')||g('datePublished');if(p){var y=new Date(p).getFullYear();if(!isNaN(y))return y;}return ''})(),url:location.href};try{var q=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(d)))));var u='${MANAGER_URL}?ref='+q;window.open(u,'_blank');}catch(e){alert('Bookmarklet error: '+e)}})();`;
+      return code;
+    }
 
-        function hideConfirmation() {
-            confirmModal.classList.remove('visible');
-            currentConfirmationCallback = null;
-        }
+    // Reads incoming ?ref=... OR window.name (fallback) and imports
+    async function importIncomingReference(){
+      const params = new URLSearchParams(location.search);
+      let data = null;
+      if (params.has('ref')) {
+        data = decodeDataFromUrl(params.get('ref'));
+      } else if (window.name && window.name.startsWith('{') && window.name.endsWith('}')) {
+        // Fallback: some workflows may set window.name to JSON
+        try { data = JSON.parse(window.name); } catch {}
+      }
+      if (data && typeof data === 'object') {
+        await addReference(normalizeRef(data));
+        showToast('Reference added: ' + (data.title || 'Untitled'));
+        // Clean URL to avoid reimport on refresh
+        history.replaceState({}, document.title, MANAGER_URL);
+      }
+    }
 
-        modalCancelBtn.addEventListener('click', hideConfirmation);
-        modalConfirmBtn.addEventListener('click', () => {
-            if (currentConfirmationCallback) currentConfirmationCallback();
-            hideConfirmation();
-        });
-        
-        // --- 8. INITIALIZATION ---
-        function init() {
-            initDB();
-            setupEventListeners();
-            const rawCode = generateBookmarkletCode();
-            bookmarkletLink.href = rawCode;
-            // NEW: Populate the mobile textarea
-            bookmarkletCode.value = rawCode;
-        }
+    function normalizeRef(ref){
+      // Ensure shape matches formatter expectations
+      return {
+        title: ref.title || 'Untitled',
+        authors: Array.isArray(ref.authors) ? ref.authors.filter(Boolean) : [],
+        journal: ref.journal || '',
+        year: ref.year || '',
+        url: ref.url || ''
+      };
+    }
 
-        init();
-    });
-    </script>
+    // --- Events ---
+    function setupEventListeners(){
+      styleSelect.addEventListener('change', renderReferences);
+
+      referenceList.addEventListener('click', (e) => {
+        const copyBtn = e.target.closest('.copy-btn');
+        if (copyBtn) {
+          const textToCopy = copyBtn.closest('.reference-content').querySelector('.reference-text').innerText;
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            copyBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            setTimeout(() => { copyBtn.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 1800);
+            showToast('Citation copied');
+          });
+        }
+        if (e.target.classList.contains('ref-checkbox')) {
+          e.target.closest('.reference-item').classList.toggle('selected', e.target.checked);
+          updateButtonStates();
+        }
+      });
+
+      deleteSelectedBtn.addEventListener('click', () => {
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length > 0) {
+          showConfirmation('Delete Selected?', `You are about to delete ${selectedIds.length} reference(s).`, () => deleteReferences(selectedIds));
+        }
+      });
+
+      clearAllBtn.addEventListener('click', () => showConfirmation('Clear All?', 'You are about to delete all references.', clearAllReferences));
+      exportTxtBtn.addEventListener('click', () => exportReferences('txt'));
+      exportDocBtn.addEventListener('click', () => exportReferences('doc'));
+
+      // Modal actions
+      modalCancelBtn.addEventListener('click', hideConfirmation);
+      modalConfirmBtn.addEventListener('click', () => { if (currentConfirmationCallback) currentConfirmationCallback(); hideConfirmation(); });
+
+      // Mobile copy bookmarklet code
+      copyCodeBtn.addEventListener('click', () => {
+        bookmarkletCode.select(); document.execCommand('copy');
+        const prev = copyCodeBtn.innerHTML; copyCodeBtn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+        setTimeout(() => { copyCodeBtn.innerHTML = prev; }, 1800);
+      });
+    }
+
+    // --- Init ---
+    function init(){
+      initDB();
+      setupEventListeners();
+      // Build and attach bookmarklet code
+      const code = buildBookmarkletCode();
+      bookmarkletLink.href = code;
+      bookmarkletCode.value = code;
+      // Try import from URL param
+      // Delay a tick to ensure DB is ready in slower environments
+      setTimeout(importIncomingReference, 60);
+    }
+
+    init();
+  })();
+  </script>
 </body>
 </html>
-
-
-
