@@ -42,12 +42,18 @@
         .main-engine, .random-data-generator {
             flex: 1;
         }
-        h1 {
+        h1, h4 {
             text-align: center;
             margin-top: 0;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
             width: 100%;
+        }
+        h4 {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 15px;
+            text-align: left;
         }
         p {
             color: var(--text-muted);
@@ -100,6 +106,10 @@
             background-color: var(--danger-color);
             border-color: var(--danger-color);
         }
+        .btn.btn-secondary {
+            background-color: #555;
+            border-color: #555;
+        }
         .status {
             margin-top: 15px;
             text-align: center;
@@ -132,15 +142,50 @@
         .config-row strong { font-size: 14px; }
         .range-input { display: flex; align-items: center; gap: 5px; }
         .range-input input { width: 60px; text-align: center; }
+        
+        /* CSV Staging Area */
+        #csv-staging-area {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+        }
+        #csv-staging-area p {
+            margin-top: 0;
+            font-weight: bold;
+        }
+        .staging-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .staging-controls input {
+            width: 80px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="main-engine">
             <h1><i class="bi bi-broadcast"></i> Autoplot Engine</h1>
-            <p>Enter data manually or use the generator. Generate a key and use it in the main app to start receiving live data.</p>
+            <p>Enter data manually, generate it, or upload a CSV. Generate a key and use it in the main app to start receiving live data.</p>
             
             <textarea id="csvData" placeholder="Time (s),Sample A,Sample B&#10;0,0,0&#10;1,0.2,0.15&#10;2,0.45,0.35"></textarea>
+            
+            <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+            <button id="uploadCsvBtn" class="btn btn-secondary" style="width: 100%; margin-top: 10px;"><i class="bi bi-upload"></i> Upload CSV Data</button>
+
+            <div id="csv-staging-area">
+                <p id="fileNameDisplay"></p>
+                <button id="pushAllBtn" class="btn">Push All Data Instantly</button>
+                <div class="staging-controls">
+                    <button id="pushIntervalBtn" class="btn">Start Row-by-Row Push</button>
+                    <input type="number" id="pushIntervalInput" value="1">
+                    <label for="pushIntervalInput">seconds</label>
+                </div>
+            </div>
             
             <div class="key-container">
                 <button id="generateKeyBtn" class="btn">Generate Key</button>
@@ -200,9 +245,21 @@
         const appendIntervalInput = document.getElementById('appendInterval');
         const toggleGeneratorBtn = document.getElementById('toggleGeneratorBtn');
 
+        // --- CSV Staging Elements ---
+        const csvFileInput = document.getElementById('csvFileInput');
+        const uploadCsvBtn = document.getElementById('uploadCsvBtn');
+        const csvStagingArea = document.getElementById('csv-staging-area');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const pushAllBtn = document.getElementById('pushAllBtn');
+        const pushIntervalBtn = document.getElementById('pushIntervalBtn');
+        const pushIntervalInput = document.getElementById('pushIntervalInput');
+
         let broadcastChannel = null;
         let generatorIntervalId = null;
         let currentValues = {};
+        let stagedCsvLines = [];
+        let pushIntervalId = null;
+        let currentRowIndex = 0;
         
         // --- Main Engine Logic ---
         function generateKey() {
@@ -230,6 +287,70 @@
 
         generateKeyBtn.addEventListener('click', generateKey);
         copyKeyBtn.addEventListener('click', copyKey);
+
+        // --- CSV Staging Logic ---
+        uploadCsvBtn.addEventListener('click', () => csvFileInput.click());
+        csvFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                stagedCsvLines = e.target.result.split(/\r?\n/).filter(line => line.trim() !== '');
+                if (stagedCsvLines.length > 0) {
+                    fileNameDisplay.textContent = `File: ${file.name} (${stagedCsvLines.length} rows)`;
+                    csvStagingArea.style.display = 'block';
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        });
+
+        pushAllBtn.addEventListener('click', () => {
+            if (stagedCsvLines.length === 0) return;
+            csvDataTextarea.value = stagedCsvLines.join('\n');
+            csvStagingArea.style.display = 'none';
+            stagedCsvLines = [];
+        });
+
+        pushIntervalBtn.addEventListener('click', () => {
+            if (pushIntervalId) { // Stop pushing
+                clearInterval(pushIntervalId);
+                pushIntervalId = null;
+                pushIntervalBtn.textContent = 'Start Row-by-Row Push';
+                pushIntervalBtn.classList.remove('btn-danger');
+                pushIntervalInput.disabled = false;
+            } else { // Start pushing
+                if (stagedCsvLines.length === 0) return;
+                
+                const interval = parseFloat(pushIntervalInput.value) * 1000;
+                if (isNaN(interval) || interval < 100) return alert('Interval must be at least 0.1 seconds.');
+
+                csvDataTextarea.value = stagedCsvLines[0] + '\n'; // Start with the header
+                currentRowIndex = 1; // Start pushing from the first data row
+
+                pushIntervalId = setInterval(() => {
+                    if (currentRowIndex < stagedCsvLines.length) {
+                        csvDataTextarea.value += stagedCsvLines[currentRowIndex] + '\n';
+                        csvDataTextarea.scrollTop = csvDataTextarea.scrollHeight;
+                        currentRowIndex++;
+                    } else {
+                        // Reached the end, so stop
+                        clearInterval(pushIntervalId);
+                        pushIntervalId = null;
+                        pushIntervalBtn.textContent = 'Start Row-by-Row Push';
+                        pushIntervalBtn.classList.remove('btn-danger');
+                        pushIntervalInput.disabled = false;
+                        csvStagingArea.style.display = 'none'; // Hide when done
+                    }
+                }, interval);
+
+                pushIntervalBtn.textContent = 'Stop Push';
+                pushIntervalBtn.classList.add('btn-danger');
+                pushIntervalInput.disabled = true;
+            }
+        });
+
 
         // --- Random Generator Logic ---
         toggleRandomGenerator.addEventListener('change', () => {
@@ -271,7 +392,6 @@
                 generatorIntervalId = null;
                 toggleGeneratorBtn.textContent = 'Start Generating';
                 toggleGeneratorBtn.classList.remove('btn-danger');
-                // Re-enable inputs
                 [xLabelInput, yLabelsInput, generateConfigsBtn, appendIntervalInput].forEach(el => el.disabled = false);
             } else { // Start generating
                 const configRows = generatorConfigsDiv.querySelectorAll('.config-row');
@@ -295,7 +415,6 @@
                 generatorIntervalId = setInterval(appendData, interval);
                 toggleGeneratorBtn.textContent = 'Stop Generating';
                 toggleGeneratorBtn.classList.add('btn-danger');
-                // Disable inputs
                 [xLabelInput, yLabelsInput, generateConfigsBtn, appendIntervalInput].forEach(el => el.disabled = true);
             }
         }
@@ -312,7 +431,6 @@
                 const increment = Math.random() * (maxInc - minInc) + minInc;
                 let newValue = currentValues[label] + increment;
 
-                // Clamp the value within the range
                 if (newValue > maxRange) newValue = maxRange;
                 if (newValue < minRange) newValue = minRange;
 
@@ -320,7 +438,7 @@
                 newRow.push(newValue.toFixed(2));
             });
             csvDataTextarea.value += newRow.join(',') + '\n';
-            csvDataTextarea.scrollTop = csvDataTextarea.scrollHeight; // Auto-scroll
+            csvDataTextarea.scrollTop = csvDataTextarea.scrollHeight;
         }
 
         toggleGeneratorBtn.addEventListener('click', toggleGenerator);
@@ -328,3 +446,4 @@
     </script>
 </body>
 </html>
+
