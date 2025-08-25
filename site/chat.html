@@ -62,6 +62,21 @@
             height: 100vh;
         }
 
+.range-inputs input {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+    padding: 6px 8px; /* Added for consistent height */
+}
+
+.range-inputs input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
         /* --- Left Panel: Controls --- */
         .controls-panel {
             width: 350px;
