@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnscyChart | Enscygen Advanced Charting Calculator</title>
+    <link rel="icon" type="image/x-icon" href="/Favicon.png">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-icons.css">
+
+    <!-- Chart.js and Zoom Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --panel-bg: #2a2a2a;
+            --header-bg: #333333;
+            --border-color: #444;
+            --text-color: #e0e0e0;
+            --text-muted: #999;
+            --accent-color: #0d6efd;
+            --accent-hover: #0b5ed7;
+            --danger-color: #dc3545;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --input-bg: #1e1e1e;
+            --btn-secondary-bg: #495057;
+            --btn-secondary-hover: #5a6268;
+        }
+
+        body.light-theme {
+            --bg-color: #f8f9fa;
+            --panel-bg: #ffffff;
+            --header-bg: #f1f3f5;
+            --border-color: #dee2e6;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --input-bg: #ffffff;
+            --btn-secondary-bg: #e9ecef;
+            --btn-secondary-hover: #dae0e5;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            overflow: hidden;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- Left Panel: Controls --- */
+        .controls-panel {
+            width: 350px;
+            min-width: 350px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-header h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        #theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        #theme-toggle:hover {
+            color: var(--text-color);
+        }
+
+
+        .panel-content {
+            display: flex;
+            flex-direction: column;
+            /* Stacks items vertically */
+            flex-grow: 1;
+            overflow: hidden;
+            /* Prevents this parent from scrolling */
+        }
+
+        .main-panel-control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 8px;
+        }
+
+        div#data-tables-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-top: 15px !important;
+            padding: 8px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 15px;
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(14px);
+        }
+
+
+        .btn {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--btn-secondary-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--btn-secondary-hover);
+        }
+
+        /* --- Data Table Styling --- */
+        .data-table-container {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            background-color: var(--bg-color);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--header-bg);
+        }
+
+        .table-header-title {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .color-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-header-actions i {
+            cursor: pointer;
+            color: var(--text-muted);
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .table-header-actions i:hover {
+            color: var(--text-color);
+        }
+
+        .table-header-actions .bi-trash:hover {
+            color: var(--danger-color);
+        }
+
+        .table-wrapper {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: center;
+            padding: 4px;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        td input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            text-align: center;
+            padding: 4px 0;
+        }
+
+        td input:focus {
+            outline: none;
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        td.action-cell {
+            width: 20px;
+        }
+
+        .remove-row-btn {
+            color: var(--text-muted);
+            cursor: pointer;
+            visibility: hidden;
+        }
+
+        tr:hover .remove-row-btn {
+            visibility: visible;
+        }
+
+        .remove-row-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .add-row-btn {
+            display: block;
+            width: 100%;
+            padding: 6px;
+            border: none;
+            background-color: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-row-btn:hover {
+            background-color: rgba(128, 128, 128, 0.1);
+        }
+
+        /* --- Right Panel: Chart --- */
+        .chart-panel {
+            flex-grow: 1;
+            padding: 15px;
+            position: relative;
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 100%;
+        }
+
+
+        /* --- Settings Modal --- */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            width: 300px;
+        }
+
+        .modal-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .modal-footer .btn {
+            width: auto;
+            padding: 6px 16px;
+        }
+
+        /* --- Custom Scrollbar Styling --- */
+        /* For Webkit browsers (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--panel-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #777;
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb {
+            background-color: #aaa;
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb:hover {
+            background-color: #888;
+        }
+
+        /* For Firefox */
+        .panel-content,
+        .table-wrapper {
+            scrollbar-width: thin;
+            scrollbar-color: #555 var(--panel-bg);
+        }
+
+        body.light-theme .panel-content,
+        body.light-theme .table-wrapper {
+            scrollbar-color: #aaa var(--panel-bg);
+        }
+
+        .panel-control-div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .import-add-options {
+            display: flex;
+            gap: 5px;
+            padding: 8px;
+        }
+
+        /* --- Logo Styling --- */
+        .logo-container {
+            margin-right: 12px;
+            /* Adds space between logo and title */
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            height: 24px;
+            width: auto;
+        }
+
+        /* --- Logo Theme Toggle Logic --- */
+        /* By default, show the dark logo and hide the light one */
+        .logo-light {
+            display: none;
+        }
+
+        .logo-dark {
+            display: block;
+        }
+
+        /* When the body has the .light-theme class, swap them */
+        body.light-theme .logo-light {
+            display: block;
+        }
+
+        body.light-theme .logo-dark {
+            display: none;
+        }
+
+        /* --- Visual Tools Button & Off-canvas Panel --- */
+
+        body.light-theme #visualToolsBtn {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+        }
+
+        #offcanvas-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            display: none;
+        }
+
+        #offcanvas-backdrop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #offcanvas-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            /* Start off-screen */
+            width: 300px;
+            height: 100%;
+            background-color: var(--panel-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 1002;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #offcanvas-panel.visible {
+            right: 0;
+        }
+
+        .offcanvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .offcanvas-header h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .offcanvas-header button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .offcanvas-body {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .offcanvas-body hr {
+            border-color: var(--border-color);
+            margin: 20px 0;
+        }
+
+        .range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .range-inputs input {
+            width: 100%;
+            text-align: center;
+        }
+
+        .range-inputs span {
+            color: var(--text-muted);
+        }
+
+        .range-inputs span {
+            white-space: nowrap;
+        }
+
+
+        body.light-theme #toggle-panel-btn {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+        }
+
+        /* --- Collapsible Panel Logic --- */
+        .controls-panel {
+            /* Add transition for smooth collapse/expand */
+            transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
+        }
+
+        .controls-panel.collapsed {
+            width: 0;
+            min-width: 0;
+            padding: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        /* ADD THIS NEW CSS BLOCK */
+        .chart-actions-group {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-color);
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* This replaces the individual button styles */
+        .chart-actions-group button {
+            background-color: rgba(42, 42, 42, 0.8);
+            color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        body.light-theme .chart-actions-group button {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+        }
+
+        #autoplotBtn {
+            background-color: #6f42c1;
+            /* A different color to stand out */
+            border-color: #6f42c1;
+        }
+
+        #autoplotBtn:hover {
+            background-color: #5a3d9a;
+        }
+
+        button#autoplotBtn {
+            width: 20%;
+        }
+
+        input#autoplotInterval {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        #autoplotModal .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* --- Autoplot Status Indicator --- */
+        #autoplotStatusIndicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(42, 42, 42, 0.8);
+            color: #a0a0a0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        body.light-theme #autoplotStatusIndicator {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-muted);
+        }
+
+        #autoplotStatusIndicator i.spinning {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        a.engine-link-key {
+            text-decoration: none;
+            color: #00bbff;
+            font-size: 0.85rem;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Left panel for controls and data tables -->
+        <div class="controls-panel">
+            <div class="panel-header">
+                <div class="logo-container">
+                    <a href="/ORT/graph/enscychart-launcher">
+                        <!-- Dark Theme Logo -->
+                        <img src="https://enscygen.web.app/assets/brand/enscychart-dark.svg" alt="Logo"
+                            class="logo-dark">
+                        <!-- Light Theme Logo (REPLACE the src) -->
+                        <img src="https://enscygen.web.app/assets/brand/enscychart-light.svg" alt="Logo"
+                            class="logo-light">
+                    </a>
+                </div>
+                <button id="theme-toggle" title="Toggle Theme"><i class="bi bi-moon-stars-fill"></i></button>
+            </div>
+            <div class="panel-content">
+                <div class="main-panel-control-section">
+                    <div class="panel-control-div">
+                        <div class="control-group">
+                            <label for="chartType">Chart Type</label>
+                            <select id="chartType">
+                                <option value="line">Line</option>
+                                <option value="bar">Bar</option>
+                                <option value="scatter">Scatter</option>
+                                <option value="pie">Pie</option>
+                                <option value="doughnut">Doughnut</option>
+                                <option value="radar">Radar</option>
+                                <option value="polarArea">Polar Area</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group" id="line-options" style="display: block;">
+                            <div class="toggle-switch">
+                                <label for="smooth-lines-toggle">Smooth Lines</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="smooth-lines-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-switch">
+                                <label for="redraw-on-edit-toggle">Redraw on Edit</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="redraw-on-edit-toggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-control-div">
+                        <div class="control-group">
+                            <label for="xAxisLabel">X-Axis Label</label>
+                            <input type="text" id="xAxisLabel" placeholder="e.g., Year">
+                        </div>
+                        <div class="control-group">
+                            <label for="yAxisLabel">Y-Axis Label</label>
+                            <input type="text" id="yAxisLabel" placeholder="e.g., Value">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="import-add-options">
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                    <button id="importCsvBtn" class="btn btn-secondary" title="Import from CSV">
+                        <i class="bi bi-upload"></i> Import from CSV
+                    </button>
+                    <button id="addTableBtn" class="btn btn-primary" title="Add Data Table">
+                        <i class="bi bi-plus-lg"></i> Add Table
+                    </button>
+                    <button id="autoplotBtn" class="btn btn-secondary" title="Autoplot Engine">
+                        <i class="bi bi-robot"></i>
+                    </button>
+                </div>
+
+                <div id="data-tables-list">
+                    <!-- Data tables will be dynamically inserted here -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right panel for the chart -->
+        <div class="chart-panel">
+            <div id="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+            <!-- REPLACE the three separate buttons with this block -->
+            <div class="chart-actions-group">
+              <button id="settingsBtn" title="Chart Settings"><i class="bi bi-gear-wide-connected"></i></button>
+                <button id="toggle-panel-btn" title="Toggle Panel"><i class="bi bi-arrows-angle-contract"></i></button>
+                <button id="visualToolsBtn" title="Visual Tools"><i class="bi bi-sliders"></i></button>
+                <button id="resetZoomBtn">Reset Zoom</button>
+                <div id="autoplotStatusIndicator" style="display: none;">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span id="autoplotStatusText"></span>
+                </div>
+            </div>
+
+            <div id="offcanvas-panel">
+                <div class="offcanvas-header">
+                    <h4>Visual Tools</h4>
+                    <button id="closeOffcanvasBtn"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="control-group">
+                        <div class="toggle-switch">
+                            <label for="lock-viewport-toggle">Lock Viewport</label>
+                            <label class="switch">
+                                <input type="checkbox" id="lock-viewport-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="control-group">
+                        <label>X-Axis Range</label>
+                        <div class="range-inputs">
+                            <input type="number" id="xAxisMin" placeholder="min">
+                            <span>≤ x ≤</span>
+                            <input type="number" id="xAxisMax" placeholder="max">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Y-Axis Range</label>
+                        <div class="range-inputs">
+                            <input type="number" id="yAxisMin" placeholder="min">
+                            <span>≤ y ≤</span>
+                            <input type="number" id="yAxisMax" placeholder="max">
+                        </div>
+                    </div>
+                    <button id="applyRangeBtn" class="btn btn-primary">Apply</button>
+                </div>
+            </div>
+            <div id="offcanvas-backdrop"></div>
+            <!-- END OF HTML TO ADD -->
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">Dataset Settings</div>
+            <div class="modal-body">
+                <input type="hidden" id="modalDatasetId">
+                <div class="control-group">
+                    <label for="modalLabel">Legend Label</label>
+                    <input type="text" id="modalLabel">
+                </div>
+                <div class="control-group">
+                    <label for="modalColor">Color</label>
+                    <input type="color" id="modalColor"
+                        style="width: 100%; height: 30px; padding: 2px; background: none; border: 1px solid var(--border-color);">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCancel" class="btn btn-secondary">Cancel</button>
+                <button id="modalSave" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="autoplotModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">Autoplot Engine Connector</div>
+            <div class="modal-body">
+                <div class="control-group">
+                    <label for="autoplotKey">Engine Key</label>
+                    <input type="text" id="autoplotKey" placeholder="Paste key from engine page...">
+                </div>
+                <div class="control-group">
+                    <label for="autoplotInterval">Fetch Interval (seconds)</label>
+                    <input type="number" id="autoplotInterval" value="2">
+                </div>
+                <div id="autoplotStatus"
+                    style="text-align: center; margin-top: 5px; color: var(--text-muted); height: 20px;">
+                    Status: Disconnected
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="/ORT/graph/autoplot" target="_blank" class="engine-link-key"
+                    title="Open the Autoplot Engine page in a new tab">
+                    <i class="bi bi-box-arrow-up-right"></i> Open Engine
+                </a>
+                <button id="modalAutoplotCancel" class="btn btn-secondary">Close</button>
+                <button id="modalAutoplotToggle" class="btn btn-primary">Start</button>
+            </div>
+        </div>
+    </div>
+
+
+<div id="mainSettingsModal" class="modal-backdrop">
+    <div class="modal-content" style="width: 400px;">
+        <div class="modal-header">Chart Settings</div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+            
+            <!-- Autoplot Settings Section -->
+            <h5><i class="bi bi-robot"></i> Autoplot</h5>
+            <div class="control-group">
+                <div class="toggle-switch">
+                    <label for="playSoundToggle">Play Sound on Data Retrieval</label>
+                    <label class="switch">
+                        <input type="checkbox" id="playSoundToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="soundFunctionInput">Sound Function (Wave Type)</label>
+                <select id="soundFunctionInput">
+                    <option value="sine">Sine (Beep)</option>
+                    <option value="square">Square (Retro)</option>
+                    <option value="sawtooth">Sawtooth (Buzz)</option>
+                    <option value="triangle">Triangle (Flute-like)</option>
+                </select>
+            </div>
+            <hr>
+
+            <!-- Visual Details Section -->
+            <h5><i class="bi bi-palette-fill"></i> Visuals</h5>
+            <div class="control-group">
+                <div class="toggle-switch">
+                    <label for="showPointsToggle">Show Data Points</label>
+                    <label class="switch">
+                        <input type="checkbox" id="showPointsToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="lineWidthSlider">Line Thickness</label>
+                <input type="range" id="lineWidthSlider" min="1" max="10" value="2" style="width: 100%;">
+            </div>
+            <div class="control-group">
+                <label for="gridColorPicker">Grid Color</label>
+                <input type="color" id="gridColorPicker" style="width: 100%; height: 30px; padding: 2px; background: none; border: 1px solid var(--border-color);">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="resetVisualsBtn" class="btn btn-secondary" style="margin-right: auto;">Reset Visuals</button>
+            <button id="settingsModalClose" class="btn btn-primary">Close</button>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- DOM Elements ---
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const addTableBtn = document.getElementById('addTableBtn');
+            const importCsvBtn = document.getElementById('importCsvBtn');
+            const csvFileInput = document.getElementById('csvFileInput');
+            const dataTablesList = document.getElementById('data-tables-list');
+            const chartTypeSelect = document.getElementById('chartType');
+            const xAxisLabelInput = document.getElementById('xAxisLabel');
+            const yAxisLabelInput = document.getElementById('yAxisLabel');
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const smoothLinesToggle = document.getElementById('smooth-lines-toggle');
+            const lineOptionsContainer = document.getElementById('line-options');
+            const resetZoomBtn = document.getElementById('resetZoomBtn');
+            const redrawOnEditToggle = document.getElementById('redraw-on-edit-toggle');
+
+            const autoplotStatusIndicator = document.getElementById('autoplotStatusIndicator');
+            const autoplotStatusText = document.getElementById('autoplotStatusText');
+
+            // Modal Elements
+            const settingsModal = document.getElementById('settingsModal');
+            const modalSaveBtn = document.getElementById('modalSave');
+            const modalCancelBtn = document.getElementById('modalCancel');
+            const modalDatasetIdInput = document.getElementById('modalDatasetId');
+            const modalLabelInput = document.getElementById('modalLabel');
+            const modalColorInput = document.getElementById('modalColor');
+
+            // --- Off-canvas Panel Logic ---
+            const visualToolsBtn = document.getElementById('visualToolsBtn');
+            const offcanvasPanel = document.getElementById('offcanvas-panel');
+            const offcanvasBackdrop = document.getElementById('offcanvas-backdrop');
+            const closeOffcanvasBtn = document.getElementById('closeOffcanvasBtn');
+            const lockViewportToggle = document.getElementById('lock-viewport-toggle');
+            const xAxisMinInput = document.getElementById('xAxisMin');
+            const xAxisMaxInput = document.getElementById('xAxisMax');
+            const yAxisMinInput = document.getElementById('yAxisMin');
+            const yAxisMaxInput = document.getElementById('yAxisMax');
+            const applyRangeBtn = document.getElementById('applyRangeBtn');
+
+            const togglePanelBtn = document.getElementById('toggle-panel-btn');
+            const controlsPanel = document.querySelector('.controls-panel');
+
+          // ADD these lines with other element declarations
+const settingsBtn = document.getElementById('settingsBtn');
+const mainSettingsModal = document.getElementById('mainSettingsModal');
+const settingsModalClose = document.getElementById('settingsModalClose');
+const playSoundToggle = document.getElementById('playSoundToggle');
+const soundFunctionInput = document.getElementById('soundFunctionInput');
+const showPointsToggle = document.getElementById('showPointsToggle');
+const lineWidthSlider = document.getElementById('lineWidthSlider');
+const gridColorPicker = document.getElementById('gridColorPicker');
+const resetVisualsBtn = document.getElementById('resetVisualsBtn');
+let customGridColor = null; // To store user's custom grid color
+
+// ADD THIS NEW FUNCTION
+let audioCtx;
+function playSound(waveType = 'sine') {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.type = waveType;
+    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4 pitch
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Volume
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1); // Play for 0.1 seconds
+}
+
+            let countdownIntervalId = null;
+
+            togglePanelBtn.addEventListener('click', () => {
+                controlsPanel.classList.toggle('collapsed');
+                const icon = togglePanelBtn.querySelector('i');
+
+                // Change icon and title based on state
+                if (controlsPanel.classList.contains('collapsed')) {
+                    icon.classList.remove('bi-arrows-angle-contract');
+                    icon.classList.add('bi-arrows-angle-expand');
+                    togglePanelBtn.title = "Expand Panel";
+                } else {
+                    icon.classList.remove('bi-arrows-angle-expand');
+                    icon.classList.add('bi-arrows-angle-contract');
+                    togglePanelBtn.title = "Collapse Panel";
+                }
+
+                // CRITICAL: Resize chart after the animation completes
+                // This ensures the chart fits the new space and buttons are visible
+                setTimeout(() => {
+                    if (chart) {
+                        chart.resize();
+                    }
+                }, 300); // This duration must match your CSS transition duration
+            });
+
+            const autoplotBtn = document.getElementById('autoplotBtn');
+            const autoplotModal = document.getElementById('autoplotModal');
+            const autoplotKeyInput = document.getElementById('autoplotKey');
+            const autoplotIntervalInput = document.getElementById('autoplotInterval');
+            const autoplotStatusDiv = document.getElementById('autoplotStatus');
+            const modalAutoplotCancelBtn = document.getElementById('modalAutoplotCancel');
+            const modalAutoplotToggleBtn = document.getElementById('modalAutoplotToggle');
+
+            let autoplotChannel = null;
+            let autoplotIntervalId = null;
+
+            function toggleAutoplotModal() {
+                const isVisible = autoplotModal.style.display === 'flex';
+                autoplotModal.style.display = isVisible ? 'none' : 'flex';
+            }
+
+            // REPLACE your old handleAutoplotData function with this new, efficient version
+
+            function handleAutoplotData(csvText) {
+                const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+                if (lines.length < 2) return; // Not enough data
+              if (playSoundToggle.checked) {
+    playSound(soundFunctionInput.value);
+              }
+
+                const headers = lines[0].split(',').map(h => h.trim());
+                const dataLines = lines.slice(1);
+
+                const chartType = chartTypeSelect.value;
+                const isLinearType = chartType === 'line' || chartType === 'scatter';
+
+                // For non-linear charts, a full redraw is the safest way to ensure correctness
+                if (!isLinearType) {
+                    // This block is the safe fallback for Bar, Pie charts etc.
+                    const datasetsToCreate = headers.slice(1).map((header, i) => {
+                        const data = dataLines.map(line => {
+                            const values = line.split(',');
+                            return { x: values[0]?.trim() || '', y: values[i + 1]?.trim() || '' };
+                        });
+                        return { label: header, data: data };
+                    });
+
+                    dataTablesList.innerHTML = ''; // Clear existing tables
+                    datasetsToCreate.forEach(dataset => createDataTable(dataset, false));
+                    updateChartFromUI(); // Redraw everything
+                    return;
+                }
+
+                // --- High-Performance Logic for Linear Charts (Line/Scatter) ---
+                let needsInitialSetup = false;
+
+                // Process each Y-axis column
+                headers.slice(1).forEach((header, i) => {
+                    const yColumnIndex = i + 1;
+                    let chartDataset = chart.data.datasets.find(ds => ds.label === header);
+                    let tableContainer = dataTablesList.querySelector(`.data-table-container[data-label="${header}"]`);
+
+                    // If a dataset/table doesn't exist, create it
+                    if (!tableContainer) {
+                        needsInitialSetup = true;
+                        const allDataForNewTable = dataLines.map(line => {
+                            const values = line.split(',');
+                            return { x: values[0]?.trim() || '', y: values[yColumnIndex]?.trim() || '' };
+                        });
+                        createDataTable({ label: header, data: allDataForNewTable }, false);
+                    } else {
+                        // If it exists, just append new data
+                        const tbody = tableContainer.querySelector('tbody');
+                        const currentDataLength = chartDataset.data.length;
+
+                        if (dataLines.length > currentDataLength) {
+                            for (let j = currentDataLength; j < dataLines.length; j++) {
+                                const values = dataLines[j].split(',');
+                                const newPoint = {
+                                    x: parseFloat(values[0]?.trim()),
+                                    y: parseFloat(values[yColumnIndex]?.trim())
+                                };
+
+                                if (!isNaN(newPoint.x) && !isNaN(newPoint.y)) {
+                                    // Append to HTML table
+                                    tbody.insertAdjacentHTML('beforeend', createTableRowHTML(newPoint.x, newPoint.y));
+                                    // Push to chart data model
+                                    chartDataset.data.push(newPoint);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                if (needsInitialSetup) {
+                    // If we added new tables, we must do one full redraw to initialize them correctly
+                    updateChartFromUI();
+                } else {
+                    // If we only appended data, do a fast, lightweight update
+                    chart.update('none'); // 'none' prevents animations for a smoother live feel
+                }
+            }
+
+            // REPLACE your old toggleAutoplot function with this one
+            function toggleAutoplot() {
+                if (autoplotIntervalId) { // If it's running, stop it
+                    clearInterval(autoplotIntervalId);
+                    autoplotIntervalId = null;
+                    if (autoplotChannel) {
+                        autoplotChannel.close();
+                        autoplotChannel = null;
+                    }
+
+                    // Stop the countdown and hide the indicator
+                    clearInterval(countdownIntervalId);
+                    countdownIntervalId = null;
+                    autoplotStatusIndicator.style.display = 'none';
+                    autoplotStatusIndicator.querySelector('i').classList.remove('spinning');
+
+                    modalAutoplotToggleBtn.textContent = 'Start';
+                    modalAutoplotToggleBtn.classList.remove('btn-danger'); // Use a specific class for danger state
+                    autoplotStatusDiv.textContent = 'Status: Disconnected';
+                    autoplotKeyInput.disabled = false;
+                    autoplotIntervalInput.disabled = false;
+
+                } else { // If it's stopped, start it
+                    const key = autoplotKeyInput.value.trim();
+                    const intervalSeconds = parseFloat(autoplotIntervalInput.value);
+                    if (!key || isNaN(intervalSeconds) || intervalSeconds < 0.5) {
+                        alert('Please provide a valid key and an interval of at least 0.5 seconds.');
+                        return;
+                    }
+
+                    autoplotChannel = new BroadcastChannel(key);
+                    autoplotChannel.onmessage = (event) => {
+                        handleAutoplotData(event.data);
+                    };
+
+                    const intervalMs = intervalSeconds * 1000;
+                    autoplotIntervalId = setInterval(() => {
+                        autoplotChannel.postMessage('requestData');
+                    }, intervalMs);
+
+                    // Start the countdown and show the indicator
+                    let countdown = intervalSeconds;
+                    autoplotStatusIndicator.style.display = 'flex';
+                    autoplotStatusIndicator.querySelector('i').classList.add('spinning');
+
+                    countdownIntervalId = setInterval(() => {
+                        countdown -= 0.1;
+                        if (countdown <= 0) {
+                            countdown = intervalSeconds; // Reset countdown
+                        }
+                        autoplotStatusText.textContent = `Autoplotting from ${key.split('-')[1]} in ${countdown.toFixed(1)}s`;
+                    }, 100); // Update every 100ms for a smoother timer
+
+                    modalAutoplotToggleBtn.textContent = 'Stop';
+                    modalAutoplotToggleBtn.classList.add('btn-danger');
+                    autoplotStatusDiv.textContent = 'Status: Connected and receiving...';
+                    autoplotKeyInput.disabled = true;
+                    autoplotIntervalInput.disabled = true;
+                }
+            }
+
+            autoplotBtn.addEventListener('click', toggleAutoplotModal);
+            modalAutoplotCancelBtn.addEventListener('click', toggleAutoplotModal);
+            modalAutoplotToggleBtn.addEventListener('click', toggleAutoplot);
+
+            function openOffcanvas() {
+                updateRangeInputs(chart); // Update inputs every time it opens
+                offcanvasPanel.classList.add('visible');
+                offcanvasBackdrop.classList.add('visible');
+            }
+
+            function closeOffcanvas() {
+                offcanvasPanel.classList.remove('visible');
+                offcanvasBackdrop.classList.remove('visible');
+            }
+
+            function updateRangeInputs(chart) {
+                if (!chart) return;
+                const { x, y } = chart.scales;
+                xAxisMinInput.value = x.min.toFixed(2);
+                xAxisMaxInput.value = x.max.toFixed(2);
+                yAxisMinInput.value = y.min.toFixed(2);
+                yAxisMaxInput.value = y.max.toFixed(2);
+            }
+
+            visualToolsBtn.addEventListener('click', openOffcanvas);
+            closeOffcanvasBtn.addEventListener('click', closeOffcanvas);
+            offcanvasBackdrop.addEventListener('click', closeOffcanvas);
+
+            lockViewportToggle.addEventListener('change', (e) => {
+                const isLocked = e.target.checked;
+                chart.options.plugins.zoom.pan.enabled = !isLocked;
+                chart.options.plugins.zoom.zoom.wheel.enabled = !isLocked;
+                chart.options.plugins.zoom.zoom.pinch.enabled = !isLocked;
+                chart.update();
+            });
+
+            applyRangeBtn.addEventListener('click', () => {
+                const newXMin = parseFloat(xAxisMinInput.value);
+                const newXMax = parseFloat(xAxisMaxInput.value);
+                const newYMin = parseFloat(yAxisMinInput.value);
+                const newYMax = parseFloat(yAxisMaxInput.value);
+
+                if (!isNaN(newXMin) && !isNaN(newXMax) && newXMin < newXMax) {
+                    chart.options.scales.x.min = newXMin;
+                    chart.options.scales.x.max = newXMax;
+                }
+                if (!isNaN(newYMin) && !isNaN(newYMax) && newYMin < newYMax) {
+                    chart.options.scales.y.min = newYMin;
+                    chart.options.scales.y.max = newYMax;
+                }
+                chart.update();
+            });
+
+            let chart;
+            let tableCounter = 0;
+            const defaultColors = ['#0d6efd', '#dc3545', '#198754', '#ffc107', '#6f42c1', '#fd7e14', '#20c997', '#d63384'];
+
+            // --- Chart Initialization ---
+            function initializeChart() {
+                const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: { datasets: [] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: { display: true, text: 'X-Axis', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            },
+                            y: {
+                                title: { display: true, text: 'Y-Axis', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            }
+                        },
+                        plugins: {
+                            legend: { labels: { color: textColor } },
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy',
+                                    onPanComplete: ({ chart }) => {
+                                        updateRangeInputs(chart);
+                                    }
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                        // Add modifier keys for axis-oriented zoom
+                                        modifierKey: 'ctrl',
+                                    },
+                                    pinch: {
+                                        enabled: true
+                                    },
+                                    mode: 'xy',
+                                    // Add the onZoomComplete callback
+                                    onZoomComplete: ({ chart }) => {
+                                        updateRangeInputs(chart);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+// REPLACE your old updateChartFromUI function with this new one
+function updateChartFromUI() {
+    if (!chart) return;
+
+    const allTables = dataTablesList.querySelectorAll('.data-table-container');
+    const newDatasets = [];
+    const isSmoothed = smoothLinesToggle.checked;
+    const chartType = chartTypeSelect.value;
+    const isLinearType = chartType === 'line' || chartType === 'scatter';
+    
+    // --- Visual Settings from Modal ---
+    const pointRadius = showPointsToggle.checked ? 3 : 0;
+    const borderWidth = lineWidthSlider.value;
+
+    if (isLinearType) {
+        // --- LOGIC FOR LINE/SCATTER CHARTS (Same as before) ---
+        allTables.forEach(table => {
+            const label = table.dataset.label;
+            const color = table.dataset.color;
+            const dataPoints = [];
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const x = parseFloat(row.querySelector('.x-val').value);
+                const y = parseFloat(row.querySelector('.y-val').value);
+                if (!isNaN(x)) {
+                    dataPoints.push({ x: x, y: isNaN(y) ? null : y });
+                }
+            });
+            dataPoints.sort((a, b) => a.x - b.x);
+            newDatasets.push({
+                label: label, data: dataPoints, borderColor: color, backgroundColor: color,
+                tension: isSmoothed ? 0.4 : 0, pointRadius: pointRadius, borderWidth: borderWidth
+            });
+        });
+        chart.data.labels = [];
+    } else {
+        // --- NEW LOGIC FOR BAR/PIE/ETC CHARTS ---
+        const labels = [];
+        const backgroundColors = [];
+        const dataValues = [];
+
+        allTables.forEach(table => {
+            const label = table.dataset.label; // The table's name is the label
+            const color = table.dataset.color;
+            let totalValue = 0;
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const y = parseFloat(row.querySelector('.y-val').value);
+                if (!isNaN(y)) {
+                    totalValue += y; // Sum up all Y values in the table
+                }
+            });
+            labels.push(label);
+            backgroundColors.push(color);
+            dataValues.push(totalValue);
+        });
+        
+        newDatasets.push({
+            label: 'Dataset', // A single dataset for these chart types
+            data: dataValues,
+            backgroundColor: backgroundColors,
+            borderColor: backgroundColors,
+            borderWidth: 1
+        });
+        chart.data.labels = labels;
+    }
+
+    chart.data.datasets = newDatasets;
+    
+    // --- Apply other settings ---
+    const isPieType = ['pie', 'doughnut', 'polarArea', 'radar'].includes(chartType);
+    const xAxisType = isLinearType ? 'linear' : 'category';
+    if (chart.options.scales.x.type !== xAxisType) {
+        chart.options.scales.x.type = xAxisType;
+    }
+
+    chart.config.type = chartType;
+    chart.options.scales.x.display = !isPieType;
+    chart.options.scales.y.display = !isPieType;
+    chart.options.scales.x.title.text = xAxisLabelInput.value || 'X-Axis';
+    chart.options.scales.y.title.text = yAxisLabelInput.value || 'Y-Axis';
+
+    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+    const gridColor = customGridColor || getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+    chart.options.scales.x.title.color = textColor;
+    chart.options.scales.y.title.color = textColor;
+    chart.options.scales.x.ticks.color = textColor;
+    chart.options.scales.y.ticks.color = textColor;
+    chart.options.scales.x.grid.color = gridColor;
+    chart.options.scales.y.grid.color = gridColor;
+    chart.options.plugins.legend.labels.color = textColor;
+
+    chart.update();
+}
+
+
+            // --- Dynamic Element Creation ---
+            // REPLACE your existing function with this one
+            function createDataTable(options = {}, shouldUpdateChart = true) {
+                tableCounter++;
+                const {
+                    label = `Sample ${tableCounter}`,
+                    data = [{ x: '', y: '' }, { x: '', y: '' }]
+                } = options;
+
+                const datasetId = `dataset-${tableCounter}`;
+                const color = defaultColors[(tableCounter - 1) % defaultColors.length];
+
+                const container = document.createElement('div');
+                container.className = 'data-table-container';
+                container.dataset.id = datasetId;
+                container.dataset.color = color;
+                container.dataset.label = label;
+
+                const tableRowsHTML = data.map(row => createTableRowHTML(row.x, row.y)).join('');
+
+                container.innerHTML = `
+        <div class="table-header">
+            <div class="table-header-title">
+               <span class="color-indicator" style="background-color: ${color};"></span>
+               <span class="label-text">${label}</span>
+            </div>
+            <div class="table-header-actions">
+                <i class="bi bi-gear-fill settings-btn" title="Settings"></i>
+                <i class="bi bi-trash remove-table-btn" title="Remove Table"></i>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>X</th><th>Y</th><th></th></tr>
+                </thead>
+                <tbody>${tableRowsHTML}</tbody>
+            </table>
+        </div>
+        <button class="add-row-btn"><i class="bi bi-plus"></i> Add Row</button>
+    `;
+                dataTablesList.appendChild(container);
+
+                // This conditional is the important change
+                if (shouldUpdateChart) {
+                    updateChartFromUI();
+                }
+            }
+
+            function createTableRowHTML(x = '', y = '') {
+                return `
+                    <tr>
+                        <td><input type="text" class="x-val" value="${x}" placeholder="value"></td>
+                        <td><input type="text" class="y-val" value="${y}" placeholder="value"></td>
+                        <td class="action-cell"><i class="bi bi-x-circle remove-row-btn"></i></td>
+                    </tr>
+                `;
+            }
+
+            // --- CSV Import Logic ---
+            function handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const csv = e.target.result;
+                    const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
+
+                    if (lines.length < 2) {
+                        alert("CSV file must have a header and at least one data row.");
+                        return;
+                    }
+
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    const dataLines = lines.slice(1);
+
+                    xAxisLabelInput.value = headers[0] || 'X-Axis';
+
+                    const datasetsToCreate = [];
+                    // Start from the first Y-axis column (index 1)
+                    for (let i = 1; i < headers.length; i++) {
+                        const yAxisLabel = headers[i];
+                        const data = [];
+                        dataLines.forEach(line => {
+                            const values = line.split(',');
+                            const xVal = values[0] ? values[0].trim() : '';
+                            const yVal = values[i] ? values[i].trim() : '';
+                            data.push({ x: xVal, y: yVal });
+                        });
+                        datasetsToCreate.push({ label: yAxisLabel, data: data });
+                    }
+
+                    if (datasetsToCreate.length > 0) {
+                        // Clear existing tables before importing new ones
+                        dataTablesList.innerHTML = '';
+                        datasetsToCreate.forEach(dataset => {
+                            createDataTable({ label: dataset.label, data: dataset.data });
+                        });
+                        updateChartFromUI();
+                    } else {
+                        alert("No valid Y-axis data columns found in CSV.");
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; // Reset input
+            }
+
+            // --- Event Handlers ---
+            addTableBtn.addEventListener('click', () => { createDataTable(); });
+            importCsvBtn.addEventListener('click', () => csvFileInput.click());
+            csvFileInput.addEventListener('change', handleFileSelect);
+
+            chartTypeSelect.addEventListener('change', () => {
+                lineOptionsContainer.style.display = chartTypeSelect.value === 'line' ? 'block' : 'none';
+                updateChartFromUI();
+            });
+
+            xAxisLabelInput.addEventListener('input', updateChartFromUI);
+            yAxisLabelInput.addEventListener('input', updateChartFromUI);
+            smoothLinesToggle.addEventListener('change', updateChartFromUI);
+            resetZoomBtn.addEventListener('click', () => chart.resetZoom());
+
+            // REPLACE your old 'dataTablesList.addEventListener('click', ...)' with this new one
+
+            dataTablesList.addEventListener('click', (e) => {
+                // Logic for adding a new row (no changes here)
+                if (e.target.closest('.add-row-btn')) {
+                    const tbody = e.target.closest('.data-table-container').querySelector('tbody');
+                    tbody.insertAdjacentHTML('beforeend', createTableRowHTML());
+                    // A new row doesn't have data, so no chart update is needed yet.
+                }
+
+                // --- MODIFIED LOGIC FOR DELETING A ROW ---
+                if (e.target.classList.contains('remove-row-btn')) {
+                    const isLinearType = chart.options.scales.x.type === 'linear';
+
+                    // If live-update is off, or it's not a linear chart, do a full redraw.
+                    if (redrawOnEditToggle.checked || !isLinearType) {
+                        e.target.closest('tr').remove();
+                        updateChartFromUI();
+                        return;
+                    }
+
+                    // --- High-performance "live delete" logic ---
+                    const tableRow = e.target.closest('tr');
+                    const tableContainer = e.target.closest('.data-table-container');
+                    const tbody = tableRow.parentElement;
+
+                    // Get the index BEFORE removing the row from the DOM
+                    const dataPointIndex = Array.from(tbody.children).indexOf(tableRow);
+                    const datasetLabel = tableContainer.dataset.label;
+                    const chartDataset = chart.data.datasets.find(ds => ds.label === datasetLabel);
+
+                    // Remove the row from the HTML table
+                    tableRow.remove();
+
+                    // If the corresponding data point exists in the chart, remove it
+                    if (chartDataset && chartDataset.data[dataPointIndex] !== undefined) {
+                        chartDataset.data.splice(dataPointIndex, 1);
+                        chart.update('none'); // Fast update
+                    } else {
+                        // Fallback if something is out of sync
+                        updateChartFromUI();
+                    }
+                }
+
+                // Logic for removing a whole table (no changes here)
+                if (e.target.classList.contains('remove-table-btn')) {
+                    e.target.closest('.data-table-container').remove();
+                    updateChartFromUI();
+                }
+
+                // Logic for opening settings (no changes here)
+                if (e.target.classList.contains('settings-btn')) {
+                    const tableContainer = e.target.closest('.data-table-container');
+                    modalDatasetIdInput.value = tableContainer.dataset.id;
+                    modalLabelInput.value = tableContainer.dataset.label;
+                    modalColorInput.value = tableContainer.dataset.color;
+                    settingsModal.style.display = 'flex';
+                }
+            });
+
+            // REPLACE your old 'dataTablesList.addEventListener('input', ...)' with this new one
+
+            dataTablesList.addEventListener('input', (e) => {
+                const target = e.target;
+                if (!target.classList.contains('x-val') && !target.classList.contains('y-val')) {
+                    return; // Exit if the event wasn't on a data input
+                }
+
+                // Always do a full redraw if the toggle is checked or if it's not a linear chart
+                const isLinearType = chart.options.scales.x.type === 'linear';
+                if (redrawOnEditToggle.checked || !isLinearType) {
+                    updateChartFromUI();
+                    return;
+                }
+
+                // --- High-performance "live update" logic for Linear Charts ---
+                const tableRow = target.closest('tr');
+                const tableContainer = target.closest('.data-table-container');
+                const tbody = tableRow.parentElement;
+
+                const dataPointIndex = Array.from(tbody.children).indexOf(tableRow);
+                const datasetLabel = tableContainer.dataset.label;
+                const chartDataset = chart.data.datasets.find(ds => ds.label === datasetLabel);
+
+                if (!chartDataset) {
+                    updateChartFromUI(); // Fallback if dataset doesn't exist
+                    return;
+                }
+
+                const xValue = parseFloat(tableRow.querySelector('.x-val').value);
+                const yValue = parseFloat(tableRow.querySelector('.y-val').value);
+
+                // Check if the point is valid before proceeding
+                if (isNaN(xValue) || isNaN(yValue)) {
+                    return;
+                }
+
+                const newPoint = { x: xValue, y: yValue };
+
+                if (chartDataset.data[dataPointIndex] !== undefined) {
+                    // --- LOGIC FOR EDITING AN EXISTING POINT ---
+                    chartDataset.data[dataPointIndex] = newPoint;
+                } else {
+                    // --- LOGIC FOR ADDING A NEW POINT ---
+                    chartDataset.data.push(newPoint);
+                    // Sorting is crucial for line charts to draw correctly
+                    chartDataset.data.sort((a, b) => a.x - b.x);
+                }
+
+                // Use 'none' for the animation mode for a fast, non-jarring update
+                chart.update('none');
+            });
+
+            // --- Modal Logic ---
+            modalSaveBtn.addEventListener('click', () => {
+                const datasetId = modalDatasetIdInput.value;
+                const tableContainer = dataTablesList.querySelector(`[data-id="${datasetId}"]`);
+                if (tableContainer) {
+                    tableContainer.dataset.label = modalLabelInput.value;
+                    tableContainer.dataset.color = modalColorInput.value;
+                    tableContainer.querySelector('.label-text').textContent = modalLabelInput.value;
+                    tableContainer.querySelector('.color-indicator').style.backgroundColor = modalColorInput.value;
+                    updateChartFromUI();
+                }
+                settingsModal.style.display = 'none';
+            });
+            modalCancelBtn.addEventListener('click', () => settingsModal.style.display = 'none');
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) settingsModal.style.display = 'none';
+            });
+
+            // --- Theme Logic ---
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.body.classList.add('light-theme');
+                    themeIcon.classList.remove('bi-moon-stars-fill');
+                    themeIcon.classList.add('bi-brightness-high-fill');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    themeIcon.classList.remove('bi-brightness-high-fill');
+                    themeIcon.classList.add('bi-moon-stars-fill');
+                }
+                if (chart) {
+                    updateChartFromUI();
+                }
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('chart-theme', newTheme);
+                applyTheme(newTheme);
+            });
+
+          // --- Main Settings Modal Logic ---
+settingsBtn.addEventListener('click', () => {
+    mainSettingsModal.style.display = 'flex';
+});
+settingsModalClose.addEventListener('click', () => {
+    mainSettingsModal.style.display = 'none';
+});
+
+// Apply visual changes instantly
+showPointsToggle.addEventListener('change', updateChartFromUI);
+lineWidthSlider.addEventListener('input', updateChartFromUI);
+gridColorPicker.addEventListener('input', (e) => {
+    customGridColor = e.target.value; // Store the custom color
+    updateChartFromUI();
+});
+
+resetVisualsBtn.addEventListener('click', () => {
+    // Reset controls to their default state
+    showPointsToggle.checked = true;
+    lineWidthSlider.value = 2;
+    customGridColor = null; // Clear the custom color override
+    
+    // Set the color picker back to the theme's default grid color
+    const themeGridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+    // Note: color inputs need hex values. This might not work if your CSS var is not a hex.
+    // For simplicity, we assume it's a convertible format or we can set a default.
+    try {
+        gridColorPicker.value = themeGridColor.trim();
+    } catch (e) {
+        gridColorPicker.value = '#444444'; // Fallback
+    }
+
+    updateChartFromUI();
+});
+
+
+            // --- Initial Setup ---
+            const savedTheme = localStorage.getItem('chart-theme') || 'dark';
+            initializeChart();
+            applyTheme(savedTheme);
+            createDataTable(); // Start with one empty table
+            updateChartFromUI();
+        });
+    </script>
+</body>
+
+  </html>
