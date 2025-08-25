@@ -1350,6 +1350,7 @@ function playSound(waveType = 'sine') {
                 });
             }
 // REPLACE your old updateChartFromUI function with this new one
+
 function updateChartFromUI() {
     if (!chart) return;
 
@@ -1363,62 +1364,63 @@ function updateChartFromUI() {
     const pointRadius = showPointsToggle.checked ? 3 : 0;
     const borderWidth = lineWidthSlider.value;
 
-    if (isLinearType) {
-        // --- LOGIC FOR LINE/SCATTER CHARTS (Same as before) ---
+    // --- Universal Data & Label Collection ---
+    let universalLabels = new Set();
+    if (!isLinearType) {
+        // For category charts, collect all unique X-labels from all tables first
         allTables.forEach(table => {
-            const label = table.dataset.label;
-            const color = table.dataset.color;
-            const dataPoints = [];
-            const rows = table.querySelectorAll('tbody tr');
-            rows.forEach(row => {
+            table.querySelectorAll('tbody tr .x-val').forEach(input => {
+                if (input.value.trim()) universalLabels.add(input.value.trim());
+            });
+        });
+    }
+    const sortedLabels = Array.from(universalLabels).sort();
+
+    // --- Process Each Table into a Dataset ---
+    allTables.forEach(table => {
+        const label = table.dataset.label;
+        const color = table.dataset.color;
+        let data;
+
+        if (isLinearType) {
+            // Logic for Line/Scatter: data is an array of {x, y} objects
+            data = [];
+            table.querySelectorAll('tbody tr').forEach(row => {
                 const x = parseFloat(row.querySelector('.x-val').value);
                 const y = parseFloat(row.querySelector('.y-val').value);
                 if (!isNaN(x)) {
-                    dataPoints.push({ x: x, y: isNaN(y) ? null : y });
+                    data.push({ x: x, y: isNaN(y) ? null : y });
                 }
             });
-            dataPoints.sort((a, b) => a.x - b.x);
-            newDatasets.push({
-                label: label, data: dataPoints, borderColor: color, backgroundColor: color,
-                tension: isSmoothed ? 0.4 : 0, pointRadius: pointRadius, borderWidth: borderWidth
-            });
-        });
-        chart.data.labels = [];
-    } else {
-        // --- NEW LOGIC FOR BAR/PIE/ETC CHARTS ---
-        const labels = [];
-        const backgroundColors = [];
-        const dataValues = [];
-
-        allTables.forEach(table => {
-            const label = table.dataset.label; // The table's name is the label
-            const color = table.dataset.color;
-            let totalValue = 0;
-            const rows = table.querySelectorAll('tbody tr');
-            rows.forEach(row => {
+            data.sort((a, b) => a.x - b.x);
+        } else {
+            // Logic for Bar/Pie/etc.: data is an array of values matched to the universal labels
+            const tableDataMap = new Map();
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const x = row.querySelector('.x-val').value.trim();
                 const y = parseFloat(row.querySelector('.y-val').value);
-                if (!isNaN(y)) {
-                    totalValue += y; // Sum up all Y values in the table
+                if (x && !isNaN(y)) {
+                    tableDataMap.set(x, y);
                 }
             });
-            labels.push(label);
-            backgroundColors.push(color);
-            dataValues.push(totalValue);
-        });
+            data = sortedLabels.map(lbl => tableDataMap.get(lbl) || null);
+        }
         
         newDatasets.push({
-            label: 'Dataset', // A single dataset for these chart types
-            data: dataValues,
-            backgroundColor: backgroundColors,
-            borderColor: backgroundColors,
-            borderWidth: 1
+            label: label,
+            data: data,
+            borderColor: color,
+            backgroundColor: color,
+            tension: isSmoothed ? 0.4 : 0,
+            pointRadius: pointRadius,
+            borderWidth: borderWidth
         });
-        chart.data.labels = labels;
-    }
+    });
 
+    // --- Update Chart Configuration ---
     chart.data.datasets = newDatasets;
+    chart.data.labels = isLinearType ? [] : sortedLabels;
     
-    // --- Apply other settings ---
     const isPieType = ['pie', 'doughnut', 'polarArea', 'radar'].includes(chartType);
     const xAxisType = isLinearType ? 'linear' : 'category';
     if (chart.options.scales.x.type !== xAxisType) {
@@ -1443,6 +1445,7 @@ function updateChartFromUI() {
 
     chart.update();
 }
+
 
 
             // --- Dynamic Element Creation ---
