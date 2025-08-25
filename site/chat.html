@@ -779,7 +779,7 @@
                 </div>
 
                 <div class="import-add-options">
-                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;" multiple>
                     <button id="importCsvBtn" class="btn btn-secondary" title="Import from CSV">
                         <i class="bi bi-upload"></i> Import from CSV
                     </button>
@@ -1489,54 +1489,63 @@ function updateChartFromUI() {
                 `;
             }
 
-            // --- CSV Import Logic ---
-            function handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
+            // REPLACE your old handleFileSelect function with this new one
 
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const csv = e.target.result;
-                    const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
+function handleFileSelect(event) {
+    const files = event.target.files; // Get all selected files
+    if (!files.length) return;
 
-                    if (lines.length < 2) {
-                        alert("CSV file must have a header and at least one data row.");
-                        return;
-                    }
+    // Loop through each selected file
+    for (const file of files) {
+        const reader = new FileReader();
 
-                    const headers = lines[0].split(',').map(h => h.trim());
-                    const dataLines = lines.slice(1);
+        // This onload function will run for each file
+        reader.onload = (e) => {
+            const csv = e.target.result;
+            const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
 
-                    xAxisLabelInput.value = headers[0] || 'X-Axis';
-
-                    const datasetsToCreate = [];
-                    // Start from the first Y-axis column (index 1)
-                    for (let i = 1; i < headers.length; i++) {
-                        const yAxisLabel = headers[i];
-                        const data = [];
-                        dataLines.forEach(line => {
-                            const values = line.split(',');
-                            const xVal = values[0] ? values[0].trim() : '';
-                            const yVal = values[i] ? values[i].trim() : '';
-                            data.push({ x: xVal, y: yVal });
-                        });
-                        datasetsToCreate.push({ label: yAxisLabel, data: data });
-                    }
-
-                    if (datasetsToCreate.length > 0) {
-                        // Clear existing tables before importing new ones
-                        dataTablesList.innerHTML = '';
-                        datasetsToCreate.forEach(dataset => {
-                            createDataTable({ label: dataset.label, data: dataset.data });
-                        });
-                        updateChartFromUI();
-                    } else {
-                        alert("No valid Y-axis data columns found in CSV.");
-                    }
-                };
-                reader.readAsText(file);
-                event.target.value = ''; // Reset input
+            if (lines.length < 2) {
+                console.warn(`Skipping file "${file.name}": It must have a header and at least one data row.`);
+                return; // Skip this file
             }
+
+            const headers = lines[0].split(',').map(h => h.trim());
+            const dataLines = lines.slice(1);
+            
+            // If the X-Axis label is empty, set it from the first column of the first file processed
+            if (!xAxisLabelInput.value) {
+                xAxisLabelInput.value = headers[0] || 'X-Axis';
+            }
+
+            const datasetsToCreate = [];
+            for (let i = 1; i < headers.length; i++) {
+                const yAxisLabel = headers[i];
+                const data = dataLines.map(line => {
+                    const values = line.split(',');
+                    return { x: values[0]?.trim() || '', y: values[i]?.trim() || '' };
+                });
+                datasetsToCreate.push({ label: yAxisLabel, data: data });
+            }
+
+            if (datasetsToCreate.length > 0) {
+                // Create new tables for this file's data but defer the chart update
+                datasetsToCreate.forEach(dataset => {
+                    createDataTable(dataset, false);
+                });
+                // Update the chart once after this file has been processed
+                updateChartFromUI(); 
+            } else {
+                console.warn(`Skipping file "${file.name}": No valid Y-axis data columns found.`);
+            }
+        };
+        
+        reader.readAsText(file);
+    }
+
+    // Reset the input so the same files can be selected again
+    event.target.value = '';
+}
+
 
             // --- Event Handlers ---
             addTableBtn.addEventListener('click', () => { createDataTable(); });
