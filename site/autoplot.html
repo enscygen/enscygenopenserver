@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoplot Engine | EnscyChart</title>
+    <link rel="icon" type="image/x-icon" href="/Favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --panel-bg: #2a2a2a;
+            --border-color: #444;
+            --text-color: #e0e0e0;
+            --text-muted: #999;
+            --accent-color: #0d6efd;
+            --danger-color: #dc3545;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            gap: 20px;
+        }
+        .main-engine, .random-data-generator {
+            flex: 1;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            width: 100%;
+        }
+        p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        /* --- Consistent Input Styling --- */
+        textarea,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        textarea {
+            height: 200px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        .key-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .key-container input {
+            flex-grow: 1;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn.btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            height: 20px;
+        }
+        .status.active {
+            color: #28a745;
+            font-weight: bold;
+        }
+        hr {
+            border-color: var(--border-color);
+            margin: 20px 0;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #random-data-panel {
+            display: none;
+            border-left: 1px solid var(--border-color);
+            padding-left: 20px;
+        }
+        .input-group { margin-bottom: 10px; }
+        .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .config-row { display: grid; grid-template-columns: 100px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .config-row strong { font-size: 14px; }
+        .range-input { display: flex; align-items: center; gap: 5px; }
+        .range-input input { width: 60px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-engine">
+            <h1><i class="bi bi-broadcast"></i> Autoplot Engine</h1>
+            <p>Enter data manually or use the generator. Generate a key and use it in the main app to start receiving live data.</p>
+            
+            <textarea id="csvData" placeholder="Time (s),Sample A,Sample B&#10;0,0,0&#10;1,0.2,0.15&#10;2,0.45,0.35"></textarea>
+            
+            <div class="key-container">
+                <button id="generateKeyBtn" class="btn">Generate Key</button>
+                <input type="text" id="engineKey" readonly placeholder="Your key will appear here...">
+                <button id="copyKeyBtn" class="btn"><i class="bi bi-clipboard"></i></button>
+            </div>
+            
+            <div id="status" class="status">Status: Idle</div>
+            <hr>
+            <div class="toggle-container">
+                <input type="checkbox" id="toggleRandomGenerator">
+                <label for="toggleRandomGenerator">Generate random data for plotting</label>
+            </div>
+        </div>
+
+        <div id="random-data-panel" class="random-data-generator">
+            <h4>Generator Settings</h4>
+            <div class="input-group">
+                <label for="xLabel">X-Axis Label</label>
+                <input type="text" id="xLabel" value="Time (s)">
+            </div>
+            <div class="input-group">
+                <label for="yLabels">Y-Axis Labels (comma-separated)</label>
+                <input type="text" id="yLabels" value="Temperature, Pressure">
+            </div>
+            <button id="generateConfigsBtn" class="btn" style="width: 100%; margin-bottom: 15px;">Generate Controls</button>
+
+            <div id="generator-configs"></div>
+
+            <div id="generator-actions" style="display: none;">
+                <hr>
+                <div class="input-group">
+                    <label for="appendInterval">Data Append Interval (seconds)</label>
+                    <input type="number" id="appendInterval" value="1">
+                </div>
+                <button id="toggleGeneratorBtn" class="btn" style="width: 100%;">Start Generating</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Main Engine Elements ---
+        const generateKeyBtn = document.getElementById('generateKeyBtn');
+        const copyKeyBtn = document.getElementById('copyKeyBtn');
+        const engineKeyInput = document.getElementById('engineKey');
+        const csvDataTextarea = document.getElementById('csvData');
+        const statusDiv = document.getElementById('status');
+        
+        // --- Random Generator Elements ---
+        const toggleRandomGenerator = document.getElementById('toggleRandomGenerator');
+        const randomDataPanel = document.getElementById('random-data-panel');
+        const xLabelInput = document.getElementById('xLabel');
+        const yLabelsInput = document.getElementById('yLabels');
+        const generateConfigsBtn = document.getElementById('generateConfigsBtn');
+        const generatorConfigsDiv = document.getElementById('generator-configs');
+        const generatorActionsDiv = document.getElementById('generator-actions');
+        const appendIntervalInput = document.getElementById('appendInterval');
+        const toggleGeneratorBtn = document.getElementById('toggleGeneratorBtn');
+
+        let broadcastChannel = null;
+        let generatorIntervalId = null;
+        let currentValues = {};
+        
+        // --- Main Engine Logic ---
+        function generateKey() {
+            const key = 'enscyChart-engine-' + Math.random().toString(36).substring(2, 10);
+            engineKeyInput.value = key;
+            if (broadcastChannel) broadcastChannel.close();
+            broadcastChannel = new BroadcastChannel(key);
+            statusDiv.textContent = `Listening on key: ${key}`;
+            statusDiv.classList.remove('active');
+            
+            broadcastChannel.onmessage = (event) => {
+                if (event.data === 'requestData') {
+                    broadcastChannel.postMessage(csvDataTextarea.value);
+                    statusDiv.textContent = 'Status: Broadcasting...';
+                    statusDiv.classList.add('active');
+                }
+            };
+        }
+
+        function copyKey() {
+            if (!engineKeyInput.value) return alert('Please generate a key first.');
+            engineKeyInput.select();
+            document.execCommand('copy');
+        }
+
+        generateKeyBtn.addEventListener('click', generateKey);
+        copyKeyBtn.addEventListener('click', copyKey);
+
+        // --- Random Generator Logic ---
+        toggleRandomGenerator.addEventListener('change', () => {
+            randomDataPanel.style.display = toggleRandomGenerator.checked ? 'block' : 'none';
+        });
+
+        generateConfigsBtn.addEventListener('click', () => {
+            generatorConfigsDiv.innerHTML = '';
+            const xLabel = xLabelInput.value.trim();
+            const yLabels = yLabelsInput.value.trim().split(',').map(l => l.trim()).filter(l => l);
+
+            if (!xLabel || yLabels.length === 0) {
+                alert('Please provide at least one X and one Y label.');
+                return;
+            }
+
+            [xLabel, ...yLabels].forEach(label => {
+                const isX = label === xLabel;
+                const configRow = document.createElement('div');
+                configRow.className = 'config-row';
+                configRow.innerHTML = `
+                    <strong>${label}</strong>
+                    <div class="range-input">
+                        <input type="number" class="range-min" value="0"> to <input type="number" class="range-max" value="100">
+                    </div>
+                    <div class="range-input">
+                        <input type="number" class="inc-min" value="${isX ? 1 : -2}"> to <input type="number" class="inc-max" value="${isX ? 1 : 2}">
+                    </div>
+                `;
+                configRow.dataset.label = label;
+                generatorConfigsDiv.appendChild(configRow);
+            });
+            generatorActionsDiv.style.display = 'block';
+        });
+
+        function toggleGenerator() {
+            if (generatorIntervalId) { // Stop generating
+                clearInterval(generatorIntervalId);
+                generatorIntervalId = null;
+                toggleGeneratorBtn.textContent = 'Start Generating';
+                toggleGeneratorBtn.classList.remove('btn-danger');
+                // Re-enable inputs
+                [xLabelInput, yLabelsInput, generateConfigsBtn, appendIntervalInput].forEach(el => el.disabled = false);
+            } else { // Start generating
+                const configRows = generatorConfigsDiv.querySelectorAll('.config-row');
+                if (configRows.length === 0) return alert('Please generate controls first.');
+
+                const headers = Array.from(configRows).map(row => row.dataset.label);
+                csvDataTextarea.value = headers.join(',') + '\n';
+                
+                currentValues = {};
+                headers.forEach(label => {
+                    const row = generatorConfigsDiv.querySelector(`[data-label="${label}"]`);
+                    const rangeMin = parseFloat(row.querySelector('.range-min').value);
+                    currentValues[label] = isNaN(rangeMin) ? 0 : rangeMin;
+                });
+
+                csvDataTextarea.value += Object.values(currentValues).join(',') + '\n';
+                
+                const interval = parseFloat(appendIntervalInput.value) * 1000;
+                if (isNaN(interval) || interval < 100) return alert('Interval must be at least 0.1 seconds.');
+
+                generatorIntervalId = setInterval(appendData, interval);
+                toggleGeneratorBtn.textContent = 'Stop Generating';
+                toggleGeneratorBtn.classList.add('btn-danger');
+                // Disable inputs
+                [xLabelInput, yLabelsInput, generateConfigsBtn, appendIntervalInput].forEach(el => el.disabled = true);
+            }
+        }
+
+        function appendData() {
+            const newRow = [];
+            generatorConfigsDiv.querySelectorAll('.config-row').forEach(row => {
+                const label = row.dataset.label;
+                const minRange = parseFloat(row.querySelector('.range-min').value);
+                const maxRange = parseFloat(row.querySelector('.range-max').value);
+                const minInc = parseFloat(row.querySelector('.inc-min').value);
+                const maxInc = parseFloat(row.querySelector('.inc-max').value);
+                
+                const increment = Math.random() * (maxInc - minInc) + minInc;
+                let newValue = currentValues[label] + increment;
+
+                // Clamp the value within the range
+                if (newValue > maxRange) newValue = maxRange;
+                if (newValue < minRange) newValue = minRange;
+
+                currentValues[label] = newValue;
+                newRow.push(newValue.toFixed(2));
+            });
+            csvDataTextarea.value += newRow.join(',') + '\n';
+            csvDataTextarea.scrollTop = csvDataTextarea.scrollHeight; // Auto-scroll
+        }
+
+        toggleGeneratorBtn.addEventListener('click', toggleGenerator);
+
+    </script>
+</body>
+</html>
