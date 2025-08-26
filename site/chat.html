@@ -952,13 +952,24 @@
             <!-- Visual Details Section -->
             <h5><i class="bi bi-palette-fill"></i> Visuals</h5>
             <div class="control-group">
-                <div class="toggle-switch">
-                    <label for="showPointsToggle">Show Data Points</label>
-                    <label class="switch">
-                        <input type="checkbox" id="showPointsToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <!-- Find this existing div... -->
+<div class="toggle-switch">
+    <label for="showPointsToggle">Show Data Points</label>
+    <label class="switch">
+        <input type="checkbox" id="showPointsToggle" checked>
+        <span class="slider"></span>
+    </label>
+</div>
+
+<!-- ...AND ADD THIS NEW DIV RIGHT AFTER IT -->
+<div class="toggle-switch">
+    <label for="returnToZeroToggle">Return to 0 After Plot</label>
+    <label class="switch">
+        <input type="checkbox" id="returnToZeroToggle">
+        <span class="slider"></span>
+    </label>
+</div>
+
             </div>
             <div class="control-group">
                 <label for="lineWidthSlider">Line Thickness</label>
@@ -1020,6 +1031,10 @@
 
             const togglePanelBtn = document.getElementById('toggle-panel-btn');
             const controlsPanel = document.querySelector('.controls-panel');
+
+            // Add this with your other main settings modal declarations
+const returnToZeroToggle = document.getElementById('returnToZeroToggle');
+
 
           // ADD these lines with other element declarations
 const settingsBtn = document.getElementById('settingsBtn');
@@ -1769,6 +1784,9 @@ resetVisualsBtn.addEventListener('click', () => {
     updateChartFromUI();
 });
 
+            // Add this with the other settings event listeners
+returnToZeroToggle.addEventListener('change', updateChartFromUI);
+
 
             // --- Initial Setup ---
             const savedTheme = localStorage.getItem('chart-theme') || 'dark';
@@ -1780,4 +1798,4 @@ resetVisualsBtn.addEventListener('click', () => {
     </script>
 </body>
 
-  </html>
+                    </html>
