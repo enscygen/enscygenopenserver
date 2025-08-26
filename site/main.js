@@ -478,7 +478,43 @@ document.getElementById("clearButton").addEventListener("click", () => {
     if (popoutWindow && !popoutWindow.closed) { popoutWindow.document.getElementById('output').innerHTML = 'Output cleared.'; }
 });
 
-document.getElementById('file-input').addEventListener('change', (event) => { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { if (sequenceEditor) sequenceEditor.setValue(e.target.result); }; reader.onerror = (e) => renderError("Failed to read the selected file.", "File Import"); reader.readAsText(file); event.target.value = ''; });
+document.getElementById('file-input').addEventListener('change', (event) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+        return; // User cancelled the dialog
+    }
+
+    // Create a promise for each file reading operation
+    const readPromises = Array.from(files).map(file => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(new Error(`Failed to read file: ${file.name}`));
+            reader.readAsText(file);
+        });
+    });
+
+    // Wait for all files to be read
+    Promise.all(readPromises)
+        .then(contents => {
+            // Join the content of all files, separated by two newlines
+            const combinedContent = contents.join('\n\n');
+            if (sequenceEditor) {
+                // Append to existing content or set if empty
+                const currentContent = sequenceEditor.getValue();
+                sequenceEditor.setValue(currentContent ? currentContent + '\n\n' + combinedContent : combinedContent);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            renderError(error.message, "File Import");
+        });
+
+    // Reset the input value to allow re-uploading the same file(s)
+    event.target.value = '';
+});
+
+
 document.getElementById('cloneButton').addEventListener('click', () => { localStorage.setItem('orfex_sequence', sequenceEditor.getValue()); localStorage.setItem('orfex_script', scriptEditor.getValue()); localStorage.setItem('orfex_output', document.getElementById('output').innerHTML); window.open(window.location.pathname + '?clone=true', '_blank'); });
 window.addEventListener('keydown', (event) => { if (event.key === 'F5') { event.preventDefault(); if (!document.getElementById('runButton').disabled) document.getElementById("runButton").click(); } });
 
