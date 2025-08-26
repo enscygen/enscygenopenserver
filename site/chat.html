@@ -1004,7 +1004,10 @@
             const smoothLinesToggle = document.getElementById('smooth-lines-toggle');
             const lineOptionsContainer = document.getElementById('line-options');
             const resetZoomBtn = document.getElementById('resetZoomBtn');
-            const redrawOnEditToggle = document.getElementById('redraw-on-edit-toggle');
+            // Add this line with your other element declarations
+const redrawOnEditToggle = document.getElementById('redraw-on-edit-toggle');
+const smoothLinesToggle = document.getElementById('smooth-lines-toggle'); // <-- ADD THIS
+
 
             const autoplotStatusIndicator = document.getElementById('autoplotStatusIndicator');
             const autoplotStatusText = document.getElementById('autoplotStatusText');
@@ -1371,11 +1374,12 @@ function updateChartFromUI() {
 
     const allTables = dataTablesList.querySelectorAll('.data-table-container');
     const newDatasets = [];
-    const isSmoothed = smoothLinesToggle.checked;
     const chartType = chartTypeSelect.value;
     const isLinearType = chartType === 'line' || chartType === 'scatter';
     
-    // --- Visual Settings from Modal ---
+    // --- Get values from all settings controls ---
+    const isSmoothed = smoothLinesToggle.checked;
+    const smoothingValue = parseFloat(lineSmoothingSlider.value);
     const pointRadius = showPointsToggle.checked ? 3 : 0;
     const borderWidth = lineWidthSlider.value;
 
@@ -1426,7 +1430,8 @@ function updateChartFromUI() {
             data: data,
             borderColor: color,
             backgroundColor: color,
-            tension: isSmoothed ? 0.4 : 0,
+            // Use slider value only if the main toggle is checked
+            tension: isSmoothed ? smoothingValue : 0, 
             pointRadius: pointRadius,
             borderWidth: borderWidth
         });
@@ -1786,6 +1791,9 @@ resetVisualsBtn.addEventListener('click', () => {
 
             // Add this with the other settings event listeners
 returnToZeroToggle.addEventListener('change', updateChartFromUI);
+            // Add this with your other main control panel listeners
+smoothLinesToggle.addEventListener('change', updateChartFromUI);
+
 
 
             // --- Initial Setup ---
