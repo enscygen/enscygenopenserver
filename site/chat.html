@@ -1369,6 +1369,8 @@ function playSound(waveType = 'sine') {
             }
 // REPLACE your old updateChartFromUI function with this new one
 
+// REPLACE your old updateChartFromUI function with this complete, corrected version
+
 function updateChartFromUI() {
     if (!chart) return;
 
@@ -1382,11 +1384,11 @@ function updateChartFromUI() {
     const smoothingValue = parseFloat(lineSmoothingSlider.value);
     const pointRadius = showPointsToggle.checked ? 3 : 0;
     const borderWidth = lineWidthSlider.value;
+    const shouldReturnToZero = returnToZeroToggle.checked;
 
     // --- Universal Data & Label Collection ---
     let universalLabels = new Set();
     if (!isLinearType) {
-        // For category charts, collect all unique X-labels from all tables first
         allTables.forEach(table => {
             table.querySelectorAll('tbody tr .x-val').forEach(input => {
                 if (input.value.trim()) universalLabels.add(input.value.trim());
@@ -1402,7 +1404,6 @@ function updateChartFromUI() {
         let data;
 
         if (isLinearType) {
-            // Logic for Line/Scatter: data is an array of {x, y} objects
             data = [];
             table.querySelectorAll('tbody tr').forEach(row => {
                 const x = parseFloat(row.querySelector('.x-val').value);
@@ -1412,8 +1413,37 @@ function updateChartFromUI() {
                 }
             });
             data.sort((a, b) => a.x - b.x);
+
+            // --- FEATURE LOGIC: Apply "Return to Zero" if toggled ---
+            if (shouldReturnToZero && chartType === 'line') {
+                const spikyData = [];
+                data.forEach(point => {
+                    if (point.y !== null) {
+                        spikyData.push(point);
+                        spikyData.push({ x: point.x, y: 0 });
+                    }
+                });
+                // Use the modified data and override some visual settings for the effect
+                newDatasets.push({
+                    label: label, data: spikyData, borderColor: color, backgroundColor: color,
+                    tension: 0, // Smoothing must be off for this effect
+                    pointRadius: 0, // Hide points for a cleaner look
+                    borderWidth: borderWidth
+                });
+            } else {
+                // --- Default behavior for Line/Scatter charts ---
+                newDatasets.push({
+                    label: label,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: isSmoothed ? smoothingValue : 0,
+                    pointRadius: pointRadius,
+                    borderWidth: borderWidth
+                });
+            }
         } else {
-            // Logic for Bar/Pie/etc.: data is an array of values matched to the universal labels
+            // Logic for Bar/Pie/etc.
             const tableDataMap = new Map();
             table.querySelectorAll('tbody tr').forEach(row => {
                 const x = row.querySelector('.x-val').value.trim();
@@ -1423,18 +1453,11 @@ function updateChartFromUI() {
                 }
             });
             data = sortedLabels.map(lbl => tableDataMap.get(lbl) || null);
+            newDatasets.push({
+                label: label, data: data, borderColor: color, backgroundColor: color,
+                borderWidth: borderWidth
+            });
         }
-        
-        newDatasets.push({
-            label: label,
-            data: data,
-            borderColor: color,
-            backgroundColor: color,
-            // Use slider value only if the main toggle is checked
-            tension: isSmoothed ? smoothingValue : 0, 
-            pointRadius: pointRadius,
-            borderWidth: borderWidth
-        });
     });
 
     // --- Update Chart Configuration ---
@@ -1465,7 +1488,6 @@ function updateChartFromUI() {
 
     chart.update();
 }
-
 
 
             // --- Dynamic Element Creation ---
