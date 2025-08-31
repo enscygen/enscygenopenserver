@@ -962,6 +962,7 @@
 </div>
 
 <!-- ...AND ADD THIS NEW DIV RIGHT AFTER IT -->
+<!-- Find this existing div... -->
 <div class="toggle-switch">
     <label for="returnToZeroToggle">Return to 0 After Plot</label>
     <label class="switch">
@@ -969,6 +970,13 @@
         <span class="slider"></span>
     </label>
 </div>
+
+<!-- ...AND ADD THIS NEW DIV RIGHT AFTER IT -->
+<div class="control-group">
+    <label for="peakWidthInput">Peak Width Offset (X-units)</label>
+    <input type="number" id="peakWidthInput" step="0.1" value="0.5">
+</div>
+
 
             </div>
             <!-- Find this existing div... -->
@@ -1041,6 +1049,9 @@ const redrawOnEditToggle = document.getElementById('redraw-on-edit-toggle');
 
             const togglePanelBtn = document.getElementById('toggle-panel-btn');
             const controlsPanel = document.querySelector('.controls-panel');
+
+            // Add this with your other main settings modal declarations
+const peakWidthInput = document.getElementById('peakWidthInput');
 
             // Add this with your other main settings modal declarations
 const returnToZeroToggle = document.getElementById('returnToZeroToggle');
@@ -1392,8 +1403,9 @@ function updateChartFromUI() {
     const pointRadius = showPointsToggle.checked ? 3 : 0;
     const borderWidth = lineWidthSlider.value;
     const shouldReturnToZero = returnToZeroToggle.checked;
+    const peakWidthOffset = parseFloat(peakWidthInput.value) || 0.5;
 
-    // --- Universal Data & Label Collection ---
+    // --- Universal Data & Label Collection for Category-based charts ---
     let universalLabels = new Set();
     if (!isLinearType) {
         allTables.forEach(table => {
@@ -1411,6 +1423,7 @@ function updateChartFromUI() {
         let data;
 
         if (isLinearType) {
+            // Logic for Line/Scatter: data is an array of {x, y} objects
             data = [];
             table.querySelectorAll('tbody tr').forEach(row => {
                 const x = parseFloat(row.querySelector('.x-val').value);
@@ -1421,22 +1434,20 @@ function updateChartFromUI() {
             });
             data.sort((a, b) => a.x - b.x);
 
-            // --- NEW AND IMPROVED "RETURN TO ZERO" (PEAK PLOT) LOGIC ---
+            // --- FEATURE LOGIC: Apply "Return to Zero" (Peak Plot) if toggled ---
             if (shouldReturnToZero && chartType === 'line') {
                 const peakData = [];
-                const x_offset = 0.001; // A tiny value to create the rise/fall
-                
                 data.forEach(point => {
                     if (point.y !== null && point.y !== 0) {
-                        // 1. The Rise
-                        peakData.push({ x: point.x - x_offset, y: 0 });
-                        // 2. The Peak
+                        // 1. The Rise: Start at zero before the peak
+                        peakData.push({ x: point.x - peakWidthOffset, y: 0 });
+                        // 2. The Peak: The actual data point
                         peakData.push(point);
-                        // 3. The Fall
-                        peakData.push({ x: point.x + x_offset, y: 0 });
+                        // 3. The Fall: Return to zero after the peak
+                        peakData.push({ x: point.x + peakWidthOffset, y: 0 });
                     }
                 });
-                
+                // Use the modified data and override visuals for the effect
                 newDatasets.push({
                     label: label, data: peakData, borderColor: color, backgroundColor: color,
                     tension: 0, // Smoothing must be off for this effect
@@ -1456,7 +1467,7 @@ function updateChartFromUI() {
                 });
             }
         } else {
-            // Logic for Bar/Pie/etc.
+            // Logic for Bar/Pie/etc.: data is an array of values matched to the universal labels
             const tableDataMap = new Map();
             table.querySelectorAll('tbody tr').forEach(row => {
                 const x = row.querySelector('.x-val').value.trim();
@@ -1799,6 +1810,10 @@ settingsModalClose.addEventListener('click', () => {
     mainSettingsModal.style.display = 'none';
 });
 
+            // Add this with the other settings event listeners
+peakWidthInput.addEventListener('input', updateChartFromUI);
+
+
 // Apply visual changes instantly
 showPointsToggle.addEventListener('change', updateChartFromUI);
 lineWidthSlider.addEventListener('input', updateChartFromUI);
@@ -1812,6 +1827,8 @@ resetVisualsBtn.addEventListener('click', () => {
     showPointsToggle.checked = true;
     lineWidthSlider.value = 2;
     customGridColor = null; // Clear the custom color override
+    peakWidthInput.value = 0.5;
+    returnToZeroToggle.checked = false;
     
     // Set the color picker back to the theme's default grid color
     const themeGridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
