@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GelSim | Gel Electrophoresis Simulator | Enscygen ORT</title>
+    <!-- Bootstrap Icons CDN -->
+   <link rel="icon" type="image/x-icon" href="/Favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* --- Global Styles & Font --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-color: #181a1f;
+            --panel-bg: #212429;
+            --text-color: #e1e1e1;
+            --text-secondary: #9a9a9a;
+            --accent-color: #3a86ff;
+            --accent-hover: #5c9cff;
+            --border-color: #33363b;
+            --input-bg: #1c1e23;
+            --danger-color: #e74c3c;
+            --danger-hover: #ff6b5b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 13px;
+            display: flex;
+            height: 100%;
+            overflow: hidden; /* Prevent body scroll on desktop */
+        }
+
+        /* --- Main Layout --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls-panel {
+            width: 300px;
+            background-color: var(--panel-bg);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            flex-shrink: 0;
+        }
+
+        .gel-view {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            background-color: var(--bg-color);
+        }
+
+        #gel-canvas {
+            border: 1px solid var(--border-color);
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        #tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+            white-space: nowrap;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- Control Elements (unchanged) --- */
+        .control-group h3 { font-size: 14px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: var(--text-color); }
+        .control-group h3 i { color: var(--accent-color); }
+        label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 9px 12px; border-radius: 5px; font-size: 13px; transition: border-color 0.2s, box-shadow 0.2s; font-family: 'Inter', sans-serif; }
+        input:disabled { background-color: #2a2d33; color: #777; cursor: not-allowed; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.3); }
+        textarea { height: 70px; resize: vertical; }
+        .wells-container { max-height: 180px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
+        .well-input-group { display: flex; align-items: center; margin-bottom: 8px; gap: 8px; }
+        .well-input-group label { flex-basis: 60px; margin-bottom: 0; color: var(--text-color); font-weight: 400; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .button { width: 100%; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .button.run-btn { background-color: var(--accent-color); color: white; }
+        .button.run-btn:hover { background-color: var(--accent-hover); }
+        .button.stop-btn { background-color: var(--danger-color); color: white; }
+        .button.stop-btn:hover { background-color: var(--danger-hover); }
+        .button.tertiary { background-color: #33363b; color: white; }
+        .button.tertiary:hover { background-color: #45494e; }
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .progress-bar { width: 100%; height: 6px; background-color: var(--input-bg); border-radius: 3px; overflow: hidden; margin: 15px 0; }
+        #progress-fill { width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.1s linear; }
+        
+        /* --- Modal & Checkbox Styles (unchanged) --- */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--panel-bg); padding: 25px; border-radius: 8px; width: 480px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content h2 { margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .modal-footer { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-footer .button { width: auto; }
+        .checkbox-container { display: flex; align-items: center; padding: 8px; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
+        .checkbox-container:hover { background-color: rgba(255,255,255,0.05); }
+        .checkbox-container input { display: none; }
+        .checkbox-custom { width: 16px; height: 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 3px; margin-right: 10px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, border-color 0.2s; }
+        .checkbox-custom i { font-size: 14px; color: white; opacity: 0; transform: scale(0.5); transition: opacity 0.2s, transform 0.2s; }
+        .checkbox-container input:checked + .checkbox-custom { background-color: var(--accent-color); border-color: var(--accent-color); }
+        .checkbox-container input:checked + .checkbox-custom i { opacity: 1; transform: scale(1); }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            body {
+                height: auto; /* Allow body to grow with content */
+                overflow: auto; /* Allow natural page scrolling */
+            }
+
+            .app-container {
+                flex-direction: column;
+                height: auto; /* Allow container to grow with content */
+            }
+
+            .controls-panel {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                overflow-y: visible;
+            }
+
+            .gel-view {
+                justify-content: flex-start; /* Align canvas to the top */
+                min-height: 100vh; /* Ensure there's plenty of space for the gel */
+                padding: 15px;
+            }
+            
+            #gel-canvas {
+                max-height: none; /* Allow canvas to be its full, taller height */
+            }
+
+            .modal-content {
+                width: 90vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- LEFT CONTROLS PANEL -->
+        <div class="controls-panel">
+            <div class="control-group">
+                <h3><i class="bi bi-tools"></i>Actions</h3>
+                 <div class="button-group">
+                    <button id="settings-button" class="button tertiary"><i class="bi bi-gear-fill"></i>Settings</button>
+                    <button id="download-button" class="button tertiary"><i class="bi bi-download"></i>Download</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="bi bi-ladder"></i>Ladder Setup</h3>
+                <label for="ladder-sizes">Ladder Sizes (bp)</label>
+                <textarea id="ladder-sizes">100,200,300,400,500,600,700,800,900,1000,1500,2000,2500,3000</textarea>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="bi bi-grid-3x3"></i>Well Loading</h3>
+                <div class="input-grid">
+                    <div>
+                        <label for="num-wells">Number of Wells</label>
+                        <input type="number" id="num-wells" value="8" min="1" max="20">
+                    </div>
+                    <div>
+                        <label for="ladder-well">Ladder in Well</label>
+                        <select id="ladder-well"></select>
+                    </div>
+                </div>
+                <div id="wells-container" class="wells-container"></div>
+            </div>
+            
+             <div class="control-group">
+                <h3><i class="bi bi-play-circle"></i>Run Simulation</h3>
+                <div class="input-grid">
+                    <div>
+                         <label for="voltage">Voltage (V)</label>
+                        <input type="number" id="voltage" value="100" min="10" max="300">
+                    </div>
+                    <div>
+                        <label for="real-time">Real Time (min)</label>
+                        <input type="number" id="real-time" value="30" min="1">
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label for="sim-time">Simulation Time (sec)</label>
+                    <input type="number" id="sim-time" value="10" min="1">
+                </div>
+
+                <div class="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+                <button id="run-button" class="button run-btn"><i class="bi bi-play-fill"></i>Run Simulation</button>
+            </div>
+        </div>
+
+        <!-- RIGHT GEL VIEW -->
+        <div class="gel-view">
+            <canvas id="gel-canvas"></canvas>
+            <div id="tooltip"></div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="bi bi-palette-fill"></i>Display Settings</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="custom-gel-css">Custom Gel CSS</label>
+                <textarea id="custom-gel-css">background: #0c0d0f;</textarea>
+            </div>
+             
+             <label class="checkbox-container">
+                <input type="checkbox" id="same-style-check" checked>
+                <span class="checkbox-custom"><i class="bi bi-check"></i></span>
+                Same style for all wells
+            </label>
+
+            <div id="single-style-container" style="margin-top: 10px;">
+                <label for="custom-band-css-single">Band CSS (All Wells)</label>
+                <textarea id="custom-band-css-single">background: #ffffff;
+box-shadow: 0 0 8px #add8e6;</textarea>
+            </div>
+
+            <div id="multi-style-container" style="display: none; margin-top: 10px;">
+                <div class="input-grid">
+                    <div>
+                        <label for="well-style-select">Select Well to Style</label>
+                        <select id="well-style-select"></select>
+                    </div>
+                </div>
+                 <div style="margin-top: 10px;">
+                    <label for="custom-band-css-multi">Band CSS</label>
+                    <textarea id="custom-band-css-multi"></textarea>
+                 </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="show-sample-names" checked>
+                    <span class="checkbox-custom"><i class="bi bi-check"></i></span>
+                    Show Well Labels
+                </label>
+                 <label class="checkbox-container">
+                    <input type="checkbox" id="show-bp-hover" checked>
+                    <span class="checkbox-custom"><i class="bi bi-check"></i></span>
+                    Show BP Length on Hover
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings-button" class="button"><i class="bi bi-check-lg"></i>Save & Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DOWNLOAD MODAL -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content" style="width: 400px;">
+            <h2><i class="bi bi-download"></i>Download Gel Image</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px;">Choose a download format.</p>
+            <div class="modal-footer" style="justify-content: center;">
+                <button id="download-bg-btn" class="button tertiary"><i class="bi bi-file-earmark-image"></i>With Background</button>
+                <button id="download-trans-btn" class="button"><i class="bi bi-file-earmark-image"></i>Transparent</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element References ---
+            const canvas = document.getElementById('gel-canvas');
+            const ctx = canvas.getContext('2d');
+            const gelView = document.querySelector('.gel-view');
+            const tooltip = document.getElementById('tooltip');
+            const ladderSizesInput = document.getElementById('ladder-sizes');
+            const numWellsInput = document.getElementById('num-wells');
+            const ladderWellSelect = document.getElementById('ladder-well');
+            const wellsContainer = document.getElementById('wells-container');
+            const runButton = document.getElementById('run-button');
+            const voltageInput = document.getElementById('voltage');
+            const realTimeInput = document.getElementById('real-time');
+            const simTimeInput = document.getElementById('sim-time');
+            const progressFill = document.getElementById('progress-fill');
+            
+            // Settings Modal
+            const settingsButton = document.getElementById('settings-button');
+            const settingsModal = document.getElementById('settings-modal');
+            const saveSettingsButton = document.getElementById('save-settings-button');
+            const customGelCssInput = document.getElementById('custom-gel-css');
+            const showSampleNamesCheck = document.getElementById('show-sample-names');
+            const showBpHoverCheck = document.getElementById('show-bp-hover');
+            
+            // Per-well styling elements
+            const sameStyleCheck = document.getElementById('same-style-check');
+            const singleStyleContainer = document.getElementById('single-style-container');
+            const multiStyleContainer = document.getElementById('multi-style-container');
+            const wellStyleSelect = document.getElementById('well-style-select');
+            const bandCssSingleInput = document.getElementById('custom-band-css-single');
+            const bandCssMultiInput = document.getElementById('custom-band-css-multi');
+            
+            // Download Modal
+            const downloadButton = document.getElementById('download-button');
+            const downloadModal = document.getElementById('download-modal');
+            const downloadBgBtn = document.getElementById('download-bg-btn');
+            const downloadTransBtn = document.getElementById('download-trans-btn');
+
+            // --- State Management ---
+            let settings = {
+                customGelCss: 'background: #0c0d0f;',
+                bandCssSingle: 'background: #ffffff;\nbox-shadow: 0 0 8px #add8e6;',
+                bandCssMulti: {}, // { '0': 'css', '1': 'css' }
+                bandCssMode: 'single', // 'single' or 'multi'
+                showSampleNames: true,
+                showBpHover: true,
+                numWells: 8,
+                wellPadding: 10,
+                wellWidth: 30,
+                wellHeight: 20,
+                gelPadding: 50,
+            };
+
+            let simulation = {
+                isRunning: false,
+                startTime: 0,
+                animationFrameId: null,
+                bands: [],
+            };
+            
+            let lastSelectedLadderWell = 1;
+
+            // --- Initialization ---
+            function initialize() {
+                updateWellsUI();
+                resizeCanvas();
+                addEventListeners();
+            }
+
+            function resizeCanvas() {
+                const isMobile = window.innerWidth <= 768;
+                const containerPadding = isMobile ? 30 : 40; // Use a bit less padding on mobile
+                
+                const availableWidth = gelView.clientWidth - containerPadding;
+                const availableHeight = gelView.clientHeight - containerPadding;
+                
+                const requiredWidth = settings.numWells * (settings.wellWidth + settings.wellPadding) + settings.wellPadding + 2 * settings.gelPadding;
+                const canvasWidth = Math.min(availableWidth, requiredWidth);
+
+                canvas.width = canvasWidth;
+
+                if (isMobile) {
+                    // On mobile, give the canvas a fixed, larger height to allow scrolling
+                    canvas.height = canvas.width * 2.5; 
+                } else {
+                    // On desktop, fit the canvas to the available vertical space
+                    canvas.height = availableHeight;
+                }
+
+                drawFullGel();
+            }
+            
+            function drawFullGel(isTransparent = false) {
+                drawGelBase(isTransparent);
+                drawAllBands();
+            }
+
+            // --- UI Update Functions ---
+            function updateWellsUI() {
+                settings.numWells = parseInt(numWellsInput.value, 10);
+                wellsContainer.innerHTML = '';
+                ladderWellSelect.innerHTML = '';
+                wellStyleSelect.innerHTML = '';
+
+                for (let i = 1; i <= settings.numWells; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `${i}`;
+                    ladderWellSelect.appendChild(option.cloneNode(true));
+                    wellStyleSelect.appendChild(option.cloneNode(true));
+                    
+                    const group = document.createElement('div');
+                    group.className = 'well-input-group';
+                    group.innerHTML = `
+                        <label for="well-${i}">Well ${i}:</label>
+                        <input type="text" id="well-${i}" placeholder="e.g., 250, 500">
+                    `;
+                    wellsContainer.appendChild(group);
+                }
+                
+                ladderWellSelect.value = lastSelectedLadderWell > settings.numWells ? 1 : lastSelectedLadderWell;
+                updateLadderWellState();
+                resizeCanvas();
+            }
+
+            function updateLadderWellState() {
+                const currentLadderWell = parseInt(ladderWellSelect.value, 10);
+                const oldInput = document.getElementById(`well-${lastSelectedLadderWell}`);
+                if (oldInput) oldInput.disabled = false;
+                
+                const newInput = document.getElementById(`well-${currentLadderWell}`);
+                if (newInput) newInput.disabled = true;
+
+                lastSelectedLadderWell = currentLadderWell;
+            }
+
+            // --- CSS Parsing and Drawing ---
+            function parseCss(cssText) {
+                const rules = {};
+                cssText.split(';').forEach(line => {
+                    const parts = line.split(':');
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        const value = parts.slice(1).join(':').trim();
+                        if (key && value) rules[key] = value;
+                    }
+                });
+                return rules;
+            }
+
+            function drawGelBase(isTransparent = false) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (!isTransparent) {
+                    const gelCss = parseCss(settings.customGelCss);
+                    if (gelCss.background) {
+                        ctx.fillStyle = gelCss.background;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+                const totalWellsWidth = settings.numWells * (settings.wellWidth + settings.wellPadding) - settings.wellPadding;
+                const startX = (canvas.width - totalWellsWidth) / 2;
+                for (let i = 0; i < settings.numWells; i++) {
+                    const x = startX + i * (settings.wellWidth + settings.wellPadding);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(x, settings.gelPadding, settings.wellWidth, settings.wellHeight);
+                    ctx.strokeStyle = '#333';
+                    ctx.strokeRect(x, settings.gelPadding, settings.wellWidth, settings.wellHeight);
+                    if (settings.showSampleNames) {
+                        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+                        ctx.textAlign = 'center';
+                        ctx.font = '11px Inter';
+                        const wellLabel = (i + 1) == ladderWellSelect.value ? `L` : `${i + 1}`;
+                        ctx.fillText(wellLabel, x + settings.wellWidth / 2, settings.gelPadding - 8);
+                    }
+                }
+            }
+
+            function drawAllBands() {
+                 simulation.bands.forEach(band => drawBand(band));
+            }
+
+            function drawBand(band) {
+                let cssText = settings.bandCssSingle;
+                if (settings.bandCssMode === 'multi' && settings.bandCssMulti[band.wellIndex]) {
+                    cssText = settings.bandCssMulti[band.wellIndex];
+                }
+
+                const bandCss = parseCss(cssText);
+                const totalWellsWidth = settings.numWells * (settings.wellWidth + settings.wellPadding) - settings.wellPadding;
+                const startX = (canvas.width - totalWellsWidth) / 2;
+                const x = startX + band.wellIndex * (settings.wellWidth + settings.wellPadding);
+                
+                if (bandCss['box-shadow']) {
+                    const shadowParts = bandCss['box-shadow'].split(' ').filter(p => p);
+                    if (shadowParts.length >= 4) { // Basic check for color at the end
+                        ctx.shadowBlur = parseFloat(shadowParts[2]) || 0;
+                        ctx.shadowColor = shadowParts[3];
+                    }
+                }
+
+                ctx.fillStyle = bandCss.background || '#ffffff';
+                ctx.fillRect(x + 2, band.yPos - 1.5, settings.wellWidth - 4, 3);
+                ctx.shadowBlur = 0; // Reset for next band
+                ctx.shadowColor = 'transparent';
+            }
+
+            // --- Simulation Logic ---
+            function toggleSimulation() {
+                if (simulation.isRunning) stopSimulation();
+                else startSimulation();
+            }
+
+            function startSimulation() {
+                simulation.isRunning = true;
+                runButton.innerHTML = '<i class="bi bi-stop-fill"></i>Stop Simulation';
+                runButton.className = 'button stop-btn';
+                prepareBands();
+                simulation.startTime = performance.now();
+                simulation.animationFrameId = requestAnimationFrame(animationLoop);
+            }
+            
+            function stopSimulation() {
+                simulation.isRunning = false;
+                runButton.innerHTML = '<i class="bi bi-play-fill"></i>Run Simulation';
+                runButton.className = 'button run-btn';
+                if (simulation.animationFrameId) {
+                    cancelAnimationFrame(simulation.animationFrameId);
+                }
+                progressFill.style.width = '0%';
+            }
+            
+            function prepareBands() {
+                simulation.bands = [];
+                const ladderWell = parseInt(ladderWellSelect.value, 10);
+                for (let i = 1; i <= settings.numWells; i++) {
+                    let sizes = [];
+                    if (i === ladderWell) {
+                        sizes = ladderSizesInput.value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n) && n > 0);
+                    } else {
+                        const wellInput = document.getElementById(`well-${i}`);
+                        if (wellInput && wellInput.value) {
+                             sizes = wellInput.value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n) && n > 0);
+                        }
+                    }
+                    sizes.forEach(size => {
+                        simulation.bands.push({
+                            wellIndex: i - 1, size: size,
+                            yPos: settings.gelPadding + settings.wellHeight,
+                        });
+                    });
+                }
+            }
+
+            function animationLoop(timestamp) {
+                const elapsedTime = timestamp - simulation.startTime;
+                const simDuration = simTimeInput.value * 1000;
+                if (elapsedTime >= simDuration) {
+                    updateBandPositions(1);
+                    drawFullGel();
+                    stopSimulation();
+                    progressFill.style.width = '100%';
+                    return;
+                }
+                const progress = elapsedTime / simDuration;
+                progressFill.style.width = `${progress * 100}%`;
+                updateBandPositions(progress);
+                drawFullGel();
+                simulation.animationFrameId = requestAnimationFrame(animationLoop);
+            }
+
+            function updateBandPositions(progress) {
+                const voltage = parseFloat(voltageInput.value);
+                const realTime = parseFloat(realTimeInput.value);
+                const maxMigrationDist = canvas.height - settings.gelPadding * 2 - settings.wellHeight;
+                simulation.bands.forEach(band => {
+                    const mobility = 1 / (Math.log10(band.size) || 1);
+                    const migrationConstant = 300; 
+                    let distance = migrationConstant * mobility * (voltage / 100) * (realTime / 30);
+                    distance = Math.min(distance, maxMigrationDist);
+                    band.yPos = (settings.gelPadding + settings.wellHeight) + (distance * progress);
+                });
+            }
+            
+            // --- Event Handlers & Download ---
+            function handleHover(e) {
+                if (!settings.showBpHover) {
+                    tooltip.style.display = 'none';
+                    return;
+                }
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top; // Relative to viewport
+                
+                // Adjust y for scrolled position on mobile
+                const isMobile = window.innerWidth <= 768;
+                const adjustedY = y + (isMobile ? document.documentElement.scrollTop : 0);
+
+                let hoveredBand = null;
+                for (let i = simulation.bands.length - 1; i >= 0; i--) {
+                    const band = simulation.bands[i];
+                    const totalWellsWidth = settings.numWells * (settings.wellWidth + settings.wellPadding) - settings.wellPadding;
+                    const startX = (canvas.width - totalWellsWidth) / 2;
+                    const bandX = startX + band.wellIndex * (settings.wellWidth + settings.wellPadding);
+                    if (x >= bandX && x <= bandX + settings.wellWidth && adjustedY >= band.yPos - 4 && adjustedY <= band.yPos + 4) {
+                        hoveredBand = band; break;
+                    }
+                }
+                if (hoveredBand) {
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${e.clientX + 15}px`;
+                    tooltip.style.top = `${e.clientY}px`;
+                    tooltip.textContent = `${hoveredBand.size} bp`;
+                } else {
+                    tooltip.style.display = 'none';
+                }
+            }
+            
+            function downloadImage(withBg) {
+                drawFullGel(!withBg);
+                const link = document.createElement('a');
+                link.download = `gel_simulation_${withBg ? 'bg' : 'trans'}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                drawFullGel();
+                downloadModal.style.display = 'none';
+            }
+            
+            function saveSettings() {
+                settings.customGelCss = customGelCssInput.value;
+                settings.showSampleNames = showSampleNamesCheck.checked;
+                settings.showBpHover = showBpHoverCheck.checked;
+                
+                settings.bandCssMode = sameStyleCheck.checked ? 'single' : 'multi';
+                
+                if (settings.bandCssMode === 'single') {
+                    settings.bandCssSingle = bandCssSingleInput.value;
+                } else {
+                    const currentWellIndex = wellStyleSelect.value - 1;
+                    settings.bandCssMulti[currentWellIndex] = bandCssMultiInput.value;
+                }
+                
+                settingsModal.style.display = 'none';
+                drawFullGel();
+            }
+
+            function addEventListeners() {
+                window.addEventListener('resize', resizeCanvas);
+                numWellsInput.addEventListener('change', updateWellsUI);
+                ladderWellSelect.addEventListener('change', updateLadderWellState);
+                runButton.addEventListener('click', toggleSimulation);
+                
+                settingsButton.addEventListener('click', () => settingsModal.style.display = 'flex');
+                saveSettingsButton.addEventListener('click', saveSettings);
+                downloadButton.addEventListener('click', () => downloadModal.style.display = 'flex');
+                
+                downloadBgBtn.addEventListener('click', () => downloadImage(true));
+                downloadTransBtn.addEventListener('click', () => downloadImage(false));
+
+                window.addEventListener('click', (event) => {
+                    if (event.target == settingsModal) settingsModal.style.display = "none";
+                    if (event.target == downloadModal) downloadModal.style.display = "none";
+                });
+                
+                canvas.addEventListener('mousemove', handleHover);
+                canvas.addEventListener('mouseout', () => tooltip.style.display = 'none');
+
+                sameStyleCheck.addEventListener('change', () => {
+                    if (sameStyleCheck.checked) {
+                        singleStyleContainer.style.display = 'block';
+                        multiStyleContainer.style.display = 'none';
+                    } else {
+                        singleStyleContainer.style.display = 'none';
+                        multiStyleContainer.style.display = 'block';
+                        const wellIndex = wellStyleSelect.value - 1;
+                        bandCssMultiInput.value = settings.bandCssMulti[wellIndex] || settings.bandCssSingle;
+                    }
+                });
+                
+                let lastStyleWell = 0;
+                wellStyleSelect.addEventListener('focus', () => {
+                     lastStyleWell = wellStyleSelect.value - 1;
+                });
+                wellStyleSelect.addEventListener('change', () => {
+                    settings.bandCssMulti[lastStyleWell] = bandCssMultiInput.value;
+                    const newWellIndex = wellStyleSelect.value - 1;
+                    bandCssMultiInput.value = settings.bandCssMulti[newWellIndex] || settings.bandCssSingle;
+                });
+            }
+
+            initialize();
+        });
+    </script>
+</body>
+</html>
+
+
