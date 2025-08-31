@@ -1460,6 +1460,97 @@ function updateChartFromUI() {
                 }
             });
             data = sortedLabels.map(lbl => tableDataMap.get(lbl) || null);
+            
+// REPLACE your old updateChartFromUI function with this complete, corrected version
+
+function updateChartFromUI() {
+    if (!chart) return;
+
+    const allTables = dataTablesList.querySelectorAll('.data-table-container');
+    const newDatasets = [];
+    const chartType = chartTypeSelect.value;
+    const isLinearType = chartType === 'line' || chartType === 'scatter';
+    
+    // --- Get values from all settings controls ---
+    const isSmoothed = smoothLinesToggle.checked;
+    const smoothingValue = parseFloat(lineSmoothingSlider.value);
+    const pointRadius = showPointsToggle.checked ? 3 : 0;
+    const borderWidth = lineWidthSlider.value;
+    const shouldReturnToZero = returnToZeroToggle.checked;
+
+    // --- Universal Data & Label Collection ---
+    let universalLabels = new Set();
+    if (!isLinearType) {
+        allTables.forEach(table => {
+            table.querySelectorAll('tbody tr .x-val').forEach(input => {
+                if (input.value.trim()) universalLabels.add(input.value.trim());
+            });
+        });
+    }
+    const sortedLabels = Array.from(universalLabels).sort();
+
+    // --- Process Each Table into a Dataset ---
+    allTables.forEach(table => {
+        const label = table.dataset.label;
+        const color = table.dataset.color;
+        let data;
+
+        if (isLinearType) {
+            data = [];
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const x = parseFloat(row.querySelector('.x-val').value);
+                const y = parseFloat(row.querySelector('.y-val').value);
+                if (!isNaN(x)) {
+                    data.push({ x: x, y: isNaN(y) ? null : y });
+                }
+            });
+            data.sort((a, b) => a.x - b.x);
+
+            // --- NEW AND IMPROVED "RETURN TO ZERO" (PEAK PLOT) LOGIC ---
+            if (shouldReturnToZero && chartType === 'line') {
+                const peakData = [];
+                const x_offset = 0.001; // A tiny value to create the rise/fall
+                
+                data.forEach(point => {
+                    if (point.y !== null && point.y !== 0) {
+                        // 1. The Rise
+                        peakData.push({ x: point.x - x_offset, y: 0 });
+                        // 2. The Peak
+                        peakData.push(point);
+                        // 3. The Fall
+                        peakData.push({ x: point.x + x_offset, y: 0 });
+                    }
+                });
+                
+                newDatasets.push({
+                    label: label, data: peakData, borderColor: color, backgroundColor: color,
+                    tension: 0, // Smoothing must be off for this effect
+                    pointRadius: 0, // Hide points for a cleaner look
+                    borderWidth: borderWidth
+                });
+            } else {
+                // --- Default behavior for Line/Scatter charts ---
+                newDatasets.push({
+                    label: label,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: isSmoothed ? smoothingValue : 0,
+                    pointRadius: pointRadius,
+                    borderWidth: borderWidth
+                });
+            }
+        } else {
+            // Logic for Bar/Pie/etc.
+            const tableDataMap = new Map();
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const x = row.querySelector('.x-val').value.trim();
+                const y = parseFloat(row.querySelector('.y-val').value);
+                if (x && !isNaN(y)) {
+                    tableDataMap.set(x, y);
+                }
+            });
+            data = sortedLabels.map(lbl => tableDataMap.get(lbl) || null);
             newDatasets.push({
                 label: label, data: data, borderColor: color, backgroundColor: color,
                 borderWidth: borderWidth
@@ -1495,6 +1586,7 @@ function updateChartFromUI() {
 
     chart.update();
 }
+
 
 
             // --- Dynamic Element Creation ---
