@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelRF - TLC Chromatography Analyzer | Enscygen ORT</title>
+  <link rel="icon" type="image/x-icon" href="/Favicon.png">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset and Theming */
+        :root {
+            --bg-color: #1a1a1a;
+            --primary-color: #2a2a2a;
+            --secondary-color: #3c3c3c;
+            --accent-color: #00aaff;
+            --text-color: #e0e0e0;
+            --text-muted-color: #888;
+            --border-color: #444;
+            --danger-color: #ff5555;
+            --font-family: 'Inter', sans-serif;
+            --font-size-sm: 12px;
+            --font-size-md: 14px;
+            --border-radius: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color);
+            font-size: var(--font-size-md); display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        /* Main Application Layout */
+        .app-container { display: flex; flex-grow: 1; height: calc(100vh - 40px); position: relative; }
+        header {
+            background-color: var(--primary-color); padding: 0 15px; height: 40px; display: flex;
+            align-items: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; z-index: 10;
+        }
+        header .title { font-size: 16px; font-weight: 600; margin-right: auto; }
+        header .title i { color: var(--accent-color); margin-right: 8px; }
+        #panel-toggle { display: none; }
+
+        /* Control Panel (Right Sidebar) */
+        .control-panel {
+            width: 320px; background-color: var(--primary-color); border-left: 1px solid var(--border-color);
+            padding: 15px; display: flex; flex-direction: column; overflow-y: auto;
+            transition: transform 0.3s ease, width 0.3s ease; flex-shrink: 0;
+        }
+        .panel-section { margin-bottom: 20px; }
+        .panel-section h3 {
+            font-size: var(--font-size-md); font-weight: 600; margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 5px; display: flex; align-items: center;
+        }
+        .panel-section h3 i { margin-right: 8px; color: var(--accent-color); }
+
+        /* Toolbar and Buttons */
+        .toolbar { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; margin-bottom: 15px; }
+        .tool-btn {
+            background-color: var(--secondary-color); color: var(--text-color); border: 1px solid var(--border-color);
+            border-radius: var(--border-radius); padding: 8px; cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-size: var(--font-size-sm); transition: background-color 0.2s, border-color 0.2s;
+        }
+        .tool-btn i { font-size: 18px; margin-bottom: 4px; }
+        .tool-btn:hover { background-color: #4a4a4a; }
+        .tool-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); color: #fff; }
+
+        /* Custom Form Elements */
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: var(--font-size-sm); margin-bottom: 5px; color: var(--text-muted-color); }
+        .form-group.inline { display: flex; align-items: center; justify-content: space-between; }
+        .form-group.inline label { margin-bottom: 0; color: var(--text-color); }
+        .form-group .input-group { display: flex; }
+        .form-group .input-group input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .form-group .input-group .unit {
+            padding: 0 8px; background-color: var(--secondary-color); border: 1px solid var(--border-color);
+            border-left: none; display: flex; align-items: center; border-radius: var(--border-radius);
+            border-top-left-radius: 0; border-bottom-left-radius: 0; font-size: var(--font-size-sm);
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: var(--border-radius); padding: 6px 8px; color: var(--text-color); font-size: var(--font-size-sm);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.3);
+        }
+        input[type="color"] {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 100%; height: 28px;
+            background-color: transparent; border: 1px solid var(--border-color); border-radius: var(--border-radius); cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+        input[type="color"]::-moz-color-swatch { border-radius: 4px; border: none; }
+        input[type="checkbox"] {
+            -webkit-appearance: none; appearance: none; background-color: var(--bg-color); margin: 0;
+            width: 1.15em; height: 1.15em; border: 1px solid var(--border-color); border-radius: 4px;
+            display: grid; place-content: center; cursor: pointer;
+        }
+        input[type="checkbox"]::before {
+            content: ""; width: 0.65em; height: 0.65em; transform: scale(0); transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--accent-color); background-color: var(--accent-color);
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        input[type="checkbox"]:checked::before { transform: scale(1); }
+        .btn {
+            background-color: var(--accent-color); color: white; border: none; padding: 8px 12px;
+            border-radius: var(--border-radius); cursor: pointer; font-size: var(--font-size-sm);
+            font-weight: 500; transition: background-color 0.2s; width: 100%; text-align: center;
+        }
+        .btn i { margin-right: 5px; }
+        .btn:hover { background-color: #0088cc; }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-secondary:hover { background-color: #4a4a4a; }
+        
+        /* Element Properties & Positioning */
+        #element-properties-content, #position-controls-content { display: flex; flex-direction: column; gap: 10px; }
+        .color-input-group { display: flex; align-items: center; gap: 10px; }
+        .color-input-group label { flex-grow: 1; }
+        .color-input-group input[type="color"] { width: 50px; min-width: 50px; }
+        .pos-controls-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;
+            background-color: var(--bg-color); border-radius: var(--border-radius); padding: 4px;
+        }
+        .pos-btn {
+            background-color: var(--secondary-color); border: none; color: var(--text-color);
+            border-radius: 4px; cursor: pointer; line-height: 1; font-size: 16px; width: 100%; height: 28px;
+        }
+        .pos-btn:hover { background-color: #4a4a4a; }
+        #pos-up { grid-column: 2; } #pos-left { grid-column: 1; } #pos-right { grid-column: 3; } #pos-down { grid-column: 2; }
+        #pos-input { grid-column: 2; text-align: center; padding: 2px; height: 28px; -moz-appearance: textfield; }
+        #pos-input::-webkit-outer-spin-button, #pos-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* Results Table */
+        .results-table-container { flex-grow: 1; overflow-y: auto; }
+        .results-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+        .results-table th, .results-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .results-table thead { position: sticky; top: 0; background-color: var(--secondary-color); }
+        .results-table tbody tr { cursor: pointer; }
+        .results-table tbody tr:hover, .results-table tbody tr.selected { background-color: #2c2c2c; }
+        .results-table .delete-spot { cursor: pointer; color: var(--danger-color); }
+
+        /* Canvas Workspace */
+        .workspace { flex-grow: 1; display: flex; align-items: center; justify-content: center; background-color: #111; overflow: hidden; position: relative; }
+        #chroma-canvas { cursor: crosshair; max-width: 100%; max-height: 100%; }
+        .placeholder-text { color: var(--text-muted-color); text-align: center; }
+        .placeholder-text i { font-size: 48px; margin-bottom: 10px; }
+        input[type="file"] { display: none; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background-color: var(--primary-color); padding: 20px; border-radius: var(--border-radius);
+            border: 1px solid var(--border-color); width: 340px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .modal-content h4 { margin-bottom: 15px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+        .modal-actions .btn { width: auto; }
+        #results-modal-content p { margin-bottom: 8px; font-size: var(--font-size-sm); }
+        #results-modal-content p span { font-weight: 600; color: var(--accent-color); }
+        #results-modal-content .formula {
+            background-color: var(--bg-color); padding: 10px; border-radius: var(--border-radius);
+            margin-top: 10px; font-family: monospace; text-align: center;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .control-panel {
+                position: fixed; right: 0; top: 40px; height: calc(100vh - 40px);
+                transform: translateX(100%); z-index: 5; width: 280px;
+            }
+            .control-panel.open { transform: translateX(0); }
+            #panel-toggle { display: block; margin-left: 10px; }
+            header .title { font-size: 14px; }
+            .btn { padding: 6px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="title"><i class="bi bi-droplet-half"></i>Enscygen PixelRF</div>
+        <label for="image-loader" class="btn btn-secondary" style="width: auto; margin-right: 10px;"><i class="bi bi-upload"></i> Load</label>
+        <input type="file" id="image-loader" accept="image/*"/>
+        <button id="export-csv" class="btn btn-secondary" style="width: auto;"><i class="bi bi-file-earmark-spreadsheet"></i> Export</button>
+        <button id="panel-toggle" class="btn btn-secondary" style="width: auto;"><i class="bi bi-layout-sidebar-inset"></i></button>
+    </header>
+
+    <div class="app-container">
+        <div class="workspace" id="workspace">
+            <div class="placeholder-text" id="placeholder-text">
+                <i class="bi bi-image"></i><p>Load an image to begin analysis</p>
+            </div>
+            <canvas id="chroma-canvas"></canvas>
+        </div>
+
+        <div class="control-panel" id="control-panel">
+            <div class="panel-section">
+                <h3><i class="bi bi-tools"></i> Tools</h3>
+                <div class="toolbar">
+                    <button class="tool-btn" data-tool="baseline" title="Set Baseline"><i class="bi bi-dash-lg"></i><span>Baseline</span></button>
+                    <button class="tool-btn" data-tool="solvent" title="Set Solvent Front"><i class="bi bi-dash-lg"></i><span>Solvent</span></button>
+                    <button class="tool-btn" data-tool="lane" title="Add Lane"><i class="bi bi-distribute-vertical"></i><span>Lane</span></button>
+                    <button class="tool-btn" data-tool="spot" title="Add Spot"><i class="bi bi-plus-circle-dotted"></i><span>Spot</span></button>
+                    <button class="tool-btn" data-tool="drag" title="Select/Drag"><i class="bi bi-hand-index-thumb"></i><span>Select</span></button>
+                    <button class="tool-btn" id="clear-all" title="Clear All"><i class="bi bi-trash"></i><span>Clear</span></button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3><i class="bi bi-sliders"></i> Settings</h3>
+                <div class="form-group inline">
+                    <label for="spot-crosshair-toggle">Spot Crosshair</label>
+                    <input type="checkbox" id="spot-crosshair-toggle">
+                </div>
+                <div class="form-group">
+                    <label for="scale-input">Pixel Scale</label>
+                    <div class="input-group">
+                        <input type="number" id="scale-input" placeholder="e.g., 100">
+                        <span class="unit">px / cm</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section" id="element-properties" style="display: none;">
+                <h3><i class="bi bi-palette"></i> Properties</h3>
+                <div id="element-properties-content"></div>
+            </div>
+            
+            <div class="panel-section" id="position-controls" style="display: none;">
+                <h3><i class="bi bi-arrows-move"></i> Positioning</h3>
+                <div id="position-controls-content">
+                    <div class="pos-controls-grid">
+                        <button class="pos-btn" id="pos-up"><i class="bi bi-arrow-up-short"></i></button>
+                        <button class="pos-btn" id="pos-left"><i class="bi bi-arrow-left-short"></i></button>
+                        <input type="number" id="pos-input" value="1" min="1">
+                        <button class="pos-btn" id="pos-right"><i class="bi bi-arrow-right-short"></i></button>
+                        <button class="pos-btn" id="pos-down"><i class="bi bi-arrow-down-short"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section" style="flex-grow: 1; display: flex; flex-direction: column;">
+                <h3><i class="bi bi-table"></i> Results</h3>
+                <div class="results-table-container">
+                    <table class="results-table">
+                        <thead><tr><th>Lane</th><th>Label</th><th>Rf</th><th></th></tr></thead>
+                        <tbody id="results-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="lane-modal">
+        <div class="modal-content">
+            <h4>Enter Lane Details</h4>
+            <div class="form-group"><label for="lane-name-input">Lane Name</label><input type="text" id="lane-name-input"></div>
+            <div class="form-group"><label for="lane-color-input">Lane Color</label><input type="color" id="lane-color-input" value="#00aaff"></div>
+            <div class="modal-actions">
+                <button id="cancel-lane-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-lane-btn" class="btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="results-modal">
+        <div class="modal-content">
+            <h4 id="results-modal-title">Spot Details</h4>
+            <div id="results-modal-content"></div>
+            <div class="modal-actions">
+                <button id="close-results-modal-btn" class="btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const canvas = document.getElementById('chroma-canvas'), ctx = canvas.getContext('2d');
+        const workspace = document.getElementById('workspace'), placeholderText = document.getElementById('placeholder-text');
+        const imageLoader = document.getElementById('image-loader'), toolBtns = document.querySelectorAll('.tool-btn');
+        const resultsBody = document.getElementById('results-body'), clearAllBtn = document.getElementById('clear-all');
+        const exportCsvBtn = document.getElementById('export-csv'), laneModal = document.getElementById('lane-modal');
+        const laneNameInput = document.getElementById('lane-name-input'), laneColorInput = document.getElementById('lane-color-input');
+        const confirmLaneBtn = document.getElementById('confirm-lane-btn'), cancelLaneBtn = document.getElementById('cancel-lane-btn');
+        const spotCrosshairToggle = document.getElementById('spot-crosshair-toggle'), scaleInput = document.getElementById('scale-input');
+        const propertiesPanel = document.getElementById('element-properties'), propertiesContent = document.getElementById('element-properties-content');
+        const posControlsPanel = document.getElementById('position-controls'), posInput = document.getElementById('pos-input');
+        const panelToggle = document.getElementById('panel-toggle'), controlPanel = document.getElementById('control-panel');
+        const resultsModal = document.getElementById('results-modal'), resultsModalContent = document.getElementById('results-modal-content');
+        const resultsModalTitle = document.getElementById('results-modal-title'), closeResultsModalBtn = document.getElementById('close-results-modal-btn');
+
+        // --- Application State ---
+        let image = null, activeTool = null;
+        let elements = { baseline: null, solvent: null, lanes: [], spots: [] };
+        let selectedElement = null, isDragging = false, dragStart = { x: 0, y: 0 };
+        let scale = 1, originX = 0, originY = 0, isPanning = false, panStart = { x: 0, y: 0 };
+        let tempLaneLine = null, lastMousePos = { x: 0, y: 0 };
+
+        // --- Event Listeners ---
+        imageLoader.addEventListener('change', handleImageLoad);
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseUp);
+        canvas.addEventListener('wheel', handleWheel);
+        toolBtns.forEach(btn => btn.addEventListener('click', () => setActiveTool(btn.dataset.tool)));
+        clearAllBtn.addEventListener('click', () => clearAll(true));
+        exportCsvBtn.addEventListener('click', exportToCSV);
+        confirmLaneBtn.addEventListener('click', confirmLane);
+        cancelLaneBtn.addEventListener('click', () => { laneModal.style.display = 'none'; tempLaneLine = null; draw(); });
+        resultsBody.addEventListener('click', handleResultsTableClick);
+        panelToggle.addEventListener('click', () => controlPanel.classList.toggle('open'));
+        workspace.addEventListener('click', (e) => { if (e.target === workspace) controlPanel.classList.remove('open'); });
+        posControlsPanel.addEventListener('click', handlePositionControls);
+        closeResultsModalBtn.addEventListener('click', () => resultsModal.style.display = 'none');
+        
+        // --- Core Functions ---
+        function handleImageLoad(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    image = new Image();
+                    image.onload = () => {
+                        placeholderText.style.display = 'none';
+                        canvas.style.display = 'block';
+                        resetCanvas();
+                    };
+                    image.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function resetCanvas() {
+            const wsRect = workspace.getBoundingClientRect();
+            const imgAR = image.width / image.height, wsAR = wsRect.width / wsRect.height;
+            canvas.width = imgAR > wsAR ? wsRect.width : wsRect.height * imgAR;
+            canvas.height = imgAR > wsAR ? wsRect.width / imgAR : wsRect.height;
+            scale = 1; originX = 0; originY = 0;
+            clearAll(false);
+            draw();
+        }
+
+        function draw() {
+            if (!image) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(originX, originY);
+            ctx.scale(scale, scale);
+            ctx.drawImage(image, 0, 0, image.width, image.height);
+            
+            const lw = 2 / scale, fz = 14 / scale;
+            ctx.font = `${fz}px ${getComputedStyle(document.body).fontFamily}`;
+
+            if (elements.baseline) drawLine(elements.baseline, 'Baseline');
+            if (elements.solvent) drawLine(elements.solvent, 'Solvent');
+            elements.lanes.forEach(l => {
+                ctx.strokeStyle = l.color; ctx.lineWidth = lw;
+                ctx.beginPath(); ctx.moveTo(l.x1, 0); ctx.lineTo(l.x1, image.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(l.x2, 0); ctx.lineTo(l.x2, image.height); ctx.stroke();
+                ctx.fillStyle = l.labelColor; ctx.fillText(l.name, Math.min(l.x1, l.x2) + 5 / scale, 15 / scale);
+            });
+            if (tempLaneLine) {
+                ctx.strokeStyle = '#FFF'; ctx.setLineDash([5/scale, 5/scale]);
+                ctx.beginPath(); ctx.moveTo(tempLaneLine.x, 0); ctx.lineTo(tempLaneLine.x, image.height); ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            elements.spots.forEach(s => {
+                ctx.strokeStyle = s.color; ctx.lineWidth = lw;
+                const radius = 5 / scale;
+                ctx.beginPath(); ctx.arc(s.x, s.y, radius, 0, 2 * Math.PI); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(s.x - radius, s.y); ctx.lineTo(s.x + radius, s.y); ctx.stroke(); // Reticle
+                if (s.label) {
+                    ctx.fillStyle = s.color; ctx.fillText(s.label, s.x + 8 / scale, s.y + 4 / scale);
+                }
+            });
+            if (selectedElement) highlightElement(selectedElement);
+            if (activeTool === 'spot' && spotCrosshairToggle.checked) drawCrosshair();
+            ctx.restore();
+        }
+        
+        function drawLine(el, label) {
+            ctx.strokeStyle = el.color; ctx.lineWidth = 2 / scale;
+            ctx.beginPath(); ctx.moveTo(0, el.y); ctx.lineTo(image.width, el.y); ctx.stroke();
+            ctx.fillStyle = el.labelColor; ctx.fillText(label, 5 / scale, el.y - 5 / scale);
+        }
+
+        function highlightElement({ type, element }) {
+            ctx.strokeStyle = 'yellow'; ctx.lineWidth = 3 / scale; ctx.setLineDash([6/scale, 3/scale]);
+            if (type === 'baseline' || type === 'solvent') {
+                ctx.beginPath(); ctx.moveTo(0, element.y); ctx.lineTo(image.width, element.y); ctx.stroke();
+            } else if (type === 'spot') {
+                ctx.beginPath(); ctx.arc(element.x, element.y, 8 / scale, 0, 2 * Math.PI); ctx.stroke();
+            } else if (type.includes('lane')) {
+                ctx.beginPath(); ctx.moveTo(element.x1, 0); ctx.lineTo(element.x1, image.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(element.x2, 0); ctx.lineTo(element.x2, image.height); ctx.stroke();
+            }
+            ctx.setLineDash([]);
+        }
+        
+        function drawCrosshair() {
+            const pos = getMousePos({ clientX: lastMousePos.x, clientY: lastMousePos.y });
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; ctx.lineWidth = 1 / scale;
+            ctx.beginPath(); ctx.moveTo(pos.x, 0); ctx.lineTo(pos.x, image.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, pos.y); ctx.lineTo(image.width, pos.y); ctx.stroke();
+        }
+
+        function setActiveTool(tool) {
+            if (tool !== 'drag') { selectedElement = null; updateUI(); }
+            activeTool = activeTool === tool ? null : tool;
+            toolBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tool === activeTool));
+            canvas.style.cursor = tool === 'pan' ? 'grab' : (tool === 'drag' ? 'default' : 'crosshair');
+        }
+
+        function clearAll(confirmFirst) {
+            if (!confirmFirst || confirm('Are you sure you want to clear all analysis data?')) {
+                elements = { baseline: null, solvent: null, lanes: [], spots: [] };
+                selectedElement = null;
+                updateUI();
+                draw();
+            }
+        }
+        
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return { x: (evt.clientX - rect.left - originX) / scale, y: (evt.clientY - rect.top - originY) / scale };
+        }
+        
+        function handleMouseMove(e) {
+            lastMousePos = { x: e.clientX, y: e.clientY };
+            if (isPanning) {
+                originX = e.clientX - panStart.x; originY = e.clientY - panStart.y;
+                draw(); return;
+            }
+            if (isDragging && selectedElement) {
+                const pos = getMousePos(e), dx = pos.x - dragStart.x, dy = pos.y - dragStart.y;
+                const { type, element, original } = selectedElement;
+                if (type === 'baseline' || type === 'solvent') element.y = original.y + dy;
+                else if (type === 'spot') { element.x = original.x + dx; element.y = original.y + dy; }
+                else if (type === 'lane') { element.x1 = original.x1 + dx; element.x2 = original.x2 + dx; }
+                else if (type === 'lane-edge1') element.x1 = pos.x;
+                else if (type === 'lane-edge2') element.x2 = pos.x;
+                updateUI(); draw(); return;
+            }
+            if (activeTool === 'drag') {
+                const nearElement = findElementNear(getMousePos(e));
+                canvas.style.cursor = nearElement ? (nearElement.type.includes('edge') ? 'ew-resize' : 'move') : 'default';
+            }
+            if (activeTool === 'spot' && spotCrosshairToggle.checked) draw();
+        }
+
+        function handleMouseDown(e) {
+            if (!image) return;
+            const pos = getMousePos(e);
+            if (activeTool === 'pan' || e.button === 1) {
+                isPanning = true; panStart.x = e.clientX - originX; panStart.y = e.clientY - originY;
+                canvas.style.cursor = 'grabbing'; return;
+            }
+            if (activeTool === 'drag') {
+                const target = findElementNear(pos);
+                selectedElement = target;
+                if (target) {
+                    isDragging = true;
+                    selectedElement.original = JSON.parse(JSON.stringify(target.element));
+                    dragStart = pos;
+                }
+                updateUI(); draw(); return;
+            }
+            switch (activeTool) {
+                case 'baseline': elements.baseline = { y: pos.y, color: '#FF3333', labelColor: '#FF3333' }; break;
+                case 'solvent': elements.solvent = { y: pos.y, color: '#33FF33', labelColor: '#33FF33' }; break;
+                case 'lane':
+                    if (!tempLaneLine) { tempLaneLine = { x: pos.x }; }
+                    else {
+                        tempLaneLine = { x1: Math.min(tempLaneLine.x, pos.x), x2: Math.max(tempLaneLine.x, pos.x) };
+                        laneModal.style.display = 'flex'; laneNameInput.value = `Lane ${elements.lanes.length + 1}`;
+                        laneNameInput.focus(); laneNameInput.select();
+                    }
+                    break;
+                case 'spot': addSpot(pos.x, pos.y); break;
+            }
+            updateUI(); draw();
+        }
+
+        function handleMouseUp(e) {
+            isPanning = false; isDragging = false;
+            if (selectedElement) selectedElement.original = null;
+            if (activeTool === 'pan' || e.button === 1) canvas.style.cursor = 'grab';
+        }
+
+        function handleWheel(e) {
+            if (!image) return; e.preventDefault();
+            const rect = canvas.getBoundingClientRect(), mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            const wheel = e.deltaY < 0 ? 1.1 : 0.9;
+            originX = mx - (mx - originX) * wheel; originY = my - (my - originY) * wheel;
+            scale *= wheel;
+            draw();
+        }
+
+        // --- Analysis Logic ---
+        function confirmLane() {
+            const name = laneNameInput.value.trim();
+            if (name && tempLaneLine.x1 !== undefined) {
+                elements.lanes.push({ ...tempLaneLine, name, color: laneColorInput.value, labelColor: laneColorInput.value });
+                elements.lanes.sort((a, b) => a.x1 - b.x1);
+                tempLaneLine = null; laneModal.style.display = 'none'; draw();
+            }
+        }
+
+        function addSpot(x, y) {
+            if (elements.lanes.length === 0) return alert('Please add at least one lane first.');
+            let laneIndex = elements.lanes.findIndex(l => x >= l.x1 && x <= l.x2);
+            if (laneIndex === -1) return alert('Spot must be placed inside a lane.');
+            const spotsInLane = elements.spots.filter(s => s.laneIndex === laneIndex).length;
+            const spotIndex = spotsInLane + 1;
+            elements.spots.push({ x, y, laneIndex, spotIndex, color: '#FFA500', label: `S${spotIndex}` });
+            reindexSpots(laneIndex);
+        }
+        
+        function reindexSpots(laneIndex) {
+            let currentSpotIndex = 1;
+            elements.spots.filter(s => s.laneIndex === laneIndex).sort((a,b) => a.y - b.y)
+                 .forEach((s) => {
+                    s.spotIndex = currentSpotIndex;
+                    if (/^S\d+$/.test(s.label) || !s.label) { // only relabel if it's default or empty
+                        s.label = `S${currentSpotIndex}`;
+                    }
+                    currentSpotIndex++;
+                 });
+            updateUI(); draw();
+        }
+
+        function calculateRf(spot) {
+            if (!elements.baseline || !elements.solvent) return { rf: 'N/A' };
+            const { y: baseY } = elements.baseline, { y: solvY } = elements.solvent;
+            if (baseY === solvY) return { rf: 'Error' };
+            const solventDist = Math.abs(solvY - baseY), spotDist = Math.abs(spot.y - baseY);
+            const minY = Math.min(baseY, solvY), maxY = Math.max(baseY, solvY);
+            if (spot.y < minY || spot.y > maxY) return { rf: 'Out of Range' };
+            return { rf: (spotDist / solventDist).toFixed(3), spotDist, solventDist };
+        }
+
+        function findElementNear({x, y}) {
+            const tol = 10 / scale;
+            for (const s of elements.spots) if (Math.hypot(s.x - x, s.y - y) < tol) return { type: 'spot', element: s };
+            for (const l of elements.lanes) {
+                if (Math.abs(l.x1 - x) < tol) return { type: 'lane-edge1', element: l };
+                if (Math.abs(l.x2 - x) < tol) return { type: 'lane-edge2', element: l };
+                if (x > l.x1 && x < l.x2) return { type: 'lane', element: l };
+            }
+            if (elements.baseline && Math.abs(elements.baseline.y - y) < tol) return { type: 'baseline', element: elements.baseline };
+            if (elements.solvent && Math.abs(elements.solvent.y - y) < tol) return { type: 'solvent', element: elements.solvent };
+            return null;
+        }
+
+        // --- UI Update & Interaction ---
+        function updateUI() { updateResults(); updateSidePanels(); }
+
+        function updateResults() {
+            resultsBody.innerHTML = '';
+            // Deselect all rows first
+            document.querySelectorAll('#results-body tr').forEach(r => r.classList.remove('selected'));
+
+            elements.spots.forEach(spot => {
+                const lane = elements.lanes[spot.laneIndex];
+                if (!lane) return;
+                const row = document.createElement('tr');
+                row.dataset.laneIndex = spot.laneIndex;
+                row.dataset.spotIndex = spot.spotIndex;
+                row.innerHTML = `<td>${lane.name}</td><td>${spot.label || ''}</td><td>${calculateRf(spot).rf}</td>
+                    <td><i class="bi bi-x-circle delete-spot"></i></td>`;
+                resultsBody.appendChild(row);
+            });
+
+            // Reselect the current element's row
+            if (selectedElement && selectedElement.type === 'spot') {
+                const { laneIndex, spotIndex } = selectedElement.element;
+                const row = resultsBody.querySelector(`tr[data-lane-index="${laneIndex}"][data-spot-index="${spotIndex}"]`);
+                if (row) row.classList.add('selected');
+            }
+        }
+        
+        function updateSidePanels() {
+            const show = !!selectedElement;
+            propertiesPanel.style.display = show ? 'block' : 'none';
+            posControlsPanel.style.display = show ? 'block' : 'none';
+            if (!show) return;
+
+            propertiesContent.innerHTML = '';
+            const { type, element } = selectedElement;
+            let title = type.includes('lane') ? 'Lane' : (type.charAt(0).toUpperCase() + type.slice(1));
+            propertiesContent.innerHTML += `<h5>Editing: ${title}</h5>`;
+
+            if (type === 'baseline' || type === 'solvent') {
+                createColorPicker('Line Color', element.color, (c) => element.color = c);
+                createColorPicker('Label Color', element.labelColor, (c) => element.labelColor = c);
+            } else if (type.includes('lane')) {
+                createTextInput('Name', element.name, (n) => element.name = n);
+                createColorPicker('Line Color', element.color, (c) => element.color = c);
+                createColorPicker('Label Color', element.labelColor, (c) => element.labelColor = c);
+            } else if (type === 'spot') {
+                createTextInput('Label', element.label, (l) => element.label = l);
+                createColorPicker('Spot Color', element.color, (c) => element.color = c);
+            }
+        }
+
+        function createColorPicker(label, value, onChange) {
+            const div = document.createElement('div'); div.className = 'color-input-group';
+            div.innerHTML = `<label>${label}</label><input type="color" value="${value}">`;
+            div.querySelector('input').addEventListener('input', (e) => { onChange(e.target.value); draw(); });
+            propertiesContent.appendChild(div);
+        }
+        function createTextInput(label, value, onChange) {
+            const div = document.createElement('div'); div.className = 'form-group';
+            div.innerHTML = `<label>${label}</label><input type="text" value="${value || ''}">`;
+            div.querySelector('input').addEventListener('input', (e) => { onChange(e.target.value); updateUI(); draw(); });
+            propertiesContent.appendChild(div);
+        }
+        
+        function handleResultsTableClick(e) {
+            const row = e.target.closest('tr');
+            if (!row) return;
+
+            const laneIndex = parseInt(row.dataset.laneIndex);
+            const spotIndex = parseInt(row.dataset.spotIndex);
+            const spot = elements.spots.find(s => s.laneIndex === laneIndex && s.spotIndex === spotIndex);
+
+            if (e.target.classList.contains('delete-spot')) {
+                elements.spots = elements.spots.filter(s => s !== spot);
+                reindexSpots(laneIndex);
+            } else {
+                selectedElement = { type: 'spot', element: spot };
+                showResultsModal(spot);
+                updateUI();
+                draw();
+            }
+        }
+
+        function showResultsModal(spot) {
+            const lane = elements.lanes[spot.laneIndex];
+            const { rf, spotDist, solventDist } = calculateRf(spot);
+            const scaleVal = parseFloat(scaleInput.value);
+            let unitText = '';
+            if (scaleVal > 0) {
+                unitText = `
+                    <p>Spot Distance: <span>${(spotDist / scaleVal).toFixed(2)} cm</span></p>
+                    <p>Solvent Distance: <span>${(solventDist / scaleVal).toFixed(2)} cm</span></p>
+                `;
+            }
+            resultsModalTitle.textContent = `Details for ${spot.label} in ${lane.name}`;
+            resultsModalContent.innerHTML = `
+                <p>Spot Distance: <span>${spotDist.toFixed(2)} px</span></p>
+                <p>Solvent Distance: <span>${solventDist.toFixed(2)} px</span></p>
+                ${unitText}
+                <div class="formula">
+                    <p>Rf = ${spotDist.toFixed(2)} / ${solventDist.toFixed(2)} = <span>${rf}</span></p>
+                </div>
+            `;
+            resultsModal.style.display = 'flex';
+        }
+
+        // --- Position Controls ---
+        function handlePositionControls(e) {
+            if (!selectedElement) return;
+            const amount = parseInt(posInput.value) || 1;
+            const { type, element } = selectedElement;
+            const target = e.target.closest('.pos-btn');
+            if (!target) return;
+
+            let dx = 0, dy = 0;
+            if (target.id === 'pos-up') dy = -amount; if (target.id === 'pos-down') dy = amount;
+            if (target.id === 'pos-left') dx = -amount; if (target.id === 'pos-right') dx = amount;
+
+            if (type === 'baseline' || type === 'solvent') element.y += dy;
+            else if (type === 'spot') { element.x += dx; element.y += dy; }
+            else if (type.includes('lane')) { element.x1 += dx; element.x2 += dx; }
+            
+            updateUI(); draw();
+        }
+
+        // --- Data Export ---
+        function exportToCSV() {
+            if (elements.spots.length === 0) return alert('No data to export.');
+            let csv = "data:text/csv;charset=utf-8,Lane Name,Spot Label,Rf Value,Spot Distance (px),Solvent Distance (px)\r\n";
+            elements.spots.forEach(s => {
+                const { rf, spotDist, solventDist } = calculateRf(s);
+                csv += `${elements.lanes[s.laneIndex].name},${s.label || ''},${rf},${spotDist || ''},${solventDist || ''}\r\n`;
+            });
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", "PixelRF_analysis.csv");
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+    });
+    </script>
+</body>
+</html>
+
+
