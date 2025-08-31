@@ -62,6 +62,65 @@
             height: 100vh;
         }
 
+        /* --- Themed Settings Modal Inputs & Sliders --- */
+
+/* Style for number inputs and select dropdowns in the modal */
+#mainSettingsModal .control-group input[type="number"],
+#mainSettingsModal .control-group select {
+    background-color: var(--bg-color); /* Use main background for contrast */
+}
+
+/* Base style to remove default browser appearance for sliders */
+#mainSettingsModal input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* --- Slider Track Styling --- */
+
+/* For Chrome, Safari, Edge (WebKit) */
+#mainSettingsModal input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: var(--border-color); /* The background bar of the slider */
+    border-radius: 4px;
+}
+
+/* For Firefox */
+#mainSettingsModal input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    background: var(--border-color); /* The background bar of the slider */
+    border-radius: 4px;
+}
+
+/* --- Slider Thumb (Handle) Styling --- */
+
+/* For Chrome, Safari, Edge (WebKit) */
+#mainSettingsModal input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -6px; /* Center the thumb on the track */
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color); /* The draggable handle */
+    border-radius: 50%;
+    border: 2px solid var(--panel-bg); /* Creates a nice border effect */
+}
+
+/* For Firefox */
+#mainSettingsModal input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent-color); /* The draggable handle */
+    border-radius: 50%;
+    border: 2px solid var(--panel-bg); /* Creates a nice border effect */
+}
+
 .range-inputs input {
     background-color: var(--input-bg);
     color: var(--text-color);
