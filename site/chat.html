@@ -1450,7 +1450,9 @@ function updateChartFromUI() {
                 // Use the modified data and override visuals for the effect
                 newDatasets.push({
                     label: label, data: peakData, borderColor: color, backgroundColor: color,
-                    tension: 0, // Smoothing must be off for this effect
+                    // This tells the chart to respect the user's smoothing toggle and slider settings
+tension: isSmoothed ? smoothingValue : 0,
+
                     pointRadius: 0, // Hide points for a cleaner look
                     borderWidth: borderWidth
                 });
