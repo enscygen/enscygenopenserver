@@ -1047,7 +1047,7 @@
 <!-- ...AND ADD THIS NEW DIV RIGHT AFTER IT -->
 <div class="control-group">
     <label for="lineSmoothingSlider">Line Smoothing (Tension)</label>
-    <input type="range" id="lineSmoothingSlider" min="0" max="1" step="0.1" value="0" style="width: 100%;">
+    <input type="range" id="lineSmoothingSlider" min="0" max="1" step="0.1" value="0.5" style="width: 100%;">
 </div>
 
             <div class="control-group">
@@ -1873,6 +1873,8 @@ settingsModalClose.addEventListener('click', () => {
 
             // Add this with the other settings event listeners
 peakWidthInput.addEventListener('input', updateChartFromUI);
+            lineSmoothingSlider.addEventListener('input', updateChartFromUI);
+
 
 
 // Apply visual changes instantly
@@ -1890,6 +1892,8 @@ resetVisualsBtn.addEventListener('click', () => {
     customGridColor = null; // Clear the custom color override
     peakWidthInput.value = 0.5;
     returnToZeroToggle.checked = false;
+    lineSmoothingSlider.value = 0.5;
+
     
     // Set the color picker back to the theme's default grid color
     const themeGridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
