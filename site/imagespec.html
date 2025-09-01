@@ -275,29 +275,407 @@
                 return { r: Math.round(255 * pow(r * factor, gamma)), g: Math.round(255 * pow(g * factor, gamma)), b: Math.round(255 * pow(b * factor, gamma)) };
             }
 
-            // --- Core Logic (Camera, Upload, Analysis) ---
-            async function getCameras() { /* ... no change ... */ }
-            async function startCamera(deviceId) { /* ... no change ... */ }
-            function stopCamera() { /* ... no change ... */ }
-            function setMode(newMode) { /* ... no change ... */ }
-            function handleImageUpload(e) { /* ... no change ... */ }
+            /**
+ * Asynchronously requests camera permissions and populates the camera selection dropdown.
+ * If permission is denied or no cameras are found, it switches the UI to upload mode.
+ */
+async function getCameras() {
+    try {
+        // Requesting a stream is necessary to get camera labels and ensure permissions are granted.
+        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        tempStream.getTracks().forEach(track => track.stop()); // Immediately stop the temporary stream.
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+        elements.cameraSelect.innerHTML = '<option value="">Select a camera...</option>';
+        if (videoDevices.length === 0) {
+           elements.cameraSelect.innerHTML = '<option value="">No cameras found</option>';
+           if(state.mode === 'camera') setMode('upload'); // Fallback to upload if no cameras
+        } else {
+            videoDevices.forEach((device, index) => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Camera ${index + 1}`;
+                elements.cameraSelect.appendChild(option);
+            });
+        }
+    } catch (error) { 
+        console.error("Error getting camera permissions:", error);
+        elements.cameraSelect.innerHTML = '<option value="">Permission denied</option>';
+        // If camera permission is denied, force the UI into upload mode as a fallback.
+        setMode('upload');
+        elements.sourceModeSelect.value = 'upload';
+    }
+}
+
+/**
+ * Starts the selected camera stream and attaches it to the video element.
+ * @param {string} deviceId - The ID of the camera device to start.
+ */
+async function startCamera(deviceId) {
+    if (state.mode !== 'camera' || !deviceId) return;
+    stopMedia(); // Ensure any previous media is stopped.
+
+    const constraints = { video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } };
+    try {
+        state.currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        elements.video.srcObject = state.currentStream;
+        await elements.video.play();
+        elements.video.classList.remove('hidden');
+        elements.message.classList.add('hidden');
+        
+        // Wait for the video metadata to load to get correct dimensions.
+        elements.video.addEventListener('loadedmetadata', () => { 
+            state.mediaReady = true;
+            updateAllRoisPosition();
+            updateUI();
+        }, { once: true });
+    } catch (error) { 
+        console.error("Failed to start camera:", error);
+        showMessage('bi-exclamation-triangle-fill', `Failed to start camera.`); 
+        state.mediaReady = false; 
+        updateUI();
+    }
+}
+
+/**
+ * Stops the current media source (camera stream) and resets the media-ready state.
+ */
+function stopMedia() {
+    state.mediaReady = false;
+    if (state.currentStream) {
+        state.currentStream.getTracks().forEach(track => track.stop());
+        state.currentStream = null;
+    }
+}
+
+/**
+ * Sets the application's primary analysis mode (camera or upload).
+ * This function handles all UI changes and initialization for the selected mode.
+ * @param {string} newMode - The mode to switch to, either 'camera' or 'upload'.
+ */
+function setMode(newMode) {
+    state.mode = newMode;
+    stopMedia();
+    resetZoomAndScroll();
+    
+    // Hide all media elements initially for a clean switch.
+    elements.video.classList.add('hidden');
+    elements.uploadedImage.classList.add('hidden');
+    
+    // Toggle visibility of the specific controls for camera vs. upload.
+    elements.cameraControl.classList.toggle('hidden', newMode !== 'camera');
+    elements.uploadControl.classList.toggle('hidden', newMode === 'camera');
+
+    if (newMode === 'camera') {
+        const camSelect = elements.cameraSelect;
+        // Check if there is a valid camera selected before trying to start it.
+        if (camSelect.value && camSelect.value !== "Permission denied" && camSelect.value !== "No cameras found") {
+            startCamera(camSelect.value);
+        } else {
+            showMessage('bi-camera-video-off', 'Select a camera to begin.');
+        }
+    } else { // 'upload' mode
+        // If an image was already uploaded, show it. Otherwise, show the prompt.
+        if (elements.uploadedImage.src) { 
+            elements.uploadedImage.classList.remove('hidden'); 
+            elements.message.classList.add('hidden');
+            state.mediaReady = true;
+        }
+        else { showMessage('bi-upload', 'Upload an image to begin analysis.'); }
+    }
+    updateAllRoisPosition();
+    updateUI();
+}
+
+/**
+ * Handles the file input change event when a user selects an image to upload.
+ * @param {Event} e - The file input change event.
+ */
+function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    stopMedia();
+    resetZoomAndScroll();
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        elements.uploadedImage.src = event.target.result;
+        elements.uploadedImage.onload = () => {
+            elements.uploadedImage.classList.remove('hidden');
+            elements.message.classList.add('hidden');
+            state.mediaReady = true;
+            updateAllRoisPosition();
+            updateUI();
+        };
+        elements.uploadedImage.onerror = () => {
+            showMessage('bi-exclamation-triangle-fill', 'Failed to load image file.');
+            state.mediaReady = false;
+            updateUI();
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
             function getActiveMediaElement(){ return state.mode === 'camera' ? video : uploadedImage; }
             function showMessage(iconClass, text) { message.classList.remove('hidden'); messageIcon.className = `bi ${iconClass}`; messageText.textContent = text; }
 
-            // --- ROI Logic ---
-            function updateRoiFromControls() { /* ... no change ... */ }
-            function updateRoiVisibility() { /* ... no change ... */ }
-            function updateRoiPosition() { /* ... no change ... */ }
-            mediaContainer.addEventListener('mousemove', (e) => { /* ... no change ... */ });
+            /**
+ * Reads ROI control values (shape, size) and updates the currently selected ROI.
+ * If no ROI is selected, it does nothing.
+ */
+function updateRoiFromControls() {
+    if (state.selectedRoiId === null) return;
 
-            // --- Analysis & Measurement ---
-            function analyzeCurrentFrame() { /* ... no change ... */ }
-            function handleCalibrate() { /* ... no change ... */ }
-            function handleMeasure() { /* ... no change ... */ }
-            function handleLogMeasurement() { /* ... no change ... */ }
+    const roi = state.rois.find(r => r.id === state.selectedRoiId);
+    if (!roi) return;
 
-            // --- Wavelength & Data Management ---
-            function handleAddWavelength() { /* ... no change ... */ }
+    const newShape = elements.roiShapeSelect.value;
+    const newSize = parseInt(elements.roiSizeInput.value, 10) || 50;
+
+    roi.shape = newShape;
+    roi.size = newSize;
+
+    updateAllRoisPosition(); // Visually update the changed ROI
+    updateUI(); // Update the ROI table
+}
+
+/**
+ * Shows or hides all ROI indicators based on whether a valid media source is ready.
+ */
+function updateRoiVisibility() {
+    elements.roiOverlay.classList.toggle('hidden', !state.mediaReady);
+}
+
+/**
+ * Recalculates and applies the CSS position and size for all ROI indicators.
+ * This is crucial for handling zoom and scroll changes.
+ */
+function updateAllRoisPosition() {
+    const scrollLeft = elements.mediaContainer.scrollLeft;
+    const scrollTop = elements.mediaContainer.scrollTop;
+
+    state.rois.forEach(roi => {
+        const roiEl = document.getElementById(`roi-${roi.id}`);
+        if (roiEl) {
+            // Calculate the position on the screen based on ROI's absolute position, zoom, and scroll
+            const cssX = roi.x * state.zoom - scrollLeft;
+            const cssY = roi.y * state.zoom - scrollTop;
+            const cssSize = roi.size * state.zoom;
+
+            // Apply the calculated styles to the visual indicator div
+            roiEl.style.width = `${cssSize}px`;
+            roiEl.style.height = `${cssSize}px`;
+            roiEl.style.left = `${cssX - cssSize / 2}px`;
+            roiEl.style.top = `${cssY - cssSize / 2}px`;
+        }
+    });
+}
+
+/**
+ * Event Listener for mouse movement over the media container.
+ * This handles the dragging logic for ROIs.
+ */
+elements.mediaContainer.addEventListener('mousemove', (e) => {
+    // Only proceed if a drag operation is in progress.
+    if (state.draggingRoiId === null) return;
+
+    // Find the ROI being dragged in the state array.
+    const roi = state.rois.find(r => r.id === state.draggingRoiId);
+    if (!roi) return;
+
+    // Calculate the mouse's movement since the drag started (the delta).
+    const dx = e.clientX - state.dragStart.x;
+    const dy = e.clientY - state.dragStart.y;
+
+    // Update the ROI's absolute position. The movement delta needs to be
+    // scaled down by the current zoom level to correctly map screen pixels to image pixels.
+    roi.x += dx / state.zoom;
+    roi.y += dy / state.zoom;
+
+    // Reset the drag start position to the current mouse position for the next move event.
+    state.dragStart.x = e.clientX;
+    state.dragStart.y = e.clientY;
+
+    // Visually update all ROIs on the screen to reflect the new position of the dragged ROI.
+    updateAllRoisPosition();
+});
+
+
+            /**
+ * Analyzes the pixel data within a given ROI on the currently active media.
+ * @param {object} roi - The ROI object to analyze.
+ * @returns {object|null} An object with average {r, g, b} values, or null if analysis fails.
+ */
+function analyzeRoi(roi) {
+    if (!state.mediaReady) return null;
+    const media = getActiveMediaElement();
+    let naturalWidth, naturalHeight;
+
+    if (state.mode === 'camera') {
+        if (!media.srcObject || !(elements.video.readyState >= 2)) return null;
+        naturalWidth = elements.video.videoWidth;
+        naturalHeight = elements.video.videoHeight;
+    } else {
+        if (!(elements.uploadedImage.complete && elements.uploadedImage.naturalWidth > 0)) return null;
+        naturalWidth = elements.uploadedImage.naturalWidth;
+        naturalHeight = elements.uploadedImage.naturalHeight;
+    }
+
+    if (naturalWidth === 0) return null;
+
+    elements.canvas.width = naturalWidth;
+    elements.canvas.height = naturalHeight;
+    elements.ctx.drawImage(media, 0, 0, naturalWidth, naturalHeight);
+
+    let r = 0, g = 0, b = 0, count = 0;
+    const radius = roi.size / 2;
+    const startX = Math.max(0, Math.floor(roi.x - radius));
+    const startY = Math.max(0, Math.floor(roi.y - radius));
+    const endX = Math.min(naturalWidth, Math.floor(roi.x + radius));
+    const endY = Math.min(naturalHeight, Math.floor(roi.y + radius));
+
+    if (endX <= startX || endY <= startY) return { r: 0, g: 0, b: 0 };
+
+    const roiWidth = endX - startX;
+    const roiHeight = endY - startY;
+    const imageData = elements.ctx.getImageData(startX, startY, roiWidth, roiHeight);
+    const data = imageData.data;
+
+    for (let y = 0; y < roiHeight; y++) {
+        for (let x = 0; x < roiWidth; x++) {
+            let include = (roi.shape === 'square') || (Math.pow((startX + x) - roi.x, 2) + Math.pow((startY + y) - roi.y, 2) <= radius * radius);
+            if (include) {
+                const i = (y * roiWidth + x) * 4;
+                r += data[i];
+                g += data[i + 1];
+                b += data[i + 2];
+                count++;
+            }
+        }
+    }
+    return count > 0 ? { r: r / count, g: g / count, b: b / count } : { r: 0, g: 0, b: 0 };
+}
+
+/**
+ * Calibrates the system by analyzing the ROI designated as 'Calibrator'.
+ * Stores the resulting RGB values as the blank/baseline for future calculations.
+ */
+function handleCalibrate() {
+    const calibratorRoi = state.rois.find(r => r.type === 'Calibrator');
+    if (!calibratorRoi) {
+        alert("Please define one ROI as 'Calibrator' type first.");
+        return;
+    }
+    const analysis = analyzeRoi(calibratorRoi);
+    if (analysis) {
+        state.blankRgb = { r: analysis.r, g: analysis.g, b: analysis.b };
+        state.isCalibrated = true;
+        updateUI();
+        // Flash a confirmation on the button
+        elements.calibrateBtn.style.backgroundColor = 'var(--accent-green)';
+        setTimeout(() => { elements.calibrateBtn.style.backgroundColor = ''; }, 1000);
+    } else {
+        alert("Calibration failed. Ensure Calibrator ROI is within the image bounds.");
+    }
+}
+
+/**
+ * Acts as a dispatcher for the main "Run Analysis" button.
+ * It reads the current analysis mode and calls the appropriate function.
+ * Also handles stopping an ongoing Kinetics analysis.
+ */
+function handleRunAnalysis() {
+    if (state.isAnalyzing) { // Stop analysis if it's running
+        if (state.kineticsTimer) {
+            clearInterval(state.kineticsTimer);
+            state.kineticsTimer = null;
+        }
+        state.isAnalyzing = false;
+        updateUI();
+        return;
+    }
+
+    const mode = elements.analysisModeSelect.value;
+    if (mode === 'point') runPointMeasurement();
+    else if (mode === 'kinetics') runKinetics();
+    else if (mode === 'scan') runSpectralScan();
+}
+
+/**
+ * Performs a one-time absorbance measurement for all 'Sample' ROIs
+ * across RGB and any custom-defined wavelengths.
+ */
+function runPointMeasurement() {
+    if (!state.isCalibrated) { alert("Please calibrate first."); return; }
+    const sampleRois = state.rois.filter(r => r.type === 'Sample');
+    if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
+
+    const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
+    let resultsLog = [];
+    state.analysisData = { type: 'point', results: [] };
+
+    sampleRois.forEach(roi => {
+        const sampleRgb = analyzeRoi(roi);
+        if (sampleRgb) {
+            const abs = {
+                R: safeLog(state.blankRgb.r, sampleRgb.r),
+                G: safeLog(state.blankRgb.g, sampleRgb.g),
+                B: safeLog(state.blankRgb.b, sampleRgb.b)
+            };
+            resultsLog.push({ id: `result_R_${roi.id}`, Sample: `${roi.name} (R)`, Value: abs.R.toFixed(4) });
+            resultsLog.push({ id: `result_G_${roi.id}`, Sample: `${roi.name} (G)`, Value: abs.G.toFixed(4) });
+            resultsLog.push({ id: `result_B_${roi.id}`, Sample: `${roi.name} (B)`, Value: abs.B.toFixed(4) });
+
+            state.pointWavelengths.forEach(wl => {
+                const targetRgb = wavelengthToRgb(wl);
+                const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
+                const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
+                const wlAbs = safeLog(blankIntensity, sampleIntensity);
+                resultsLog.push({ id: `result_wl_${wl}_${roi.id}`, Sample: `${roi.name} (${wl}nm)`, Value: wlAbs.toFixed(4) });
+            });
+        }
+    });
+    state.analysisData.results = resultsLog;
+    updateUI();
+}
+
+            /**
+ * Handles adding a new custom wavelength for point measurements.
+ * It reads the value from the input, validates it, and updates the state.
+ */
+function handleAddWavelength() {
+    // 1. Get the value from the wavelength input element and parse it as an integer.
+    const wl = parseInt(elements.wavelengthInput.value, 10);
+
+    // 2. Validate the input.
+    //    - Is it a valid number?
+    //    - Is it within the visible spectrum (380nm to 780nm)?
+    //    - Is it a duplicate of a wavelength already added?
+    if (isNaN(wl) || wl < 380 || wl > 780) {
+        alert("Please enter a valid wavelength between 380 and 780 nm.");
+        elements.wavelengthInput.value = ''; // Clear invalid input
+        return;
+    }
+    if (state.pointWavelengths.includes(wl)) {
+        alert("This wavelength has already been added.");
+        elements.wavelengthInput.value = ''; // Clear duplicate input
+        return;
+    }
+
+    // 3. If validation passes, add the new wavelength to the state array.
+    state.pointWavelengths.push(wl);
+    state.pointWavelengths.sort((a, b) => a - b); // Keep the list sorted.
+
+    // 4. Clear the input field to prepare for the next entry.
+    elements.wavelengthInput.value = '';
+
+    // 5. Trigger a full UI update to render the new wavelength result box.
+    updateUI();
+}
+
             function handleDeleteWavelength(wl) {
                 state.customWavelengths = state.customWavelengths.filter(w => w !== wl);
                 state.measurements.forEach(m => delete m[`abs${wl}`]);
@@ -307,7 +685,30 @@
                 updateUI();
             }
 
-            function handleDeleteMeasurement(id) { /* ... no change ... */ }
+            /**
+ * Deletes a specific measurement from the analysis data log based on its unique ID.
+ * @param {number} id - The unique ID of the measurement record to delete.
+ */
+function handleDeleteMeasurement(id) {
+    // Ensure the ID from the dataset is treated as a number for strict comparison.
+    const idToDelete = parseInt(id, 10);
+    if (isNaN(idToDelete)) {
+        console.error("Invalid ID passed to handleDeleteMeasurement:", id);
+        return;
+    }
+
+    // Check if the main analysis data object exists.
+    if (state.analysisData && state.analysisData.results) {
+        // Filter the results array, creating a new array that excludes the item with the matching ID.
+        state.analysisData.results = state.analysisData.results.filter(result => result.id !== idToDelete);
+    }
+
+    // After modifying the application's state, trigger a full UI refresh.
+    // This single call will handle redrawing the results table and updating the chart
+    // to reflect the removal of the data point.
+    updateUI();
+}
+
 
             function handleCsvUpload(event) {
                 const file = event.target.files[0];
