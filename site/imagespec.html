@@ -7,6 +7,7 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
@@ -21,110 +22,103 @@
         html { color-scheme: dark; }
         body {
             background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-main);
-            font-size: 14px; display: flex; height: 100vh; overflow: hidden; overscroll-behavior: none;
+            font-size: 12px;
+            display: flex; height: 100vh; overflow: hidden;
         }
         aside {
-            width: 33.33%; min-width: 450px; max-width: 500px; height: 100%; display: flex;
-            flex-direction: column; padding: 0.75rem; gap: 0.75rem;
+            width: 33.33%; min-width: 420px; max-width: 450px; height: 100%; display: flex;
+            flex-direction: column; padding: 6px; gap: 6px; overflow-y: auto;
         }
-        main { flex-grow: 1; height: 100%; display: flex; flex-direction: column; padding: 0.75rem; }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-card); }
-        ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+        main { flex-grow: 1; height: 100%; display: flex; flex-direction: column; padding: 6px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px;}
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 4px; border: 2px solid var(--bg-primary); }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
         .card {
             background-color: var(--bg-card); border: 1px solid var(--border-primary);
-            border-radius: 0.5rem; padding: 1rem; flex-shrink: 0;
+            border-radius: 6px; padding: 10px; flex-shrink: 0;
         }
         .card-grow { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; }
-        h1 { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--text-white); }
-        h2 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; color: var(--text-white); margin-bottom: 0.5rem; }
-        header p { font-size: 0.875rem; color: var(--text-secondary); }
-        label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.25rem; }
-        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-        .form-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+        h1 { font-size: 18px; font-weight: 600; color: var(--text-white); margin: 0; padding: 0;}
+        h2 { font-size: 13px; font-weight: 600; color: var(--text-white); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        header p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        label { display: block; font-size: 10px; font-weight: 500; color: var(--text-secondary); margin-bottom: 3px; text-transform: uppercase; }
+        .control-group { display: flex; gap: 10px; align-items: flex-end; }
+        .control-group > div { flex: 1; }
         .form-input, .form-select {
             background-color: var(--border-primary); border: 1px solid var(--border-secondary);
-            color: var(--text-primary); border-radius: 0.375rem; padding: 0.5rem 0.75rem;
-            font-size: 0.875rem; width: 100%; box-sizing: border-box;
+            color: var(--text-primary); border-radius: 4px; padding: 4px 7px;
+            font-size: 12px; width: 100%; box-sizing: border-box; transition: all 0.2s;
         }
         .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); }
-        input[type='number'] { -moz-appearance: textfield; }
-        input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; font-size: 0.875rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+            padding: 4px 9px; border-radius: 4px; font-weight: 500; font-size: 12px;
             transition: all 0.2s; border: 1px solid transparent; cursor: pointer; width: 100%;
         }
-        .btn-primary { background-color: var(--accent-blue); color: white; border-color: var(--accent-blue); }
-        .btn-primary:hover { background-color: var(--accent-blue-hover); }
-        .btn-secondary { background-color: var(--border-secondary); color: white; border-color: #6b7280; }
-        .btn-secondary:hover { background-color: #6b7280; }
-        .btn-danger { background-color: var(--accent-red); color: white; border-color: var(--accent-red); }
-        .btn-danger:hover { background-color: var(--accent-red-hover); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .media-wrapper { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 6px;}
         #mediaContainer {
-            width: 100%; height: 100%; position: relative; display: flex; align-items: center;
-            justify-content: center; background-color: black; border-radius: 0.375rem;
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            background-color: black; overflow: auto; cursor: crosshair;
         }
-        #video, #uploadedImage { max-width: 100%; max-height: 100%; }
-        #message { position: absolute; text-align: center; color: var(--text-secondary); }
-        .hidden { display: none; } .flex-end { display: flex; align-items: flex-end; }
-        #roi {
-            position: absolute; border: 2px dashed rgba(0, 255, 255, 0.7); cursor: move;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); border-radius: 0;
+        #video, #uploadedImage { transform-origin: top left; max-width: none; position: absolute; top: 0; left: 0; }
+        #roiOverlay { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
+        .roi-indicator {
+            position: absolute; border: 1px solid white;
+            box-shadow: 0 0 8px rgba(0,0,0,0.7); 
+            background-color: rgba(255, 255, 255, 0.1); 
+            cursor: move; pointer-events: auto;
         }
-        #roi.circle { border-radius: 50%; }
-        #roi-point-selector {
-            position: absolute; width: 20px; height: 20px; border: 1px solid white; 
-            background-image: linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px);
-            background-size: 2px 2px; background-position: 10px 10px; cursor: crosshair;
+        .roi-indicator.circle { border-radius: 50%; }
+        .roi-indicator.selected { border-width: 2px; box-shadow: 0 0 12px rgba(59, 130, 246, 0.8); }
+        .roi-indicator.calibrator { border-style: dashed; }
+        #message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: var(--text-secondary); padding: 16px;}
+        .hidden { display: none; }
+
+        .table-container { max-height: 150px; overflow-y: auto; border: 1px solid var(--border-primary); border-radius: 6px; position: relative; font-size: 11px;}
+        table { width: 100%; font-size: 11px; text-align: left; border-collapse: collapse; }
+        thead { background-color: var(--bg-card); position: sticky; top: 0; z-index: 10; }
+        th, td { padding: 5px; border-bottom: 1px solid var(--border-primary); }
+        td { vertical-align: middle; }
+        .color-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.2); }
+        
+        .chart-container { position: relative; min-height: 150px; flex-grow: 1; margin-top: 8px; }
+        .delete-btn { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; } .delete-btn:hover { color: var(--accent-red); }
+        .button-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; } 
+
+        #pointMeasurementCard .result-box {
+            padding: 5px; border-radius: 4px; flex-grow: 1;
+            min-width: 60px; position: relative; text-align: center;
         }
-        #calibrationStatus { display: flex; align-items: center; gap: 0.5rem; height: 100%; font-size: 0.875rem; }
-        #results { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; text-align: center; }
-        .result-box {
-            padding: 0.5rem; border-radius: 0.25rem; flex-grow: 1;
-            min-width: 80px; position: relative;
+        #pointMeasurementCard .font-bold { font-weight: 600; font-size: 10px; text-transform: uppercase; }
+        #pointMeasurementCard .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        #pointMeasurementCard .text-lg { font-size: 14px; }
+        #pointMeasurementCard .bg-red { background-color: rgba(127, 29, 29, 0.5); } 
+        #pointMeasurementCard .bg-green { background-color: rgba(21, 128, 61, 0.5); }
+        #pointMeasurementCard .bg-blue { background-color: rgba(30, 64, 175, 0.5); }
+        
+        @media (max-width: 1024px) {
+            body { flex-direction: column; height: auto; overflow-y: auto; font-size: 14px; }
+            aside { width: 100%; max-width: none; height: auto; overflow-y: visible; padding: 8px; }
+            main { width: 100%; height: 60vh; padding: 0 8px 8px 8px; }
+            .control-group { flex-direction: column; align-items: stretch; gap: 12px;}
         }
-        .delete-wl-btn {
-            position: absolute; top: 2px; left: 4px; cursor: pointer; color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-        .delete-wl-btn:hover { color: var(--accent-red); }
-        #results .font-bold, #concentrationResult .font-bold { font-weight: 700; }
-        #results .font-mono, #concentrationResult .font-mono, #curveFitInfo, .font-mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-        #results .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .bg-red { background-color: rgba(127, 29, 29, 0.5); } .bg-green { background-color: rgba(21, 128, 61, 0.5); }
-        .bg-blue { background-color: rgba(30, 64, 175, 0.5); }
-        #concentrationResult { margin-top: 0.5rem; text-align: center; }
-        #estConc { font-size: 1.875rem; line-height: 2.25rem; color: var(--accent-cyan); }
-        .chart-container { position: relative; flex-grow: 1; height: 8rem; margin-bottom: 0.5rem; }
-        #curveFitInfo { font-size: 0.75rem; text-align: center; background-color: var(--bg-primary); padding: 0.25rem; border-radius: 0.25rem; margin-bottom: 0.5rem; }
-        .table-container { flex-grow: 1; overflow-y: auto; border: 1px solid var(--border-primary); border-radius: 0.375rem; position: relative; }
-        table { width: 100%; font-size: 0.75rem; text-align: left; border-collapse: collapse; }
-        thead { background-color: var(--bg-card); position: sticky; top: 0; }
-        th, td { padding: 0.5rem; }
-        .delete-btn { cursor: pointer; color: var(--text-secondary); } .delete-btn:hover { color: var(--accent-red); }
-        .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; } 
-        .button-group .btn, .button-group .form-select { flex: 1; min-width: 120px; }
-        .input-group { display:flex; align-items:center; }
-        .input-group .form-input { border-top-right-radius:0; border-bottom-right-radius:0; }
-        .input-group .btn { border-top-left-radius:0; border-bottom-left-radius:0; width:auto; }
     </style>
 </head>
 <body>
     <canvas id="canvas" class="hidden"></canvas>
-    <input type="file" id="csvUpload" class="hidden" accept=".csv">
 
     <aside>
         <header>
-            <h1><i class="bi bi-camera-video-fill" style="color: var(--accent-blue);"></i> ImageSpec Pro</h1>
-            <p>Image-Based Spectrophotometer Simulator</p>
+            <h1><i class="bi bi-bullseye" style="color: var(--accent-blue);"></i> ImageSpec Pro</h1>
+            <p>Advanced Image Analysis Spectrophotometer</p>
         </header>
 
         <div class="card">
-            <div class="form-grid" style="margin-bottom: 1rem;">
+            <h2>1. Setup Source</h2>
+            <div class="control-group" style="margin-bottom: 12px;">
                 <div>
                     <label for="sourceMode">Input Source</label>
                     <select id="sourceMode" class="form-select">
@@ -132,10 +126,10 @@
                         <option value="upload">Uploaded Image</option>
                     </select>
                 </div>
-                 <div id="mediaControlContainer">
+                 <div id="mediaControlContainer" style="flex: 1.5;">
                     <div id="cameraControl">
                         <label for="cameraSelect">Select Camera</label>
-                        <select id="cameraSelect" class="form-select"></select>
+                        <select id="cameraSelect" class="form-select"><option value="">Waiting for permission...</option></select>
                     </div>
                     <div id="uploadControl" class="hidden">
                          <label for="imageUpload">Upload Image</label>
@@ -143,121 +137,159 @@
                     </div>
                 </div>
             </div>
-            <div class="form-grid">
+             <div class="control-group">
                 <div>
-                    <label for="projectName">Project Name</label>
-                    <input type="text" id="projectName" class="form-input" value="Untitled Project">
+                    <label>Zoom (Ctrl+Scroll)</label>
+                    <input type="range" id="zoomSlider" min="1" max="10" value="1" step="0.1" class="form-input">
                 </div>
-                <div>
-                    <label>Calibration Status</label>
-                    <div id="calibrationStatus">
-                        <i class="bi bi-x-circle-fill" style="color:var(--accent-red);"></i><span>Not Calibrated</span>
-                    </div>
+                <div style="flex: 0 0 50px;">
+                    <label>Value</label>
+                    <div id="zoomValue" style="font-size: 12px; padding-top: 4px;">1.0x</div>
                 </div>
-            </div>
-             <button id="calibrateBtn" class="btn btn-primary" style="margin-top: 0.75rem;">
-                <i class="bi bi-eyedropper"></i> Calibrate (Set Blank)
-            </button>
+             </div>
         </div>
         
         <div class="card">
-             <h2>ROI Controls</h2>
-             <div class="form-grid">
-                 <div><label for="roiShape">Shape</label><select id="roiShape" class="form-select"><option value="square">Square</option><option value="circle">Circle</option><option value="point">Point (1x1 px)</option></select></div>
-                 <div><label for="roiSize">Size (px)</label><input type="number" id="roiSize" class="form-input" value="50" min="1"></div>
+            <h2>2. Analysis Mode</h2>
+            <select id="analysisMode" class="form-select">
+                <option value="point">Point Measurement</option>
+                <option value="kinetics">Kinetics (Time Series)</option>
+                <option value="scan">Spectral Scan</option>
+            </select>
+            <div id="kineticsControls" class="control-group hidden" style="margin-top: 10px;">
+                <div><label>Interval (sec)</label><input type="number" id="kineticsInterval" class="form-input" value="30" min="1"></div>
+                <div><label>Cycles</label><input type="number" id="kineticsCycles" class="form-input" value="10" min="1"></div>
+            </div>
+            <div id="scanControls" class="control-group hidden" style="margin-top: 10px;">
+                <div><label>Start λ (nm)</label><input type="number" id="scanStart" class="form-input" value="400" min="380" max="780"></div>
+                <div><label>End λ (nm)</label><input type="number" id="scanEnd" class="form-input" value="700" min="380" max="780"></div>
+                <div><label>Step (nm)</label><input type="number" id="scanStep" class="form-input" value="5" min="1"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+             <h2>3. Define Regions of Interest (ROI)</h2>
+             <div class="control-group">
+                 <div style="flex: 2;"><label>ROI Name</label><input type="text" id="roiName" class="form-input" value="ROI-1"></div>
+                 <div><label>Color</label><input type="color" id="roiColor" class="form-input" value="#3b82f6" style="padding: 2px;"></div>
+                 <div style="flex: 0 0 70px;"><label>&nbsp;</label><button id="addRoiBtn" class="btn btn-secondary"><i class="bi bi-plus-circle"></i> Add</button></div>
+             </div>
+             <div class="control-group" style="margin-top: 10px;">
+                <div><label>Shape</label><select id="roiShape" class="form-select"><option value="square">Square</option><option value="circle">Circle</option></select></div>
+                <div><label>Size (px)</label><input type="number" id="roiSize" class="form-input" value="50" min="1"></div>
+            </div>
+            <div id="roiTableContainer" class="table-container" style="margin-top: 10px; max-height: 120px;">
+                <table id="roiTable">
+                    <thead><tr><th>Color</th><th>Name</th><th>Type</th><th>Size</th><th>Del</th></tr></thead>
+                    <tbody id="roiTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+             <h2>4. Run Analysis</h2>
+             <div class="control-group">
+                <button id="calibrateBtn" class="btn btn-primary" disabled><i class="bi bi-eyedropper"></i> Calibrate Blank</button>
+                <button id="runAnalysisBtn" class="btn btn-secondary" style="margin-top: 0px;" disabled><i class="bi bi-play-fill"></i> Run Analysis</button>
              </div>
         </div>
 
-        <div class="card card-grow">
-             <h2>Measurement</h2>
-             <div id="results">
-                <div class="result-box bg-red"><p class="font-bold">Absorbance (R)</p><p id="absR" class="text-lg font-mono">0.000</p></div>
-                <div class="result-box bg-green"><p class="font-bold">Absorbance (G)</p><p id="absG" class="text-lg font-mono">0.000</p></div>
-                <div class="result-box bg-blue"><p class="font-bold">Absorbance (B)</p><p id="absB" class="text-lg font-mono">0.000</p></div>
-             </div>
-             <div style="margin-top: 1rem;"><label>Add Wavelength Channel (nm)</label><div class="input-group"><input type="number" id="wavelengthInput" placeholder="380-780" class="form-input"><button id="addWavelengthBtn" class="btn btn-secondary"><i class="bi bi-plus-lg"></i></button></div></div>
-             <div style="margin-top: 1rem;"><button id="measureBtn" class="btn btn-primary" disabled><i class="bi bi-beaker"></i> Measure Sample</button></div>
-             <div id="concentrationResult" class="hidden"><p class="font-bold">Estimated Concentration</p><p id="estConc" class="font-mono">0.000</p></div>
-        </div>
-        
-        <div class="card card-grow">
-            <h2>Standard Curve & Data Log</h2>
-            <div class="form-grid-3">
-                <input type="text" id="sampleName" placeholder="Sample Name" class="form-input" value="Sample-1">
-                <input type="number" id="concentration" placeholder="Concentration" class="form-input">
-                <button id="logMeasurementBtn" class="btn btn-secondary" disabled><i class="bi bi-journal-plus"></i> Log Point</button>
+        <div id="pointMeasurementCard" class="card">
+            <h2>Point Measurement</h2>
+            <div id="pointResults" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <div class="result-box bg-red"><p class="font-bold">Abs (R)</p><p id="absR" class="text-lg font-mono">-</p></div>
+                <div class="result-box bg-green"><p class="font-bold">Abs (G)</p><p id="absG" class="text-lg font-mono">-</p></div>
+                <div class="result-box bg-blue"><p class="font-bold">Abs (B)</p><p id="absB" class="text-lg font-mono">-</p></div>
             </div>
-            <div class="chart-container"><canvas id="stdCurveChart"></canvas></div>
-            <div id="curveFitInfo">Select a channel to build curve.</div>
-            <div class="table-container"><table><thead><tr><th>Del</th><th>Sample</th><th>Abs (R)</th><th>Abs (G)</th><th>Abs (B)</th></tr></thead><tbody id="logTableBody"></tbody></table></div>
+            <div class="control-group" style="margin-top: 10px;">
+                <div style="flex: 2;"><label>Add Wavelength (nm)</label><input type="number" id="wavelengthInput" placeholder="380-780" class="form-input"></div>
+                <div style="flex: 0 0 70px;"><label>&nbsp;</label><button id="addWavelengthBtn" class="btn btn-secondary"><i class="bi bi-plus-lg"></i></button></div>
+            </div>
+        </div>
+
+        <div class="card card-grow">
+            <h2>Results & Data</h2>
+            <div class="chart-container"><canvas id="resultsChart"></canvas></div>
+            <div id="resultsLogContainer" class="table-container">
+                 <table id="resultsTable">
+                    <thead><tr><th>Sample</th><th>Value</th></tr></thead>
+                    <tbody id="resultsTableBody"></tbody>
+                </table>
+            </div>
             <div class="button-group">
-                <select id="absChannel" class="form-select"><option value="absR">Curve: Abs (R)</option><option value="absG">Curve: Abs (G)</option><option value="absB">Curve: Abs (B)</option></select>
-                <button id="importCsvBtn" class="btn btn-secondary"><i class="bi bi-table"></i> Import</button>
-                <button id="exportCsvBtn" class="btn btn-secondary"><i class="bi bi-download"></i> Export</button>
-                <button id="resetBtn" class="btn btn-danger"><i class="bi bi-trash"></i> Reset</button>
+                 <button id="exportChartBtn" class="btn btn-secondary"><i class="bi bi-image"></i> Export Chart</button>
+                 <button id="exportDataBtn" class="btn btn-secondary"><i class="bi bi-download"></i> Export Data</button>
             </div>
         </div>
     </aside>
 
     <main>
-        <div class="card card-grow" style="padding: 0.5rem; display:flex; flex-direction:column; gap: 0.5rem;">
-            <div id="mediaContainer" style="cursor: crosshair;">
-                <video id="video" playsinline></video><img id="uploadedImage" class="hidden"><div id="roi"></div><div id="roi-point-selector" class="hidden"></div>
-                <div id="message"><i id="messageIcon" class="bi bi-camera-video-off" style="font-size: 2.25rem;"></i><p id="messageText">Select a camera to begin.</p></div>
+        <div class="card card-grow" style="padding: 8px; display:flex; flex-direction:column;">
+            <div class="media-wrapper">
+                <div id="mediaContainer">
+                    <video id="video" class="hidden"></video>
+                    <img id="uploadedImage" class="hidden">
+                    <div id="message"><i id="messageIcon" class="bi bi-camera-video-off" style="font-size: 2.25rem;"></i><p id="messageText">Select a camera to begin.</p></div>
+                </div>
+                <div id="roiOverlay"></div>
             </div>
         </div>
     </main>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Elements ---
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            const cameraSelect = document.getElementById('cameraSelect');
-            const calibrateBtn = document.getElementById('calibrateBtn');
-            const measureBtn = document.getElementById('measureBtn');
-            const calibrationStatus = document.getElementById('calibrationStatus');
-            const resultsDiv = document.getElementById('results');
-            const logTableBody = document.getElementById('logTableBody');
-            const sampleNameInput = document.getElementById('sampleName');
-            const concentrationInput = document.getElementById('concentration');
-            const absChannelSelect = document.getElementById('absChannel');
-            const logMeasurementBtn = document.getElementById('logMeasurementBtn');
-            const stdCurveChartCanvas = document.getElementById('stdCurveChart');
-            const curveFitInfo = document.getElementById('curveFitInfo');
-            const exportCsvBtn = document.getElementById('exportCsvBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const roiElement = document.getElementById('roi');
-            const roiPointSelector = document.getElementById('roi-point-selector');
-            const roiShapeSelect = document.getElementById('roiShape');
-            const roiSizeInput = document.getElementById('roiSize');
-            const sourceModeSelect = document.getElementById('sourceMode');
-            const cameraControl = document.getElementById('cameraControl');
-            const uploadControl = document.getElementById('uploadControl');
-            const imageUpload = document.getElementById('imageUpload');
-            const uploadedImage = document.getElementById('uploadedImage');
-            const message = document.getElementById('message');
-            const messageIcon = document.getElementById('messageIcon');
-            const messageText = document.getElementById('messageText');
-            const wavelengthInput = document.getElementById('wavelengthInput');
-            const addWavelengthBtn = document.getElementById('addWavelengthBtn');
-            const concentrationResult = document.getElementById('concentrationResult');
-            const estConc = document.getElementById('estConc');
-            const mediaContainer = document.getElementById('mediaContainer');
-            const importCsvBtn = document.getElementById('importCsvBtn');
-            const csvUpload = document.getElementById('csvUpload');
+            const elements = {
+                video: document.getElementById('video'),
+                canvas: document.getElementById('canvas'),
+                cameraSelect: document.getElementById('cameraSelect'),
+                calibrateBtn: document.getElementById('calibrateBtn'),
+                runAnalysisBtn: document.getElementById('runAnalysisBtn'),
+                roiOverlay: document.getElementById('roiOverlay'),
+                roiNameInput: document.getElementById('roiName'),
+                roiColorInput: document.getElementById('roiColor'),
+                addRoiBtn: document.getElementById('addRoiBtn'),
+                roiShapeSelect: document.getElementById('roiShape'),
+                roiSizeInput: document.getElementById('roiSize'),
+                roiTableBody: document.getElementById('roiTableBody'),
+                sourceModeSelect: document.getElementById('sourceMode'),
+                cameraControl: document.getElementById('cameraControl'),
+                uploadControl: document.getElementById('uploadControl'),
+                imageUpload: document.getElementById('imageUpload'),
+                uploadedImage: document.getElementById('uploadedImage'),
+                message: document.getElementById('message'),
+                messageIcon: document.getElementById('messageIcon'),
+                messageText: document.getElementById('messageText'),
+                mediaContainer: document.getElementById('mediaContainer'),
+                zoomSlider: document.getElementById('zoomSlider'),
+                zoomValue: document.getElementById('zoomValue'),
+                analysisModeSelect: document.getElementById('analysisMode'),
+                kineticsControls: document.getElementById('kineticsControls'),
+                kineticsIntervalInput: document.getElementById('kineticsInterval'),
+                kineticsCyclesInput: document.getElementById('kineticsCycles'),
+                scanControls: document.getElementById('scanControls'),
+                scanStartInput: document.getElementById('scanStart'),
+                scanEndInput: document.getElementById('scanEnd'),
+                scanStepInput: document.getElementById('scanStep'),
+                pointMeasurementCard: document.getElementById('pointMeasurementCard'),
+                pointResultsDiv: document.getElementById('pointResults'),
+                wavelengthInput: document.getElementById('wavelengthInput'),
+                addWavelengthBtn: document.getElementById('addWavelengthBtn'),
+                resultsChartCanvas: document.getElementById('resultsChart'),
+                resultsTableBody: document.getElementById('resultsTableBody'),
+                exportChartBtn: document.getElementById('exportChartBtn'),
+                exportDataBtn: document.getElementById('exportDataBtn'),
+            };
+            elements.ctx = elements.canvas.getContext('2d', { willReadFrequently: true });
 
-            // --- App State ---
             let state = {
-                mode: 'camera', isCalibrated: false, blankRgb: null, currentMeasurement: null,
-                sampleCounter: 1, measurements: [], customWavelengths: [],
-                regression: { m: 0, c: 0, r2: 0, active: false }, currentStream: null,
-                roi: { x: 0, y: 0, shape: 'square', size: 50 },
+                mode: 'camera', mediaReady: false, currentStream: null,
+                rois: [], nextRoiId: 1, selectedRoiId: null, draggingRoiId: null,
+                dragStart: { x: 0, y: 0 }, blankRgb: null, isCalibrated: false,
+                analysisData: {}, zoom: 1, kineticsTimer: null, isAnalyzing: false,
+                pointWavelengths: []
             };
             let chart;
 
-            // --- Wavelength to RGB Conversion ---
             function wavelengthToRgb(wavelength) {
                 let r, g, b; const gamma = 0.80;
                 if (wavelength >= 380 && wavelength <= 439) { r = -(wavelength - 440) / (440 - 380); g = 0.0; b = 1.0; } 
@@ -275,803 +307,511 @@
                 return { r: Math.round(255 * pow(r * factor, gamma)), g: Math.round(255 * pow(g * factor, gamma)), b: Math.round(255 * pow(b * factor, gamma)) };
             }
 
-            /**
- * Asynchronously requests camera permissions and populates the camera selection dropdown.
- * If permission is denied or no cameras are found, it switches the UI to upload mode.
- */
-async function getCameras() {
-    try {
-        // Requesting a stream is necessary to get camera labels and ensure permissions are granted.
-        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        tempStream.getTracks().forEach(track => track.stop()); // Immediately stop the temporary stream.
-
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        
-        elements.cameraSelect.innerHTML = '<option value="">Select a camera...</option>';
-        if (videoDevices.length === 0) {
-           elements.cameraSelect.innerHTML = '<option value="">No cameras found</option>';
-           if(state.mode === 'camera') setMode('upload'); // Fallback to upload if no cameras
-        } else {
-            videoDevices.forEach((device, index) => {
-                const option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || `Camera ${index + 1}`;
-                elements.cameraSelect.appendChild(option);
-            });
-        }
-    } catch (error) { 
-        console.error("Error getting camera permissions:", error);
-        elements.cameraSelect.innerHTML = '<option value="">Permission denied</option>';
-        // If camera permission is denied, force the UI into upload mode as a fallback.
-        setMode('upload');
-        elements.sourceModeSelect.value = 'upload';
-    }
-}
-
-/**
- * Starts the selected camera stream and attaches it to the video element.
- * @param {string} deviceId - The ID of the camera device to start.
- */
-async function startCamera(deviceId) {
-    if (state.mode !== 'camera' || !deviceId) return;
-    stopMedia(); // Ensure any previous media is stopped.
-
-    const constraints = { video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } };
-    try {
-        state.currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-        elements.video.srcObject = state.currentStream;
-        await elements.video.play();
-        elements.video.classList.remove('hidden');
-        elements.message.classList.add('hidden');
-        
-        // Wait for the video metadata to load to get correct dimensions.
-        elements.video.addEventListener('loadedmetadata', () => { 
-            state.mediaReady = true;
-            updateAllRoisPosition();
-            updateUI();
-        }, { once: true });
-    } catch (error) { 
-        console.error("Failed to start camera:", error);
-        showMessage('bi-exclamation-triangle-fill', `Failed to start camera.`); 
-        state.mediaReady = false; 
-        updateUI();
-    }
-}
-
-/**
- * Stops the current media source (camera stream) and resets the media-ready state.
- */
-function stopMedia() {
-    state.mediaReady = false;
-    if (state.currentStream) {
-        state.currentStream.getTracks().forEach(track => track.stop());
-        state.currentStream = null;
-    }
-}
-
-/**
- * Sets the application's primary analysis mode (camera or upload).
- * This function handles all UI changes and initialization for the selected mode.
- * @param {string} newMode - The mode to switch to, either 'camera' or 'upload'.
- */
-function setMode(newMode) {
-    state.mode = newMode;
-    stopMedia();
-    resetZoomAndScroll();
-    
-    // Hide all media elements initially for a clean switch.
-    elements.video.classList.add('hidden');
-    elements.uploadedImage.classList.add('hidden');
-    
-    // Toggle visibility of the specific controls for camera vs. upload.
-    elements.cameraControl.classList.toggle('hidden', newMode !== 'camera');
-    elements.uploadControl.classList.toggle('hidden', newMode === 'camera');
-
-    if (newMode === 'camera') {
-        const camSelect = elements.cameraSelect;
-        // Check if there is a valid camera selected before trying to start it.
-        if (camSelect.value && camSelect.value !== "Permission denied" && camSelect.value !== "No cameras found") {
-            startCamera(camSelect.value);
-        } else {
-            showMessage('bi-camera-video-off', 'Select a camera to begin.');
-        }
-    } else { // 'upload' mode
-        // If an image was already uploaded, show it. Otherwise, show the prompt.
-        if (elements.uploadedImage.src) { 
-            elements.uploadedImage.classList.remove('hidden'); 
-            elements.message.classList.add('hidden');
-            state.mediaReady = true;
-        }
-        else { showMessage('bi-upload', 'Upload an image to begin analysis.'); }
-    }
-    updateAllRoisPosition();
-    updateUI();
-}
-
-/**
- * Handles the file input change event when a user selects an image to upload.
- * @param {Event} e - The file input change event.
- */
-function handleImageUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    stopMedia();
-    resetZoomAndScroll();
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        elements.uploadedImage.src = event.target.result;
-        elements.uploadedImage.onload = () => {
-            elements.uploadedImage.classList.remove('hidden');
-            elements.message.classList.add('hidden');
-            state.mediaReady = true;
-            updateAllRoisPosition();
-            updateUI();
-        };
-        elements.uploadedImage.onerror = () => {
-            showMessage('bi-exclamation-triangle-fill', 'Failed to load image file.');
-            state.mediaReady = false;
-            updateUI();
-        };
-    };
-    reader.readAsDataURL(file);
-}
-
-            function getActiveMediaElement(){ return state.mode === 'camera' ? video : uploadedImage; }
-            function showMessage(iconClass, text) { message.classList.remove('hidden'); messageIcon.className = `bi ${iconClass}`; messageText.textContent = text; }
-
-            /**
- * Reads ROI control values (shape, size) and updates the currently selected ROI.
- * If no ROI is selected, it does nothing.
- */
-function updateRoiFromControls() {
-    if (state.selectedRoiId === null) return;
-
-    const roi = state.rois.find(r => r.id === state.selectedRoiId);
-    if (!roi) return;
-
-    const newShape = elements.roiShapeSelect.value;
-    const newSize = parseInt(elements.roiSizeInput.value, 10) || 50;
-
-    roi.shape = newShape;
-    roi.size = newSize;
-
-    updateAllRoisPosition(); // Visually update the changed ROI
-    updateUI(); // Update the ROI table
-}
-
-/**
- * Shows or hides all ROI indicators based on whether a valid media source is ready.
- */
-function updateRoiVisibility() {
-    elements.roiOverlay.classList.toggle('hidden', !state.mediaReady);
-}
-
-/**
- * Recalculates and applies the CSS position and size for all ROI indicators.
- * This is crucial for handling zoom and scroll changes.
- */
-function updateAllRoisPosition() {
-    const scrollLeft = elements.mediaContainer.scrollLeft;
-    const scrollTop = elements.mediaContainer.scrollTop;
-
-    state.rois.forEach(roi => {
-        const roiEl = document.getElementById(`roi-${roi.id}`);
-        if (roiEl) {
-            // Calculate the position on the screen based on ROI's absolute position, zoom, and scroll
-            const cssX = roi.x * state.zoom - scrollLeft;
-            const cssY = roi.y * state.zoom - scrollTop;
-            const cssSize = roi.size * state.zoom;
-
-            // Apply the calculated styles to the visual indicator div
-            roiEl.style.width = `${cssSize}px`;
-            roiEl.style.height = `${cssSize}px`;
-            roiEl.style.left = `${cssX - cssSize / 2}px`;
-            roiEl.style.top = `${cssY - cssSize / 2}px`;
-        }
-    });
-}
-
-/**
- * Event Listener for mouse movement over the media container.
- * This handles the dragging logic for ROIs.
- */
-elements.mediaContainer.addEventListener('mousemove', (e) => {
-    // Only proceed if a drag operation is in progress.
-    if (state.draggingRoiId === null) return;
-
-    // Find the ROI being dragged in the state array.
-    const roi = state.rois.find(r => r.id === state.draggingRoiId);
-    if (!roi) return;
-
-    // Calculate the mouse's movement since the drag started (the delta).
-    const dx = e.clientX - state.dragStart.x;
-    const dy = e.clientY - state.dragStart.y;
-
-    // Update the ROI's absolute position. The movement delta needs to be
-    // scaled down by the current zoom level to correctly map screen pixels to image pixels.
-    roi.x += dx / state.zoom;
-    roi.y += dy / state.zoom;
-
-    // Reset the drag start position to the current mouse position for the next move event.
-    state.dragStart.x = e.clientX;
-    state.dragStart.y = e.clientY;
-
-    // Visually update all ROIs on the screen to reflect the new position of the dragged ROI.
-    updateAllRoisPosition();
-});
-
-
-            /**
- * Analyzes the pixel data within a given ROI on the currently active media.
- * @param {object} roi - The ROI object to analyze.
- * @returns {object|null} An object with average {r, g, b} values, or null if analysis fails.
- */
-function analyzeRoi(roi) {
-    if (!state.mediaReady) return null;
-    const media = getActiveMediaElement();
-    let naturalWidth, naturalHeight;
-
-    if (state.mode === 'camera') {
-        if (!media.srcObject || !(elements.video.readyState >= 2)) return null;
-        naturalWidth = elements.video.videoWidth;
-        naturalHeight = elements.video.videoHeight;
-    } else {
-        if (!(elements.uploadedImage.complete && elements.uploadedImage.naturalWidth > 0)) return null;
-        naturalWidth = elements.uploadedImage.naturalWidth;
-        naturalHeight = elements.uploadedImage.naturalHeight;
-    }
-
-    if (naturalWidth === 0) return null;
-
-    elements.canvas.width = naturalWidth;
-    elements.canvas.height = naturalHeight;
-    elements.ctx.drawImage(media, 0, 0, naturalWidth, naturalHeight);
-
-    let r = 0, g = 0, b = 0, count = 0;
-    const radius = roi.size / 2;
-    const startX = Math.max(0, Math.floor(roi.x - radius));
-    const startY = Math.max(0, Math.floor(roi.y - radius));
-    const endX = Math.min(naturalWidth, Math.floor(roi.x + radius));
-    const endY = Math.min(naturalHeight, Math.floor(roi.y + radius));
-
-    if (endX <= startX || endY <= startY) return { r: 0, g: 0, b: 0 };
-
-    const roiWidth = endX - startX;
-    const roiHeight = endY - startY;
-    const imageData = elements.ctx.getImageData(startX, startY, roiWidth, roiHeight);
-    const data = imageData.data;
-
-    for (let y = 0; y < roiHeight; y++) {
-        for (let x = 0; x < roiWidth; x++) {
-            let include = (roi.shape === 'square') || (Math.pow((startX + x) - roi.x, 2) + Math.pow((startY + y) - roi.y, 2) <= radius * radius);
-            if (include) {
-                const i = (y * roiWidth + x) * 4;
-                r += data[i];
-                g += data[i + 1];
-                b += data[i + 2];
-                count++;
-            }
-        }
-    }
-    return count > 0 ? { r: r / count, g: g / count, b: b / count } : { r: 0, g: 0, b: 0 };
-}
-
-/**
- * Calibrates the system by analyzing the ROI designated as 'Calibrator'.
- * Stores the resulting RGB values as the blank/baseline for future calculations.
- */
-function handleCalibrate() {
-    const calibratorRoi = state.rois.find(r => r.type === 'Calibrator');
-    if (!calibratorRoi) {
-        alert("Please define one ROI as 'Calibrator' type first.");
-        return;
-    }
-    const analysis = analyzeRoi(calibratorRoi);
-    if (analysis) {
-        state.blankRgb = { r: analysis.r, g: analysis.g, b: analysis.b };
-        state.isCalibrated = true;
-        updateUI();
-        // Flash a confirmation on the button
-        elements.calibrateBtn.style.backgroundColor = 'var(--accent-green)';
-        setTimeout(() => { elements.calibrateBtn.style.backgroundColor = ''; }, 1000);
-    } else {
-        alert("Calibration failed. Ensure Calibrator ROI is within the image bounds.");
-    }
-}
-
-/**
- * Acts as a dispatcher for the main "Run Analysis" button.
- * It reads the current analysis mode and calls the appropriate function.
- * Also handles stopping an ongoing Kinetics analysis.
- */
-function handleRunAnalysis() {
-    if (state.isAnalyzing) { // Stop analysis if it's running
-        if (state.kineticsTimer) {
-            clearInterval(state.kineticsTimer);
-            state.kineticsTimer = null;
-        }
-        state.isAnalyzing = false;
-        updateUI();
-        return;
-    }
-
-    const mode = elements.analysisModeSelect.value;
-    if (mode === 'point') runPointMeasurement();
-    else if (mode === 'kinetics') runKinetics();
-    else if (mode === 'scan') runSpectralScan();
-}
-
-/**
- * Performs a one-time absorbance measurement for all 'Sample' ROIs
- * across RGB and any custom-defined wavelengths.
- */
-function runPointMeasurement() {
-    if (!state.isCalibrated) { alert("Please calibrate first."); return; }
-    const sampleRois = state.rois.filter(r => r.type === 'Sample');
-    if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
-
-    const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
-    let resultsLog = [];
-    state.analysisData = { type: 'point', results: [] };
-
-    sampleRois.forEach(roi => {
-        const sampleRgb = analyzeRoi(roi);
-        if (sampleRgb) {
-            const abs = {
-                R: safeLog(state.blankRgb.r, sampleRgb.r),
-                G: safeLog(state.blankRgb.g, sampleRgb.g),
-                B: safeLog(state.blankRgb.b, sampleRgb.b)
-            };
-            resultsLog.push({ id: `result_R_${roi.id}`, Sample: `${roi.name} (R)`, Value: abs.R.toFixed(4) });
-            resultsLog.push({ id: `result_G_${roi.id}`, Sample: `${roi.name} (G)`, Value: abs.G.toFixed(4) });
-            resultsLog.push({ id: `result_B_${roi.id}`, Sample: `${roi.name} (B)`, Value: abs.B.toFixed(4) });
-
-            state.pointWavelengths.forEach(wl => {
-                const targetRgb = wavelengthToRgb(wl);
-                const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
-                const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
-                const wlAbs = safeLog(blankIntensity, sampleIntensity);
-                resultsLog.push({ id: `result_wl_${wl}_${roi.id}`, Sample: `${roi.name} (${wl}nm)`, Value: wlAbs.toFixed(4) });
-            });
-        }
-    });
-    state.analysisData.results = resultsLog;
-    updateUI();
-}
-
-            /**
- * Handles adding a new custom wavelength for point measurements.
- * It reads the value from the input, validates it, and updates the state.
- */
-function handleAddWavelength() {
-    // 1. Get the value from the wavelength input element and parse it as an integer.
-    const wl = parseInt(elements.wavelengthInput.value, 10);
-
-    // 2. Validate the input.
-    //    - Is it a valid number?
-    //    - Is it within the visible spectrum (380nm to 780nm)?
-    //    - Is it a duplicate of a wavelength already added?
-    if (isNaN(wl) || wl < 380 || wl > 780) {
-        alert("Please enter a valid wavelength between 380 and 780 nm.");
-        elements.wavelengthInput.value = ''; // Clear invalid input
-        return;
-    }
-    if (state.pointWavelengths.includes(wl)) {
-        alert("This wavelength has already been added.");
-        elements.wavelengthInput.value = ''; // Clear duplicate input
-        return;
-    }
-
-    // 3. If validation passes, add the new wavelength to the state array.
-    state.pointWavelengths.push(wl);
-    state.pointWavelengths.sort((a, b) => a - b); // Keep the list sorted.
-
-    // 4. Clear the input field to prepare for the next entry.
-    elements.wavelengthInput.value = '';
-
-    // 5. Trigger a full UI update to render the new wavelength result box.
-    updateUI();
-}
-
-            function handleDeleteWavelength(wl) {
-                state.customWavelengths = state.customWavelengths.filter(w => w !== wl);
-                state.measurements.forEach(m => delete m[`abs${wl}`]);
-                if (absChannelSelect.value === `abs${wl}`) {
-                    absChannelSelect.value = 'absR'; // Default back to Red
+            async function getCameras() {
+                try {
+                    await navigator.mediaDevices.getUserMedia({ video: true }); // Crucial for getting labels
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    elements.cameraSelect.innerHTML = '<option value="">Select a camera...</option>';
+                    if (videoDevices.length === 0) {
+                       elements.cameraSelect.innerHTML = '<option value="">No cameras found</option>';
+                       if(state.mode === 'camera') setMode('upload');
+                    } else {
+                        videoDevices.forEach((device, index) => {
+                            const option = document.createElement('option');
+                            option.value = device.deviceId;
+                            option.text = device.label || `Camera ${index + 1}`;
+                            elements.cameraSelect.appendChild(option);
+                        });
+                    }
+                } catch (error) { 
+                    elements.cameraSelect.innerHTML = '<option value="">Permission denied</option>';
+                    setMode('upload');
                 }
+            }
+
+            async function startCamera(deviceId) {
+                if (state.mode !== 'camera' || !deviceId) return;
+                stopMedia();
+                const constraints = { video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } };
+                try {
+                    state.currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    elements.video.srcObject = state.currentStream;
+                    await elements.video.play();
+                    elements.video.classList.remove('hidden');
+                    elements.message.classList.add('hidden');
+                    elements.video.addEventListener('loadedmetadata', () => { 
+                        state.mediaReady = true;
+                        updateAllRoisPosition();
+                        updateUI();
+                    }, { once: true });
+                } catch (error) { 
+                    showMessage('bi-exclamation-triangle-fill', `Failed to start camera.`); 
+                    state.mediaReady = false; updateUI();
+                }
+            }
+            
+            function stopMedia() {
+                state.mediaReady = false;
+                if (state.currentStream) { state.currentStream.getTracks().forEach(track => track.stop()); state.currentStream = null; }
+            }
+
+            function resetZoomAndScroll() {
+                state.zoom = 1;
+                const media = getActiveMediaElement();
+                media.style.transform = `scale(1)`;
+                elements.mediaContainer.scrollTop = 0;
+                elements.mediaContainer.scrollLeft = 0;
+                elements.zoomSlider.value = 1;
+                elements.zoomValue.textContent = '1.0x';
+            }
+
+            function setMode(newMode) {
+                state.mode = newMode;
+                stopMedia();
+                resetZoomAndScroll();
+                elements.video.classList.add('hidden');
+                elements.uploadedImage.classList.add('hidden');
+                elements.cameraControl.classList.toggle('hidden', newMode !== 'camera');
+                elements.uploadControl.classList.toggle('hidden', newMode === 'camera');
+                if (newMode === 'camera') {
+                    if (elements.cameraSelect.value && elements.cameraSelect.value !== "Permission denied" && elements.cameraSelect.value !== "No cameras found") {
+                        startCamera(elements.cameraSelect.value);
+                    } else {
+                        showMessage('bi-camera-video-off', 'Select a camera to begin.');
+                    }
+                } else {
+                    if (elements.uploadedImage.src) { 
+                        elements.uploadedImage.classList.remove('hidden'); 
+                        elements.message.classList.add('hidden');
+                        state.mediaReady = true;
+                    }
+                    else { showMessage('bi-upload', 'Upload an image to begin analysis.'); }
+                }
+                updateAllRoisPosition();
                 updateUI();
             }
 
-            /**
- * Deletes a specific measurement from the analysis data log based on its unique ID.
- * @param {number} id - The unique ID of the measurement record to delete.
- */
-function handleDeleteMeasurement(id) {
-    // Ensure the ID from the dataset is treated as a number for strict comparison.
-    const idToDelete = parseInt(id, 10);
-    if (isNaN(idToDelete)) {
-        console.error("Invalid ID passed to handleDeleteMeasurement:", id);
-        return;
-    }
-
-    // Check if the main analysis data object exists.
-    if (state.analysisData && state.analysisData.results) {
-        // Filter the results array, creating a new array that excludes the item with the matching ID.
-        state.analysisData.results = state.analysisData.results.filter(result => result.id !== idToDelete);
-    }
-
-    // After modifying the application's state, trigger a full UI refresh.
-    // This single call will handle redrawing the results table and updating the chart
-    // to reflect the removal of the data point.
-    updateUI();
-}
-
-
-            function handleCsvUpload(event) {
-                const file = event.target.files[0];
+            function handleImageUpload(e) {
+                const file = e.target.files[0];
                 if (!file) return;
-                
+                stopMedia();
+                resetZoomAndScroll();
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const text = e.target.result;
-                        const lines = text.trim().split('\n');
-                        const dataPoints = lines.map(line => line.split(',').map(parseFloat)).filter(row => row.length === 2 && !isNaN(row[0]) && !isNaN(row[1]));
-
-                        if (dataPoints.length === 0) { throw new Error("No valid data points found."); }
-
-                        if (!confirm(`Found ${dataPoints.length} data points. This will replace existing standard curve data. Proceed?`)) return;
-
-                        // Remove old points that had concentrations
-                        state.measurements = state.measurements.filter(m => m.concentration === null);
-                        const channel = absChannelSelect.value;
-                        let importCounter = 1;
-
-                        dataPoints.forEach(([conc, abs]) => {
-                             const newMeasurement = {
-                                id: Date.now() + importCounter,
-                                name: `Imported-${importCounter++}`,
-                                concentration: conc,
-                                absR: 0, absG: 0, absB: 0,
-                             };
-                             newMeasurement[channel] = abs;
-                             state.measurements.push(newMeasurement);
-                        });
-                        
+                reader.onload = (event) => {
+                    elements.uploadedImage.src = event.target.result;
+                    elements.uploadedImage.onload = () => {
+                        elements.uploadedImage.classList.remove('hidden');
+                        elements.message.classList.add('hidden');
+                        state.mediaReady = true;
+                        updateAllRoisPosition();
                         updateUI();
-                    } catch (error) {
-                        alert(`Error parsing CSV file: ${error.message}`);
-                    } finally {
-                        csvUpload.value = ''; // Reset file input
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            function getActiveMediaElement(){ return state.mode === 'camera' ? elements.video : elements.uploadedImage; }
+            function showMessage(iconClass, text) { elements.message.classList.remove('hidden'); elements.messageIcon.className = `bi ${iconClass}`; elements.messageText.textContent = text; }
+            
+            function addRoi() {
+                if (!state.mediaReady) { alert("Please load an image or start the camera first."); return; }
+                const media = getActiveMediaElement();
+                let naturalWidth, naturalHeight;
+                if(state.mode === 'camera') {
+                    naturalWidth = media.videoWidth;
+                    naturalHeight = media.videoHeight;
+                } else {
+                    naturalWidth = media.naturalWidth;
+                    naturalHeight = media.naturalHeight;
+                }
+
+                const newRoi = {
+                    id: state.nextRoiId++,
+                    name: elements.roiNameInput.value || `ROI-${state.nextRoiId}`,
+                    color: elements.roiColorInput.value,
+                    shape: elements.roiShapeSelect.value,
+                    size: parseInt(elements.roiSizeInput.value) || 50,
+                    x: (elements.mediaContainer.scrollLeft + elements.mediaContainer.clientWidth / 2) / state.zoom,
+                    y: (elements.mediaContainer.scrollTop + elements.mediaContainer.clientHeight / 2) / state.zoom,
+                    type: state.rois.some(r => r.type === 'Calibrator') ? 'Sample' : 'Calibrator',
+                };
+                state.rois.push(newRoi);
+                elements.roiNameInput.value = `ROI-${state.nextRoiId}`;
+                updateUI();
+            }
+
+            function deleteRoi(id) {
+                state.rois = state.rois.filter(roi => roi.id !== id);
+                if (state.selectedRoiId === id) state.selectedRoiId = null;
+                updateUI();
+            }
+
+            function updateAllRoisPosition() {
+                state.rois.forEach(roi => {
+                    const roiEl = document.getElementById(`roi-${roi.id}`);
+                    if (roiEl) {
+                        const scrollLeft = elements.mediaContainer.scrollLeft;
+                        const scrollTop = elements.mediaContainer.scrollTop;
+                        const cssX = roi.x * state.zoom - scrollLeft;
+                        const cssY = roi.y * state.zoom - scrollTop;
+                        const cssSize = roi.size * state.zoom;
+                        roiEl.style.width = `${cssSize}px`;
+                        roiEl.style.height = `${cssSize}px`;
+                        roiEl.style.left = `${cssX - cssSize / 2}px`;
+                        roiEl.style.top = `${cssY - cssSize / 2}px`;
+                    }
+                });
+            }
+
+            function analyzeRoi(roi) {
+                if (!state.mediaReady) return null;
+                const media = getActiveMediaElement();
+                let naturalWidth, naturalHeight;
+                if (state.mode === 'camera') {
+                    if (!(elements.video.readyState >= 2)) return null;
+                    naturalWidth = elements.video.videoWidth; naturalHeight = elements.video.videoHeight;
+                } else {
+                    if (!(elements.uploadedImage.complete && elements.uploadedImage.naturalWidth > 0)) return null;
+                    naturalWidth = elements.uploadedImage.naturalWidth; naturalHeight = elements.uploadedImage.naturalHeight;
+                }
+                if (naturalWidth === 0) return null;
+                elements.canvas.width = naturalWidth;
+                elements.canvas.height = naturalHeight;
+                elements.ctx.drawImage(media, 0, 0, naturalWidth, naturalHeight);
+
+                let r = 0, g = 0, b = 0, count = 0;
+                const radius = roi.size / 2;
+                const startX = Math.max(0, Math.floor(roi.x - radius));
+                const startY = Math.max(0, Math.floor(roi.y - radius));
+                const endX = Math.min(naturalWidth, Math.floor(roi.x + radius));
+                const endY = Math.min(naturalHeight, Math.floor(roi.y + radius));
+                if (endX <= startX || endY <= startY) return {r:0, g:0, b:0};
+                const roiWidth = endX - startX;
+                const roiHeight = endY - startY;
+                const imageData = elements.ctx.getImageData(startX, startY, roiWidth, roiHeight);
+                const data = imageData.data;
+                for (let y = 0; y < roiHeight; y++) {
+                    for (let x = 0; x < roiWidth; x++) {
+                        let include = (roi.shape === 'square') || (Math.pow((startX + x) - roi.x, 2) + Math.pow((startY + y) - roi.y, 2) <= radius * radius);
+                        if (include) {
+                            const i = (y * roiWidth + x) * 4;
+                            r += data[i]; g += data[i+1]; b += data[i+2];
+                            count++;
+                        }
+                    }
+                }
+                return count > 0 ? { r: r/count, g: g/count, b: b/count } : {r:0, g:0, b:0};
+            }
+
+            function handleCalibrate() { 
+                const calibratorRoi = state.rois.find(r => r.type === 'Calibrator');
+                if (!calibratorRoi) { alert("Please define one ROI as 'Calibrator' type first."); return; }
+                const analysis = analyzeRoi(calibratorRoi);
+                if (analysis) { 
+                    state.blankRgb = {r: analysis.r, g: analysis.g, b: analysis.b}; 
+                    state.isCalibrated = true; 
+                    updateUI();
+                } else { alert("Calibration failed. Ensure Calibrator ROI is within image bounds."); }
+            }
+            
+            function handleRunAnalysis() {
+                const mode = elements.analysisModeSelect.value;
+                if (mode === 'point') runPointMeasurement();
+                else if (mode === 'kinetics') runKinetics();
+                else if (mode === 'scan') runSpectralScan();
+            }
+
+            function runPointMeasurement() {
+                if(!state.isCalibrated) { alert("Please calibrate first."); return; }
+                const sampleRois = state.rois.filter(r => r.type === 'Sample');
+                if(sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
+
+                const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
+                
+                sampleRois.forEach(roi => {
+                    const sampleRgb = analyzeRoi(roi);
+                    if(sampleRgb) {
+                        const abs = {
+                            r: safeLog(state.blankRgb.r, sampleRgb.r),
+                            g: safeLog(state.blankRgb.g, sampleRgb.g),
+                            b: safeLog(state.blankRgb.b, sampleRgb.b)
+                        };
+                         document.getElementById('absR').textContent = abs.r.toFixed(3);
+                         document.getElementById('absG').textContent = abs.g.toFixed(3);
+                         document.getElementById('absB').textContent = abs.b.toFixed(3);
+
+                        state.pointWavelengths.forEach(wl => {
+                            const targetRgb = wavelengthToRgb(wl);
+                            const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
+                            const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
+                            const wlAbs = safeLog(blankIntensity, sampleIntensity);
+                            const el = document.getElementById(`abs_wl_${wl}`);
+                            if(el) el.textContent = wlAbs.toFixed(3);
+                        });
+                    }
+                });
+            }
+
+            function runKinetics() {
+                if (state.isAnalyzing) { // Stop analysis
+                    clearInterval(state.kineticsTimer);
+                    state.isAnalyzing = false;
+                    updateUI();
+                    return;
+                }
+                if(!state.isCalibrated) { alert("Please calibrate first."); return; }
+                const sampleRois = state.rois.filter(r => r.type === 'Sample');
+                if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
+                
+                state.isAnalyzing = true;
+                updateUI();
+                state.analysisData = { type: 'kinetics', datasets: sampleRois.map(r => ({label: r.name, data:[], borderColor: r.color, tension: 0.1})) };
+                
+                let cycle = 0;
+                const maxCycles = parseInt(elements.kineticsCyclesInput.value);
+                const interval = parseInt(elements.kineticsIntervalInput.value) * 1000;
+
+                const runCycle = () => {
+                    const timestamp = new Date();
+                    handleCalibrate(); // Recalibrate for each time point
+                    sampleRois.forEach((roi, index) => {
+                        const sampleRgb = analyzeRoi(roi);
+                        if(sampleRgb && state.isCalibrated) {
+                            const abs = Math.log10(state.blankRgb.r / sampleRgb.r); // Example using Red channel
+                            state.analysisData.datasets[index].data.push({x: timestamp, y: abs});
+                        }
+                    });
+                    
+                    updateChart();
+                    updateResultsTable();
+                    cycle++;
+                    if (cycle >= maxCycles) {
+                        clearInterval(state.kineticsTimer);
+                        state.isAnalyzing = false;
+                        updateUI();
                     }
                 };
-                reader.readAsText(file);
+                
+                runCycle(); // Run first cycle immediately
+                state.kineticsTimer = setInterval(runCycle, interval);
             }
 
-            // --- Charting and Regression ---
-            /**
- * Calculates the linear regression for a set of data points.
- * This is typically used for standard curves (Concentration vs. Absorbance).
- * It finds the best-fit line (y = mx + c) and the R-squared value.
- */
-function calculateAndUpdateRegression() {
-    // 1. Identify which data channel to use for the Y-axis from the dropdown.
-    const channel = elements.analysisModeSelect.value; // In a standard curve context, this would point to an absorbance channel.
+            function runSpectralScan() {
+                 if(!state.isCalibrated) { alert("Please calibrate first."); return; }
+                const sampleRois = state.rois.filter(r => r.type === 'Sample');
+                if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
+                
+                state.isAnalyzing = true;
+                updateUI();
+                state.analysisData = { type: 'scan', datasets: sampleRois.map(r => ({label: r.name, data:[], borderColor: r.color, tension: 0.1})) };
 
-    // 2. Filter the master data log to get only the points relevant for a standard curve.
-    // These are points that must have a user-defined concentration.
-    const points = state.analysisData.datasets
-        .filter(ds => ds.data && ds.data.length > 0) // Ensure dataset exists
-        .flatMap(ds => ds.data) // Flatten all datasets into a single array of points
-        .filter(point => point.concentration !== null && point.concentration !== undefined && point[channel] !== undefined)
-        .map(point => ({ x: point.concentration, y: point[channel] }));
-
-    // 3. A regression line requires at least two points to be meaningful.
-    if (points.length < 2) {
-        state.regression = { m: 0, c: 0, r2: 0, active: false };
-        return; // Exit if there's not enough data.
-    }
-
-    // 4. Perform the least squares linear regression calculation.
-    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
-    const n = points.length;
-
-    points.forEach(p => {
-        sumX += p.x;
-        sumY += p.y;
-        sumXY += p.x * p.y;
-        sumX2 += p.x * p.x;
-        sumY2 += p.y * p.y;
-    });
-
-    // Calculate slope (m)
-    const m_numerator = (n * sumXY - sumX * sumY);
-    const m_denominator = (n * sumX2 - sumX * sumX);
-    const m = m_denominator === 0 ? 0 : m_numerator / m_denominator;
-
-    // Calculate y-intercept (c)
-    const c = (sumY - m * sumX) / n;
-
-    // Calculate R-squared (coefficient of determination)
-    const r2_numerator = Math.pow((n * sumXY - sumX * sumY), 2);
-    const r2_denominator = (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY);
-    const r2 = r2_denominator === 0 ? 0 : r2_numerator / r2_denominator;
-
-    // 5. Update the global state with the new regression results.
-    state.regression = { m, c, r2, active: true };
-}
-
-            // --- UI Update Functions ---
+                const start = parseInt(elements.scanStartInput.value);
+                const end = parseInt(elements.scanEndInput.value);
+                const step = parseInt(elements.scanStepInput.value);
+                const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
+                
+                sampleRois.forEach((roi, index) => {
+                    const sampleRgb = analyzeRoi(roi);
+                    if(sampleRgb){
+                        for(let wl = start; wl <= end; wl += step) {
+                            const targetRgb = wavelengthToRgb(wl);
+                            const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
+                            const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
+                            const abs = safeLog(blankIntensity, sampleIntensity);
+                            state.analysisData.datasets[index].data.push({x: wl, y: abs});
+                        }
+                    }
+                });
+                
+                updateChart();
+                updateResultsTable();
+                state.isAnalyzing = false;
+                updateUI();
+            }
+            
             function updateUI() {
-    // --- 1. Update Button States based on current state ---
-    const hasCalibrator = state.rois.some(r => r.type === 'Calibrator');
-    const hasSample = state.rois.some(r => r.type === 'Sample');
+                // Main UI update logic
+                elements.calibrateBtn.disabled = !state.mediaReady || state.rois.filter(r => r.type === 'Calibrator').length === 0;
+                elements.runAnalysisBtn.disabled = !state.isCalibrated || state.rois.filter(r => r.type === 'Sample').length === 0 || state.isAnalyzing;
+                elements.runAnalysisBtn.innerHTML = state.isAnalyzing ? '<i class="bi bi-stop-fill"></i> Stop' : '<i class="bi bi-play-fill"></i> Run Analysis';
 
-    elements.calibrateBtn.disabled = !state.mediaReady || !hasCalibrator || state.isAnalyzing;
-    elements.runAnalysisBtn.disabled = !state.isCalibrated || !hasSample || state.isAnalyzing;
+                // ROI Table
+                elements.roiTableBody.innerHTML = '';
+                state.rois.forEach(roi => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><span class="color-swatch" style="background-color: ${roi.color};"></span></td>
+                        <td>${roi.name}</td>
+                        <td><select class="form-select roi-type-select" data-id="${roi.id}"><option>Sample</option><option>Calibrator</option></select></td>
+                        <td>${roi.size}px, ${roi.shape}</td>
+                        <td><i class="bi bi-trash-fill delete-btn" data-id="${roi.id}"></i></td>
+                    `;
+                    row.querySelector('.roi-type-select').value = roi.type;
+                    elements.roiTableBody.appendChild(row);
+                });
 
-    if (state.isAnalyzing) {
-        elements.runAnalysisBtn.innerHTML = `<i class="bi bi-stop-fill"></i> Stop`;
-    } else {
-        elements.runAnalysisBtn.innerHTML = `<i class="bi bi-play-fill"></i> Run Analysis`;
-    }
+                // ROI Overlay
+                elements.roiOverlay.innerHTML = '';
+                state.rois.forEach(roi => {
+                    const el = document.createElement('div');
+                    el.id = `roi-${roi.id}`;
+                    el.className = 'roi-indicator';
+                    el.classList.toggle('circle', roi.shape === 'circle');
+                    el.classList.toggle('selected', roi.id === state.selectedRoiId);
+                    el.classList.toggle('calibrator', roi.type === 'Calibrator');
+                    el.style.borderColor = roi.color;
+                    elements.roiOverlay.appendChild(el);
+                });
 
-    // --- 2. Update Analysis Mode Visibility ---
-    const currentMode = elements.analysisModeSelect.value;
-    elements.kineticsControls.classList.toggle('hidden', currentMode !== 'kinetics');
-    elements.scanControls.classList.toggle('hidden', currentMode !== 'scan');
-    elements.pointMeasurementCard.classList.toggle('hidden', currentMode !== 'point');
-
-
-    // --- 3. Update Calibration Status Indicator ---
-    if (state.isCalibrated) {
-        elements.calibrateBtn.innerHTML = `<i class="bi bi-arrow-repeat"></i> Recalibrate`;
-    } else {
-        elements.calibrateBtn.innerHTML = `<i class="bi bi-eyedropper"></i> Calibrate Blank`;
-    }
-
-
-    // --- 4. Render the ROI Table ---
-    elements.roiTableBody.innerHTML = '';
-    state.rois.forEach(roi => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><span class="color-swatch" style="background-color: ${roi.color};"></span></td>
-            <td>${roi.name}</td>
-            <td><select class="form-select roi-type-select" data-id="${roi.id}"><option>Sample</option><option>Calibrator</option></select></td>
-            <td>${roi.size}px, ${roi.shape}</td>
-            <td><i class="bi bi-trash-fill delete-btn" data-id="${roi.id}"></i></td>
-        `;
-        row.querySelector('.roi-type-select').value = roi.type;
-        elements.roiTableBody.appendChild(row);
-    });
-
-
-    // --- 5. Render ROI Visuals on the Overlay ---
-    elements.roiOverlay.innerHTML = '';
-    state.rois.forEach(roi => {
-        const el = document.createElement('div');
-        el.id = `roi-${roi.id}`;
-        el.className = 'roi-indicator';
-        el.classList.toggle('circle', roi.shape === 'circle');
-        el.classList.toggle('selected', roi.id === state.selectedRoiId);
-        el.classList.toggle('calibrator', roi.type === 'Calibrator');
-        el.style.borderColor = roi.color;
-        el.dataset.id = roi.id; // Set ID for drag handling
-        elements.roiOverlay.appendChild(el);
-    });
-    updateAllRoisPosition(); // Ensure visuals match state
-
-
-    // --- 6. Render Point Measurement Wavelengths ---
-    elements.pointResultsDiv.querySelectorAll('.dynamic-wl').forEach(el => el.remove());
-    state.pointWavelengths.forEach(wl => {
-        const rgb = wavelengthToRgb(wl);
-        const box = document.createElement('div');
-        box.className = 'result-box dynamic-wl';
-        box.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`;
-        box.innerHTML = `
-            <i class="bi bi-trash-fill delete-btn" data-wl="${wl}" style="position: absolute; top: 1px; left: 3px; font-size: 9px; cursor: pointer;"></i>
-            <p class="font-bold">${wl} nm</p>
-            <p id="abs_wl_${wl}" class="text-lg font-mono">-</p>
-        `;
-        elements.pointResultsDiv.appendChild(box);
-    });
-
-
-    // --- 7. Update Chart and Results Log ---
-    updateChart();
-    updateResultsTable();
-}
-
-            function updateChart() {
-    if (!chart) return;
-
-    const mode = elements.analysisModeSelect.value;
-    const datasets = state.analysisData.datasets || [];
-
-    let chartType = 'scatter';
-    let options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: datasets.length > 1,
-                position: 'top',
-                labels: { color: 'var(--text-primary)', font: { size: 10 } }
+                updateAllRoisPosition();
             }
-        },
-        scales: {
-            x: {
-                type: 'linear',
-                title: { display: true, text: 'X-Axis', color: 'var(--text-secondary)' },
-                ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
-                grid: { color: 'var(--border-primary)' }
-            },
-            y: {
-                title: { display: true, text: 'Absorbance', color: 'var(--text-secondary)' },
-                ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
-                grid: { color: 'var(--border-primary)' },
-                beginAtZero: true
+            
+            /**
+ * Initializes the application, sets up all event listeners, and configures the chart.
+ * This is the main entry point for the application's JavaScript.
+ */
+function init() {
+    // --- Setup and Source Listeners ---
+    elements.sourceModeSelect.addEventListener('change', (e) => setMode(e.target.value));
+    elements.cameraSelect.addEventListener('change', () => startCamera(elements.cameraSelect.value));
+    elements.imageUpload.addEventListener('change', handleImageUpload);
+    elements.zoomSlider.addEventListener('input', (e) => {
+        state.zoom = parseFloat(e.target.value);
+        elements.zoomValue.textContent = `${state.zoom.toFixed(1)}x`;
+        const media = getActiveMediaElement();
+        if (media) {
+            media.style.transform = `scale(${state.zoom})`;
+        }
+        updateAllRoisPosition();
+    });
+
+    // --- Analysis Mode Listener ---
+    elements.analysisModeSelect.addEventListener('change', updateUI);
+
+    // --- ROI Definition Listeners ---
+    elements.addRoiBtn.addEventListener('click', addRoi);
+    elements.roiShapeSelect.addEventListener('change', updateSelectedRoiProperties);
+    elements.roiSizeInput.addEventListener('change', updateSelectedRoiProperties);
+    
+    // Using event delegation for dynamic elements in the ROI table
+    elements.roiTableBody.addEventListener('click', (e) => {
+        const id = parseInt(e.target.dataset.id, 10);
+        if (e.target.classList.contains('delete-btn')) {
+            deleteRoi(id);
+        } else {
+            // Handle row selection for editing
+            const row = e.target.closest('tr');
+            if (row) {
+                const rowId = parseInt(row.dataset.id, 10);
+                state.selectedRoiId = rowId;
+                const roi = state.rois.find(r => r.id === rowId);
+                if (roi) {
+                    elements.roiShapeSelect.value = roi.shape;
+                    elements.roiSizeInput.value = roi.size;
+                }
+                updateUI();
             }
         }
-    };
+    });
 
-    if (mode === 'kinetics') {
-        chartType = 'line';
-        options.scales.x.type = 'time';
-        options.scales.x.title.text = 'Time';
-        options.scales.x.time = { unit: 'second' };
-    } else if (mode === 'scan') {
-        chartType = 'line';
-        options.scales.x.type = 'linear';
-        options.scales.x.title.text = 'Wavelength (nm)';
-    }
-
-    chart.config.type = chartType;
-    chart.data.datasets = datasets;
-    chart.options = options;
-    chart.update();
-}
-
-function handleExport() {
-    const mode = state.analysisData.type;
-    if (!mode || !state.analysisData.datasets || state.analysisData.datasets.length === 0) {
-        alert("No data available to export.");
-        return;
-    }
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    let headers = [];
-    let rows = [];
-
-    if (mode === 'kinetics') {
-        headers = ['Time (s)'];
-        const datasets = state.analysisData.datasets;
-        datasets.forEach(ds => headers.push(`${ds.label}_Abs`));
-        
-        const timePoints = {};
-        datasets.forEach((ds, i) => {
-            ds.data.forEach(point => {
-                const timeSec = Math.round(point.x.getTime() / 1000);
-                if (!timePoints[timeSec]) {
-                    timePoints[timeSec] = new Array(datasets.length).fill('');
+    elements.roiTableBody.addEventListener('change', (e) => {
+        const id = parseInt(e.target.dataset.id, 10);
+        if (e.target.classList.contains('roi-type-select')) {
+            const roi = state.rois.find(r => r.id === id);
+            if (roi) {
+                roi.type = e.target.value;
+                // Ensure only one calibrator at a time
+                if (roi.type === 'Calibrator') {
+                    state.rois.forEach(r => { if (r.id !== roi.id) r.type = 'Sample' });
                 }
-                timePoints[timeSec][i] = point.y.toFixed(4);
-            });
-        });
+                updateUI();
+            }
+        }
+    });
 
-        Object.keys(timePoints).sort((a,b)=>a-b).forEach(time => {
-            rows.push([time, ...timePoints[time]].join(','));
-        });
+    // --- Analysis Execution Listeners ---
+    elements.calibrateBtn.addEventListener('click', handleCalibrate);
+    elements.runAnalysisBtn.addEventListener('click', handleRunAnalysis);
 
-    } else if (mode === 'scan') {
-        headers = ['Wavelength (nm)'];
-        const datasets = state.analysisData.datasets;
-        datasets.forEach(ds => headers.push(`${ds.label}_Abs`));
-        
-        const wavelengths = {};
-        datasets.forEach((ds, i) => {
-            ds.data.forEach(point => {
-                const wl = point.x;
-                if (!wavelengths[wl]) {
-                    wavelengths[wl] = new Array(datasets.length).fill('');
+    // --- Point Measurement Wavelength Listeners ---
+    elements.addWavelengthBtn.addEventListener('click', handleAddWavelength);
+    elements.pointResultsDiv.addEventListener('click', (e) => {
+         if (e.target.classList.contains('delete-btn')) {
+            const wl = parseInt(e.target.dataset.wl, 10);
+            if (!isNaN(wl)) handleDeleteWavelength(wl);
+        }
+    });
+
+    // --- Media Interaction (Pan/Zoom/Drag) Listeners ---
+    elements.mediaContainer.addEventListener('wheel', handleZoom, { passive: false });
+    
+    elements.roiOverlay.addEventListener('mousedown', (e) => {
+        const target = e.target;
+        if (target.classList.contains('roi-indicator')) {
+            e.preventDefault();
+            state.draggingRoiId = parseInt(target.dataset.id, 10);
+            state.selectedRoiId = state.draggingRoiId;
+            state.dragStart.x = e.clientX;
+            state.dragStart.y = e.clientY;
+            updateUI(); // Redraw to show selection
+        }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (state.draggingRoiId === null) return;
+        const roi = state.rois.find(r => r.id === state.draggingRoiId);
+        if (!roi) return;
+        const dx = e.clientX - state.dragStart.x;
+        const dy = e.clientY - state.dragStart.y;
+        roi.x += dx / state.zoom;
+        roi.y += dy / state.zoom;
+        state.dragStart.x = e.clientX;
+        state.dragStart.y = e.clientY;
+        updateAllRoisPosition();
+    });
+
+    document.addEventListener('mouseup', () => {
+        state.draggingRoiId = null;
+    });
+
+    // --- Data Export Listeners ---
+    elements.exportChartBtn.addEventListener('click', handleExportChart);
+    elements.exportDataBtn.addEventListener('click', handleExportData);
+
+    // --- Window Resize Listener ---
+    window.addEventListener('resize', updateAllRoisPosition);
+
+    // --- Initialize Chart.js ---
+    chart = new Chart(elements.resultsChartCanvas, {
+        type: 'scatter',
+        data: { datasets: [] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false, position: 'top', labels: { color: 'var(--text-primary)', font: { size: 10 } } } },
+            scales: {
+                x: {
+                    title: { display: true, text: 'X-Axis', color: 'var(--text-secondary)' },
+                    ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
+                    grid: { color: 'var(--border-primary)' }
+                },
+                y: {
+                    title: { display: true, text: 'Y-Axis', color: 'var(--text-secondary)' },
+                    ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
+                    grid: { color: 'var(--border-primary)' },
+                    beginAtZero: true
                 }
-                wavelengths[wl][i] = point.y.toFixed(4);
-            });
-        });
-
-        Object.keys(wavelengths).sort((a,b)=>a-b).forEach(wl => {
-            rows.push([wl, ...wavelengths[wl]].join(','));
-        });
-    } else { // Point Measurement
-        const resultsTable = elements.resultsTableBody;
-        if (resultsTable.rows.length === 0) {
-            alert("No point measurement data to export.");
-            return;
+            }
         }
-        headers = ['Sample', 'Value'];
-        for(const row of resultsTable.rows) {
-            rows.push(`${row.cells[0].innerText},${row.cells[1].innerText}`);
-        }
-    }
+    });
     
-    csvContent += headers.join(",") + "\n" + rows.join("\n");
-    const link = document.createElement("a");
-    link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `ImageSpecPro_${mode}_data.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function handleReset() {
-    if (!confirm("This will reset all data, calibration, and ROIs. Are you sure?")) return;
-    
-    stopMedia();
-    if(state.kineticsTimer) clearInterval(state.kineticsTimer);
-
-    state = {
-        mode: elements.sourceModeSelect.value,
-        mediaReady: false,
-        currentStream: null,
-        rois: [],
-        nextRoiId: 1,
-        selectedRoiId: null,
-        draggingRoiId: null,
-        dragStart: { x: 0, y: 0 },
-        blankRgb: null,
-        isCalibrated: false,
-        analysisData: {},
-        zoom: 1,
-        kineticsTimer: null,
-        isAnalyzing: false,
-        pointWavelengths: []
-    };
-    
-    resetZoomAndScroll();
-    setMode(elements.sourceModeSelect.value);
-    
-    // Clear UI elements
-    elements.roiTableBody.innerHTML = '';
-    elements.roiOverlay.innerHTML = '';
-    elements.resultsTableBody.innerHTML = '';
-    state.analysisData = {};
-    updateChart();
+    // --- Initial Application State Setup ---
+    getCameras();
+    setMode('camera'); 
     updateUI();
 }
 
-
-            // --- Event Listeners & Initialization ---
-            function init() {
-                calibrateBtn.addEventListener('click', handleCalibrate);
-                measureBtn.addEventListener('click', handleMeasure);
-                logMeasurementBtn.addEventListener('click', handleLogMeasurement);
-                exportCsvBtn.addEventListener('click', handleExport);
-                resetBtn.addEventListener('click', handleReset);
-                importCsvBtn.addEventListener('click', () => csvUpload.click());
-                csvUpload.addEventListener('change', handleCsvUpload);
-                cameraSelect.addEventListener('change', () => startCamera(cameraSelect.value));
-                sourceModeSelect.addEventListener('change', (e) => setMode(e.target.value));
-                imageUpload.addEventListener('change', handleImageUpload);
-                roiShapeSelect.addEventListener('change', updateRoiFromControls);
-                roiSizeInput.addEventListener('change', updateRoiFromControls);
-                addWavelengthBtn.addEventListener('click', handleAddWavelength);
-                absChannelSelect.addEventListener('change', updateUI);
-                logTableBody.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-btn')) { handleDeleteMeasurement(parseInt(e.target.dataset.id, 10)); }
-                });
-                resultsDiv.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-wl-btn')) { handleDeleteWavelength(parseInt(e.target.dataset.wl, 10)); }
-                });
-                
-                const chartOptions = { /* ... no change ... */ };
-                chart = new Chart(stdCurveChartCanvas, { /* ... no change ... */ });
-                getCameras(); setMode('camera'); updateRoiFromControls();
-            }
             init();
         });
     </script>
