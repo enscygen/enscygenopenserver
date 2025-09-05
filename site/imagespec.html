@@ -13,7 +13,7 @@
         :root { --bg-color: #121212; --surface-color: #1e1e1e; --primary-color: #bb86fc; --primary-variant-color: #3700b3; --secondary-color: #03dac6; --text-color: #e0e0e0; --text-color-muted: #888; --border-color: #333; --error-color: #cf6679; --font-family: 'Inter', sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; overflow: hidden; font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); font-size: 14px; }
-        .app-container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: auto 1fr auto; grid-template-areas: "header header header" "controls canvas data" "results results results"; height: 100vh; gap: 8px; padding: 8px; }
+        .app-container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: auto 1fr auto; grid-template-areas: "header header header" "controls canvas data" "results results results"; gap: 8px; padding: 8px; }
         .app-header { grid-area: header; } .controls-panel { grid-area: controls; } .canvas-container { grid-area: canvas; } .data-panel { grid-area: data; } .results-panel { grid-area: results; }
         .panel { background-color: var(--surface-color); border-radius: 8px; border: 1px solid var(--border-color); padding: 12px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
         .panel-title { font-size: 1.1em; font-weight: 500; display: flex; align-items: center; gap: 8px; margin: 0; }
