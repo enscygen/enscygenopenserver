@@ -103,12 +103,61 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const imageLoader = document.getElementById('imageLoader'); const uploadButton = document.getElementById('uploadButton'); const mainCanvas = document.getElementById('mainCanvas'); const roiCanvas = document.getElementById('roiCanvas'); const videoFeed = document.getElementById('videoFeed'); const canvasPlaceholder = document.getElementById('canvas-placeholder'); const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true }); const roiCtx = roiCanvas.getContext('2d'); const sourceRadios = document.querySelectorAll('input[name="source"]'); const wavelengthInput = document.getElementById('wavelengthInput'); const addWavelengthBtn = document.getElementById('addWavelengthBtn'); const wavelengthList = document.getElementById('wavelengthList'); const roiTypeRadios = document.querySelectorAll('input[name="roiType"]'); const roiShapeSelect = document.getElementById('roiShape'); const roiSizeInput = document.getElementById('roiSize'); const roiNameInput = document.getElementById('roiName'); const liveAbsorbanceValue = document.getElementById('liveAbsorbanceValue'); const liveAbsorbanceLabel = document.getElementById('liveAbsorbanceLabel'); const liveAbsorbanceInfo = document.getElementById('liveAbsorbanceInfo'); const measurementModeSelect = document.getElementById('measurementMode'); const seriesScanOptions = document.getElementById('series-scan-options'); const timeSeriesOptions = document.getElementById('time-series-options'); const startMeasurementBtn = document.getElementById('startMeasurementBtn'); const resultsTableBody = document.querySelector('#resultsTable tbody'); const resultsTableHead = document.querySelector('#resultsTable thead tr'); const roiEditModal = document.getElementById('roiEditModal'); const roiInfoModal = document.getElementById('roiInfoModal'); const chartModal = document.getElementById('chartModal'); const saveRoiChangesBtn = document.getElementById('saveRoiChangesBtn'); const editRoiName = document.getElementById('editRoiName'); const editRoiShape = document.getElementById('editRoiShape'); const editRoiSize = document.getElementById('editRoiSize'); const editRoiColor = document.getElementById('editRoiColor'); let currentlyEditingRoiId = null;
-            let appState = { sourceType: 'upload', rois: [], wavelengths: [540], blankRoiId: null, nextSampleId: 1, isDragging: false, draggedRoi: null, dragOffsetX: 0, dragOffsetY: 0, videoStream: null, measurementChart: null, isMeasuring: false, liveAbsorbanceIndex: 0, liveAbsorbanceInterval: null };
+            let appState = { sourceType: 'upload', rois: [], wavelengths: [540], blankRoiId: null, nextSampleId: 1, isDragging: false, draggedRoi: null, dragOffsetX: 0, dragOffsetY: 0, videoStream: null, measurementChart: null, isMeasuring: false, liveAbsorbanceIndex: 0, liveAbsorbanceInterval: null, selectedRoiId: null };
             function wavelengthToRgb(lambda) { let r, g, b; if (lambda >= 380 && lambda <= 439) { r = -(lambda - 440) / (440 - 380); g = 0.0; b = 1.0; } else if (lambda >= 440 && lambda <= 489) { r = 0.0; g = (lambda - 440) / (490 - 440); b = 1.0; } else if (lambda >= 490 && lambda <= 509) { r = 0.0; g = 1.0; b = -(lambda - 510) / (510 - 490); } else if (lambda >= 510 && lambda <= 579) { r = (lambda - 510) / (580 - 510); g = 1.0; b = 0.0; } else if (lambda >= 580 && lambda <= 644) { r = 1.0; g = -(lambda - 645) / (645 - 580); b = 0.0; } else if (lambda >= 645 && lambda <= 780) { r = 1.0; g = 0.0; b = 0.0; } else { r = 0.0; g = 0.0; b = 0.0; } let factor; if (lambda >= 380 && lambda <= 419) { factor = 0.3 + 0.7 * (lambda - 380) / (420 - 380); } else if (lambda >= 420 && lambda <= 700) { factor = 1.0; } else if (lambda >= 701 && lambda <= 780) { factor = 0.3 + 0.7 * (780 - lambda) / (780 - 700); } else { factor = 0.0; } const gamma = 0.8; const adjust = (color) => Math.round(255 * Math.pow(color * factor, gamma)); return { r: adjust(r), g: adjust(g), b: adjust(b) }; }
             function getRoiAverageColor(roi) { if (!mainCanvas.width || !mainCanvas.height) return null; const size = roi.shape === 'pixel' ? 1 : roi.size; const halfSize = size / 2; const startX = Math.round(roi.x - halfSize); const startY = Math.round(roi.y - halfSize); if (startX + size < 0 || startX > mainCanvas.width || startY + size < 0 || startY > mainCanvas.height) return null; const imageData = mainCtx.getImageData(Math.max(0, startX), Math.max(0, startY), Math.min(size, mainCanvas.width - startX), Math.min(size, mainCanvas.height - startY)); const data = imageData.data; let r = 0, g = 0, b = 0, count = 0; for (let i = 0; i < data.length; i += 4) { const pixelX = Math.max(0, startX) + (i / 4) % imageData.width; const pixelY = Math.max(0, startY) + Math.floor((i / 4) / imageData.width); let inShape = false; if (roi.shape === 'square' || roi.shape === 'pixel') { inShape = true; } else if (roi.shape === 'circle') { const dx = pixelX - roi.x; const dy = pixelY - roi.y; if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true; } if (inShape) { r += data[i]; g += data[i + 1]; b += data[i + 2]; count++; } } if (count === 0) return { r: 0, g: 0, b: 0, count: 0 }; return { r: r / count, g: g / count, b: b / count, count }; }
             function getWavelengthChannelWeights(wl) { const bluePeak = 450, greenPeak = 540, redPeak = 620; const blueSpread = 60, greenSpread = 70, redSpread = 60; const gaussian = (x, peak, spread) => Math.exp(-((x - peak) ** 2) / (2 * spread ** 2)); let bWeight = gaussian(wl, bluePeak, blueSpread); let gWeight = gaussian(wl, greenPeak, greenSpread); let rWeight = gaussian(wl, redPeak, redSpread); const totalWeight = bWeight + gWeight + rWeight; if (totalWeight === 0) return { r: 0, g: 0, b: 0 }; return { r: rWeight / totalWeight, g: gWeight / totalWeight, b: bWeight / totalWeight }; }
             function calculateAllAbsorbances() { const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); if (!blankRoi) { liveAbsorbanceInfo.textContent = "No Blank ROI set"; appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => { sampleRoi.absorbance = {}; }); updateResultsTable(); updateLiveAbsorbanceDisplay(); return; } liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`; const blankColor = getRoiAverageColor(blankRoi); if (!blankColor) return; appState.rois.forEach(roi => { if (roi.type === 'sample') { const sampleColor = getRoiAverageColor(roi); if (!sampleColor) { roi.absorbance = {}; return; } appState.wavelengths.forEach(wl => { const weights = getWavelengthChannelWeights(wl); const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b; const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b; if (blankIntensity > 0 && sampleIntensity > 0) { roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3); } else { roi.absorbance[wl] = 'inf'; } }); } }); updateResultsTable(); updateLiveAbsorbanceDisplay(); }
-            function updateLiveAbsorbanceDisplay() { const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); const firstSample = appState.rois.find(r => r.type === 'sample'); if (firstSample && blankRoi && appState.wavelengths.length > 0) { if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) { appState.liveAbsorbanceIndex = 0; } const wl = appState.wavelengths[appState.liveAbsorbanceIndex]; const absorbance = firstSample.absorbance[wl]; liveAbsorbanceLabel.textContent = `${firstSample.name} @ ${wl} nm`; liveAbsorbanceValue.textContent = absorbance || '-'; liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`; } else { liveAbsorbanceLabel.textContent = ''; liveAbsorbanceValue.textContent = '-'; if (!blankRoi) { liveAbsorbanceInfo.textContent = 'No Blank ROI set'; } else if (!firstSample) { liveAbsorbanceInfo.textContent = 'No Sample ROI set'; } else { liveAbsorbanceInfo.textContent = 'No Wavelengths added'; } } }
+            function updateLiveAbsorbanceDisplay() {
+    let targetRoi = null;
+
+    // Priority 1: Find the user-selected ROI
+    if (appState.selectedRoiId) {
+        targetRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
+    }
+
+    // Priority 2: If no selection, find the last added sample ROI
+    if (!targetRoi) {
+        const samples = appState.rois.filter(r => r.type === 'sample');
+        if (samples.length > 0) {
+            targetRoi = samples[samples.length - 1];
+        }
+    }
+
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+
+    // Now, update the display based on the targetRoi we found
+    if (targetRoi && blankRoi && appState.wavelengths.length > 0) {
+        if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) {
+            appState.liveAbsorbanceIndex = 0;
+        }
+
+        const wl = appState.wavelengths[appState.liveAbsorbanceIndex];
+        const absorbance = targetRoi.absorbance[wl];
+        const rgb = wavelengthToRgb(wl);
+
+        // Update text content and apply the matching color
+        liveAbsorbanceLabel.textContent = `${targetRoi.name} @ ${wl} nm`;
+        liveAbsorbanceValue.textContent = absorbance || '-';
+        liveAbsorbanceValue.style.color = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
+
+    } else {
+        // Default state if no valid sample/blank/wavelength
+        liveAbsorbanceLabel.textContent = '';
+        liveAbsorbanceValue.textContent = '-';
+        liveAbsorbanceValue.style.color = 'var(--secondary-color)'; // Reset to default color
+
+        if (!blankRoi) {
+            liveAbsorbanceInfo.textContent = 'No Blank ROI set';
+        } else if (!targetRoi) {
+            liveAbsorbanceInfo.textContent = 'No Sample ROI set';
+        } else {
+            liveAbsorbanceInfo.textContent = 'No Wavelengths added';
+        }
+    }
+}
+
             document.querySelectorAll('.collapsible-header').forEach(header => { header.addEventListener('click', () => { header.closest('.collapsible').classList.toggle('open'); }); });
             function drawROIs() { roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height); appState.rois.forEach(roi => { const size = roi.shape === 'pixel' ? 5 : roi.size; const halfSize = size / 2; roiCtx.strokeStyle = roi.color; roiCtx.lineWidth = 2; roiCtx.fillStyle = `${roi.color}33`; roiCtx.font = "12px Arial"; roiCtx.textAlign = "center"; roiCtx.beginPath(); if (roi.shape === 'circle') { roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2); } else { roiCtx.rect(roi.x - halfSize, roi.y - halfSize, size, size); } roiCtx.stroke(); roiCtx.fill(); roiCtx.fillStyle = roi.color; roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5); if (roi.locked) { roiCtx.font = "15px Arial"; roiCtx.fillStyle = roi.color; roiCtx.fillText('🔒', roi.x, roi.y + halfSize + 15); } }); }
             function updateWavelengthList() { wavelengthList.innerHTML = ''; appState.wavelengths.forEach(wl => { const rgb = wavelengthToRgb(wl); const li = document.createElement('li'); li.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`; const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000; li.style.color = brightness > 128 ? '#000' : '#fff'; li.innerHTML = `${wl} nm <button data-wl="${wl}" class="delete-wl">&times;</button>`; wavelengthList.appendChild(li); }); updateResultsTableHeader(); }
@@ -125,7 +174,69 @@
             roiCanvas.addEventListener('mousedown', (e) => { const rect = roiCanvas.getBoundingClientRect(); const scaleX = roiCanvas.width / rect.width; const scaleY = roiCanvas.height / rect.height; const x = (e.clientX - rect.left) * scaleX; const y = (e.clientY - rect.top) * scaleY; let clickedOnRoi = null; for (let i = appState.rois.length - 1; i >= 0; i--) { const roi = appState.rois[i]; const dist = Math.sqrt(Math.pow(x - roi.x, 2) + Math.pow(y - roi.y, 2)); if (dist < roi.size / 2) { clickedOnRoi = roi; break; } } if (clickedOnRoi && !clickedOnRoi.locked) { appState.isDragging = true; appState.draggedRoi = clickedOnRoi; appState.dragOffsetX = x - clickedOnRoi.x; appState.dragOffsetY = y - clickedOnRoi.y; } else if (!clickedOnRoi && mainCanvas.width > 0) { addRoi(x,y); } });
             roiCanvas.addEventListener('mousemove', (e) => { if (appState.isDragging && appState.draggedRoi) { const rect = roiCanvas.getBoundingClientRect(); const scaleX = roiCanvas.width / rect.width; const scaleY = roiCanvas.height / rect.height; const x = (e.clientX - rect.left) * scaleX; const y = (e.clientY - rect.top) * scaleY; appState.draggedRoi.x = x - appState.dragOffsetX; appState.draggedRoi.y = y - appState.dragOffsetY; appState.draggedRoi.x = Math.max(0, Math.min(mainCanvas.width, appState.draggedRoi.x)); appState.draggedRoi.y = Math.max(0, Math.min(mainCanvas.height, appState.draggedRoi.y)); drawROIs(); calculateAllAbsorbances(); } });
             window.addEventListener('mouseup', () => { appState.isDragging = false; appState.draggedRoi = null; });
-            resultsTableBody.addEventListener('click', (e) => { const button = e.target.closest('button'); if (!button) return; const id = button.dataset.id; const roi = appState.rois.find(r => r.id === id); if(button.classList.contains('lock-roi-btn')) { if (roi) { roi.locked = !roi.locked; drawROIs(); updateResultsTable(); } } else if(button.classList.contains('delete-roi-btn')) { appState.rois = appState.rois.filter(r => r.id !== id); if(appState.blankRoiId === id) appState.blankRoiId = null; drawROIs(); calculateAllAbsorbances(); } else if(button.classList.contains('edit-roi-btn')) { openEditModal(id); } else if(button.classList.contains('info-roi-btn')) { openInfoModal(id); } else if(button.classList.contains('chart-roi-btn')) { if(roi && roi.seriesData) { showChart(roi.seriesData, 'Wavelength (nm)', 'Absorbance', `${roi.name} - Wavelength Scan`); } } });
+            resultsTableBody.addEventListener('click', (e) => {
+    // --- New Row Selection & Highlighting Logic ---
+    const row = e.target.closest('tr');
+    if (!row) return; // Exit if the click was not inside a row
+
+    // Find the ROI ID associated with the clicked row.
+    // We get it from a button within the row as a reliable source.
+    const buttonInRow = row.querySelector('td:last-child button');
+    if (buttonInRow) {
+        const id = buttonInRow.dataset.id;
+        const roi = appState.rois.find(r => r.id === id);
+
+        // Check if the clicked ROI is a sample. We only want to select samples for live view.
+        if (roi && roi.type === 'sample') {
+            // If the user clicks the *same* row again, deselect it. Otherwise, select the new one.
+            if (appState.selectedRoiId === id) {
+                appState.selectedRoiId = null;
+                row.style.backgroundColor = ''; // Remove highlight
+            } else {
+                appState.selectedRoiId = id;
+                // Remove highlighting from all other rows first
+                document.querySelectorAll('#resultsTable tbody tr').forEach(tr => tr.style.backgroundColor = '');
+                // Apply highlight to the newly selected row
+                row.style.backgroundColor = 'rgba(187, 134, 252, 0.2)';
+            }
+        }
+        // Always update the display after a click to reflect the new selection or deselection
+        updateLiveAbsorbanceDisplay();
+    }
+
+    // --- Original Button-Specific Logic ---
+    // Check if the actual click target was a button
+    const button = e.target.closest('button');
+    if (!button) return; // If not, we're done (the click was just for selection)
+
+    const id = button.dataset.id;
+    const roi = appState.rois.find(r => r.id === id);
+
+    if (button.classList.contains('lock-roi-btn')) {
+        if (roi) {
+            roi.locked = !roi.locked;
+            drawROIs();
+            updateResultsTable(); // Redraw table to update the icon
+        }
+    } else if (button.classList.contains('edit-roi-btn')) {
+        openEditModal(id);
+    } else if (button.classList.contains('info-roi-btn')) {
+        openInfoModal(id);
+    } else if (button.classList.contains('chart-roi-btn')) {
+        if (roi && roi.seriesData) {
+            showChart(roi.seriesData, 'Wavelength (nm)', 'Absorbance', `${roi.name} - Wavelength Scan`);
+        }
+    } else if (button.classList.contains('delete-roi-btn')) {
+        appState.rois = appState.rois.filter(roi => roi.id !== id);
+        if (appState.blankRoiId === id) appState.blankRoiId = null;
+        // If the deleted ROI was the selected one, clear the selection
+        if (appState.selectedRoiId === id) appState.selectedRoiId = null;
+        drawROIs();
+        calculateAllAbsorbances(); // This will also call updateResultsTable
+    }
+});
+
+
             measurementModeSelect.addEventListener('change', (e) => { seriesScanOptions.style.display = e.target.value === 'series' ? 'block' : 'none'; timeSeriesOptions.style.display = e.target.value === 'time' ? 'block' : 'none'; document.querySelectorAll('.chart-roi-btn').forEach(btn => { btn.style.display = e.target.value === 'series' ? 'inline-block' : 'none'; }) });
             startMeasurementBtn.addEventListener('click', handleStartMeasurement);
             function addRoi(x, y) { const type = document.querySelector('input[name="roiType"]:checked').value; const id = 'roi-' + Date.now(); const name = roiNameInput.value || (type === 'blank' ? 'Blank' : `Sample ${appState.nextSampleId++}`); const newRoi = { id: id, name: name, type: type, shape: roiShapeSelect.value, size: parseInt(roiSizeInput.value), x: x, y: y, color: type === 'blank' ? '#03dac6' : '#bb86fc', absorbance: {}, locked: false }; if (type === 'blank') { appState.rois = appState.rois.filter(r => r.type !== 'blank'); appState.blankRoiId = id; } appState.rois.push(newRoi); roiNameInput.value = ''; drawROIs(); calculateAllAbsorbances(); }
