@@ -92,7 +92,17 @@
         </aside>
         <footer class="panel results-panel">
             <section class="collapsible open">
-                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-table"></i> ROI Data</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-header">
+    <h3 class="panel-title">
+        <i class="bi bi-table"></i> ROI Data
+        <!-- Add this new button -->
+        <button id="downloadCsvBtn" class="icon-button" title="Download as CSV" style="margin-left: auto;">
+            <i class="bi bi-download"></i>
+        </button>
+    </h3>
+    <i class="bi bi-chevron-up collapse-icon"></i>
+</div>
+
                 <div class="collapsible-content"> <div style="overflow-x: auto; width: 100%;"> <table id="resultsTable"> <thead> <tr> <th></th> <th>Name</th> <th>Actions</th> </tr> </thead> <tbody></tbody> </table> </div> </div>
             </section>
         </footer>
@@ -102,7 +112,8 @@
     <div id="chartModal" class="modal"> <div class="modal-content" style="max-width: 800px;"> <div class="modal-header"> <h2 id="chartTitle">Measurement Chart</h2> <button class="close-button">&times;</button> </div> <canvas id="measurementChart"></canvas> </div> </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const imageLoader = document.getElementById('imageLoader'); const uploadButton = document.getElementById('uploadButton'); const mainCanvas = document.getElementById('mainCanvas'); const roiCanvas = document.getElementById('roiCanvas'); const videoFeed = document.getElementById('videoFeed'); const canvasPlaceholder = document.getElementById('canvas-placeholder'); const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true }); const roiCtx = roiCanvas.getContext('2d'); const sourceRadios = document.querySelectorAll('input[name="source"]'); const wavelengthInput = document.getElementById('wavelengthInput'); const addWavelengthBtn = document.getElementById('addWavelengthBtn'); const wavelengthList = document.getElementById('wavelengthList'); const roiTypeRadios = document.querySelectorAll('input[name="roiType"]'); const roiShapeSelect = document.getElementById('roiShape'); const roiSizeInput = document.getElementById('roiSize'); const roiNameInput = document.getElementById('roiName'); const liveAbsorbanceValue = document.getElementById('liveAbsorbanceValue'); const liveAbsorbanceLabel = document.getElementById('liveAbsorbanceLabel'); const liveAbsorbanceInfo = document.getElementById('liveAbsorbanceInfo'); const measurementModeSelect = document.getElementById('measurementMode'); const seriesScanOptions = document.getElementById('series-scan-options'); const timeSeriesOptions = document.getElementById('time-series-options'); const startMeasurementBtn = document.getElementById('startMeasurementBtn'); const resultsTableBody = document.querySelector('#resultsTable tbody'); const resultsTableHead = document.querySelector('#resultsTable thead tr'); const roiEditModal = document.getElementById('roiEditModal'); const roiInfoModal = document.getElementById('roiInfoModal'); const chartModal = document.getElementById('chartModal'); const saveRoiChangesBtn = document.getElementById('saveRoiChangesBtn'); const editRoiName = document.getElementById('editRoiName'); const editRoiShape = document.getElementById('editRoiShape'); const editRoiSize = document.getElementById('editRoiSize'); const editRoiColor = document.getElementById('editRoiColor'); let currentlyEditingRoiId = null;
+            const imageLoader = document.getElementById('imageLoader'); const uploadButton = document.getElementById('uploadButton'); const mainCanvas = document.getElementById('mainCanvas'); const roiCanvas = document.getElementById('roiCanvas'); const videoFeed = document.getElementById('videoFeed'); const canvasPlaceholder = document.getElementById('canvas-placeholder'); const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true }); const roiCtx = roiCanvas.getContext('2d'); const sourceRadios = document.querySelectorAll('input[name="source"]'); const wavelengthInput = document.getElementById('wavelengthInput'); const addWavelengthBtn = document.getElementById('addWavelengthBtn'); const wavelengthList = document.getElementById('wavelengthList'); const roiTypeRadios = document.querySelectorAll('input[name="roiType"]'); const roiShapeSelect = document.getElementById('roiShape'); const roiSizeInput = document.getElementById('roiSize'); const roiNameInput = document.getElementById('roiName'); const liveAbsorbanceValue = document.getElementById('liveAbsorbanceValue'); const liveAbsorbanceLabel = document.getElementById('liveAbsorbanceLabel'); const liveAbsorbanceInfo = document.getElementById('liveAbsorbanceInfo'); const measurementModeSelect = document.getElementById('measurementMode'); const seriesScanOptions = document.getElementById('series-scan-options'); const timeSeriesOptions = document.getElementById('time-series-options'); const startMeasurementBtn = document.getElementById('startMeasurementBtn'); const resultsTableBody = document.querySelector('#resultsTable tbody'); const resultsTableHead = document.querySelector('#resultsTable thead tr'); const roiEditModal = document.getElementById('roiEditModal'); const roiInfoModal = document.getElementById('roiInfoModal'); const chartModal = document.getElementById('chartModal'); const saveRoiChangesBtn = document.getElementById('saveRoiChangesBtn'); const editRoiName = document.getElementById('editRoiName'); const editRoiShape = document.getElementById('editRoiShape'); const editRoiSize = document.getElementById('editRoiSize'); const editRoiColor = document.getElementById('editRoiColor'); const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+let currentlyEditingRoiId = null;
             let appState = { sourceType: 'upload', rois: [], wavelengths: [540], blankRoiId: null, nextSampleId: 1, isDragging: false, draggedRoi: null, dragOffsetX: 0, dragOffsetY: 0, videoStream: null, measurementChart: null, isMeasuring: false, liveAbsorbanceIndex: 0, liveAbsorbanceInterval: null, selectedRoiId: null };
             function wavelengthToRgb(lambda) { let r, g, b; if (lambda >= 380 && lambda <= 439) { r = -(lambda - 440) / (440 - 380); g = 0.0; b = 1.0; } else if (lambda >= 440 && lambda <= 489) { r = 0.0; g = (lambda - 440) / (490 - 440); b = 1.0; } else if (lambda >= 490 && lambda <= 509) { r = 0.0; g = 1.0; b = -(lambda - 510) / (510 - 490); } else if (lambda >= 510 && lambda <= 579) { r = (lambda - 510) / (580 - 510); g = 1.0; b = 0.0; } else if (lambda >= 580 && lambda <= 644) { r = 1.0; g = -(lambda - 645) / (645 - 580); b = 0.0; } else if (lambda >= 645 && lambda <= 780) { r = 1.0; g = 0.0; b = 0.0; } else { r = 0.0; g = 0.0; b = 0.0; } let factor; if (lambda >= 380 && lambda <= 419) { factor = 0.3 + 0.7 * (lambda - 380) / (420 - 380); } else if (lambda >= 420 && lambda <= 700) { factor = 1.0; } else if (lambda >= 701 && lambda <= 780) { factor = 0.3 + 0.7 * (780 - lambda) / (780 - 700); } else { factor = 0.0; } const gamma = 0.8; const adjust = (color) => Math.round(255 * Math.pow(color * factor, gamma)); return { r: adjust(r), g: adjust(g), b: adjust(b) }; }
             function getRoiAverageColor(roi) { if (!mainCanvas.width || !mainCanvas.height) return null; const size = roi.shape === 'pixel' ? 1 : roi.size; const halfSize = size / 2; const startX = Math.round(roi.x - halfSize); const startY = Math.round(roi.y - halfSize); if (startX + size < 0 || startX > mainCanvas.width || startY + size < 0 || startY > mainCanvas.height) return null; const imageData = mainCtx.getImageData(Math.max(0, startX), Math.max(0, startY), Math.min(size, mainCanvas.width - startX), Math.min(size, mainCanvas.height - startY)); const data = imageData.data; let r = 0, g = 0, b = 0, count = 0; for (let i = 0; i < data.length; i += 4) { const pixelX = Math.max(0, startX) + (i / 4) % imageData.width; const pixelY = Math.max(0, startY) + Math.floor((i / 4) / imageData.width); let inShape = false; if (roi.shape === 'square' || roi.shape === 'pixel') { inShape = true; } else if (roi.shape === 'circle') { const dx = pixelX - roi.x; const dy = pixelY - roi.y; if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true; } if (inShape) { r += data[i]; g += data[i + 1]; b += data[i + 2]; count++; } } if (count === 0) return { r: 0, g: 0, b: 0, count: 0 }; return { r: r / count, g: g / count, b: b / count, count }; }
@@ -236,6 +247,8 @@
     }
 });
 
+            downloadCsvBtn.addEventListener('click', downloadDataAsCSV);
+
 
             measurementModeSelect.addEventListener('change', (e) => { seriesScanOptions.style.display = e.target.value === 'series' ? 'block' : 'none'; timeSeriesOptions.style.display = e.target.value === 'time' ? 'block' : 'none'; document.querySelectorAll('.chart-roi-btn').forEach(btn => { btn.style.display = e.target.value === 'series' ? 'inline-block' : 'none'; }) });
             startMeasurementBtn.addEventListener('click', handleStartMeasurement);
@@ -249,6 +262,43 @@
             function runSeriesScan() { return new Promise(resolve => { const sampleRoi = appState.rois.find(r => r.type === 'sample'); if(!sampleRoi) { alert("Please add at least one Sample ROI."); return resolve(); } const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); if(!blankRoi) { alert("Please set a Blank ROI."); return resolve(); } const start = parseInt(document.getElementById('seriesStart').value); const end = parseInt(document.getElementById('seriesEnd').value); const step = parseInt(document.getElementById('seriesStep').value); const blankColor = getRoiAverageColor(blankRoi); const sampleColor = getRoiAverageColor(sampleRoi); const seriesData = { labels: [], datasets: [{ label: 'Absorbance', data: [], borderColor: '#03dac6', backgroundColor: '#03dac633', tension: 0.1, fill: true }] }; for(let wl = start; wl <= end; wl += step) { const weights = getWavelengthChannelWeights(wl); const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b; const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b; let absorbance = 0; if(blankIntensity > 0 && sampleIntensity > 0) { absorbance = -Math.log10(sampleIntensity / blankIntensity); } seriesData.labels.push(wl); seriesData.datasets[0].data.push(absorbance); } sampleRoi.seriesData = seriesData; showChart(seriesData, 'Wavelength (nm)', 'Absorbance', `${sampleRoi.name} - Wavelength Scan`); resolve(); }); }
             function runTimeSeries() { return new Promise((resolve) => { if (appState.sourceType !== 'camera') { alert("Time series measurement requires the live camera source."); return resolve(); } const sampleRoi = appState.rois.find(r => r.type === 'sample'); if(!sampleRoi || !appState.blankRoiId) { alert("Please set one Blank and at least one Sample ROI."); return resolve(); } const timePointsInput = document.getElementById('timePoints').value; const timePoints = timePointsInput.split(',').map(t => parseFloat(t.trim())).filter(t => !isNaN(t) && t >= 0).sort((a, b) => a - b); if (timePoints.length === 0) { alert("Please enter valid, comma-separated time points."); return resolve(); } const timeData = { labels: [], datasets: [] }; appState.wavelengths.forEach(wl => { const rgb = wavelengthToRgb(wl); timeData.datasets.push({ label: `${wl} nm`, data: [], borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`, tension: 0.1, pointRadius: 4, fill: true }); }); showChart(timeData, 'Time (s)', 'Absorbance', 'Time Series Measurement'); let currentIndex = 0; function takeMeasurementAtNextPoint() { if (currentIndex >= timePoints.length) { startMeasurementBtn.textContent = 'Start Measurement'; resolve(); return; } const targetTime = timePoints[currentIndex]; const previousTime = currentIndex > 0 ? timePoints[currentIndex - 1] : 0; const delay = (targetTime - previousTime) * 1000; startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`; setTimeout(() => { startMeasurementBtn.textContent = `Measuring at ${targetTime}s...`; mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height); calculateAllAbsorbances(); timeData.labels.push(targetTime); appState.wavelengths.forEach((wl, index) => { while(timeData.datasets[index].data.length < currentIndex) { timeData.datasets[index].data.push(null); } timeData.datasets[index].data.push(sampleRoi.absorbance[wl] || 0); }); appState.measurementChart.update(); currentIndex++; takeMeasurementAtNextPoint(); }, delay); } takeMeasurementAtNextPoint(); }); }
             function showChart(data, xLabel, yLabel, titleText) { const chartCanvas = document.getElementById('measurementChart'); if(appState.measurementChart) { appState.measurementChart.destroy(); } document.getElementById('chartTitle').textContent = titleText; appState.measurementChart = new Chart(chartCanvas, { type: 'line', data: data, options: { responsive: true, scales: { x: { title: { display: true, text: xLabel, color: '#fff' }, ticks: { color: '#aaa' }, grid: { color: '#444' } }, y: { title: { display: true, text: yLabel, color: '#fff' }, ticks: { color: '#aaa' }, grid: { color: '#444' } } }, plugins: { legend: { labels: { color: '#fff' } } } } }); chartModal.style.display = 'flex'; }
+
+function downloadDataAsCSV() {
+    // 1. Define CSV Headers
+    const headers = ['Name', ...appState.wavelengths.map(wl => `${wl} nm`)];
+
+    // 2. Map ROI data to CSV rows
+    const rows = appState.rois.map(roi => {
+        // Enclose the name in double quotes to handle commas within names
+        const name = `"${roi.name}"`;
+
+        // Get the absorbance value for each wavelength in the correct order
+        const values = appState.wavelengths.map(wl => {
+            return roi.absorbance ? (roi.absorbance[wl] || '') : '';
+        });
+
+        // Combine the name and values into a single row string
+        return [name, ...values].join(',');
+    });
+
+    // 3. Combine headers and rows into a single CSV string
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // 4. Create a Blob and trigger the download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) { // Check for browser support
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'ImageSpec_ROI_Data.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+            
             function init() { updateWavelengthList(); calculateAllAbsorbances(); if(appState.liveAbsorbanceInterval) clearInterval(appState.liveAbsorbanceInterval); appState.liveAbsorbanceInterval = setInterval(() => { if (appState.wavelengths.length > 0) { appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length; } liveAbsorbanceValue.style.opacity = 0; setTimeout(() => { updateLiveAbsorbanceDisplay(); liveAbsorbanceValue.style.opacity = 1; }, 300); }, 2500); console.log("Spectrophotometer Initialized"); }
             init();
         });
