@@ -3,815 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImageSpec Pro</title>
-    
+    <title>ImageSpec | Enscygen</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-    <link rel="preconnect" href="https://rsms.me/">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #111827; --bg-card: #1f2937; --border-primary: #374151;
-            --border-secondary: #4b5563; --text-primary: #d1d5db; --text-secondary: #9ca3af;
-            --text-white: #ffffff; --font-main: 'Inter', sans-serif; --accent-blue: #3b82f6;
-            --accent-blue-hover: #2563eb; --accent-green: #22c55e; --accent-red: #ef4444;
-            --accent-red-hover: #dc2626; --accent-cyan: #22d3ee;
-        }
-        html { color-scheme: dark; }
-        body {
-            background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-main);
-            font-size: 12px;
-            display: flex; height: 100vh; overflow: hidden;
-        }
-        aside {
-            width: 33.33%; min-width: 420px; max-width: 450px; height: 100%; display: flex;
-            flex-direction: column; padding: 6px; gap: 6px; overflow-y: auto;
-        }
-        main { flex-grow: 1; height: 100%; display: flex; flex-direction: column; padding: 6px; }
-        ::-webkit-scrollbar { width: 8px; height: 8px;}
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 4px; border: 2px solid var(--bg-primary); }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-        .card {
-            background-color: var(--bg-card); border: 1px solid var(--border-primary);
-            border-radius: 6px; padding: 10px; flex-shrink: 0;
-        }
-        .card-grow { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; }
-        h1 { font-size: 18px; font-weight: 600; color: var(--text-white); margin: 0; padding: 0;}
-        h2 { font-size: 13px; font-weight: 600; color: var(--text-white); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        header p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        label { display: block; font-size: 10px; font-weight: 500; color: var(--text-secondary); margin-bottom: 3px; text-transform: uppercase; }
-        .control-group { display: flex; gap: 10px; align-items: flex-end; }
-        .control-group > div { flex: 1; }
-        .form-input, .form-select {
-            background-color: var(--border-primary); border: 1px solid var(--border-secondary);
-            color: var(--text-primary); border-radius: 4px; padding: 4px 7px;
-            font-size: 12px; width: 100%; box-sizing: border-box; transition: all 0.2s;
-        }
-        .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); }
-        input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-            padding: 4px 9px; border-radius: 4px; font-weight: 500; font-size: 12px;
-            transition: all 0.2s; border: 1px solid transparent; cursor: pointer; width: 100%;
-        }
-        
-        .media-wrapper { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 6px;}
-        #mediaContainer {
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-            background-color: black; overflow: auto; cursor: crosshair;
-        }
-        #video, #uploadedImage { transform-origin: top left; max-width: none; position: absolute; top: 0; left: 0; }
-        #roiOverlay { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
-        .roi-indicator {
-            position: absolute; border: 1px solid white;
-            box-shadow: 0 0 8px rgba(0,0,0,0.7); 
-            background-color: rgba(255, 255, 255, 0.1); 
-            cursor: move; pointer-events: auto;
-        }
-        .roi-indicator.circle { border-radius: 50%; }
-        .roi-indicator.selected { border-width: 2px; box-shadow: 0 0 12px rgba(59, 130, 246, 0.8); }
-        .roi-indicator.calibrator { border-style: dashed; }
-        #message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: var(--text-secondary); padding: 16px;}
-        .hidden { display: none; }
-
-        .table-container { max-height: 150px; overflow-y: auto; border: 1px solid var(--border-primary); border-radius: 6px; position: relative; font-size: 11px;}
-        table { width: 100%; font-size: 11px; text-align: left; border-collapse: collapse; }
-        thead { background-color: var(--bg-card); position: sticky; top: 0; z-index: 10; }
-        th, td { padding: 5px; border-bottom: 1px solid var(--border-primary); }
-        td { vertical-align: middle; }
-        .color-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.2); }
-        
-        .chart-container { position: relative; min-height: 150px; flex-grow: 1; margin-top: 8px; }
-        .delete-btn { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; } .delete-btn:hover { color: var(--accent-red); }
-        .button-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; } 
-
-        #pointMeasurementCard .result-box {
-            padding: 5px; border-radius: 4px; flex-grow: 1;
-            min-width: 60px; position: relative; text-align: center;
-        }
-        #pointMeasurementCard .font-bold { font-weight: 600; font-size: 10px; text-transform: uppercase; }
-        #pointMeasurementCard .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-        #pointMeasurementCard .text-lg { font-size: 14px; }
-        #pointMeasurementCard .bg-red { background-color: rgba(127, 29, 29, 0.5); } 
-        #pointMeasurementCard .bg-green { background-color: rgba(21, 128, 61, 0.5); }
-        #pointMeasurementCard .bg-blue { background-color: rgba(30, 64, 175, 0.5); }
-        
-        @media (max-width: 1024px) {
-            body { flex-direction: column; height: auto; overflow-y: auto; font-size: 14px; }
-            aside { width: 100%; max-width: none; height: auto; overflow-y: visible; padding: 8px; }
-            main { width: 100%; height: 60vh; padding: 0 8px 8px 8px; }
-            .control-group { flex-direction: column; align-items: stretch; gap: 12px;}
-        }
+        :root { --bg-color: #121212; --surface-color: #1e1e1e; --primary-color: #bb86fc; --primary-variant-color: #3700b3; --secondary-color: #03dac6; --text-color: #e0e0e0; --text-color-muted: #888; --border-color: #333; --error-color: #cf6679; --font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); font-size: 14px; }
+        .app-container { display: grid; grid-template-columns: 280px 1fr 280px; grid-template-rows: auto 1fr auto; grid-template-areas: "header header header" "controls canvas data" "results results results"; height: 100vh; gap: 8px; padding: 8px; }
+        .app-header { grid-area: header; } .controls-panel { grid-area: controls; } .canvas-container { grid-area: canvas; } .data-panel { grid-area: data; } .results-panel { grid-area: results; }
+        .panel { background-color: var(--surface-color); border-radius: 8px; border: 1px solid var(--border-color); padding: 12px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+        .panel-title { font-size: 1.1em; font-weight: 500; display: flex; align-items: center; gap: 8px; margin: 0; }
+        .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); margin-bottom: 8px; }
+        .collapse-icon { font-size: 1.2em; transition: transform 0.3s ease; }
+        .collapsible-content { max-height: 500px; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; display: flex; flex-direction: column; gap: 12px; }
+        .collapsible:not(.open) .collapsible-content { max-height: 0; padding-top: 0; padding-bottom: 0; }
+        .collapsible:not(.open) .collapse-icon { transform: rotate(-90deg); }
+        .app-header { text-align: center; padding: 4px 0; font-size: 1.5em; font-weight: 600; color: var(--primary-color); }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-weight: 500; color: var(--text-color-muted); font-size: 0.9em; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 8px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); font-size: 0.95em; }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); }
+        button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; background-color: var(--primary-variant-color); color: #fff; font-weight: 500; transition: background-color 0.2s; }
+        button:hover:not(:disabled) { background-color: var(--primary-color); }
+        button:disabled { background-color: #333; cursor: not-allowed; color: #888; }
+        .button-secondary { background-color: #444; } .button-secondary:hover { background-color: #555; }
+        .icon-button { background: none; border: none; color: var(--text-color-muted); cursor: pointer; padding: 4px; border-radius: 50%; }
+        .icon-button:hover { color: var(--secondary-color); background-color: rgba(3, 218, 198, 0.1); }
+        .canvas-container { position: relative; background-color: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+        #mainCanvas, #roiCanvas { position: absolute; top: 0; left: 0; max-width: 100%; max-height: 100%; object-fit: contain; }
+        #videoFeed { display: none; }
+        #wavelengthList { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+        #wavelengthList li { padding: 4px 8px; border-radius: 12px; font-size: 0.9em; display: flex; align-items: center; gap: 6px; border: 1px solid #fff3; }
+        #wavelengthList li button { background: none; border: none; color: inherit; cursor: pointer; padding: 0; font-size: 1.1em; line-height: 1; }
+        #liveAbsorbanceValue { font-size: 2em; font-weight: 600; color: var(--secondary-color); text-align: center; margin: auto 0; transition: opacity 0.3s; }
+        #liveAbsorbanceLabel { font-size: 0.8em; color: var(--text-color-muted); text-align: center; height: 1.2em; }
+        .results-panel { max-height: 30vh; }
+        #resultsTable { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        #resultsTable th, #resultsTable td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        #resultsTable thead { position: sticky; top: 0; background: var(--surface-color); }
+        #resultsTable th { font-weight: 600; color: var(--text-color-muted); }
+        .roi-thumbnail { width: 24px; height: 24px; border-radius: 4px; border: 1px solid #555; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+        .modal-content { background-color: var(--surface-color); padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; border: 1px solid var(--border-color); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        .close-button { background: none; border: none; font-size: 1.5rem; color: var(--text-color); cursor: pointer; }
+        .radio-group { display: flex; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label { flex: 1; text-align: center; padding: 8px; cursor: pointer; background-color: var(--bg-color); color: var(--text-color-muted); transition: all 0.2s; font-size: 0.9em; }
+        .radio-group input[type="radio"]:checked + label { background-color: var(--primary-variant-color); color: white; }
+        .input-row { display: flex; gap: 8px; align-items: center; }
+        .input-row > * { flex: 1; }
+        .info-preview-container { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .info-preview-image { max-width: 128px; max-height: 128px; border: 1px solid var(--border-color); border-radius: 4px; image-rendering: pixelated; }
+        @media (max-width: 900px) { .app-container { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto 1fr; grid-template-areas: "header" "controls" "data" "canvas" "results"; height: auto; overflow-y: auto; } .panel { min-height: auto; } .canvas-container { min-height: 300px; height: 50vh; } .results-panel { max-height: none; } }
     </style>
 </head>
 <body>
-    <canvas id="canvas" class="hidden"></canvas>
-
-    <aside>
-        <header>
-            <h1><i class="bi bi-bullseye" style="color: var(--accent-blue);"></i> ImageSpec Pro</h1>
-            <p>Advanced Image Analysis Spectrophotometer</p>
-        </header>
-
-        <div class="card">
-            <h2>1. Setup Source</h2>
-            <div class="control-group" style="margin-bottom: 12px;">
-                <div>
-                    <label for="sourceMode">Input Source</label>
-                    <select id="sourceMode" class="form-select">
-                        <option value="camera">Live Camera</option>
-                        <option value="upload">Uploaded Image</option>
-                    </select>
-                </div>
-                 <div id="mediaControlContainer" style="flex: 1.5;">
-                    <div id="cameraControl">
-                        <label for="cameraSelect">Select Camera</label>
-                        <select id="cameraSelect" class="form-select"><option value="">Waiting for permission...</option></select>
-                    </div>
-                    <div id="uploadControl" class="hidden">
-                         <label for="imageUpload">Upload Image</label>
-                         <input type="file" id="imageUpload" accept="image/*" class="form-input">
-                    </div>
-                </div>
-            </div>
-             <div class="control-group">
-                <div>
-                    <label>Zoom (Ctrl+Scroll)</label>
-                    <input type="range" id="zoomSlider" min="1" max="10" value="1" step="0.1" class="form-input">
-                </div>
-                <div style="flex: 0 0 50px;">
-                    <label>Value</label>
-                    <div id="zoomValue" style="font-size: 12px; padding-top: 4px;">1.0x</div>
-                </div>
-             </div>
-        </div>
-        
-        <div class="card">
-            <h2>2. Analysis Mode</h2>
-            <select id="analysisMode" class="form-select">
-                <option value="point">Point Measurement</option>
-                <option value="kinetics">Kinetics (Time Series)</option>
-                <option value="scan">Spectral Scan</option>
-            </select>
-            <div id="kineticsControls" class="control-group hidden" style="margin-top: 10px;">
-                <div><label>Interval (sec)</label><input type="number" id="kineticsInterval" class="form-input" value="30" min="1"></div>
-                <div><label>Cycles</label><input type="number" id="kineticsCycles" class="form-input" value="10" min="1"></div>
-            </div>
-            <div id="scanControls" class="control-group hidden" style="margin-top: 10px;">
-                <div><label>Start λ (nm)</label><input type="number" id="scanStart" class="form-input" value="400" min="380" max="780"></div>
-                <div><label>End λ (nm)</label><input type="number" id="scanEnd" class="form-input" value="700" min="380" max="780"></div>
-                <div><label>Step (nm)</label><input type="number" id="scanStep" class="form-input" value="5" min="1"></div>
-            </div>
-        </div>
-        
-        <div class="card">
-             <h2>3. Define Regions of Interest (ROI)</h2>
-             <div class="control-group">
-                 <div style="flex: 2;"><label>ROI Name</label><input type="text" id="roiName" class="form-input" value="ROI-1"></div>
-                 <div><label>Color</label><input type="color" id="roiColor" class="form-input" value="#3b82f6" style="padding: 2px;"></div>
-                 <div style="flex: 0 0 70px;"><label>&nbsp;</label><button id="addRoiBtn" class="btn btn-secondary"><i class="bi bi-plus-circle"></i> Add</button></div>
-             </div>
-             <div class="control-group" style="margin-top: 10px;">
-                <div><label>Shape</label><select id="roiShape" class="form-select"><option value="square">Square</option><option value="circle">Circle</option></select></div>
-                <div><label>Size (px)</label><input type="number" id="roiSize" class="form-input" value="50" min="1"></div>
-            </div>
-            <div id="roiTableContainer" class="table-container" style="margin-top: 10px; max-height: 120px;">
-                <table id="roiTable">
-                    <thead><tr><th>Color</th><th>Name</th><th>Type</th><th>Size</th><th>Del</th></tr></thead>
-                    <tbody id="roiTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-             <h2>4. Run Analysis</h2>
-             <div class="control-group">
-                <button id="calibrateBtn" class="btn btn-primary" disabled><i class="bi bi-eyedropper"></i> Calibrate Blank</button>
-                <button id="runAnalysisBtn" class="btn btn-secondary" style="margin-top: 0px;" disabled><i class="bi bi-play-fill"></i> Run Analysis</button>
-             </div>
-        </div>
-
-        <div id="pointMeasurementCard" class="card">
-            <h2>Point Measurement</h2>
-            <div id="pointResults" style="display: flex; flex-wrap: wrap; gap: 6px;">
-                <div class="result-box bg-red"><p class="font-bold">Abs (R)</p><p id="absR" class="text-lg font-mono">-</p></div>
-                <div class="result-box bg-green"><p class="font-bold">Abs (G)</p><p id="absG" class="text-lg font-mono">-</p></div>
-                <div class="result-box bg-blue"><p class="font-bold">Abs (B)</p><p id="absB" class="text-lg font-mono">-</p></div>
-            </div>
-            <div class="control-group" style="margin-top: 10px;">
-                <div style="flex: 2;"><label>Add Wavelength (nm)</label><input type="number" id="wavelengthInput" placeholder="380-780" class="form-input"></div>
-                <div style="flex: 0 0 70px;"><label>&nbsp;</label><button id="addWavelengthBtn" class="btn btn-secondary"><i class="bi bi-plus-lg"></i></button></div>
-            </div>
-        </div>
-
-        <div class="card card-grow">
-            <h2>Results & Data</h2>
-            <div class="chart-container"><canvas id="resultsChart"></canvas></div>
-            <div id="resultsLogContainer" class="table-container">
-                 <table id="resultsTable">
-                    <thead><tr><th>Sample</th><th>Value</th></tr></thead>
-                    <tbody id="resultsTableBody"></tbody>
-                </table>
-            </div>
-            <div class="button-group">
-                 <button id="exportChartBtn" class="btn btn-secondary"><i class="bi bi-image"></i> Export Chart</button>
-                 <button id="exportDataBtn" class="btn btn-secondary"><i class="bi bi-download"></i> Export Data</button>
-            </div>
-        </div>
-    </aside>
-
-    <main>
-        <div class="card card-grow" style="padding: 8px; display:flex; flex-direction:column;">
-            <div class="media-wrapper">
-                <div id="mediaContainer">
-                    <video id="video" class="hidden"></video>
-                    <img id="uploadedImage" class="hidden">
-                    <div id="message"><i id="messageIcon" class="bi bi-camera-video-off" style="font-size: 2.25rem;"></i><p id="messageText">Select a camera to begin.</p></div>
-                </div>
-                <div id="roiOverlay"></div>
-            </div>
-        </div>
-    </main>
-    
+    <div class="app-container">
+        <header class="app-header">Enscygen ImageSpec Pro</header>
+        <aside class="panel controls-panel">
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-camera"></i> Source</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content"> <div class="form-group"> <div class="radio-group"> <input type="radio" id="sourceUpload" name="source" value="upload" checked> <label for="sourceUpload"><i class="bi bi-upload"></i> Upload</label> <input type="radio" id="sourceCamera" name="source" value="camera"> <label for="sourceCamera"><i class="bi bi-camera-video"></i> Camera</label> </div> <input type="file" id="imageLoader" accept="image/*" style="display: none;"> <button id="uploadButton" class="button-secondary">Select Image</button> </div> </div>
+            </section>
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-plus-circle-dotted"></i> ROI Selection</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content"> <div class="form-group"> <label>ROI Type</label> <div class="radio-group"> <input type="radio" id="roiTypeBlank" name="roiType" value="blank"> <label for="roiTypeBlank">Blank</label> <input type="radio" id="roiTypeSample" name="roiType" value="sample" checked> <label for="roiTypeSample">Sample</label> </div> </div> <div class="form-group"> <label for="roiShape">Shape</label> <select id="roiShape"> <option value="square">Square</option> <option value="circle">Circle</option> <option value="pixel">Pixel</option> </select> </div> <div class="form-group"> <label for="roiSize">Size (px)</label> <input type="number" id="roiSize" value="20" min="1" max="500"> </div> <div class="form-group"> <label for="roiName">Name (Optional)</label> <input type="text" id="roiName" placeholder="Auto (e.g., Sample 1)"> </div> <small style="color:var(--text-color-muted); text-align:center;">Click on the image to place an ROI.</small> </div>
+            </section>
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-spectrometer"></i> Wavelengths (nm)</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content"> <div class="form-group"> <div class="input-row"> <input type="number" id="wavelengthInput" placeholder="e.g., 540" min="380" max="780"> <button id="addWavelengthBtn">Add</button> </div> </div> <ul id="wavelengthList"></ul> </div>
+            </section>
+        </aside>
+        <main class="canvas-container"> <video id="videoFeed" autoplay playsinline></video> <canvas id="mainCanvas"></canvas> <canvas id="roiCanvas"></canvas> <p id="canvas-placeholder" style="color:var(--text-color-muted);">Upload an image or start the camera</p> </main>
+        <aside class="panel data-panel">
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-graph-up"></i> Live Absorbance</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content" style="justify-content: center;"> <div id="liveAbsorbanceLabel"></div> <div id="liveAbsorbanceValue">-</div> <small style="color:var(--text-color-muted); text-align:center;" id="liveAbsorbanceInfo">No Blank ROI set</small> </div>
+            </section>
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-gear"></i> Measurement Mode</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content"> <div class="form-group"> <select id="measurementMode"> <option value="static">Static Absorbance at Point</option> <option value="series">Series Wavelength Scan</option> <option value="time">Absorbance at Time Points</option> </select> </div> <div id="series-scan-options" class="form-group" style="display:none;"> <label>Wavelength Range (nm)</label> <div class="input-row"> <input type="number" id="seriesStart" placeholder="Start" value="400"> <input type="number" id="seriesEnd" placeholder="End" value="700"> </div> <input type="number" id="seriesStep" placeholder="Step" value="10"> </div> <div id="time-series-options" class="form-group" style="display:none;"> <label>Time Points (seconds, comma-separated)</label> <input type="text" id="timePoints" placeholder="e.g. 0, 30, 60, 120" value="0, 5, 10"> </div> <button id="startMeasurementBtn">Start Measurement</button> </div>
+            </section>
+        </aside>
+        <footer class="panel results-panel">
+            <section class="collapsible open">
+                <div class="collapsible-header"> <h3 class="panel-title"><i class="bi bi-table"></i> ROI Data</h3> <i class="bi bi-chevron-up collapse-icon"></i> </div>
+                <div class="collapsible-content"> <div style="overflow-x: auto; width: 100%;"> <table id="resultsTable"> <thead> <tr> <th></th> <th>Name</th> <th>Actions</th> </tr> </thead> <tbody></tbody> </table> </div> </div>
+            </section>
+        </footer>
+    </div>
+    <div id="roiEditModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h2>Edit ROI</h2> <button class="close-button">&times;</button> </div> <div class="form-group"> <label for="editRoiName">Name</label> <input type="text" id="editRoiName"> </div> <div class="form-group"> <label for="editRoiShape">Shape</label> <select id="editRoiShape"> <option value="square">Square</option> <option value="circle">Circle</option> <option value="pixel">Pixel</option> </select> </div> <div class="form-group"> <label for="editRoiSize">Size</label> <input type="number" id="editRoiSize" min="1"> </div> <div class="form-group"> <label for="editRoiColor">Border Color</label> <input type="color" id="editRoiColor" style="width:100%; height: 40px; padding: 0;"> </div> <button id="saveRoiChangesBtn" style="margin-top: 20px;">Save Changes</button> </div> </div>
+    <div id="roiInfoModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h2>ROI Information</h2> <button class="close-button">&times;</button> </div> <div id="roiInfoContent"></div> </div> </div>
+    <div id="chartModal" class="modal"> <div class="modal-content" style="max-width: 800px;"> <div class="modal-header"> <h2 id="chartTitle">Measurement Chart</h2> <button class="close-button">&times;</button> </div> <canvas id="measurementChart"></canvas> </div> </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const elements = {
-                video: document.getElementById('video'),
-                canvas: document.getElementById('canvas'),
-                cameraSelect: document.getElementById('cameraSelect'),
-                calibrateBtn: document.getElementById('calibrateBtn'),
-                runAnalysisBtn: document.getElementById('runAnalysisBtn'),
-                roiOverlay: document.getElementById('roiOverlay'),
-                roiNameInput: document.getElementById('roiName'),
-                roiColorInput: document.getElementById('roiColor'),
-                addRoiBtn: document.getElementById('addRoiBtn'),
-                roiShapeSelect: document.getElementById('roiShape'),
-                roiSizeInput: document.getElementById('roiSize'),
-                roiTableBody: document.getElementById('roiTableBody'),
-                sourceModeSelect: document.getElementById('sourceMode'),
-                cameraControl: document.getElementById('cameraControl'),
-                uploadControl: document.getElementById('uploadControl'),
-                imageUpload: document.getElementById('imageUpload'),
-                uploadedImage: document.getElementById('uploadedImage'),
-                message: document.getElementById('message'),
-                messageIcon: document.getElementById('messageIcon'),
-                messageText: document.getElementById('messageText'),
-                mediaContainer: document.getElementById('mediaContainer'),
-                zoomSlider: document.getElementById('zoomSlider'),
-                zoomValue: document.getElementById('zoomValue'),
-                analysisModeSelect: document.getElementById('analysisMode'),
-                kineticsControls: document.getElementById('kineticsControls'),
-                kineticsIntervalInput: document.getElementById('kineticsInterval'),
-                kineticsCyclesInput: document.getElementById('kineticsCycles'),
-                scanControls: document.getElementById('scanControls'),
-                scanStartInput: document.getElementById('scanStart'),
-                scanEndInput: document.getElementById('scanEnd'),
-                scanStepInput: document.getElementById('scanStep'),
-                pointMeasurementCard: document.getElementById('pointMeasurementCard'),
-                pointResultsDiv: document.getElementById('pointResults'),
-                wavelengthInput: document.getElementById('wavelengthInput'),
-                addWavelengthBtn: document.getElementById('addWavelengthBtn'),
-                resultsChartCanvas: document.getElementById('resultsChart'),
-                resultsTableBody: document.getElementById('resultsTableBody'),
-                exportChartBtn: document.getElementById('exportChartBtn'),
-                exportDataBtn: document.getElementById('exportDataBtn'),
-            };
-            elements.ctx = elements.canvas.getContext('2d', { willReadFrequently: true });
-
-            let state = {
-                mode: 'camera', mediaReady: false, currentStream: null,
-                rois: [], nextRoiId: 1, selectedRoiId: null, draggingRoiId: null,
-                dragStart: { x: 0, y: 0 }, blankRgb: null, isCalibrated: false,
-                analysisData: {}, zoom: 1, kineticsTimer: null, isAnalyzing: false,
-                pointWavelengths: []
-            };
-            let chart;
-
-            function wavelengthToRgb(wavelength) {
-                let r, g, b; const gamma = 0.80;
-                if (wavelength >= 380 && wavelength <= 439) { r = -(wavelength - 440) / (440 - 380); g = 0.0; b = 1.0; } 
-                else if (wavelength >= 440 && wavelength <= 489) { r = 0.0; g = (wavelength - 440) / (490 - 440); b = 1.0; } 
-                else if (wavelength >= 490 && wavelength <= 509) { r = 0.0; g = 1.0; b = -(wavelength - 510) / (510 - 490); } 
-                else if (wavelength >= 510 && wavelength <= 579) { r = (wavelength - 510) / (580 - 510); g = 1.0; b = 0.0; } 
-                else if (wavelength >= 580 && wavelength <= 644) { r = 1.0; g = -(wavelength - 645) / (645 - 580); b = 0.0; } 
-                else if (wavelength >= 645 && wavelength <= 780) { r = 1.0; g = 0.0; b = 0.0; } 
-                else { r = 0.0; g = 0.0; b = 0.0; }
-                let factor;
-                if (wavelength >= 380 && wavelength <= 419) factor = 0.3 + 0.7 * (wavelength - 380) / (420 - 380);
-                else if (wavelength >= 420 && wavelength <= 780) factor = 1.0;
-                else factor = 0.0;
-                const pow = (x, p) => x < 0 ? 0 : Math.pow(x, p);
-                return { r: Math.round(255 * pow(r * factor, gamma)), g: Math.round(255 * pow(g * factor, gamma)), b: Math.round(255 * pow(b * factor, gamma)) };
-            }
-
-            async function getCameras() {
-                try {
-                    await navigator.mediaDevices.getUserMedia({ video: true }); // Crucial for getting labels
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                    elements.cameraSelect.innerHTML = '<option value="">Select a camera...</option>';
-                    if (videoDevices.length === 0) {
-                       elements.cameraSelect.innerHTML = '<option value="">No cameras found</option>';
-                       if(state.mode === 'camera') setMode('upload');
-                    } else {
-                        videoDevices.forEach((device, index) => {
-                            const option = document.createElement('option');
-                            option.value = device.deviceId;
-                            option.text = device.label || `Camera ${index + 1}`;
-                            elements.cameraSelect.appendChild(option);
-                        });
-                    }
-                } catch (error) { 
-                    elements.cameraSelect.innerHTML = '<option value="">Permission denied</option>';
-                    setMode('upload');
-                }
-            }
-
-            async function startCamera(deviceId) {
-                if (state.mode !== 'camera' || !deviceId) return;
-                stopMedia();
-                const constraints = { video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } };
-                try {
-                    state.currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-                    elements.video.srcObject = state.currentStream;
-                    await elements.video.play();
-                    elements.video.classList.remove('hidden');
-                    elements.message.classList.add('hidden');
-                    elements.video.addEventListener('loadedmetadata', () => { 
-                        state.mediaReady = true;
-                        updateAllRoisPosition();
-                        updateUI();
-                    }, { once: true });
-                } catch (error) { 
-                    showMessage('bi-exclamation-triangle-fill', `Failed to start camera.`); 
-                    state.mediaReady = false; updateUI();
-                }
-            }
-            
-            function stopMedia() {
-                state.mediaReady = false;
-                if (state.currentStream) { state.currentStream.getTracks().forEach(track => track.stop()); state.currentStream = null; }
-            }
-
-            function resetZoomAndScroll() {
-                state.zoom = 1;
-                const media = getActiveMediaElement();
-                media.style.transform = `scale(1)`;
-                elements.mediaContainer.scrollTop = 0;
-                elements.mediaContainer.scrollLeft = 0;
-                elements.zoomSlider.value = 1;
-                elements.zoomValue.textContent = '1.0x';
-            }
-
-            function setMode(newMode) {
-                state.mode = newMode;
-                stopMedia();
-                resetZoomAndScroll();
-                elements.video.classList.add('hidden');
-                elements.uploadedImage.classList.add('hidden');
-                elements.cameraControl.classList.toggle('hidden', newMode !== 'camera');
-                elements.uploadControl.classList.toggle('hidden', newMode === 'camera');
-                if (newMode === 'camera') {
-                    if (elements.cameraSelect.value && elements.cameraSelect.value !== "Permission denied" && elements.cameraSelect.value !== "No cameras found") {
-                        startCamera(elements.cameraSelect.value);
-                    } else {
-                        showMessage('bi-camera-video-off', 'Select a camera to begin.');
-                    }
-                } else {
-                    if (elements.uploadedImage.src) { 
-                        elements.uploadedImage.classList.remove('hidden'); 
-                        elements.message.classList.add('hidden');
-                        state.mediaReady = true;
-                    }
-                    else { showMessage('bi-upload', 'Upload an image to begin analysis.'); }
-                }
-                updateAllRoisPosition();
-                updateUI();
-            }
-
-            function handleImageUpload(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                stopMedia();
-                resetZoomAndScroll();
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    elements.uploadedImage.src = event.target.result;
-                    elements.uploadedImage.onload = () => {
-                        elements.uploadedImage.classList.remove('hidden');
-                        elements.message.classList.add('hidden');
-                        state.mediaReady = true;
-                        updateAllRoisPosition();
-                        updateUI();
-                    };
-                };
-                reader.readAsDataURL(file);
-            }
-            
-            function getActiveMediaElement(){ return state.mode === 'camera' ? elements.video : elements.uploadedImage; }
-            function showMessage(iconClass, text) { elements.message.classList.remove('hidden'); elements.messageIcon.className = `bi ${iconClass}`; elements.messageText.textContent = text; }
-            
-            function addRoi() {
-                if (!state.mediaReady) { alert("Please load an image or start the camera first."); return; }
-                const media = getActiveMediaElement();
-                let naturalWidth, naturalHeight;
-                if(state.mode === 'camera') {
-                    naturalWidth = media.videoWidth;
-                    naturalHeight = media.videoHeight;
-                } else {
-                    naturalWidth = media.naturalWidth;
-                    naturalHeight = media.naturalHeight;
-                }
-
-                const newRoi = {
-                    id: state.nextRoiId++,
-                    name: elements.roiNameInput.value || `ROI-${state.nextRoiId}`,
-                    color: elements.roiColorInput.value,
-                    shape: elements.roiShapeSelect.value,
-                    size: parseInt(elements.roiSizeInput.value) || 50,
-                    x: (elements.mediaContainer.scrollLeft + elements.mediaContainer.clientWidth / 2) / state.zoom,
-                    y: (elements.mediaContainer.scrollTop + elements.mediaContainer.clientHeight / 2) / state.zoom,
-                    type: state.rois.some(r => r.type === 'Calibrator') ? 'Sample' : 'Calibrator',
-                };
-                state.rois.push(newRoi);
-                elements.roiNameInput.value = `ROI-${state.nextRoiId}`;
-                updateUI();
-            }
-
-            function deleteRoi(id) {
-                state.rois = state.rois.filter(roi => roi.id !== id);
-                if (state.selectedRoiId === id) state.selectedRoiId = null;
-                updateUI();
-            }
-
-            function updateAllRoisPosition() {
-                state.rois.forEach(roi => {
-                    const roiEl = document.getElementById(`roi-${roi.id}`);
-                    if (roiEl) {
-                        const scrollLeft = elements.mediaContainer.scrollLeft;
-                        const scrollTop = elements.mediaContainer.scrollTop;
-                        const cssX = roi.x * state.zoom - scrollLeft;
-                        const cssY = roi.y * state.zoom - scrollTop;
-                        const cssSize = roi.size * state.zoom;
-                        roiEl.style.width = `${cssSize}px`;
-                        roiEl.style.height = `${cssSize}px`;
-                        roiEl.style.left = `${cssX - cssSize / 2}px`;
-                        roiEl.style.top = `${cssY - cssSize / 2}px`;
-                    }
-                });
-            }
-
-            function analyzeRoi(roi) {
-                if (!state.mediaReady) return null;
-                const media = getActiveMediaElement();
-                let naturalWidth, naturalHeight;
-                if (state.mode === 'camera') {
-                    if (!(elements.video.readyState >= 2)) return null;
-                    naturalWidth = elements.video.videoWidth; naturalHeight = elements.video.videoHeight;
-                } else {
-                    if (!(elements.uploadedImage.complete && elements.uploadedImage.naturalWidth > 0)) return null;
-                    naturalWidth = elements.uploadedImage.naturalWidth; naturalHeight = elements.uploadedImage.naturalHeight;
-                }
-                if (naturalWidth === 0) return null;
-                elements.canvas.width = naturalWidth;
-                elements.canvas.height = naturalHeight;
-                elements.ctx.drawImage(media, 0, 0, naturalWidth, naturalHeight);
-
-                let r = 0, g = 0, b = 0, count = 0;
-                const radius = roi.size / 2;
-                const startX = Math.max(0, Math.floor(roi.x - radius));
-                const startY = Math.max(0, Math.floor(roi.y - radius));
-                const endX = Math.min(naturalWidth, Math.floor(roi.x + radius));
-                const endY = Math.min(naturalHeight, Math.floor(roi.y + radius));
-                if (endX <= startX || endY <= startY) return {r:0, g:0, b:0};
-                const roiWidth = endX - startX;
-                const roiHeight = endY - startY;
-                const imageData = elements.ctx.getImageData(startX, startY, roiWidth, roiHeight);
-                const data = imageData.data;
-                for (let y = 0; y < roiHeight; y++) {
-                    for (let x = 0; x < roiWidth; x++) {
-                        let include = (roi.shape === 'square') || (Math.pow((startX + x) - roi.x, 2) + Math.pow((startY + y) - roi.y, 2) <= radius * radius);
-                        if (include) {
-                            const i = (y * roiWidth + x) * 4;
-                            r += data[i]; g += data[i+1]; b += data[i+2];
-                            count++;
-                        }
-                    }
-                }
-                return count > 0 ? { r: r/count, g: g/count, b: b/count } : {r:0, g:0, b:0};
-            }
-
-            function handleCalibrate() { 
-                const calibratorRoi = state.rois.find(r => r.type === 'Calibrator');
-                if (!calibratorRoi) { alert("Please define one ROI as 'Calibrator' type first."); return; }
-                const analysis = analyzeRoi(calibratorRoi);
-                if (analysis) { 
-                    state.blankRgb = {r: analysis.r, g: analysis.g, b: analysis.b}; 
-                    state.isCalibrated = true; 
-                    updateUI();
-                } else { alert("Calibration failed. Ensure Calibrator ROI is within image bounds."); }
-            }
-            
-            function handleRunAnalysis() {
-                const mode = elements.analysisModeSelect.value;
-                if (mode === 'point') runPointMeasurement();
-                else if (mode === 'kinetics') runKinetics();
-                else if (mode === 'scan') runSpectralScan();
-            }
-
-            function runPointMeasurement() {
-                if(!state.isCalibrated) { alert("Please calibrate first."); return; }
-                const sampleRois = state.rois.filter(r => r.type === 'Sample');
-                if(sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
-
-                const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
-                
-                sampleRois.forEach(roi => {
-                    const sampleRgb = analyzeRoi(roi);
-                    if(sampleRgb) {
-                        const abs = {
-                            r: safeLog(state.blankRgb.r, sampleRgb.r),
-                            g: safeLog(state.blankRgb.g, sampleRgb.g),
-                            b: safeLog(state.blankRgb.b, sampleRgb.b)
-                        };
-                         document.getElementById('absR').textContent = abs.r.toFixed(3);
-                         document.getElementById('absG').textContent = abs.g.toFixed(3);
-                         document.getElementById('absB').textContent = abs.b.toFixed(3);
-
-                        state.pointWavelengths.forEach(wl => {
-                            const targetRgb = wavelengthToRgb(wl);
-                            const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
-                            const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
-                            const wlAbs = safeLog(blankIntensity, sampleIntensity);
-                            const el = document.getElementById(`abs_wl_${wl}`);
-                            if(el) el.textContent = wlAbs.toFixed(3);
-                        });
-                    }
-                });
-            }
-
-            function runKinetics() {
-                if (state.isAnalyzing) { // Stop analysis
-                    clearInterval(state.kineticsTimer);
-                    state.isAnalyzing = false;
-                    updateUI();
-                    return;
-                }
-                if(!state.isCalibrated) { alert("Please calibrate first."); return; }
-                const sampleRois = state.rois.filter(r => r.type === 'Sample');
-                if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
-                
-                state.isAnalyzing = true;
-                updateUI();
-                state.analysisData = { type: 'kinetics', datasets: sampleRois.map(r => ({label: r.name, data:[], borderColor: r.color, tension: 0.1})) };
-                
-                let cycle = 0;
-                const maxCycles = parseInt(elements.kineticsCyclesInput.value);
-                const interval = parseInt(elements.kineticsIntervalInput.value) * 1000;
-
-                const runCycle = () => {
-                    const timestamp = new Date();
-                    handleCalibrate(); // Recalibrate for each time point
-                    sampleRois.forEach((roi, index) => {
-                        const sampleRgb = analyzeRoi(roi);
-                        if(sampleRgb && state.isCalibrated) {
-                            const abs = Math.log10(state.blankRgb.r / sampleRgb.r); // Example using Red channel
-                            state.analysisData.datasets[index].data.push({x: timestamp, y: abs});
-                        }
-                    });
-                    
-                    updateChart();
-                    updateResultsTable();
-                    cycle++;
-                    if (cycle >= maxCycles) {
-                        clearInterval(state.kineticsTimer);
-                        state.isAnalyzing = false;
-                        updateUI();
-                    }
-                };
-                
-                runCycle(); // Run first cycle immediately
-                state.kineticsTimer = setInterval(runCycle, interval);
-            }
-
-            function runSpectralScan() {
-                 if(!state.isCalibrated) { alert("Please calibrate first."); return; }
-                const sampleRois = state.rois.filter(r => r.type === 'Sample');
-                if (sampleRois.length === 0) { alert("Please define at least one 'Sample' ROI."); return; }
-                
-                state.isAnalyzing = true;
-                updateUI();
-                state.analysisData = { type: 'scan', datasets: sampleRois.map(r => ({label: r.name, data:[], borderColor: r.color, tension: 0.1})) };
-
-                const start = parseInt(elements.scanStartInput.value);
-                const end = parseInt(elements.scanEndInput.value);
-                const step = parseInt(elements.scanStepInput.value);
-                const safeLog = (I0, I) => (I > 0 && I0 > 0) ? Math.log10(I0 / I) : 0;
-                
-                sampleRois.forEach((roi, index) => {
-                    const sampleRgb = analyzeRoi(roi);
-                    if(sampleRgb){
-                        for(let wl = start; wl <= end; wl += step) {
-                            const targetRgb = wavelengthToRgb(wl);
-                            const blankIntensity = (state.blankRgb.r * targetRgb.r + state.blankRgb.g * targetRgb.g + state.blankRgb.b * targetRgb.b);
-                            const sampleIntensity = (sampleRgb.r * targetRgb.r + sampleRgb.g * targetRgb.g + sampleRgb.b * targetRgb.b);
-                            const abs = safeLog(blankIntensity, sampleIntensity);
-                            state.analysisData.datasets[index].data.push({x: wl, y: abs});
-                        }
-                    }
-                });
-                
-                updateChart();
-                updateResultsTable();
-                state.isAnalyzing = false;
-                updateUI();
-            }
-            
-            function updateUI() {
-                // Main UI update logic
-                elements.calibrateBtn.disabled = !state.mediaReady || state.rois.filter(r => r.type === 'Calibrator').length === 0;
-                elements.runAnalysisBtn.disabled = !state.isCalibrated || state.rois.filter(r => r.type === 'Sample').length === 0 || state.isAnalyzing;
-                elements.runAnalysisBtn.innerHTML = state.isAnalyzing ? '<i class="bi bi-stop-fill"></i> Stop' : '<i class="bi bi-play-fill"></i> Run Analysis';
-
-                // ROI Table
-                elements.roiTableBody.innerHTML = '';
-                state.rois.forEach(roi => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><span class="color-swatch" style="background-color: ${roi.color};"></span></td>
-                        <td>${roi.name}</td>
-                        <td><select class="form-select roi-type-select" data-id="${roi.id}"><option>Sample</option><option>Calibrator</option></select></td>
-                        <td>${roi.size}px, ${roi.shape}</td>
-                        <td><i class="bi bi-trash-fill delete-btn" data-id="${roi.id}"></i></td>
-                    `;
-                    row.querySelector('.roi-type-select').value = roi.type;
-                    elements.roiTableBody.appendChild(row);
-                });
-
-                // ROI Overlay
-                elements.roiOverlay.innerHTML = '';
-                state.rois.forEach(roi => {
-                    const el = document.createElement('div');
-                    el.id = `roi-${roi.id}`;
-                    el.className = 'roi-indicator';
-                    el.classList.toggle('circle', roi.shape === 'circle');
-                    el.classList.toggle('selected', roi.id === state.selectedRoiId);
-                    el.classList.toggle('calibrator', roi.type === 'Calibrator');
-                    el.style.borderColor = roi.color;
-                    elements.roiOverlay.appendChild(el);
-                });
-
-                updateAllRoisPosition();
-            }
-            
-            /**
- * Initializes the application, sets up all event listeners, and configures the chart.
- * This is the main entry point for the application's JavaScript.
- */
-function init() {
-    // --- Setup and Source Listeners ---
-    elements.sourceModeSelect.addEventListener('change', (e) => setMode(e.target.value));
-    elements.cameraSelect.addEventListener('change', () => startCamera(elements.cameraSelect.value));
-    elements.imageUpload.addEventListener('change', handleImageUpload);
-    elements.zoomSlider.addEventListener('input', (e) => {
-        state.zoom = parseFloat(e.target.value);
-        elements.zoomValue.textContent = `${state.zoom.toFixed(1)}x`;
-        const media = getActiveMediaElement();
-        if (media) {
-            media.style.transform = `scale(${state.zoom})`;
-        }
-        updateAllRoisPosition();
-    });
-
-    // --- Analysis Mode Listener ---
-    elements.analysisModeSelect.addEventListener('change', updateUI);
-
-    // --- ROI Definition Listeners ---
-    elements.addRoiBtn.addEventListener('click', addRoi);
-    elements.roiShapeSelect.addEventListener('change', updateSelectedRoiProperties);
-    elements.roiSizeInput.addEventListener('change', updateSelectedRoiProperties);
-    
-    // Using event delegation for dynamic elements in the ROI table
-    elements.roiTableBody.addEventListener('click', (e) => {
-        const id = parseInt(e.target.dataset.id, 10);
-        if (e.target.classList.contains('delete-btn')) {
-            deleteRoi(id);
-        } else {
-            // Handle row selection for editing
-            const row = e.target.closest('tr');
-            if (row) {
-                const rowId = parseInt(row.dataset.id, 10);
-                state.selectedRoiId = rowId;
-                const roi = state.rois.find(r => r.id === rowId);
-                if (roi) {
-                    elements.roiShapeSelect.value = roi.shape;
-                    elements.roiSizeInput.value = roi.size;
-                }
-                updateUI();
-            }
-        }
-    });
-
-    elements.roiTableBody.addEventListener('change', (e) => {
-        const id = parseInt(e.target.dataset.id, 10);
-        if (e.target.classList.contains('roi-type-select')) {
-            const roi = state.rois.find(r => r.id === id);
-            if (roi) {
-                roi.type = e.target.value;
-                // Ensure only one calibrator at a time
-                if (roi.type === 'Calibrator') {
-                    state.rois.forEach(r => { if (r.id !== roi.id) r.type = 'Sample' });
-                }
-                updateUI();
-            }
-        }
-    });
-
-    // --- Analysis Execution Listeners ---
-    elements.calibrateBtn.addEventListener('click', handleCalibrate);
-    elements.runAnalysisBtn.addEventListener('click', handleRunAnalysis);
-
-    // --- Point Measurement Wavelength Listeners ---
-    elements.addWavelengthBtn.addEventListener('click', handleAddWavelength);
-    elements.pointResultsDiv.addEventListener('click', (e) => {
-         if (e.target.classList.contains('delete-btn')) {
-            const wl = parseInt(e.target.dataset.wl, 10);
-            if (!isNaN(wl)) handleDeleteWavelength(wl);
-        }
-    });
-
-    // --- Media Interaction (Pan/Zoom/Drag) Listeners ---
-    elements.mediaContainer.addEventListener('wheel', handleZoom, { passive: false });
-    
-    elements.roiOverlay.addEventListener('mousedown', (e) => {
-        const target = e.target;
-        if (target.classList.contains('roi-indicator')) {
-            e.preventDefault();
-            state.draggingRoiId = parseInt(target.dataset.id, 10);
-            state.selectedRoiId = state.draggingRoiId;
-            state.dragStart.x = e.clientX;
-            state.dragStart.y = e.clientY;
-            updateUI(); // Redraw to show selection
-        }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (state.draggingRoiId === null) return;
-        const roi = state.rois.find(r => r.id === state.draggingRoiId);
-        if (!roi) return;
-        const dx = e.clientX - state.dragStart.x;
-        const dy = e.clientY - state.dragStart.y;
-        roi.x += dx / state.zoom;
-        roi.y += dy / state.zoom;
-        state.dragStart.x = e.clientX;
-        state.dragStart.y = e.clientY;
-        updateAllRoisPosition();
-    });
-
-    document.addEventListener('mouseup', () => {
-        state.draggingRoiId = null;
-    });
-
-    // --- Data Export Listeners ---
-    elements.exportChartBtn.addEventListener('click', handleExportChart);
-    elements.exportDataBtn.addEventListener('click', handleExportData);
-
-    // --- Window Resize Listener ---
-    window.addEventListener('resize', updateAllRoisPosition);
-
-    // --- Initialize Chart.js ---
-    chart = new Chart(elements.resultsChartCanvas, {
-        type: 'scatter',
-        data: { datasets: [] },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false, position: 'top', labels: { color: 'var(--text-primary)', font: { size: 10 } } } },
-            scales: {
-                x: {
-                    title: { display: true, text: 'X-Axis', color: 'var(--text-secondary)' },
-                    ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
-                    grid: { color: 'var(--border-primary)' }
-                },
-                y: {
-                    title: { display: true, text: 'Y-Axis', color: 'var(--text-secondary)' },
-                    ticks: { color: 'var(--text-secondary)', font: { size: 10 } },
-                    grid: { color: 'var(--border-primary)' },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    
-    // --- Initial Application State Setup ---
-    getCameras();
-    setMode('camera'); 
-    updateUI();
-}
-
+            const imageLoader = document.getElementById('imageLoader'); const uploadButton = document.getElementById('uploadButton'); const mainCanvas = document.getElementById('mainCanvas'); const roiCanvas = document.getElementById('roiCanvas'); const videoFeed = document.getElementById('videoFeed'); const canvasPlaceholder = document.getElementById('canvas-placeholder'); const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true }); const roiCtx = roiCanvas.getContext('2d'); const sourceRadios = document.querySelectorAll('input[name="source"]'); const wavelengthInput = document.getElementById('wavelengthInput'); const addWavelengthBtn = document.getElementById('addWavelengthBtn'); const wavelengthList = document.getElementById('wavelengthList'); const roiTypeRadios = document.querySelectorAll('input[name="roiType"]'); const roiShapeSelect = document.getElementById('roiShape'); const roiSizeInput = document.getElementById('roiSize'); const roiNameInput = document.getElementById('roiName'); const liveAbsorbanceValue = document.getElementById('liveAbsorbanceValue'); const liveAbsorbanceLabel = document.getElementById('liveAbsorbanceLabel'); const liveAbsorbanceInfo = document.getElementById('liveAbsorbanceInfo'); const measurementModeSelect = document.getElementById('measurementMode'); const seriesScanOptions = document.getElementById('series-scan-options'); const timeSeriesOptions = document.getElementById('time-series-options'); const startMeasurementBtn = document.getElementById('startMeasurementBtn'); const resultsTableBody = document.querySelector('#resultsTable tbody'); const resultsTableHead = document.querySelector('#resultsTable thead tr'); const roiEditModal = document.getElementById('roiEditModal'); const roiInfoModal = document.getElementById('roiInfoModal'); const chartModal = document.getElementById('chartModal'); const saveRoiChangesBtn = document.getElementById('saveRoiChangesBtn'); const editRoiName = document.getElementById('editRoiName'); const editRoiShape = document.getElementById('editRoiShape'); const editRoiSize = document.getElementById('editRoiSize'); const editRoiColor = document.getElementById('editRoiColor'); let currentlyEditingRoiId = null;
+            let appState = { sourceType: 'upload', rois: [], wavelengths: [540], blankRoiId: null, nextSampleId: 1, isDragging: false, draggedRoi: null, dragOffsetX: 0, dragOffsetY: 0, videoStream: null, measurementChart: null, isMeasuring: false, liveAbsorbanceIndex: 0, liveAbsorbanceInterval: null };
+            function wavelengthToRgb(lambda) { let r, g, b; if (lambda >= 380 && lambda <= 439) { r = -(lambda - 440) / (440 - 380); g = 0.0; b = 1.0; } else if (lambda >= 440 && lambda <= 489) { r = 0.0; g = (lambda - 440) / (490 - 440); b = 1.0; } else if (lambda >= 490 && lambda <= 509) { r = 0.0; g = 1.0; b = -(lambda - 510) / (510 - 490); } else if (lambda >= 510 && lambda <= 579) { r = (lambda - 510) / (580 - 510); g = 1.0; b = 0.0; } else if (lambda >= 580 && lambda <= 644) { r = 1.0; g = -(lambda - 645) / (645 - 580); b = 0.0; } else if (lambda >= 645 && lambda <= 780) { r = 1.0; g = 0.0; b = 0.0; } else { r = 0.0; g = 0.0; b = 0.0; } let factor; if (lambda >= 380 && lambda <= 419) { factor = 0.3 + 0.7 * (lambda - 380) / (420 - 380); } else if (lambda >= 420 && lambda <= 700) { factor = 1.0; } else if (lambda >= 701 && lambda <= 780) { factor = 0.3 + 0.7 * (780 - lambda) / (780 - 700); } else { factor = 0.0; } const gamma = 0.8; const adjust = (color) => Math.round(255 * Math.pow(color * factor, gamma)); return { r: adjust(r), g: adjust(g), b: adjust(b) }; }
+            function getRoiAverageColor(roi) { if (!mainCanvas.width || !mainCanvas.height) return null; const size = roi.shape === 'pixel' ? 1 : roi.size; const halfSize = size / 2; const startX = Math.round(roi.x - halfSize); const startY = Math.round(roi.y - halfSize); if (startX + size < 0 || startX > mainCanvas.width || startY + size < 0 || startY > mainCanvas.height) return null; const imageData = mainCtx.getImageData(Math.max(0, startX), Math.max(0, startY), Math.min(size, mainCanvas.width - startX), Math.min(size, mainCanvas.height - startY)); const data = imageData.data; let r = 0, g = 0, b = 0, count = 0; for (let i = 0; i < data.length; i += 4) { const pixelX = Math.max(0, startX) + (i / 4) % imageData.width; const pixelY = Math.max(0, startY) + Math.floor((i / 4) / imageData.width); let inShape = false; if (roi.shape === 'square' || roi.shape === 'pixel') { inShape = true; } else if (roi.shape === 'circle') { const dx = pixelX - roi.x; const dy = pixelY - roi.y; if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true; } if (inShape) { r += data[i]; g += data[i + 1]; b += data[i + 2]; count++; } } if (count === 0) return { r: 0, g: 0, b: 0, count: 0 }; return { r: r / count, g: g / count, b: b / count, count }; }
+            function getWavelengthChannelWeights(wl) { const bluePeak = 450, greenPeak = 540, redPeak = 620; const blueSpread = 60, greenSpread = 70, redSpread = 60; const gaussian = (x, peak, spread) => Math.exp(-((x - peak) ** 2) / (2 * spread ** 2)); let bWeight = gaussian(wl, bluePeak, blueSpread); let gWeight = gaussian(wl, greenPeak, greenSpread); let rWeight = gaussian(wl, redPeak, redSpread); const totalWeight = bWeight + gWeight + rWeight; if (totalWeight === 0) return { r: 0, g: 0, b: 0 }; return { r: rWeight / totalWeight, g: gWeight / totalWeight, b: bWeight / totalWeight }; }
+            function calculateAllAbsorbances() { const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); if (!blankRoi) { liveAbsorbanceInfo.textContent = "No Blank ROI set"; appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => { sampleRoi.absorbance = {}; }); updateResultsTable(); updateLiveAbsorbanceDisplay(); return; } liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`; const blankColor = getRoiAverageColor(blankRoi); if (!blankColor) return; appState.rois.forEach(roi => { if (roi.type === 'sample') { const sampleColor = getRoiAverageColor(roi); if (!sampleColor) { roi.absorbance = {}; return; } appState.wavelengths.forEach(wl => { const weights = getWavelengthChannelWeights(wl); const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b; const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b; if (blankIntensity > 0 && sampleIntensity > 0) { roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3); } else { roi.absorbance[wl] = 'inf'; } }); } }); updateResultsTable(); updateLiveAbsorbanceDisplay(); }
+            function updateLiveAbsorbanceDisplay() { const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); const firstSample = appState.rois.find(r => r.type === 'sample'); if (firstSample && blankRoi && appState.wavelengths.length > 0) { if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) { appState.liveAbsorbanceIndex = 0; } const wl = appState.wavelengths[appState.liveAbsorbanceIndex]; const absorbance = firstSample.absorbance[wl]; liveAbsorbanceLabel.textContent = `${firstSample.name} @ ${wl} nm`; liveAbsorbanceValue.textContent = absorbance || '-'; liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`; } else { liveAbsorbanceLabel.textContent = ''; liveAbsorbanceValue.textContent = '-'; if (!blankRoi) { liveAbsorbanceInfo.textContent = 'No Blank ROI set'; } else if (!firstSample) { liveAbsorbanceInfo.textContent = 'No Sample ROI set'; } else { liveAbsorbanceInfo.textContent = 'No Wavelengths added'; } } }
+            document.querySelectorAll('.collapsible-header').forEach(header => { header.addEventListener('click', () => { header.closest('.collapsible').classList.toggle('open'); }); });
+            function drawROIs() { roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height); appState.rois.forEach(roi => { const size = roi.shape === 'pixel' ? 5 : roi.size; const halfSize = size / 2; roiCtx.strokeStyle = roi.color; roiCtx.lineWidth = 2; roiCtx.fillStyle = `${roi.color}33`; roiCtx.font = "12px Arial"; roiCtx.textAlign = "center"; roiCtx.beginPath(); if (roi.shape === 'circle') { roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2); } else { roiCtx.rect(roi.x - halfSize, roi.y - halfSize, size, size); } roiCtx.stroke(); roiCtx.fill(); roiCtx.fillStyle = roi.color; roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5); if (roi.locked) { roiCtx.font = "15px Arial"; roiCtx.fillStyle = roi.color; roiCtx.fillText('🔒', roi.x, roi.y + halfSize + 15); } }); }
+            function updateWavelengthList() { wavelengthList.innerHTML = ''; appState.wavelengths.forEach(wl => { const rgb = wavelengthToRgb(wl); const li = document.createElement('li'); li.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`; const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000; li.style.color = brightness > 128 ? '#000' : '#fff'; li.innerHTML = `${wl} nm <button data-wl="${wl}" class="delete-wl">&times;</button>`; wavelengthList.appendChild(li); }); updateResultsTableHeader(); }
+            function updateResultsTableHeader() { let headers = `<th></th><th>Name</th>`; headers += appState.wavelengths.map(wl => `<th>${wl} nm</th>`).join(''); headers += `<th>Actions</th>`; resultsTableHead.innerHTML = headers; }
+            function updateResultsTable() { resultsTableBody.innerHTML = ''; appState.rois.forEach(roi => { const tr = document.createElement('tr'); const thumbCanvas = document.createElement('canvas'); thumbCanvas.width = 24; thumbCanvas.height = 24; const thumbCtx = thumbCanvas.getContext('2d'); const avgColor = getRoiAverageColor(roi) || {r:0, g:0, b:0}; thumbCtx.fillStyle = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`; thumbCtx.fillRect(0, 0, 24, 24); const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join(''); tr.innerHTML = `<td><img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail"></td><td>${roi.name}</td>${absorbanceCells}<td> <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button> <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button><button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button><button class="icon-button chart-roi-btn" data-id="${roi.id}" title="Chart" style="display: ${measurementModeSelect.value === 'series' ? 'inline-block' : 'none'};"><i class="bi bi-bar-chart"></i></button><button class="icon-button delete-roi-btn" data-id="${roi.id}" title="Delete"><i class="bi bi-trash"></i></button></td>`; resultsTableBody.appendChild(tr); }); }
+            function handleImageUpload(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { const img = new Image(); img.onload = () => { setCanvasSize(img.width, img.height); mainCtx.drawImage(img, 0, 0); canvasPlaceholder.style.display = 'none'; calculateAllAbsorbances(); }; img.src = event.target.result; }; reader.readAsDataURL(file); }
+            async function startCamera() { try { if (appState.videoStream) { appState.videoStream.getTracks().forEach(track => track.stop()); } appState.videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); videoFeed.srcObject = appState.videoStream; videoFeed.onloadedmetadata = () => { setCanvasSize(videoFeed.videoWidth, videoFeed.videoHeight); canvasPlaceholder.style.display = 'none'; requestAnimationFrame(drawVideoFrame); }; } catch (err) { console.error("Error accessing camera:", err); alert("Could not access camera. Please check permissions."); } }
+            function stopCamera() { if(appState.videoStream) { appState.videoStream.getTracks().forEach(track => track.stop()); appState.videoStream = null; } }
+            function drawVideoFrame() { if (appState.sourceType === 'camera' && !videoFeed.paused && !videoFeed.ended && !appState.isMeasuring) { mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height); calculateAllAbsorbances(); requestAnimationFrame(drawVideoFrame); } }
+            function setCanvasSize(width, height) { mainCanvas.width = roiCanvas.width = width; mainCanvas.height = roiCanvas.height = height; drawROIs(); }
+            uploadButton.addEventListener('click', () => imageLoader.click()); imageLoader.addEventListener('change', handleImageUpload); sourceRadios.forEach(radio => { radio.addEventListener('change', (e) => { appState.sourceType = e.target.value; if (appState.sourceType === 'camera') { startCamera(); uploadButton.style.display = 'none'; imageLoader.style.display = 'none'; } else { stopCamera(); uploadButton.style.display = 'block'; imageLoader.style.display = 'block'; } })});
+            addWavelengthBtn.addEventListener('click', () => { const wl = parseInt(wavelengthInput.value); if (wl >= 380 && wl <= 780 && !appState.wavelengths.includes(wl)) { appState.wavelengths.push(wl); appState.wavelengths.sort((a,b)=>a-b); wavelengthInput.value = ''; updateWavelengthList(); calculateAllAbsorbances(); } });
+            wavelengthList.addEventListener('click', (e) => { if (e.target.classList.contains('delete-wl')) { const wlToRemove = parseInt(e.target.dataset.wl); appState.wavelengths = appState.wavelengths.filter(wl => wl !== wlToRemove); updateWavelengthList(); calculateAllAbsorbances(); } });
+            roiCanvas.addEventListener('mousedown', (e) => { const rect = roiCanvas.getBoundingClientRect(); const scaleX = roiCanvas.width / rect.width; const scaleY = roiCanvas.height / rect.height; const x = (e.clientX - rect.left) * scaleX; const y = (e.clientY - rect.top) * scaleY; let clickedOnRoi = null; for (let i = appState.rois.length - 1; i >= 0; i--) { const roi = appState.rois[i]; const dist = Math.sqrt(Math.pow(x - roi.x, 2) + Math.pow(y - roi.y, 2)); if (dist < roi.size / 2) { clickedOnRoi = roi; break; } } if (clickedOnRoi && !clickedOnRoi.locked) { appState.isDragging = true; appState.draggedRoi = clickedOnRoi; appState.dragOffsetX = x - clickedOnRoi.x; appState.dragOffsetY = y - clickedOnRoi.y; } else if (!clickedOnRoi && mainCanvas.width > 0) { addRoi(x,y); } });
+            roiCanvas.addEventListener('mousemove', (e) => { if (appState.isDragging && appState.draggedRoi) { const rect = roiCanvas.getBoundingClientRect(); const scaleX = roiCanvas.width / rect.width; const scaleY = roiCanvas.height / rect.height; const x = (e.clientX - rect.left) * scaleX; const y = (e.clientY - rect.top) * scaleY; appState.draggedRoi.x = x - appState.dragOffsetX; appState.draggedRoi.y = y - appState.dragOffsetY; appState.draggedRoi.x = Math.max(0, Math.min(mainCanvas.width, appState.draggedRoi.x)); appState.draggedRoi.y = Math.max(0, Math.min(mainCanvas.height, appState.draggedRoi.y)); drawROIs(); calculateAllAbsorbances(); } });
+            window.addEventListener('mouseup', () => { appState.isDragging = false; appState.draggedRoi = null; });
+            resultsTableBody.addEventListener('click', (e) => { const button = e.target.closest('button'); if (!button) return; const id = button.dataset.id; const roi = appState.rois.find(r => r.id === id); if(button.classList.contains('lock-roi-btn')) { if (roi) { roi.locked = !roi.locked; drawROIs(); updateResultsTable(); } } else if(button.classList.contains('delete-roi-btn')) { appState.rois = appState.rois.filter(r => r.id !== id); if(appState.blankRoiId === id) appState.blankRoiId = null; drawROIs(); calculateAllAbsorbances(); } else if(button.classList.contains('edit-roi-btn')) { openEditModal(id); } else if(button.classList.contains('info-roi-btn')) { openInfoModal(id); } else if(button.classList.contains('chart-roi-btn')) { if(roi && roi.seriesData) { showChart(roi.seriesData, 'Wavelength (nm)', 'Absorbance', `${roi.name} - Wavelength Scan`); } } });
+            measurementModeSelect.addEventListener('change', (e) => { seriesScanOptions.style.display = e.target.value === 'series' ? 'block' : 'none'; timeSeriesOptions.style.display = e.target.value === 'time' ? 'block' : 'none'; document.querySelectorAll('.chart-roi-btn').forEach(btn => { btn.style.display = e.target.value === 'series' ? 'inline-block' : 'none'; }) });
+            startMeasurementBtn.addEventListener('click', handleStartMeasurement);
+            function addRoi(x, y) { const type = document.querySelector('input[name="roiType"]:checked').value; const id = 'roi-' + Date.now(); const name = roiNameInput.value || (type === 'blank' ? 'Blank' : `Sample ${appState.nextSampleId++}`); const newRoi = { id: id, name: name, type: type, shape: roiShapeSelect.value, size: parseInt(roiSizeInput.value), x: x, y: y, color: type === 'blank' ? '#03dac6' : '#bb86fc', absorbance: {}, locked: false }; if (type === 'blank') { appState.rois = appState.rois.filter(r => r.type !== 'blank'); appState.blankRoiId = id; } appState.rois.push(newRoi); roiNameInput.value = ''; drawROIs(); calculateAllAbsorbances(); }
+            function openEditModal(id) { const roi = appState.rois.find(r => r.id === id); if(roi) { currentlyEditingRoiId = id; editRoiName.value = roi.name; editRoiShape.value = roi.shape; editRoiSize.value = roi.size; editRoiColor.value = roi.color; roiEditModal.style.display = 'flex'; } }
+            saveRoiChangesBtn.addEventListener('click', () => { const roi = appState.rois.find(r => r.id === currentlyEditingRoiId); if(roi) { roi.name = editRoiName.value; roi.shape = editRoiShape.value; roi.size = parseInt(editRoiSize.value); roi.color = editRoiColor.value; if(roi.type === 'blank') { roi.color = '#03dac6'; } drawROIs(); calculateAllAbsorbances(); closeAllModals(); } });
+            function openInfoModal(id) { const roi = appState.rois.find(r => r.id === id); if (roi) { const avgColor = getRoiAverageColor(roi); let previewImageHtml = ''; if (mainCanvas.width > 0) { const size = roi.shape === 'pixel' ? 5 : roi.size; const halfSize = Math.floor(size/2); const previewCanvas = document.createElement('canvas'); previewCanvas.width = size; previewCanvas.height = size; const previewCtx = previewCanvas.getContext('2d'); try { const imageData = mainCtx.getImageData(roi.x - halfSize, roi.y - halfSize, size, size); previewCtx.putImageData(imageData, 0, 0); if (roi.shape === 'circle') { previewCtx.globalCompositeOperation = 'destination-in'; previewCtx.beginPath(); previewCtx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2); previewCtx.fill(); previewCtx.globalCompositeOperation = 'source-over'; } previewImageHtml = `<div class="info-preview-container"><img src="${previewCanvas.toDataURL()}" class="info-preview-image" title="Actual ROI Pixels"><p><strong>Average Color:</strong> <span style="display:inline-block; width: 16px; height: 16px; background-color: rgb(${avgColor.r.toFixed(0)}, ${avgColor.g.toFixed(0)}, ${avgColor.b.toFixed(0)}); border: 1px solid #fff; vertical-align: middle;"></span></p></div>`; } catch(e) { console.error("Could not get image data for info preview:", e); previewImageHtml = `<p style="color:var(--text-color-muted)">Could not generate preview.</p>`; } } const content = document.getElementById('roiInfoContent'); content.innerHTML = `<p><strong>Name:</strong> ${roi.name}</p><p><strong>Pixels in ROI:</strong> ${avgColor ? avgColor.count : 'N/A'}</p><p><strong>Avg RGB:</strong> R:${avgColor.r.toFixed(1)}, G:${avgColor.g.toFixed(1)}, B:${avgColor.b.toFixed(1)}</p>${previewImageHtml}`; roiInfoModal.style.display = 'flex'; } }
+            function closeAllModals() { document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none'); currentlyEditingRoiId = null; }
+            document.querySelectorAll('.modal .close-button').forEach(btn => btn.addEventListener('click', closeAllModals)); window.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) { closeAllModals(); } });
+            async function handleStartMeasurement() { if(appState.isMeasuring) return; appState.isMeasuring = true; startMeasurementBtn.disabled = true; const mode = measurementModeSelect.value; try { if(mode === 'series') { startMeasurementBtn.textContent = 'Scanning...'; await runSeriesScan(); } else if(mode === 'time') { await runTimeSeries(); } } catch(e) { console.error("Measurement failed: ", e); alert("An error occurred during measurement."); } finally { appState.isMeasuring = false; startMeasurementBtn.textContent = 'Start Measurement'; startMeasurementBtn.disabled = false; } }
+            function runSeriesScan() { return new Promise(resolve => { const sampleRoi = appState.rois.find(r => r.type === 'sample'); if(!sampleRoi) { alert("Please add at least one Sample ROI."); return resolve(); } const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId); if(!blankRoi) { alert("Please set a Blank ROI."); return resolve(); } const start = parseInt(document.getElementById('seriesStart').value); const end = parseInt(document.getElementById('seriesEnd').value); const step = parseInt(document.getElementById('seriesStep').value); const blankColor = getRoiAverageColor(blankRoi); const sampleColor = getRoiAverageColor(sampleRoi); const seriesData = { labels: [], datasets: [{ label: 'Absorbance', data: [], borderColor: '#03dac6', backgroundColor: '#03dac633', tension: 0.1, fill: true }] }; for(let wl = start; wl <= end; wl += step) { const weights = getWavelengthChannelWeights(wl); const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b; const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b; let absorbance = 0; if(blankIntensity > 0 && sampleIntensity > 0) { absorbance = -Math.log10(sampleIntensity / blankIntensity); } seriesData.labels.push(wl); seriesData.datasets[0].data.push(absorbance); } sampleRoi.seriesData = seriesData; showChart(seriesData, 'Wavelength (nm)', 'Absorbance', `${sampleRoi.name} - Wavelength Scan`); resolve(); }); }
+            function runTimeSeries() { return new Promise((resolve) => { if (appState.sourceType !== 'camera') { alert("Time series measurement requires the live camera source."); return resolve(); } const sampleRoi = appState.rois.find(r => r.type === 'sample'); if(!sampleRoi || !appState.blankRoiId) { alert("Please set one Blank and at least one Sample ROI."); return resolve(); } const timePointsInput = document.getElementById('timePoints').value; const timePoints = timePointsInput.split(',').map(t => parseFloat(t.trim())).filter(t => !isNaN(t) && t >= 0).sort((a, b) => a - b); if (timePoints.length === 0) { alert("Please enter valid, comma-separated time points."); return resolve(); } const timeData = { labels: [], datasets: [] }; appState.wavelengths.forEach(wl => { const rgb = wavelengthToRgb(wl); timeData.datasets.push({ label: `${wl} nm`, data: [], borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`, tension: 0.1, pointRadius: 4, fill: true }); }); showChart(timeData, 'Time (s)', 'Absorbance', 'Time Series Measurement'); let currentIndex = 0; function takeMeasurementAtNextPoint() { if (currentIndex >= timePoints.length) { startMeasurementBtn.textContent = 'Start Measurement'; resolve(); return; } const targetTime = timePoints[currentIndex]; const previousTime = currentIndex > 0 ? timePoints[currentIndex - 1] : 0; const delay = (targetTime - previousTime) * 1000; startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`; setTimeout(() => { startMeasurementBtn.textContent = `Measuring at ${targetTime}s...`; mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height); calculateAllAbsorbances(); timeData.labels.push(targetTime); appState.wavelengths.forEach((wl, index) => { while(timeData.datasets[index].data.length < currentIndex) { timeData.datasets[index].data.push(null); } timeData.datasets[index].data.push(sampleRoi.absorbance[wl] || 0); }); appState.measurementChart.update(); currentIndex++; takeMeasurementAtNextPoint(); }, delay); } takeMeasurementAtNextPoint(); }); }
+            function showChart(data, xLabel, yLabel, titleText) { const chartCanvas = document.getElementById('measurementChart'); if(appState.measurementChart) { appState.measurementChart.destroy(); } document.getElementById('chartTitle').textContent = titleText; appState.measurementChart = new Chart(chartCanvas, { type: 'line', data: data, options: { responsive: true, scales: { x: { title: { display: true, text: xLabel, color: '#fff' }, ticks: { color: '#aaa' }, grid: { color: '#444' } }, y: { title: { display: true, text: yLabel, color: '#fff' }, ticks: { color: '#aaa' }, grid: { color: '#444' } } }, plugins: { legend: { labels: { color: '#fff' } } } } }); chartModal.style.display = 'flex'; }
+            function init() { updateWavelengthList(); calculateAllAbsorbances(); if(appState.liveAbsorbanceInterval) clearInterval(appState.liveAbsorbanceInterval); appState.liveAbsorbanceInterval = setInterval(() => { if (appState.wavelengths.length > 0) { appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length; } liveAbsorbanceValue.style.opacity = 0; setTimeout(() => { updateLiveAbsorbanceDisplay(); liveAbsorbanceValue.style.opacity = 1; }, 300); }, 2500); console.log("Spectrophotometer Initialized"); }
             init();
         });
     </script>
