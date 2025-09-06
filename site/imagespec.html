@@ -502,6 +502,156 @@
 .styled-checkbox:checked::before {
     transform: scale(1); /* Makes the checkmark visible when checked */
 }
+
+      /* --- CSS for the Chart Data Table --- */
+
+/* 1. Styling for the scrollable container holding the table. */
+/* This creates a defined, bordered area that will scroll if the content is too tall. */
+#chartDataTableContainer div[style*="overflow-y: auto"] {
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* 2. Basic table setup for clean lines and full width. */
+#chartDataTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+/* 3. Table Header (thead) styling. */
+/* The "position: sticky" is the key feature that makes the header stay at the top when you scroll. */
+#chartDataTable thead {
+    position: sticky;
+    top: 0;
+    /* The background must match the panel color to hide scrolling content underneath. */
+    background: var(--surface-color);
+}
+
+/* 4. Table Header Cells (th) styling. */
+/* This makes the headers look distinct from the data. */
+#chartDataTable th {
+    font-weight: 600;
+    color: var(--text-color-muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border-color); /* A slightly thicker border for emphasis */
+}
+
+/* 5. Table Body Cells (td) styling. */
+/* This ensures data is clean and readable. */
+#chartDataTable td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    /* This helps with long numbers, but you can remove it if you prefer wrapping */
+    white-space: nowrap;
+}
+
+/* 6. Hover effect for table rows (tbody tr). */
+/* Provides visual feedback to the user as they move their mouse over the data. */
+#chartDataTable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* A subtle highlight */
+}
+
+/* 7. Remove the bottom border from the very last row in the table for a cleaner look. */
+#chartDataTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 8. Custom Scrollbar Styling (for WebKit browsers like Chrome, Edge, Safari). */
+/* This makes the scrollbar match the dark theme instead of using the default bright white one. */
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+    background: var(--surface-color); /* The background of the scrollbar track */
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+    background-color: #555; /* The color of the scrollbar itself */
+    border-radius: 6px;
+    border: 2px solid var(--surface-color); /* Creates a nice padding effect */
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {
+    background-color: #777; /* A lighter color when you hover over the scrollbar */
+}
+
+      /* --- CSS for the Modernized ROI Info Modal --- */
+
+/* 1. Main flex container for the two-column layout */
+.info-modal-body {
+    display: flex;
+    align-items: flex-start; /* Aligns items to the top */
+    gap: 20px; /* Space between the thumbnail and the data table */
+}
+
+/* 2. Container for the thumbnail preview on the left */
+.info-modal-preview {
+    flex-shrink: 0; /* Prevents the image from shrinking */
+    width: 128px;
+}
+
+/* 3. The thumbnail image itself */
+.info-modal-preview img {
+    width: 100%;
+    height: 128px;
+    object-fit: cover; /* Ensures the image fills the space nicely */
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    image-rendering: pixelated; /* Keeps pixel art sharp */
+    background-color: #000; /* Background for transparent parts (e.g., circle mask) */
+}
+
+/* 4. Container for the data on the right */
+.info-modal-details {
+    flex-grow: 1; /* Allows the data section to take up the remaining space */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Space between each data row */
+}
+
+/* 5. Styling for each individual data row (e.g., "Name: Sample 1") */
+.info-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95em;
+}
+
+/* Remove border from the last row for a cleaner look */
+.info-data-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* 6. Styling for the label/key part of the row (e.g., "Name:") */
+.info-data-row .label {
+    color: var(--text-color-muted);
+    font-weight: 500;
+}
+
+/* 7. Styling for the value part of the row (e.g., "Sample 1") */
+.info-data-row .value {
+    color: var(--text-color);
+    font-weight: 400;
+    text-align: right;
+}
+
+/* 8. Specific styling for the color swatch in the "Avg RGB" row */
+.info-color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #fff;
+    vertical-align: middle;
+    margin-right: 8px;
+}
     </style>
   </head>
 
@@ -1792,10 +1942,30 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
     </div>`;
 
     const content = document.getElementById('roiInfoContent');
-    content.innerHTML = `<p><strong>Name:</strong> ${infoData.name}</p>
-                       <p><strong>Pixels in ROI:</strong> ${infoData.pixelCount}</p>
-                       <p><strong>Avg RGB:</strong> R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}</p>
-                       ${previewImageHtml}`;
+    content.innerHTML = `
+        <div class="info-modal-body">
+            <div class="info-modal-preview">
+                <img src="${infoData.thumbnailDataUrl}" style="border-radius: ${roi.shape === 'circle' ? '50%' : '6px'};" title="ROI Snapshot">
+            </div>
+            <div class="info-modal-details">
+                <div class="info-data-row">
+                    <span class="label">Name:</span>
+                    <span class="value">${infoData.name}</span>
+                </div>
+                <div class="info-data-row">
+                    <span class="label">Pixels in ROI:</span>
+                    <span class="value">${infoData.pixelCount}</span>
+                </div>
+                <div class="info-data-row">
+                    <span class="label">Avg RGB:</span>
+                    <span class="value">
+                        <span class="info-color-swatch" style="background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)})"></span>
+                        R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
 
     roiInfoModal.style.display = 'flex';
 }
@@ -2075,7 +2245,8 @@ function showChart(data, xLabel, yLabel, titleText, mode) {
           }
         }
 
-        function generateChartTable(chartData, mode, title) {
+        // REPLACE THE OLD FUNCTION WITH THIS NEW ONE
+function generateChartTable(chartData, mode, title) {
     const tableHead = chartDataTable.querySelector('thead');
     const tableBody = chartDataTable.querySelector('tbody');
     tableHead.innerHTML = '';
@@ -2083,14 +2254,18 @@ function showChart(data, xLabel, yLabel, titleText, mode) {
     let headHtml = '<tr>';
     let bodyHtml = '';
 
+    // CORRECTED: Extract the sample name for both modes to ensure consistency.
+    const sampleName = title.split(' - ')[0];
+
     if (mode === 'series') { // Wavelength Scan
-        headHtml += '<th>Wavelength (nm)</th><th>Absorbance</th>';
+        // CORRECTED: The headers now match the format you requested.
+        headHtml += '<th>Measurement Point</th><th>Absorbance</th>';
         chartData.labels.forEach((wl, index) => {
             const absorbance = chartData.datasets[0].data[index].toFixed(4);
-            bodyHtml += `<tr><td>${wl}</td><td>${absorbance}</td></tr>`;
+            // CORRECTED: The first cell is now formatted with the sample name and wavelength.
+            bodyHtml += `<tr><td>${sampleName} @ ${wl}nm</td><td>${absorbance}</td></tr>`;
         });
-    } else if (mode === 'time') { // Time Points
-        const sampleName = title.split(' - ')[0]; // Extract sample name from title
+    } else if (mode === 'time') { // Time Points (This part was already correct)
         headHtml += '<th>Measurement Point</th>';
         chartData.datasets.forEach(dataset => {
             headHtml += `<th>${dataset.label}</th>`;
@@ -2109,6 +2284,7 @@ function showChart(data, xLabel, yLabel, titleText, mode) {
     tableHead.innerHTML = headHtml;
     tableBody.innerHTML = bodyHtml;
 }
+
 
         function downloadChartDataAsCSV() {
     if (!currentChartDataForCSV) return;
