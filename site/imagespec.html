@@ -696,7 +696,70 @@
         transform: rotate(360deg);
     }
 }
+/* --- CSS for the Image Manipulation Section --- */
 
+/* 1. A new container for a slider and its number input */
+.slider-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 2. The number input next to a slider */
+.slider-input {
+    width: 60px; /* A fixed, compact width */
+    padding: 4px 6px;
+    -moz-appearance: textfield; /* Hides arrows in Firefox */
+}
+/* Hides arrows in Chrome/Safari/Edge */
+.slider-input::-webkit-outer-spin-button,
+.slider-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 3. General styling for the sliders */
+.styled-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* 4. Styling for the slider's "thumb" or handle (for WebKit browsers) */
+.styled-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    border: 2px solid var(--surface-color);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    transition: background-color 0.2s;
+}
+.styled-slider::-webkit-slider-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* 5. Styling for the slider's "thumb" or handle (for Firefox) */
+.styled-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    border: 1px solid var(--surface-color);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    transition: background-color 0.2s;
+}
+.styled-slider::-moz-range-thumb:hover {
+    background: var(--secondary-color);
+}
     </style>
   </head>
 
@@ -930,6 +993,40 @@
     </div>
 </section>
 
+        <!-- Insert this new section after "ImageSpec Settings" -->
+<section class="collapsible open">
+    <div class="collapsible-header">
+        <h3 class="panel-title"><i class="bi bi-sliders"></i> Image Manipulation</h3>
+        <i class="bi bi-chevron-up collapse-icon"></i>
+    </div>
+    <div class="collapsible-content">
+        <!-- Brightness Control -->
+        <div class="setting-row">
+            <label for="brightnessSlider">Brightness</label>
+            <div class="slider-control">
+                <input type="range" id="brightnessSlider" class="styled-slider" min="0" max="200" value="100">
+                <input type="number" id="brightnessInput" class="slider-input" min="0" max="200" value="100">
+            </div>
+        </div>
+        <!-- Contrast Control -->
+        <div class="setting-row">
+            <label for="contrastSlider">Contrast</label>
+            <div class="slider-control">
+                <input type="range" id="contrastSlider" class="styled-slider" min="0" max="200" value="100">
+                <input type="number" id="contrastInput" class="slider-input" min="0" max="200" value="100">
+            </div>
+        </div>
+        <!-- Grayscale Control -->
+        <div class="setting-row">
+            <label for="grayscaleCheck">Grayscale</label>
+            <input type="checkbox" id="grayscaleCheck" class="styled-checkbox">
+        </div>
+        <!-- Revert Button -->
+        <button id="revertFiltersBtn" class="button-secondary" style="margin-top: 10px;">Revert to Original</button>
+    </div>
+</section>
+
+
 
 <div id="settingsInfoModal" class="modal">
     <div class="modal-content">
@@ -1152,6 +1249,12 @@ const downloadChartCsvBtn = document.getElementById('downloadChartCsvBtn');
 const masterChartModal = document.getElementById('masterChartModal');
 const masterChartDataType = document.getElementById('masterChartDataType');
 const masterChartTypeToggle = document.getElementById('masterChartTypeToggle');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+const brightnessInput = document.getElementById('brightnessInput');
+const contrastSlider = document.getElementById('contrastSlider');
+const contrastInput = document.getElementById('contrastInput');
+const grayscaleCheck = document.getElementById('grayscaleCheck');
+const revertFiltersBtn = document.getElementById('revertFiltersBtn');
 
 
         
@@ -1185,6 +1288,12 @@ lockedSampleData: null, // Will hold the same for the locked sample
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
           masterChart: null,
+          originalImageData: null, // This will store the raw pixel data of the original image
+    imageFilters: {
+        brightness: 100,
+        contrast: 100,
+        grayscale: false,
+    },
           roiHistogramChart: null
         };
         
@@ -1603,6 +1712,9 @@ function createRoiSnapshot(roi) {
             setCanvasSize(img.width, img.height);
             mainCtx.drawImage(img, 0, 0);
             canvasPlaceholder.style.display = 'none';
+
+          // Store a pristine copy of the raw pixel data for the new image.
+    appState.originalImageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
 
             // --- CORRECTED and UPGRADED LOGIC ---
             // This block now correctly handles all locking scenarios.
@@ -2775,6 +2887,87 @@ function drawHistogram(histogramData, mode, sourceType, roi) {
     });
 }
 
+        /**
+ * Applies the current filter settings (brightness, contrast, grayscale)
+ * to the original image data and redraws it on the main canvas.
+ */
+function applyImageFilters() {
+    if (!appState.originalImageData) return; // Exit if there's no original image to work from
+
+    const originalData = appState.originalImageData.data;
+    const manipulatedData = new Uint8ClampedArray(originalData); // Create a copy to manipulate
+
+    const brightness = (appState.imageFilters.brightness - 100) * 2.55; // Scale to -255 to 255
+    const contrast = appState.imageFilters.contrast / 100; // Scale to 0 to 2
+    const grayscale = appState.imageFilters.grayscale;
+
+    const clamp = (value) => Math.max(0, Math.min(255, value)); // Helper to keep values in 0-255 range
+
+    for (let i = 0; i < manipulatedData.length; i += 4) {
+        let r = originalData[i];
+        let g = originalData[i + 1];
+        let b = originalData[i + 2];
+
+        // Apply Contrast
+        r = clamp(((r / 255 - 0.5) * contrast + 0.5) * 255);
+        g = clamp(((g / 255 - 0.5) * contrast + 0.5) * 255);
+        b = clamp(((b / 255 - 0.5) * contrast + 0.5) * 255);
+
+        // Apply Brightness
+        r = clamp(r + brightness);
+        g = clamp(g + brightness);
+        b = clamp(b + brightness);
+
+        // Apply Grayscale
+        if (grayscale) {
+            const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+            r = g = b = luminance;
+        }
+
+        manipulatedData[i] = r;
+        manipulatedData[i + 1] = g;
+        manipulatedData[i + 2] = b;
+    }
+
+    // Put the newly manipulated pixel data back onto the canvas
+    mainCtx.putImageData(new ImageData(manipulatedData, mainCanvas.width, mainCanvas.height), 0, 0);
+    
+    // After redrawing the canvas, all ROI measurements must be recalculated
+    calculateAllAbsorbances();
+}
+
+        // This function syncs the state and triggers a redraw.
+const handleFilterChange = () => {
+    // Update state from UI
+    appState.imageFilters.brightness = parseInt(brightnessInput.value);
+    appState.imageFilters.contrast = parseInt(contrastInput.value);
+    appState.imageFilters.grayscale = grayscaleCheck.checked;
+
+    // Apply the filters and recalculate everything
+    applyImageFilters();
+};
+
+// Link sliders to their input boxes
+brightnessSlider.addEventListener('input', () => { brightnessInput.value = brightnessSlider.value; handleFilterChange(); });
+brightnessInput.addEventListener('input', () => { brightnessSlider.value = brightnessInput.value; handleFilterChange(); });
+contrastSlider.addEventListener('input', () => { contrastInput.value = contrastSlider.value; handleFilterChange(); });
+contrastInput.addEventListener('input', () => { contrastSlider.value = contrastInput.value; handleFilterChange(); });
+
+// Listener for the checkbox
+grayscaleCheck.addEventListener('change', handleFilterChange);
+
+// Listener for the revert button
+revertFiltersBtn.addEventListener('click', () => {
+    // Reset the UI controls
+    brightnessSlider.value = 100;
+    brightnessInput.value = 100;
+    contrastSlider.value = 100;
+    contrastInput.value = 100;
+    grayscaleCheck.checked = false;
+
+    // Trigger a filter update, which will now use the default values.
+    handleFilterChange();
+});
 
         function init() {
           updateWavelengthList();
