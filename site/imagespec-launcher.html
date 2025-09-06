@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ImageSpec Tool | Enscygen</title>
+
+    <link rel="icon" type="image/x-icon" href="/Favicon.png">
+    <script src="https://kit.fontawesome.com/2caf9d68bd.js" crossorigin="anonymous"></script>
+    <!-- Load external CSS styles -->
+    <link rel="stylesheet" href="/style/navbarstyle.css">
+    <link rel="stylesheet" href="/style/allpagestyle.css">
+    <link rel="stylesheet" href="/style/projects.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        xintegrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        xintegrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="/ess/nav.js" crossorigin="anonymous"></script>
+    <style>
+        .tool-info-title.show-icon-along::before {
+            background-image: url('/ORT/icons/imagespec.svg'); /* Updated Icon Path */
+        }
+
+        /* Custom styles for the about page content */
+        .tool-info-content h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .tool-info-content p, .tool-info-content .disclaimer p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .tool-info-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .tool-info-content ul li {
+            margin-bottom: 8px;
+        }
+
+        .tool-info-content ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .tool-info-content ol li {
+            margin-bottom: 10px;
+        }
+
+        .tool-info-content strong {
+            color: #333;
+        }
+
+        .launch-tool-btn {
+            display: inline-block;
+            background-color: #76b000;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 30px;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .launch-tool-btn:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        img.contain-img-enscy {
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin: 20px auto;
+        }
+
+        .image-enscygraph-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .disclaimer {
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #bb86fc; /* Primary color accent */
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+    <nav class="agicle-path-container">
+        <div class="container">
+            <ul class="agicle-path-list" id="agicle-path">
+                <li class="agicle-path-item"><a href="/" class="agicle-path-link">Home</a></li>
+                <li class="agicle-path-item"><a href="/ORT/" class="agicle-path-link">Open Research Toolkit (ORT)</a></li>
+                <li class="agicle-path-item active" id="bec-pointer">ImageSpec Tool</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="res-holders">
+        <div class="container">
+            <div class="res-holder-2">
+                <div class="res-header-1">
+                    <p class="res-login-header">Digital Colorimetric Analysis</p>
+                </div>
+                <div class="res-header-2">
+                    <span class="enscy-app-name-display" id="show-tool-info">ImageSpec</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="imagepro-app-main">
+            <div class="image-enscygraph-container">
+                <img src="/assets/home/imagespec.png" alt="ImageSpec Application Interface" class="contain-img-enscy">
+            </div>
+            <p style="text-align: center; margin: 40px;margin-top:0px;">
+                <a href="/ORT/imagetools/imagespec" class="launch-tool-btn">Launch ImageSpec</a>
+            </p>
+            <div id="tool-info-container" class="tool-info-box" style="display: block;">
+                <div class="tool-info-header">
+                    <p class="tool-info-title show-icon-along">About ImageSpec by Enscygen</p>
+                </div>
+                <div class="tool-info-content">
+                    <div class="disclaimer">
+                        <h4>Disclaimer: For Educational & Research Use Only</h4>
+                        <p>
+                            ImageSpec is a powerful scientific tool designed for educational, research, and semi-quantitative analysis. It models the principles of spectrophotometry with high fidelity. However, due to inherent variables in consumer cameras and ambient lighting, it is <strong>not a replacement for a calibrated, certified laboratory spectrophotometer</strong> in regulated environments (e.g., medical diagnostics, GMP/GLP). All data should be interpreted with an understanding of the tool's context and limitations.
+                        </p>
+                    </div>
+
+                    <h4>What is ImageSpec?</h4>
+                    <p>
+                        <strong>ImageSpec by Enscygen</strong> is an advanced web-based application that transforms a standard digital image or live camera feed into a source for quantitative scientific data. It replicates the function of a real-world spectrophotometer, an instrument that measures a substance's color by analyzing how much light is absorbed at specific wavelengths. ImageSpec achieves this digitally by intelligently analyzing the Red, Green, and Blue (RGB) pixel values from a user-defined Region of Interest (ROI), allowing for sophisticated colorimetric and concentration analysis directly in your browser.
+                    </p>
+
+                    <h4>Key Features:</h4>
+                    <ul>
+                        <li><strong>Dual Source Input:</strong> Analyze static images by uploading a file (PNG, JPG, etc.) or perform real-time measurements using your device's live camera feed.</li>
+                        <li><strong>Advanced ROI Control:</strong> Define precise Regions of Interest (ROIs) for analysis. Designate ROIs as a "Blank" (for calibration) or a "Sample". Choose from Square, Circle, or single-Pixel shapes. All ROIs can be dragged and repositioned on the canvas with real-time data updates.</li>
+                        <li><strong>Dynamic Wavelength Management:</strong> Add any number of wavelengths (380-780 nm) to your analysis. Each wavelength is color-coded in the UI for easy identification.</li>
+                        <li><strong>Live Absorbance Display:</strong> A dedicated panel shows a real-time, cycling display of the absorbance values for the primary or selected sample across all chosen wavelengths.</li>
+                        <li><strong>Multiple Measurement Modes:</strong>
+                            <ul>
+                                <li><strong>Static Absorbance:</strong> The default mode for analyzing specific points on a static image.</li>
+                                <li><strong>Series Wavelength Scan:</strong> Generate a full absorbance spectrum graph for a sample across a defined range of wavelengths.</li>
+                                <li><strong>Absorbance at Time Points:</strong> A powerful kinetic mode that uses the live camera to measure and plot absorbance changes for one or all samples synchronously at user-defined time intervals.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Advanced Data Management:</strong>
+                            <ul>
+                                <li><strong>Lock-in Blank:</strong> "Freeze" the calibration data from one image or moment in time, allowing you to swap in new images or samples without losing your reference. The Blank ROI disappears from view to reduce clutter.</li>
+                                <li><strong>Lock-in Sample:</strong> "Freeze" a sample's data snapshot for direct comparison against subsequent measurements.</li>
+                                <li><strong>Interactive Charts & Data Tables:</strong> All chart-based measurements are accompanied by a complete data table.</li>
+                                <li><strong>CSV Download:</strong> Download both the main results table and chart-specific data tables as CSV files for analysis in external software like Excel or Google Sheets.</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>How ImageSpec Works: The Science Inside</h4>
+                    <p>
+                        ImageSpec is more than a simple color picker. It uses established scientific models to derive its data.
+                    </p>
+                    <ul>
+                        <li><strong>Calibration (The Blank):</strong> Setting a "Blank" ROI is the most critical step. It captures the average RGB value of your reference point (e.g., clear water, a clean filter paper). This value becomes the "100% Transmission" or "Zero Absorbance" baseline. All subsequent sample measurements are mathematically compared against this locked-in reference, correcting for variables like ambient light color and camera sensor bias.</li>
+                        <li><strong>Wavelength Conversion:</strong> A camera only has three broad sensors (Red, Green, Blue). To estimate the response at a specific wavelength (e.g., 550 nm), ImageSpec uses a mathematical model based on Gaussian curves that simulate the spectral sensitivity of real camera sensors. This allows it to calculate a weighted average of the RGB channels that corresponds to the target wavelength.</li>
+                        <li><strong>Absorbance Calculation:</strong> The final absorbance value is derived using the digital equivalent of the Beer-Lambert law: <code>Absorbance = -log10 (Sample Intensity / Blank Intensity)</code>. This is why a green sample (which reflects green light) has a very low absorbance at green wavelengths, but a very high absorbance at red wavelengths (which it absorbs).</li>
+                    </ul>
+                    
+
+                    <h4>How to Operate ImageSpec: A Step-by-Step Guide</h4>
+                    <ol>
+                        <li>
+                            <strong>Select Your Source:</strong> Choose "Upload" to analyze a static image or "Camera" for live measurements.
+                        </li>
+                        <li>
+                            <strong>Calibrate (Set the Blank):</strong>
+                            <ul>
+                                <li>In the "ROI Selection" panel, select the "Blank" type.</li>
+                                <li>Click on a reference area in your image (e.g., a white area, a cuvette with clear solvent). This establishes your baseline.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Select Wavelengths:</strong> In the "Wavelengths" panel, enter the specific wavelengths (in nm) you wish to analyze and click "Add". Your results table will update with a new column for each.
+                        </li>
+                        <li>
+                            <strong>Place Sample ROIs:</strong>
+                            <ul>
+                                <li>In "ROI Selection", switch the type back to "Sample".</li>
+                                <li>Click on the colored areas of your image you wish to measure. A new ROI will appear, and its data will be added to the results table below.</li>
+                                <li>You can click and drag any ROI to reposition it; all data will update live.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Use Advanced Measurement Modes:</strong>
+                            <ul>
+                                <li><strong>For a Wavelength Scan:</strong> Select a sample row in the results table to highlight it. In the "Measurement Mode" panel, choose "Series Wavelength Scan" and click "Start Measurement". A chart and data table will appear. If no sample is selected, it will scan all samples.</li>
+                                <li><strong>For a Time-Series Scan:</strong> Select the "Camera" source. Place your Blank and Sample ROIs. Choose "Absorbance at Time Points", enter your time intervals (e.g., 0, 10, 20), and click "Start Measurement". If a single sample is selected, its chart will appear and update in real-time. If no sample is selected, it will measure all samples synchronously.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Use the Lock-in Features for Advanced Workflows:</strong>
+                            <ul>
+                                <li>In the "ImageSpec Settings" panel, check "Lock-in Blank" after placing your Blank ROI. You can now upload a new image or swap samples in the live view, and all new measurements will use the original, stored calibration.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Manage and Export Data:</strong>
+                            <ul>
+                                <li>In the "ROI Data" table, click the gear icon to edit an ROI's properties or the info icon to see detailed metrics.</li>
+                                <li>Click the download icon in the "ROI Data" header to save the main table as a CSV file.</li>
+                                <li>In any chart view, click the download icon to save that specific chart's data as a CSV file.</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h4>Strengths & Limitations (Pros & Cons)</h4>
+                    <ul>
+                        <li><strong>Strength (Pro): High Relative Accuracy.</strong> The tool is excellent for comparative analysis. It can accurately determine if Sample A is more concentrated than Sample B and by what ratio.</li>
+                        <li><strong>Strength (Pro): Excellent for Education.</strong> It perfectly demonstrates the principles of absorbance, transmission, and spectral analysis in a visual and interactive way.</li>
+                        <li><strong>Limitation (Con): Dependent on Controlled Lighting.</strong> For best results, measurements should be taken under consistent lighting. The optional "Precision Chamber" detailed in the user manual is recommended for high-precision work.</li>
+                        <li><strong>Limitation (Con): Not a Substitute for Certified Instruments.</strong> The app uses a mathematical model, not a true monochromator. For applications requiring certified, absolute accuracy (like medical diagnostics), a calibrated laboratory instrument is required.</li>
+                    </ul>
+
+                    <h4>Conclusion</h4>
+                    <p>
+                        ImageSpec by Enscygen bridges the gap between simple color picking and professional scientific analysis. By combining a sophisticated calculation engine with an intuitive user interface, it provides a powerful, accessible, and low-cost platform for a wide range of educational, research, and quality control applications. When used with an understanding of its principles, it can be an invaluable tool for anyone looking to extract quantitative data from visual information.
+                    </p>
+
+                    <p style="text-align: center; margin-top: 40px;">
+                        <a href="/ORT/imagetools/imagespec" class="launch-tool-btn">Launch ImageSpec</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer-placeholder"></div>
+    <script src="/ORT/projectessentials/projectscripts.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
