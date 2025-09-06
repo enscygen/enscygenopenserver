@@ -911,13 +911,53 @@ const settingsInfoContent = document.getElementById('settingsInfoContent');
           measurementChart: null,
           isMeasuring: false,
           isBlankLocked: false,
-    isSampleLocked: false,
-    lockedBlankColor: null,
-    lockedSampleRoiId: null,
+isSampleLocked: false,
+lockedBlankData: null, // Will hold the complete {avgColor, pixelCount, thumbnailDataUrl}
+lockedSampleData: null, // Will hold the same for the locked sample
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
         };
+        
+function createRoiSnapshot(roi) {
+    if (!roi) return null;
+
+    const avgColor = getRoiAverageColor(roi);
+    if (!avgColor) return null;
+
+    // Create the thumbnail image data
+    let thumbnailDataUrl = '';
+    try {
+        const size = roi.shape === 'pixel' ? 5 : roi.size;
+        const halfSize = Math.floor(size / 2);
+        const thumbCanvas = document.createElement('canvas');
+        thumbCanvas.width = size;
+        thumbCanvas.height = size;
+        const thumbCtx = thumbCanvas.getContext('2d');
+        const imageData = mainCtx.getImageData(roi.x - halfSize, roi.y - halfSize, size, size);
+        thumbCtx.putImageData(imageData, 0, 0);
+
+        if (roi.shape === 'circle') {
+            thumbCtx.globalCompositeOperation = 'destination-in';
+            thumbCtx.beginPath();
+            thumbCtx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2);
+            thumbCtx.fill();
+        }
+        thumbnailDataUrl = thumbCanvas.toDataURL();
+    } catch (e) {
+        console.error("Could not create thumbnail snapshot:", e);
+    }
+
+    return {
+        id: roi.id,
+        name: roi.name,
+        avgColor: avgColor,
+        pixelCount: avgColor.count,
+        thumbnailDataUrl: thumbnailDataUrl
+    };
+}
+
+        
         function wavelengthToRgb(lambda) {
           let r, g, b;
           if (lambda >= 380 && lambda <= 439) {
@@ -1226,44 +1266,65 @@ const settingsInfoContent = document.getElementById('settingsInfoContent');
           resultsTableHead.innerHTML = headers;
         }
         function updateResultsTable() {
-          resultsTableBody.innerHTML = "";
-          appState.rois.forEach((roi) => {
-            const tr = document.createElement("tr");
-            const thumbCanvas = document.createElement("canvas");
+    // 1. Clear the existing table content to prepare for a fresh render.
+    resultsTableBody.innerHTML = '';
+
+    // 2. Loop through every ROI currently in the application state.
+    appState.rois.forEach(roi => {
+        const tr = document.createElement('tr');
+        let thumbCellHtml = ''; // This variable will hold the HTML for the first cell (the thumbnail).
+
+        // --- NEW: Conditional Thumbnail Logic ---
+        // This block decides WHICH thumbnail to show: a live one or a stored snapshot.
+
+        // Case A: Is the current ROI the "Blank" AND is the lock-in feature active?
+        if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
+            // If yes, use the stored thumbnail from the snapshot.
+            // This ensures the original blank's image is shown even after uploading a new photo.
+            thumbCellHtml = `<img src="${appState.lockedBlankData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Blank Snapshot">`;
+
+        // Case B: Is the current ROI the locked "Sample" AND is the feature active?
+        } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
+            // If yes, use the stored thumbnail from the sample's snapshot.
+            thumbCellHtml = `<img src="${appState.lockedSampleData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Sample Snapshot">`;
+
+        // Case C: For all other ROIs (any unlocked or live ROI).
+        } else {
+            // Revert to the original behavior: generate the thumbnail live from the current canvas.
+            const avgColor = getRoiAverageColor(roi) || { r: 0, g: 0, b: 0 };
+            const thumbCanvas = document.createElement('canvas');
             thumbCanvas.width = 24;
             thumbCanvas.height = 24;
-            const thumbCtx = thumbCanvas.getContext("2d");
-            const avgColor = getRoiAverageColor(roi) || { r: 0, g: 0, b: 0 };
-            thumbCtx.fillStyle = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`;
+            const thumbCtx = thumbCanvas.getContext('2d');
+            thumbCtx.fillStyle = `rgb(${avgColor.r.toFixed(0)}, ${avgColor.g.toFixed(0)}, ${avgColor.b.toFixed(0)})`;
             thumbCtx.fillRect(0, 0, 24, 24);
-            const absorbanceCells = appState.wavelengths
-              .map(
-                (wl) =>
-                  `<td>${roi.absorbance ? roi.absorbance[wl] || "-" : "-"}</td>`
-              )
-              .join("");
-            tr.innerHTML = `<td><img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail"></td><td>${
-              roi.name
-            }</td>${absorbanceCells}<td> <button class="icon-button lock-roi-btn" data-id="${
-              roi.id
-            }" title="Toggle Lock">${
-              roi.locked
-                ? '<i class="bi bi-lock-fill"></i>'
-                : '<i class="bi bi-unlock-fill"></i>'
-            }</button> <button class="icon-button edit-roi-btn" data-id="${
-              roi.id
-            }" title="Edit"><i class="bi bi-pencil"></i></button><button class="icon-button info-roi-btn" data-id="${
-              roi.id
-            }" title="Info"><i class="bi bi-info-circle"></i></button><button class="icon-button chart-roi-btn" data-id="${
-              roi.id
-            }" title="Chart" style="display: ${
-              measurementModeSelect.value === "series" ? "inline-block" : "none"
-            };"><i class="bi bi-bar-chart"></i></button><button class="icon-button delete-roi-btn" data-id="${
-              roi.id
-            }" title="Delete"><i class="bi bi-trash"></i></button></td>`;
-            resultsTableBody.appendChild(tr);
-          });
+            thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
         }
+
+        // --- END: Conditional Thumbnail Logic ---
+
+
+        // 3. Assemble the rest of the table row.
+        // Get the absorbance values for each wavelength.
+        const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
+
+        // Build the complete HTML string for the row, including the correct thumbnail and all action buttons.
+        tr.innerHTML = `
+            <td>${thumbCellHtml}</td>
+            <td>${roi.name}</td>
+            ${absorbanceCells}
+            <td>
+                <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
+                <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button>
+                <button class="icon-button chart-roi-btn" data-id="${roi.id}" title="Chart" style="display: ${measurementModeSelect.value === 'series' ? 'inline-block' : 'none'};"><i class="bi bi-bar-chart"></i></button>
+                <button class="icon-button delete-roi-btn" data-id="${roi.id}" title="Delete"><i class="bi bi-trash"></i></button>
+            </td>`;
+
+        // 4. Append the fully constructed row to the table body.
+        resultsTableBody.appendChild(tr);
+    });
+}
         function handleImageUpload(e) {
           const file = e.target.files[0];
           if (!file) return;
@@ -1518,16 +1579,14 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         lockinBlankCheck.addEventListener('change', (e) => {
     appState.isBlankLocked = e.target.checked;
     if (!appState.isBlankLocked) {
-        // If unchecked, clear the stored value
-        appState.lockedBlankColor = null;
+        appState.lockedBlankData = null; // Clear the snapshot
     } else {
-        // If checked, try to lock the current blank if one exists
         const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
         if (blankRoi) {
-            appState.lockedBlankColor = getRoiAverageColor(blankRoi);
+            appState.lockedBlankData = createRoiSnapshot(blankRoi); // Create the snapshot
         }
     }
-    drawROIs(); // Redraw to immediately show/hide the blank if needed
+    drawROIs();
 });
 
         lockinSampleCheck.addEventListener('change', (e) => {
@@ -1551,8 +1610,9 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
           });
         });
         startMeasurementBtn.addEventListener("click", handleStartMeasurement);
+        
         function addRoi(x, y) {
-    // 1. Get all the properties for the new ROI from the UI
+    // 1. Get all the properties for the new ROI from the UI controls.
     const type = document.querySelector('input[name="roiType"]:checked').value;
     const id = 'roi-' + Date.now();
     const name = roiNameInput.value || (type === 'blank' ? 'Blank' : `Sample ${appState.nextSampleId++}`);
@@ -1570,36 +1630,39 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         locked: false
     };
 
-    // 2. Handle the "Blank" ROI logic
+    // 2. Handle logic specific to placing a "Blank" ROI.
     if (type === 'blank') {
-        // Remove any previous blank to ensure only one exists
+        // Ensure only one blank exists by removing any previous ones.
         appState.rois = appState.rois.filter(r => r.type !== 'blank');
         appState.blankRoiId = id;
 
-        // --- NEW: Lock-in Blank Logic ---
-        // If the "Lock-in Blank" setting is enabled, immediately capture its color value.
+        // --- "Lock-in Blank" Logic ---
+        // If the lock setting is active, create a complete snapshot of the blank's data
+        // at this exact moment and store it.
         if (appState.isBlankLocked) {
-            appState.lockedBlankColor = getRoiAverageColor(newRoi);
+            appState.lockedBlankData = createRoiSnapshot(newRoi);
         }
     }
 
-    // 3. Handle the "Sample" ROI logic
+    // 3. Handle logic specific to placing a "Sample" ROI.
     if (type === 'sample') {
-        // --- NEW: Lock-in Sample Logic ---
-        // If the "Lock-in Sample" setting is enabled and no sample is locked yet,
-        // designate this new ROI as the one to lock.
-        if (appState.isSampleLocked && !appState.lockedSampleRoiId) {
+        // --- "Lock-in Sample" Logic ---
+        // If the lock setting is active AND no sample has been locked yet,
+        // this new ROI becomes the locked one.
+        if (appState.isSampleLocked && !appState.lockedSampleData) {
+            // Create a complete data snapshot of this sample and store it.
+            appState.lockedSampleData = createRoiSnapshot(newRoi);
+            // Also store its ID for faster lookups in other functions (like drawROIs).
             appState.lockedSampleRoiId = newRoi.id;
         }
     }
 
-    // 4. Add the new ROI to the main array
+    // 4. Add the newly created ROI to the main array.
     appState.rois.push(newRoi);
-    roiNameInput.value = ''; // Clear the name input field for the next ROI
+    roiNameInput.value = ''; // Clear the input field for the next ROI.
 
-    // 5. Update the entire UI
-    // The drawROIs function now contains the logic to hide the blank or locked samples
-    // under the right conditions, so simply calling it here is sufficient.
+    // 5. Trigger a full UI and data refresh.
+    // These functions will now use the new state (locked data, etc.) to render correctly.
     drawROIs();
     calculateAllAbsorbances();
 }
@@ -1630,55 +1693,41 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
           }
         });
         function openInfoModal(id) {
-          const roi = appState.rois.find((r) => r.id === id);
-          if (roi) {
-            const avgColor = getRoiAverageColor(roi);
-            let previewImageHtml = "";
-            if (mainCanvas.width > 0) {
-              const size = roi.shape === "pixel" ? 5 : roi.size;
-              const halfSize = Math.floor(size / 2);
-              const previewCanvas = document.createElement("canvas");
-              previewCanvas.width = size;
-              previewCanvas.height = size;
-              const previewCtx = previewCanvas.getContext("2d");
-              try {
-                const imageData = mainCtx.getImageData(
-                  roi.x - halfSize,
-                  roi.y - halfSize,
-                  size,
-                  size
-                );
-                previewCtx.putImageData(imageData, 0, 0);
-                if (roi.shape === "circle") {
-                  previewCtx.globalCompositeOperation = "destination-in";
-                  previewCtx.beginPath();
-                  previewCtx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2);
-                  previewCtx.fill();
-                  previewCtx.globalCompositeOperation = "source-over";
-                }
-                previewImageHtml = `<div class="info-preview-container"><img src="${previewCanvas.toDataURL()}" class="info-preview-image" title="Actual ROI Pixels"><p><strong>Average Color:</strong> <span style="display:inline-block; width: 16px; height: 16px; background-color: rgb(${avgColor.r.toFixed(
-                  0
-                )}, ${avgColor.g.toFixed(0)}, ${avgColor.b.toFixed(
-                  0
-                )}); border: 1px solid #fff; vertical-align: middle;"></span></p></div>`;
-              } catch (e) {
-                console.error("Could not get image data for info preview:", e);
-                previewImageHtml = `<p style="color:var(--text-color-muted)">Could not generate preview.</p>`;
-              }
-            }
-            const content = document.getElementById("roiInfoContent");
-            content.innerHTML = `<p><strong>Name:</strong> ${
-              roi.name
-            }</p><p><strong>Pixels in ROI:</strong> ${
-              avgColor ? avgColor.count : "N/A"
-            }</p><p><strong>Avg RGB:</strong> R:${avgColor.r.toFixed(
-              1
-            )}, G:${avgColor.g.toFixed(1)}, B:${avgColor.b.toFixed(
-              1
-            )}</p>${previewImageHtml}`;
-            roiInfoModal.style.display = "flex";
-          }
-        }
+    const roi = appState.rois.find(r => r.id === id);
+    if (!roi) return;
+
+    let infoData;
+
+    // Check if the ROI is a locked one and use its snapshot
+    if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
+        infoData = appState.lockedBlankData;
+    } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
+        infoData = appState.lockedSampleData;
+    } else {
+        // Original behavior: create a snapshot on-the-fly for a live ROI
+        infoData = createRoiSnapshot(roi);
+    }
+
+    if (!infoData) {
+        document.getElementById('roiInfoContent').innerHTML = `<p>Could not retrieve data for this ROI.</p>`;
+        roiInfoModal.style.display = 'flex';
+        return;
+    }
+
+    const previewImageHtml = `<div class="info-preview-container">
+        <img src="${infoData.thumbnailDataUrl}" class="info-preview-image" title="Actual ROI Pixels" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};">
+        <p><strong>Average Color:</strong> <span style="display:inline-block; width: 16px; height: 16px; background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)}); border: 1px solid #fff; vertical-align: middle;"></span></p>
+    </div>`;
+
+    const content = document.getElementById('roiInfoContent');
+    content.innerHTML = `<p><strong>Name:</strong> ${infoData.name}</p>
+                       <p><strong>Pixels in ROI:</strong> ${infoData.pixelCount}</p>
+                       <p><strong>Avg RGB:</strong> R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}</p>
+                       ${previewImageHtml}`;
+
+    roiInfoModal.style.display = 'flex';
+}
+
         function closeAllModals() {
           document
             .querySelectorAll(".modal")
