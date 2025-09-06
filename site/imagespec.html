@@ -833,6 +833,21 @@
           <button class="close-button">&times;</button>
         </div>
         <canvas id="measurementChart"></canvas>
+      
+<div id="chartDataTableContainer" style="display: none; margin-top: 20px;">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <button id="downloadChartCsvBtn" class="icon-button" title="Download Chart Data as CSV">
+            <i class="bi bi-download"></i>
+        </button>
+    </div>
+    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px;">
+        <table id="chartDataTable" style="width: 100%; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: var(--surface-color);"></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
       </div>
     </div>
     <script>
@@ -889,6 +904,10 @@
         const editRoiSize = document.getElementById("editRoiSize");
         const editRoiColor = document.getElementById("editRoiColor");
         const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+        const chartDataTableContainer = document.getElementById('chartDataTableContainer');
+const chartDataTable = document.getElementById('chartDataTable');
+const downloadChartCsvBtn = document.getElementById('downloadChartCsvBtn');
+
         
 const lockinBlankCheck = document.getElementById('lockinBlankCheck');
 const lockinSampleCheck = document.getElementById('lockinSampleCheck');
@@ -897,6 +916,8 @@ const settingsInfoTitle = document.getElementById('settingsInfoTitle');
 const settingsInfoContent = document.getElementById('settingsInfoContent');
 
         let currentlyEditingRoiId = null;
+        let currentChartDataForCSV = null;
+
         let appState = {
           sourceType: "upload",
           rois: [],
@@ -1611,6 +1632,9 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
     drawROIs();
 });
 
+        downloadChartCsvBtn.addEventListener('click', downloadChartDataAsCSV);
+
+
         lockinSampleCheck.addEventListener('change', (e) => {
     // 1. Update the state based on whether the box is checked or not.
     appState.isSampleLocked = e.target.checked;
@@ -1863,12 +1887,7 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
               seriesData.datasets[0].data.push(absorbance);
             }
             sampleRoi.seriesData = seriesData;
-            showChart(
-              seriesData,
-              "Wavelength (nm)",
-              "Absorbance",
-              `${sampleRoi.name} - Wavelength Scan`
-            );
+            showChart(seriesData, 'Wavelength (nm)', 'Absorbance', \${sampleRoi.name} - Wavelength Scan`, 'series');`
             resolve();
           });
         }
@@ -1906,12 +1925,7 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
                 fill: true,
               });
             });
-            showChart(
-              timeData,
-              "Time (s)",
-              "Absorbance",
-              "Time Series Measurement"
-            );
+            showChart(timeData, 'Time (s)', 'Absorbance', \${sampleRoi.name} - Time Series`, 'time');`
             let currentIndex = 0;
             function takeMeasurementAtNextPoint() {
               if (currentIndex >= timePoints.length) {
@@ -1951,34 +1965,72 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
             takeMeasurementAtNextPoint();
           });
         }
-        function showChart(data, xLabel, yLabel, titleText) {
-          const chartCanvas = document.getElementById("measurementChart");
-          if (appState.measurementChart) {
-            appState.measurementChart.destroy();
-          }
-          document.getElementById("chartTitle").textContent = titleText;
-          appState.measurementChart = new Chart(chartCanvas, {
-            type: "line",
-            data: data,
-            options: {
-              responsive: true,
-              scales: {
+        /**
+ * Displays the measurement chart modal with a graph and a corresponding data table.
+ *
+ * @param {object} data The Chart.js data object (labels, datasets).
+ * @param {string} xLabel The label for the X-axis.
+ * @param {string} yLabel The label for the Y-axis.
+ * @param {string} titleText The main title for the chart and modal.
+ * @param {string} mode The type of measurement being displayed ('series' for wavelength or 'time' for time points).
+ */
+function showChart(data, xLabel, yLabel, titleText, mode) {
+    // 1. Get a reference to the canvas element for the chart.
+    const chartCanvas = document.getElementById('measurementChart');
+
+    // 2. Destroy any previously existing chart instance.
+    // This is crucial to prevent memory leaks and rendering glitches when showing a new chart.
+    if (appState.measurementChart) {
+        appState.measurementChart.destroy();
+    }
+
+    // 3. Set the title of the modal.
+    document.getElementById('chartTitle').textContent = titleText;
+
+    // 4. Create the new Chart.js instance with the provided data and styling options.
+    appState.measurementChart = new Chart(chartCanvas, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
                 x: {
-                  title: { display: true, text: xLabel, color: "#fff" },
-                  ticks: { color: "#aaa" },
-                  grid: { color: "#444" },
+                    title: { display: true, text: xLabel, color: '#fff' },
+                    ticks: { color: '#aaa' },
+                    grid: { color: '#444' }
                 },
                 y: {
-                  title: { display: true, text: yLabel, color: "#fff" },
-                  ticks: { color: "#aaa" },
-                  grid: { color: "#444" },
-                },
-              },
-              plugins: { legend: { labels: { color: "#fff" } } },
+                    title: { display: true, text: yLabel, color: '#fff' },
+                    ticks: { color: '#aaa' },
+                    grid: { color: '#444' }
+                }
             },
-          });
-          chartModal.style.display = "flex";
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            }
         }
+    });
+
+    // --- NEW LOGIC for Data Table and CSV Preparation ---
+
+    // 5. Generate and populate the HTML table with the same data used by the chart.
+    generateChartTable(data, mode, titleText);
+
+    // 6. Store the chart's data in a globally accessible variable.
+    // This allows the separate "downloadChartCsvBtn" event listener to access the correct data when clicked.
+    currentChartDataForCSV = { data, mode, title: titleText };
+
+    // 7. Make the container for the table and download button visible.
+    chartDataTableContainer.style.display = 'block';
+
+    // --- END of New Logic ---
+
+
+    // 8. Finally, display the entire modal.
+    chartModal.style.display = 'flex';
+}
 
         function downloadDataAsCSV() {
           // 1. Define CSV Headers
@@ -2020,6 +2072,73 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
             document.body.removeChild(link);
           }
         }
+
+        function generateChartTable(chartData, mode, title) {
+    const tableHead = chartDataTable.querySelector('thead');
+    const tableBody = chartDataTable.querySelector('tbody');
+    tableHead.innerHTML = '';
+    tableBody.innerHTML = '';
+    let headHtml = '<tr>';
+    let bodyHtml = '';
+
+    if (mode === 'series') { // Wavelength Scan
+        headHtml += '<th>Wavelength (nm)</th><th>Absorbance</th>';
+        chartData.labels.forEach((wl, index) => {
+            const absorbance = chartData.datasets[0].data[index].toFixed(4);
+            bodyHtml += `<tr><td>${wl}</td><td>${absorbance}</td></tr>`;
+        });
+    } else if (mode === 'time') { // Time Points
+        const sampleName = title.split(' - ')[0]; // Extract sample name from title
+        headHtml += '<th>Measurement Point</th>';
+        chartData.datasets.forEach(dataset => {
+            headHtml += `<th>${dataset.label}</th>`;
+        });
+        chartData.labels.forEach((time, timeIndex) => {
+            bodyHtml += `<tr><td>${sampleName} @ ${time}s</td>`;
+            chartData.datasets.forEach(dataset => {
+                const absorbance = dataset.data[timeIndex] !== null ? dataset.data[timeIndex].toFixed(4) : '-';
+                bodyHtml += `<td>${absorbance}</td>`;
+            });
+            bodyHtml += '</tr>';
+        });
+    }
+
+    headHtml += '</tr>';
+    tableHead.innerHTML = headHtml;
+    tableBody.innerHTML = bodyHtml;
+}
+
+        function downloadChartDataAsCSV() {
+    if (!currentChartDataForCSV) return;
+
+    const { data, mode, title } = currentChartDataForCSV;
+    let csvContent = '';
+    let headers = [];
+    let rows = [];
+
+    if (mode === 'series') {
+        headers = ['Wavelength (nm)', 'Absorbance'];
+        rows = data.labels.map((wl, index) => `${wl},${data.datasets[0].data[index].toFixed(4)}`);
+    } else if (mode === 'time') {
+        const sampleName = title.split(' - ')[0];
+        headers = ['Measurement Point', ...data.datasets.map(d => d.label)];
+        rows = data.labels.map((time, timeIndex) => {
+            const rowData = data.datasets.map(d => (d.data[timeIndex] !== null ? d.data[timeIndex].toFixed(4) : ''));
+            return `"${sampleName} @ ${time}s",${rowData.join(',')}`;
+        });
+    }
+
+    csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const filename = title.replace(/\s/g, '_') + '.csv';
+    link.setAttribute('href', URL.createObjectURL(blob));
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 
         function init() {
           updateWavelengthList();
