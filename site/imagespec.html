@@ -427,6 +427,81 @@
               max-height: none;
           }
       }
+
+      /* --- Styles for the new "ImageSpec Settings" section --- */
+
+/* 1. Main container for each setting row (e.g., "Lock-in Blank: [icon] [checkbox]") */
+/* This creates the perfect alignment between the label on the left and the controls on the right. */
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0; /* Adds a little vertical breathing room */
+}
+
+/* 2. Inner container for the controls (the icon and the checkbox) */
+/* This ensures the icon and checkbox are perfectly aligned with each other. */
+.setting-control {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Provides consistent spacing between the icon and the checkbox */
+}
+
+/* 3. Styling for the clickable info icon */
+.info-icon-settings {
+    color: var(--text-color-muted); /* Matches the muted text color of the app */
+    font-size: 1.2em; /* Makes the icon slightly larger and easier to click */
+    cursor: pointer;
+    transition: color 0.2s ease-in-out; /* Smooth transition for hover effect */
+}
+
+.info-icon-settings:hover {
+    color: var(--secondary-color); /* Matches the app's highlight color on hover */
+}
+
+/* 4. Styling for the custom checkbox */
+/* This uses a modern CSS property to style the native checkbox to match the dark theme. */
+.styled-checkbox {
+    /* This is the key property. It colors the checkmark and highlight with our app's primary purple. */
+    accent-color: var(--primary-color);
+
+    /* Appearance and Sizing */
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+
+    /* Styling for the UNCHECKED state */
+    background-color: var(--bg-color); /* Matches the app's darkest background */
+    border: 1px solid var(--border-color); /* Matches other borders */
+    border-radius: 4px; /* Slightly rounded corners */
+
+    /* Positioning and layout */
+    position: relative;
+    display: grid;
+    place-content: center;
+}
+
+/* Styling for the CHECKMARK itself (a pseudo-element) */
+.styled-checkbox::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    transform: scale(0); /* Hidden by default */
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--primary-color);
+    
+    /* Creates the checkmark shape */
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+/* Styling for the CHECKED state */
+.styled-checkbox:checked::before {
+    transform: scale(1); /* Makes the checkmark visible when checked */
+}
     </style>
   </head>
 
@@ -642,20 +717,21 @@
         <i class="bi bi-chevron-up collapse-icon"></i>
     </div>
     <div class="collapsible-content">
-        <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
-            <label for="lockinBlankCheck">Lock-in Blank:</label>
-            <div>
-                <i class="bi bi-info-circle info-icon-settings" data-info="blank" style="cursor: pointer; margin-right: 10px;"></i>
-                <input type="checkbox" id="lockinBlankCheck">
-            </div>
-        </div>
-        <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
-            <label for="lockinSampleCheck">Lock-in Sample:</label>
-            <div>
-                <i class="bi bi-info-circle info-icon-settings" data-info="sample" style="cursor: pointer; margin-right: 10px;"></i>
-                <input type="checkbox" id="lockinSampleCheck">
-            </div>
-        </div>
+        <div class="setting-row">
+    <label for="lockinBlankCheck">Lock-in Blank:</label>
+    <div class="setting-control">
+        <i class="bi bi-info-circle info-icon-settings" data-info="blank"></i>
+        <input type="checkbox" id="lockinBlankCheck" class="styled-checkbox">
+    </div>
+</div>
+<div class="setting-row">
+    <label for="lockinSampleCheck">Lock-in Sample:</label>
+    <div class="setting-control">
+        <i class="bi bi-info-circle info-icon-settings" data-info="sample"></i>
+        <input type="checkbox" id="lockinSampleCheck" class="styled-checkbox">
+    </div>
+</div>
+
     </div>
 </section>
 
