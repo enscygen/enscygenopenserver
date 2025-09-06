@@ -652,6 +652,22 @@
     vertical-align: middle;
     margin-right: 8px;
 }
+
+      /* --- CSS for the Live Measurement Spinner --- */
+.spinner-icon {
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
     </style>
   </head>
 
@@ -1442,10 +1458,14 @@ function createRoiSnapshot(roi) {
         }
         function updateResultsTable() {
     resultsTableBody.innerHTML = '';
+    
+    // Check if a batch time-series scan is running
+    const isBatchTimeScanRunning = appState.isMeasuring && measurementModeSelect.value === 'time';
+
     appState.rois.forEach(roi => {
         const tr = document.createElement('tr');
+        // ... (The thumbnail logic remains the same) ...
         let thumbCellHtml = '';
-        // This logic for choosing the correct thumbnail (live vs. snapshot) is already correct.
         if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
             thumbCellHtml = `<img src="${appState.lockedBlankData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Blank Snapshot">`;
         } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
@@ -1459,20 +1479,21 @@ function createRoiSnapshot(roi) {
             thumbCtx.fillRect(0, 0, 24, 24);
             thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
         }
+        
+        let absorbanceCells = '';
 
-        const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
-
-        // --- NEW: Conditional Icon Rendering ---
-        // Create the Wavelength Scan chart button (bar-chart icon) ONLY if seriesData exists.
-        const seriesChartBtn = roi.seriesData
-            ? `<button class="icon-button chart-roi-btn" data-id="${roi.id}" title="View Wavelength Scan Chart"><i class="bi bi-bar-chart"></i></button>`
-            : '';
-
-        // Create the Time Series chart button (clock icon) ONLY if timeSeriesData exists.
-        const timeChartBtn = roi.timeSeriesData
-            ? `<button class="icon-button timeseries-chart-btn" data-id="${roi.id}" title="View Time Series Chart"><i class="bi bi-clock"></i></button>`
-            : '';
+        // --- NEW: Conditional Data Cell Rendering ---
+        if (isBatchTimeScanRunning && roi.type === 'sample') {
+            // If a scan is running, show a spinner for each wavelength column.
+            absorbanceCells = appState.wavelengths.map(() => `<td><i class="bi bi-arrow-repeat spinner-icon"></i></td>`).join('');
+        } else {
+            // Otherwise, show the actual absorbance values.
+            absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
+        }
         // --- END of New Logic ---
+
+        const seriesChartBtn = roi.seriesData ? `<button class="icon-button chart-roi-btn" data-id="${roi.id}" title="View Wavelength Scan Chart"><i class="bi bi-bar-chart"></i></button>` : '';
+        const timeChartBtn = roi.timeSeriesData ? `<button class="icon-button timeseries-chart-btn" data-id="${roi.id}" title="View Time Series Chart"><i class="bi bi-clock"></i></button>` : '';
 
         tr.innerHTML = `
             <td>${thumbCellHtml}</td>
@@ -1482,13 +1503,14 @@ function createRoiSnapshot(roi) {
                 <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
                 <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button>
                 <button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button>
-                ${seriesChartBtn} <!-- Insert the conditional button here -->
-                ${timeChartBtn}   <!-- And the other conditional button here -->
+                ${seriesChartBtn}
+                ${timeChartBtn}
                 <button class="icon-button delete-roi-btn" data-id="${roi.id}" title="Delete"><i class="bi bi-trash"></i></button>
             </td>`;
         resultsTableBody.appendChild(tr);
     });
 }
+
         function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -2052,10 +2074,16 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         resolve(); // Signal completion.
     });
 }
-        async function runTimeSeries(roiId) {
+        /**
+ * Asynchronously runs a time-series measurement.
+ * - If an roiId is provided, it measures that single sample and updates its chart/table in real-time.
+ * - If roiId is null, it measures ALL available samples synchronously at each time point.
+ * @param {string | null} roiId The ID of the specific sample to measure, or null to measure all.
+ */
+async function runTimeSeries(roiId) {
     let samplesToScan = [];
 
-    // --- Logic to Build the Scan List (This part is the same) ---
+    // 1. Build the list of samples to be measured based on user selection.
     if (roiId) {
         const selectedSample = appState.rois.find(r => r.id === roiId);
         if (selectedSample) samplesToScan.push(selectedSample);
@@ -2063,7 +2091,7 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         samplesToScan = appState.rois.filter(r => r.type === 'sample');
     }
 
-    // --- Validation (This part is the same) ---
+    // 2. Validate all necessary conditions before starting the measurement.
     if (samplesToScan.length === 0) {
         alert("No samples found to measure.");
         throw new Error("No samples found.");
@@ -2072,7 +2100,10 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         alert("Time series measurement requires the live camera source.");
         throw new Error("Camera not active.");
     }
-    // ... (other validations for blank and time points remain the same) ...
+    if (!appState.blankRoiId) {
+        alert("Please set a Blank ROI before starting a measurement.");
+        throw new Error("No Blank ROI.");
+    }
     const timePointsInput = document.getElementById("timePoints").value;
     const timePoints = timePointsInput.split(",").map(t => parseFloat(t.trim())).filter(t => !isNaN(t) && t >= 0).sort((a, b) => a - b);
     if (timePoints.length === 0) {
@@ -2080,31 +2111,31 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         throw new Error("Invalid time points.");
     }
 
-    // --- NEW: Prepare Data Structures for ALL Samples ---
-    // Create a data object for each sample upfront
+    // 3. Prepare the data storage structures for each sample that will be measured.
     samplesToScan.forEach(sample => {
         const timeData = { labels: [], datasets: [] };
         appState.wavelengths.forEach(wl => {
             const rgb = wavelengthToRgb(wl);
             timeData.datasets.push({ label: `${wl} nm`, data: [], borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`, tension: 0.1, pointRadius: 4, fill: true });
         });
-        sample.timeSeriesData = timeData; // Attach the data structure to the sample
+        sample.timeSeriesData = timeData; // Attach the empty data structure to the sample's state.
     });
 
-    // If we are only measuring one sample, we can create its chart immediately.
+    // 4. If this is a single-sample run, open its chart modal immediately.
+    // The chart will be empty at first and will populate in real-time.
     if (samplesToScan.length === 1) {
         const singleSample = samplesToScan[0];
         showChart(singleSample.timeSeriesData, 'Time (s)', 'Absorbance', `${singleSample.name} - Time Series`, 'time');
     }
 
-    // --- REBUILT: Synchronous Measurement Logic ---
-    // This is an outer promise that resolves only when all time points are complete.
+    // 5. Start the main asynchronous measurement process.
+    // This outer promise ensures the function waits until all time points are complete.
     await new Promise(resolve => {
         let timeIndex = 0;
 
         function measureAtNextTimePoint() {
             if (timeIndex >= timePoints.length) {
-                resolve(); // All time points are done, finish the entire process.
+                resolve(); // All time points are measured; resolve the promise.
                 return;
             }
 
@@ -2117,35 +2148,39 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
             setTimeout(() => {
                 startMeasurementBtn.textContent = `Measuring All Samples @ ${targetTime}s`;
 
-                // 1. Capture a single, definitive frame from the video.
+                // A. Capture a single, definitive frame from the video. This is the key to synchronicity.
                 mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height);
 
-                // 2. Loop through ALL samples for this single point in time.
+                // B. Loop through ALL samples for this single point in time.
                 samplesToScan.forEach(sampleRoi => {
-                    // This function now uses the single captured frame for all calculations.
+                    // This function now uses the same captured frame for all sample calculations.
                     calculateAllAbsorbances();
                     
                     const timeData = sampleRoi.timeSeriesData;
-                    timeData.labels.push(targetTime);
+                    timeData.labels.push(targetTime); // Add the time point to this sample's data.
 
+                    // Add the absorbance value for each wavelength to this sample's data.
                     appState.wavelengths.forEach((wl, wlIndex) => {
                         timeData.datasets[wlIndex].data.push(sampleRoi.absorbance[wl] || 0);
                     });
                 });
 
-                // 3. Update the chart ONLY if we are in single-sample mode.
+                // C. If this is a single-sample run, update its chart AND table in real-time.
                 if (samplesToScan.length === 1 && appState.measurementChart) {
-                    appState.measurementChart.update();
+                    appState.measurementChart.update(); // Update the graph.
+                    const singleSample = samplesToScan[0];
+                    generateChartTable(singleSample.timeSeriesData, 'time', `${singleSample.name} - Time Series`); // Update the table.
                 }
 
                 timeIndex++;
-                measureAtNextTimePoint(); // Schedule the next time point.
+                measureAtNextTimePoint(); // Schedule the next measurement.
             }, delay);
         }
 
-        measureAtNextTimePoint(); // Start the timer for the first point (t=0).
+        measureAtNextTimePoint(); // Initiate the first measurement (t=0).
     });
 
+    // 6. Provide final feedback to the user.
     alert(`Time series measurement complete for ${samplesToScan.length} sample(s).`);
 }
         /**
