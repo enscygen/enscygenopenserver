@@ -1441,49 +1441,39 @@ function createRoiSnapshot(roi) {
           resultsTableHead.innerHTML = headers;
         }
         function updateResultsTable() {
-    // 1. Clear the existing table content to prepare for a fresh render.
     resultsTableBody.innerHTML = '';
-
-    // 2. Loop through every ROI currently in the application state.
     appState.rois.forEach(roi => {
         const tr = document.createElement('tr');
-        let thumbCellHtml = ''; // This variable will hold the HTML for the first cell (the thumbnail).
-
-        // --- NEW: Conditional Thumbnail Logic ---
-        // This block decides WHICH thumbnail to show: a live one or a stored snapshot.
-
-        // Case A: Is the current ROI the "Blank" AND is the lock-in feature active?
+        let thumbCellHtml = '';
+        // This logic for choosing the correct thumbnail (live vs. snapshot) is already correct.
         if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
-            // If yes, use the stored thumbnail from the snapshot.
-            // This ensures the original blank's image is shown even after uploading a new photo.
             thumbCellHtml = `<img src="${appState.lockedBlankData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Blank Snapshot">`;
-
-        // Case B: Is the current ROI the locked "Sample" AND is the feature active?
         } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
-            // If yes, use the stored thumbnail from the sample's snapshot.
             thumbCellHtml = `<img src="${appState.lockedSampleData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Sample Snapshot">`;
-
-        // Case C: For all other ROIs (any unlocked or live ROI).
         } else {
-            // Revert to the original behavior: generate the thumbnail live from the current canvas.
             const avgColor = getRoiAverageColor(roi) || { r: 0, g: 0, b: 0 };
             const thumbCanvas = document.createElement('canvas');
-            thumbCanvas.width = 24;
-            thumbCanvas.height = 24;
+            thumbCanvas.width = 24; thumbCanvas.height = 24;
             const thumbCtx = thumbCanvas.getContext('2d');
             thumbCtx.fillStyle = `rgb(${avgColor.r.toFixed(0)}, ${avgColor.g.toFixed(0)}, ${avgColor.b.toFixed(0)})`;
             thumbCtx.fillRect(0, 0, 24, 24);
             thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
         }
 
-        // --- END: Conditional Thumbnail Logic ---
-
-
-        // 3. Assemble the rest of the table row.
-        // Get the absorbance values for each wavelength.
         const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
 
-        // Build the complete HTML string for the row, including the correct thumbnail and all action buttons.
+        // --- NEW: Conditional Icon Rendering ---
+        // Create the Wavelength Scan chart button (bar-chart icon) ONLY if seriesData exists.
+        const seriesChartBtn = roi.seriesData
+            ? `<button class="icon-button chart-roi-btn" data-id="${roi.id}" title="View Wavelength Scan Chart"><i class="bi bi-bar-chart"></i></button>`
+            : '';
+
+        // Create the Time Series chart button (clock icon) ONLY if timeSeriesData exists.
+        const timeChartBtn = roi.timeSeriesData
+            ? `<button class="icon-button timeseries-chart-btn" data-id="${roi.id}" title="View Time Series Chart"><i class="bi bi-clock"></i></button>`
+            : '';
+        // --- END of New Logic ---
+
         tr.innerHTML = `
             <td>${thumbCellHtml}</td>
             <td>${roi.name}</td>
@@ -1492,11 +1482,10 @@ function createRoiSnapshot(roi) {
                 <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
                 <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button>
                 <button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button>
-                <button class="icon-button chart-roi-btn" data-id="${roi.id}" title="Chart" style="display: ${measurementModeSelect.value === 'series' ? 'inline-block' : 'none'};"><i class="bi bi-bar-chart"></i></button>
+                ${seriesChartBtn} <!-- Insert the conditional button here -->
+                ${timeChartBtn}   <!-- And the other conditional button here -->
                 <button class="icon-button delete-roi-btn" data-id="${roi.id}" title="Delete"><i class="bi bi-trash"></i></button>
             </td>`;
-
-        // 4. Append the fully constructed row to the table body.
         resultsTableBody.appendChild(tr);
     });
 }
