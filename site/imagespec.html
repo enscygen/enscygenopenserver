@@ -2006,6 +2006,7 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         appState.isMeasuring = false;
         startMeasurementBtn.textContent = "Start Measurement";
         startMeasurementBtn.disabled = false;
+      updateResultsTable(); 
     }
 }
         function runSeriesScan(roiId) {
@@ -2183,7 +2184,7 @@ async function runTimeSeries(roiId) {
 
     // 6. Provide final feedback to the user.
     alert(`Time series measurement complete for ${samplesToScan.length} sample(s).`);
-  updateResultsTable();
+  
 }
         /**
  * Displays the measurement chart modal with a graph and a corresponding data table.
