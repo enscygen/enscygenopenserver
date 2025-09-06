@@ -813,6 +813,13 @@
         const editRoiSize = document.getElementById("editRoiSize");
         const editRoiColor = document.getElementById("editRoiColor");
         const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+        
+const lockinBlankCheck = document.getElementById('lockinBlankCheck');
+const lockinSampleCheck = document.getElementById('lockinSampleCheck');
+const settingsInfoModal = document.getElementById('settingsInfoModal');
+const settingsInfoTitle = document.getElementById('settingsInfoTitle');
+const settingsInfoContent = document.getElementById('settingsInfoContent');
+
         let currentlyEditingRoiId = null;
         let appState = {
           sourceType: "upload",
@@ -827,6 +834,10 @@
           videoStream: null,
           measurementChart: null,
           isMeasuring: false,
+          isBlankLocked: false,
+    isSampleLocked: false,
+    lockedBlankColor: null,
+    lockedSampleRoiId: null,
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
@@ -944,53 +955,62 @@
           };
         }
         function calculateAllAbsorbances() {
-          const blankRoi = appState.rois.find(
-            (r) => r.id === appState.blankRoiId
-          );
-          if (!blankRoi) {
-            liveAbsorbanceInfo.textContent = "No Blank ROI set";
-            appState.rois
-              .filter((r) => r.type === "sample")
-              .forEach((sampleRoi) => {
-                sampleRoi.absorbance = {};
-              });
-            updateResultsTable();
-            updateLiveAbsorbanceDisplay();
-            return;
-          }
-          liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
-          const blankColor = getRoiAverageColor(blankRoi);
-          if (!blankColor) return;
-          appState.rois.forEach((roi) => {
-            if (roi.type === "sample") {
-              const sampleColor = getRoiAverageColor(roi);
-              if (!sampleColor) {
-                roi.absorbance = {};
+    // 1. Find the Blank ROI object to get its properties (like its name).
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+
+    // 2. --- NEW: Conditional Blank Color Logic ---
+    // Determine which blank color value to use based on the "Lock-in Blank" setting.
+    const blankColor = appState.isBlankLocked
+        ? appState.lockedBlankColor // If locked, use the value stored in memory.
+        : (blankRoi ? getRoiAverageColor(blankRoi) : null); // If not locked, perform a live measurement from the canvas.
+
+    // 3. Validate the Blank
+    // The calculation cannot proceed if there is no Blank ROI placed OR if there is no valid color data
+    // (either because it wasn't locked or couldn't be measured).
+    if (!blankRoi || !blankColor) {
+        liveAbsorbanceInfo.textContent = "No Blank ROI set";
+        // Clear old absorbance data from all samples since the calibration is invalid.
+        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
+            sampleRoi.absorbance = {};
+        });
+        // Update the UI to reflect the missing calibration.
+        updateResultsTable();
+        updateLiveAbsorbanceDisplay();
+        return; // Stop the function here.
+    }
+
+    // 4. If validation passes, proceed with calculations.
+    liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
+
+    // Loop through every ROI in the list.
+    appState.rois.forEach(roi => {
+        // We only calculate absorbance for ROIs marked as 'sample'.
+        if (roi.type === 'sample') {
+            const sampleColor = getRoiAverageColor(roi);
+            if (!sampleColor) {
+                roi.absorbance = {}; // Clear data if sample color can't be read.
                 return;
-              }
-              appState.wavelengths.forEach((wl) => {
-                const weights = getWavelengthChannelWeights(wl);
-                const blankIntensity =
-                  weights.r * blankColor.r +
-                  weights.g * blankColor.g +
-                  weights.b * blankColor.b;
-                const sampleIntensity =
-                  weights.r * sampleColor.r +
-                  weights.g * sampleColor.g +
-                  weights.b * sampleColor.b;
-                if (blankIntensity > 0 && sampleIntensity > 0) {
-                  roi.absorbance[wl] = -Math.log10(
-                    sampleIntensity / blankIntensity
-                  ).toFixed(3);
-                } else {
-                  roi.absorbance[wl] = "inf";
-                }
-              });
             }
-          });
-          updateResultsTable();
-          updateLiveAbsorbanceDisplay();
+
+            // For each sample, loop through every wavelength the user has added.
+            appState.wavelengths.forEach(wl => {
+                const weights = getWavelengthChannelWeights(wl);
+                const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
+                const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
+
+                if (blankIntensity > 0 && sampleIntensity > 0) {
+                    roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3);
+                } else {
+                    roi.absorbance[wl] = 'inf'; // Set to 'inf' for total absorption.
+                }
+            });
         }
+    });
+
+    // 5. After all calculations are done, update the entire UI.
+    updateResultsTable();
+    updateLiveAbsorbanceDisplay();
+}
         function updateLiveAbsorbanceDisplay() {
           let targetRoi = null;
 
@@ -1050,32 +1070,64 @@
           });
         });
         function drawROIs() {
-          roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height);
-          appState.rois.forEach((roi) => {
-            const size = roi.shape === "pixel" ? 5 : roi.size;
-            const halfSize = size / 2;
-            roiCtx.strokeStyle = roi.color;
-            roiCtx.lineWidth = 2;
-            roiCtx.fillStyle = `${roi.color}33`;
-            roiCtx.font = "12px Arial";
-            roiCtx.textAlign = "center";
-            roiCtx.beginPath();
-            if (roi.shape === "circle") {
-              roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2);
-            } else {
-              roiCtx.rect(roi.x - halfSize, roi.y - halfSize, size, size);
-            }
-            roiCtx.stroke();
-            roiCtx.fill();
-            roiCtx.fillStyle = roi.color;
-            roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5);
-            if (roi.locked) {
-              roiCtx.font = "15px Arial";
-              roiCtx.fillStyle = roi.color;
-              roiCtx.fillText("🔒", roi.x, roi.y + halfSize + 15);
-            }
-          });
+    // 1. Clear the canvas for a fresh drawing
+    roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height);
+
+    // 2. Determine the current state before looping (this is more efficient)
+    // Check if at least one sample ROI exists on the canvas
+    const hasSample = appState.rois.some(r => r.type === 'sample');
+    // Check if at least one sample exists that ISN'T the locked one
+    const nonLockedSamplesExist = appState.rois.some(r => r.type === 'sample' && r.id !== appState.lockedSampleRoiId);
+
+    // 3. Loop through all ROIs and decide whether to draw them
+    appState.rois.forEach(roi => {
+
+        // --- NEW: Conditional Hiding Logic ---
+
+        // Condition A: Hide the Blank ROI if "Lock-in Blank" is active and a sample has been placed.
+        if (roi.type === 'blank' && appState.isBlankLocked && hasSample) {
+            return; // Skip the rest of the function for this ROI
         }
+
+        // Condition B: Hide the "locked" Sample ROI if "Lock-in Sample" is active and a different sample has been placed.
+        if (roi.id === appState.lockedSampleRoiId && appState.isSampleLocked && nonLockedSamplesExist) {
+            return; // Skip the rest of the function for this ROI
+        }
+
+        // --- END: Conditional Hiding Logic ---
+
+
+        // 4. If the ROI was not hidden, proceed with the original drawing logic
+        const size = roi.shape === 'pixel' ? 5 : roi.size;
+        const halfSize = size / 2;
+        roiCtx.strokeStyle = roi.color;
+        roiCtx.lineWidth = 2;
+        roiCtx.fillStyle = `${roi.color}33`; // Semi-transparent fill
+        roiCtx.font = "12px Arial";
+        roiCtx.textAlign = "center";
+
+        // Draw the shape (circle or square/pixel)
+        roiCtx.beginPath();
+        if (roi.shape === 'circle') {
+            roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2);
+        } else {
+            roiCtx.rect(roi.x - halfSize, roi.y - halfSize, size, size);
+        }
+        roiCtx.stroke();
+        roiCtx.fill();
+
+        // Draw the name label above the ROI
+        roiCtx.fillStyle = roi.color;
+        roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5);
+
+        // Draw the manual lock icon if the user has locked it from the table
+        if (roi.locked) {
+            roiCtx.font = "15px Arial";
+            roiCtx.fillStyle = roi.color;
+            roiCtx.fillText('🔒', roi.x, roi.y + halfSize + 15);
+        }
+    });
+}
         function updateWavelengthList() {
           wavelengthList.innerHTML = "";
           appState.wavelengths.forEach((wl) => {
@@ -1146,6 +1198,19 @@
               setCanvasSize(img.width, img.height);
               mainCtx.drawImage(img, 0, 0);
               canvasPlaceholder.style.display = "none";
+
+// --- ADD THIS LOGIC ---
+        // Clear only sample ROIs if blank is locked
+        if (appState.isBlankLocked) {
+            appState.rois = appState.rois.filter(r => r.type === 'blank');
+        } else {
+            // Original behavior: clear everything
+            appState.rois = [];
+            appState.blankRoiId = null;
+            appState.lockedBlankColor = null;
+        }
+        // --- END LOGIC ---
+            
               calculateAllAbsorbances();
             };
             img.src = event.target.result;
@@ -1358,6 +1423,47 @@
 
         downloadCsvBtn.addEventListener("click", downloadDataAsCSV);
 
+        document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('info-icon-settings')) {
+        const infoType = e.target.dataset.info;
+        if (infoType === 'blank') {
+            settingsInfoTitle.textContent = 'Lock-in Blank Explained';
+            settingsInfoContent.textContent = 'When checked, the app "locks in" the color value of your Blank ROI. This allows you to change the image (e.g., upload a new one or swap samples in the live camera) without losing your calibration. Once a Sample ROI is placed, the Blank ROI will disappear from the view to reduce clutter, as its value is already stored in memory.';
+        } else if (infoType === 'sample') {
+            settingsInfoTitle.textContent = 'Lock-in Sample Explained';
+            settingsInfoContent.textContent = 'When checked, the app locks the first Sample ROI you place. This is useful for comparative analysis. The locked sample ROI will disappear from the view when you place a second sample, allowing you to use the full frame to measure a new sample against the original locked one.';
+        }
+        settingsInfoModal.style.display = 'flex';
+    }
+});
+
+settingsInfoModal.querySelector('.close-button').addEventListener('click', () => settingsInfoModal.style.display = 'none');
+
+        lockinBlankCheck.addEventListener('change', (e) => {
+    appState.isBlankLocked = e.target.checked;
+    if (!appState.isBlankLocked) {
+        // If unchecked, clear the stored value
+        appState.lockedBlankColor = null;
+    } else {
+        // If checked, try to lock the current blank if one exists
+        const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+        if (blankRoi) {
+            appState.lockedBlankColor = getRoiAverageColor(blankRoi);
+        }
+    }
+    drawROIs(); // Redraw to immediately show/hide the blank if needed
+});
+
+        lockinSampleCheck.addEventListener('change', (e) => {
+    appState.isSampleLocked = e.target.checked;
+    if (!appState.isSampleLocked) {
+        appState.lockedSampleRoiId = null; // Clear the lock if unchecked
+    }
+    drawROIs();
+});
+
+
+
         measurementModeSelect.addEventListener("change", (e) => {
           seriesScanOptions.style.display =
             e.target.value === "series" ? "block" : "none";
@@ -1370,34 +1476,57 @@
         });
         startMeasurementBtn.addEventListener("click", handleStartMeasurement);
         function addRoi(x, y) {
-          const type = document.querySelector(
-            'input[name="roiType"]:checked'
-          ).value;
-          const id = "roi-" + Date.now();
-          const name =
-            roiNameInput.value ||
-            (type === "blank" ? "Blank" : `Sample ${appState.nextSampleId++}`);
-          const newRoi = {
-            id: id,
-            name: name,
-            type: type,
-            shape: roiShapeSelect.value,
-            size: parseInt(roiSizeInput.value),
-            x: x,
-            y: y,
-            color: type === "blank" ? "#03dac6" : "#bb86fc",
-            absorbance: {},
-            locked: false,
-          };
-          if (type === "blank") {
-            appState.rois = appState.rois.filter((r) => r.type !== "blank");
-            appState.blankRoiId = id;
-          }
-          appState.rois.push(newRoi);
-          roiNameInput.value = "";
-          drawROIs();
-          calculateAllAbsorbances();
+    // 1. Get all the properties for the new ROI from the UI
+    const type = document.querySelector('input[name="roiType"]:checked').value;
+    const id = 'roi-' + Date.now();
+    const name = roiNameInput.value || (type === 'blank' ? 'Blank' : `Sample ${appState.nextSampleId++}`);
+
+    const newRoi = {
+        id: id,
+        name: name,
+        type: type,
+        shape: roiShapeSelect.value,
+        size: parseInt(roiSizeInput.value),
+        x: x,
+        y: y,
+        color: type === 'blank' ? '#03dac6' : '#bb86fc',
+        absorbance: {},
+        locked: false
+    };
+
+    // 2. Handle the "Blank" ROI logic
+    if (type === 'blank') {
+        // Remove any previous blank to ensure only one exists
+        appState.rois = appState.rois.filter(r => r.type !== 'blank');
+        appState.blankRoiId = id;
+
+        // --- NEW: Lock-in Blank Logic ---
+        // If the "Lock-in Blank" setting is enabled, immediately capture its color value.
+        if (appState.isBlankLocked) {
+            appState.lockedBlankColor = getRoiAverageColor(newRoi);
         }
+    }
+
+    // 3. Handle the "Sample" ROI logic
+    if (type === 'sample') {
+        // --- NEW: Lock-in Sample Logic ---
+        // If the "Lock-in Sample" setting is enabled and no sample is locked yet,
+        // designate this new ROI as the one to lock.
+        if (appState.isSampleLocked && !appState.lockedSampleRoiId) {
+            appState.lockedSampleRoiId = newRoi.id;
+        }
+    }
+
+    // 4. Add the new ROI to the main array
+    appState.rois.push(newRoi);
+    roiNameInput.value = ''; // Clear the name input field for the next ROI
+
+    // 5. Update the entire UI
+    // The drawROIs function now contains the logic to hide the blank or locked samples
+    // under the right conditions, so simply calling it here is sufficient.
+    drawROIs();
+    calculateAllAbsorbances();
+}
         function openEditModal(id) {
           const roi = appState.rois.find((r) => r.id === id);
           if (roi) {
