@@ -1325,34 +1325,52 @@ function createRoiSnapshot(roi) {
     });
 }
         function handleImageUpload(e) {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-              setCanvasSize(img.width, img.height);
-              mainCtx.drawImage(img, 0, 0);
-              canvasPlaceholder.style.display = "none";
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            setCanvasSize(img.width, img.height);
+            mainCtx.drawImage(img, 0, 0);
+            canvasPlaceholder.style.display = 'none';
 
-// --- ADD THIS LOGIC ---
-        // Clear only sample ROIs if blank is locked
-        if (appState.isBlankLocked) {
-            appState.rois = appState.rois.filter(r => r.type === 'blank');
-        } else {
-            // Original behavior: clear everything
-            appState.rois = [];
-            appState.blankRoiId = null;
-            appState.lockedBlankColor = null;
-        }
-        // --- END LOGIC ---
-            
-              calculateAllAbsorbances();
-            };
-            img.src = event.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
+            // --- CORRECTED and UPGRADED LOGIC ---
+            // This block now correctly handles all locking scenarios.
+
+            // Case 1: BOTH Blank and Sample are locked.
+            if (appState.isBlankLocked && appState.isSampleLocked && appState.lockedSampleData) {
+                // Keep ONLY the blank and the one locked sample. Clear all other ROIs.
+                appState.rois = appState.rois.filter(r => r.type === 'blank' || r.id === appState.lockedSampleData.id);
+
+            // Case 2: ONLY the Blank is locked.
+            } else if (appState.isBlankLocked) {
+                // Keep ONLY the blank. Clear all samples.
+                appState.rois = appState.rois.filter(r => r.type === 'blank');
+                // Also ensure any previous sample lock is cleared.
+                appState.lockedSampleData = null;
+                appState.lockedSampleRoiId = null;
+
+            // Case 3: NO locks are active (Default behavior).
+            } else {
+                // Reset everything completely for a new experiment.
+                appState.rois = [];
+                appState.blankRoiId = null;
+                appState.lockedBlankData = null;
+                appState.lockedSampleData = null;
+                appState.lockedSampleRoiId = null;
+            }
+            // --- END of Corrected Logic ---
+
+            // Recalculate and redraw the UI with the corrected state.
+            calculateAllAbsorbances();
+            drawROIs();
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
         async function startCamera() {
           try {
             if (appState.videoStream) {
