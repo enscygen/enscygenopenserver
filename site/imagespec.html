@@ -653,6 +653,35 @@
     margin-right: 8px;
 }
 
+      /* 9. Container for the entire histogram section */
+.info-histogram-container {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 10. Container for the top-level (data source) toggle buttons */
+.histogram-data-source {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-color); /* Dashed border to separate controls */
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* 11. Container for the bottom-level (chart type) toggle buttons */
+.histogram-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* 12. The canvas for the chart itself */
+#roiHistogramCanvas {
+    max-height: 200px;
+    width: 100%;
+}
+
       /* --- CSS for the Live Measurement Spinner --- */
 .spinner-icon {
     display: inline-block;
@@ -1155,7 +1184,8 @@ lockedSampleData: null, // Will hold the same for the locked sample
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
-          masterChart: null
+          masterChart: null,
+          roiHistogramChart: null
         };
         
 function createRoiSnapshot(roi) {
@@ -2101,54 +2131,93 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
     if (!roi) return;
 
     let infoData;
+    let isSnapshot = false; // Flag to know if we are dealing with a live or locked ROI
 
-    // Check if the ROI is a locked one and use its snapshot
+    // Determine if we're using a live ROI or a stored snapshot
     if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
         infoData = appState.lockedBlankData;
+        isSnapshot = true;
     } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
         infoData = appState.lockedSampleData;
+        isSnapshot = true;
     } else {
-        // Original behavior: create a snapshot on-the-fly for a live ROI
         infoData = createRoiSnapshot(roi);
     }
-
+    
+    const content = document.getElementById('roiInfoContent');
     if (!infoData) {
-        document.getElementById('roiInfoContent').innerHTML = `<p>Could not retrieve data for this ROI.</p>`;
+        content.innerHTML = `<p>Could not retrieve data for this ROI.</p>`;
         roiInfoModal.style.display = 'flex';
         return;
     }
 
-    const previewImageHtml = `<div class="info-preview-container">
-        <img src="${infoData.thumbnailDataUrl}" class="info-preview-image" title="Actual ROI Pixels" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};">
-        <p><strong>Average Color:</strong> <span style="display:inline-block; width: 16px; height: 16px; background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)}); border: 1px solid #fff; vertical-align: middle;"></span></p>
-    </div>`;
+    // Conditionally build the data source toggle UI based on whether it's a snapshot
+    const dataSourceToggleHtml = isSnapshot
+        ? `<div class="histogram-data-source"><p style="color:var(--text-color-muted)">Showing histogram based on stored average value.</p></div>`
+        : `<div class="histogram-data-source">
+               <div class="radio-group">
+                   <input type="radio" id="histSourceActual" name="histSource" value="actual" checked>
+                   <label for="histSourceActual">Actual Pixels</label>
+                   <input type="radio" id="histSourceAveraged" name="histSource" value="averaged">
+                   <label for="histSourceAveraged">Averaged Value</label>
+               </div>
+           </div>`;
 
-    const content = document.getElementById('roiInfoContent');
+    // Build the complete modal HTML, including the new histogram section
     content.innerHTML = `
         <div class="info-modal-body">
             <div class="info-modal-preview">
                 <img src="${infoData.thumbnailDataUrl}" style="border-radius: ${roi.shape === 'circle' ? '50%' : '6px'};" title="ROI Snapshot">
             </div>
             <div class="info-modal-details">
-                <div class="info-data-row">
-                    <span class="label">Name:</span>
-                    <span class="value">${infoData.name}</span>
+                <div class="info-data-row"><span class="label">Name:</span><span class="value">${infoData.name}</span></div>
+                <div class="info-data-row"><span class="label">Pixels in ROI:</span><span class="value">${infoData.pixelCount}</span></div>
+                <div class="info-data-row"><span class="label">Avg RGB:</span><span class="value"><span class="info-color-swatch" style="background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)})"></span>R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}</span></div>
+            </div>
+        </div>
+        <div class="info-histogram-container">
+            ${dataSourceToggleHtml}
+            <div class="histogram-controls">
+                <div class="radio-group">
+                    <input type="radio" id="histTypeRGB" name="histType" value="rgb" checked>
+                    <label for="histTypeRGB">RGB</label>
+                    <input type="radio" id="histTypeGrayscale" name="histType" value="grayscale">
+                    <label for="histTypeGrayscale">Grayscale</label>
+                    <input type="radio" id="histTypeSpectral" name="histType" value="spectral">
+                    <label for="histTypeSpectral">Spectral</label>
                 </div>
-                <div class="info-data-row">
-                    <span class="label">Pixels in ROI:</span>
-                    <span class="value">${infoData.pixelCount}</span>
-                </div>
-                <div class="info-data-row">
-                    <span class="label">Avg RGB:</span>
-                    <span class="value">
-                        <span class="info-color-swatch" style="background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)})"></span>
-                        R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}
-                    </span>
-                </div>
+            </div>
+            <div style="position: relative; height: 200px;">
+                <canvas id="roiHistogramCanvas"></canvas>
             </div>
         </div>
     `;
 
+    // Calculate ALL potential data types upfront to make UI updates instantaneous.
+    const averagedHistData = calculateAveragedHistogramData(infoData.avgColor);
+    // Actual pixel data is only calculated if it's not a snapshot to save performance.
+    const actualHistData = isSnapshot ? null : calculateHistogramData(roi);
+
+    // This is the single function that will be called whenever a control changes.
+    const redrawHistogram = () => {
+        const sourceType = isSnapshot ? 'averaged' : document.querySelector('input[name="histSource"]:checked').value;
+        const histType = document.querySelector('input[name="histType"]:checked').value;
+        const dataToDraw = (sourceType === 'actual') ? actualHistData : averagedHistData;
+        
+        drawHistogram(dataToDraw, histType, sourceType, roi);
+    };
+
+    // Attach a single event listener to the entire modal content area.
+    // This is more efficient than attaching multiple listeners to each button.
+    content.addEventListener('change', (e) => {
+        if (e.target.name === 'histSource' || e.target.name === 'histType') {
+            redrawHistogram();
+        }
+    });
+
+    // Initial draw when the modal opens.
+    redrawHistogram();
+    
     roiInfoModal.style.display = 'flex';
 }
 
@@ -2549,6 +2618,161 @@ function generateChartTable(chartData, mode, title) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+        /**
+ * Creates a "perfect" histogram based on a single average color value.
+ * The result is a sharp spike at the average intensity for each channel.
+ * @param {object} avgColor An object with {r, g, b} properties.
+ * @returns {object} A histogram data object.
+ */
+function calculateAveragedHistogramData(avgColor) {
+    const redBins = new Array(256).fill(0);
+    const greenBins = new Array(256).fill(0);
+    const blueBins = new Array(256).fill(0);
+    const lumBins = new Array(256).fill(0);
+
+    const r = Math.round(avgColor.r);
+    const g = Math.round(avgColor.g);
+    const b = Math.round(avgColor.b);
+
+    redBins[r] = 1; // A single "count" at the average value
+    greenBins[g] = 1;
+    blueBins[b] = 1;
+
+    const luminance = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    lumBins[luminance] = 1;
+
+    return { red: redBins, green: greenBins, blue: blueBins, luminance: lumBins };
+}
+
+/**
+ * Calculates the frequency of each intensity value (0-255) for the R, G, B,
+ * and Luminance channels for all pixels within a given ROI's shape.
+ * @param {object} roi The ROI object to analyze.
+ * @returns {object|null} An object containing arrays for each channel's histogram data, or null.
+ */
+function calculateHistogramData(roi) {
+    if (!roi || !mainCanvas.width || !mainCanvas.height) return null;
+
+    const redBins = new Array(256).fill(0);
+    const greenBins = new Array(256).fill(0);
+    const blueBins = new Array(256).fill(0);
+    const lumBins = new Array(256).fill(0);
+
+    const size = roi.shape === 'pixel' ? 1 : roi.size;
+    const halfSize = size / 2;
+    const startX = Math.round(roi.x - halfSize);
+    const startY = Math.round(roi.y - halfSize);
+
+    try {
+        const imageData = mainCtx.getImageData(
+            Math.max(0, startX), Math.max(0, startY),
+            Math.min(size, mainCanvas.width - startX), Math.min(size, mainCanvas.height - startY)
+        );
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const pixelX = Math.max(0, startX) + ((i / 4) % imageData.width);
+            const pixelY = Math.max(0, startY) + Math.floor((i / 4) / imageData.width);
+
+            let inShape = false;
+            if (roi.shape === 'square' || roi.shape === 'pixel') {
+                inShape = true;
+            } else if (roi.shape === 'circle') {
+                const dx = pixelX - roi.x;
+                const dy = pixelY - roi.y;
+                if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true;
+            }
+
+            if (inShape) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                redBins[r]++;
+                greenBins[g]++;
+                blueBins[b]++;
+                const luminance = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                lumBins[luminance]++;
+            }
+        }
+        return { red: redBins, green: greenBins, blue: blueBins, luminance: lumBins };
+    } catch (e) {
+        console.error("Error calculating histogram data:", e);
+        return null;
+    }
+}
+
+/**
+ * Draws a histogram on the modal's canvas, adapting its style for different data types.
+ * @param {object} histogramData The data object from one of the calculation functions.
+ * @param {string} mode The type of chart to draw: 'rgb', 'grayscale', or 'spectral'.
+ * @param {string} sourceType The source of the data: 'actual' or 'averaged'.
+ * @param {object} roi The ROI object, needed only for spectral calculation.
+ */
+function drawHistogram(histogramData, mode, sourceType, roi) {
+    if (appState.roiHistogramChart) {
+        appState.roiHistogramChart.destroy();
+    }
+    const canvas = document.getElementById('roiHistogramCanvas');
+    if (!canvas) return;
+    if (!histogramData && mode !== 'spectral') {
+        // Clear canvas if no data, unless it's a spectral chart which calculates its own data
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    let chartData = { labels: [], datasets: [] };
+    const labels = Array.from(Array(256).keys());
+    let chartType = 'bar';
+    let yAxisLabel = 'Pixel Count';
+
+    if (sourceType === 'averaged') {
+        chartType = 'line';
+        yAxisLabel = 'Presence';
+    }
+    if (mode === 'spectral') {
+        chartType = 'line';
+        yAxisLabel = 'Relative Intensity';
+    }
+
+    if (mode === 'rgb') {
+        chartData = { labels: labels, datasets: [
+            { label: 'Red', data: histogramData.red, backgroundColor: 'rgba(255, 99, 132, 0.7)', borderColor: 'rgb(255, 99, 132)', stepped: sourceType === 'averaged' },
+            { label: 'Green', data: histogramData.green, backgroundColor: 'rgba(75, 192, 192, 0.7)', borderColor: 'rgb(75, 192, 192)', stepped: sourceType === 'averaged' },
+            { label: 'Blue', data: histogramData.blue, backgroundColor: 'rgba(54, 162, 235, 0.7)', borderColor: 'rgb(54, 162, 235)', stepped: sourceType === 'averaged' }
+        ]};
+    } else if (mode === 'grayscale') {
+        chartData = { labels: labels, datasets: [{ label: 'Luminance', data: histogramData.luminance, backgroundColor: 'rgba(200, 200, 200, 0.7)', borderColor: 'rgb(200, 200, 200)', stepped: sourceType === 'averaged' }]};
+    } else if (mode === 'spectral' && roi) {
+        const avgColor = getRoiAverageColor(roi);
+        const spectralLabels = [];
+        const spectralData = [];
+        for (let wl = 400; wl <= 700; wl += 5) {
+            const weights = getWavelengthChannelWeights(wl);
+            const intensity = weights.r * avgColor.r + weights.g * avgColor.g + weights.b * avgColor.b;
+            spectralLabels.push(wl);
+            spectralData.push(intensity);
+        }
+        chartData = {
+            labels: spectralLabels,
+            datasets: [{ label: 'Spectral Intensity', data: spectralData, borderColor: '#bb86fc', tension: 0.2, fill: false, pointRadius: 0 }]
+        };
+    }
+
+    appState.roiHistogramChart = new Chart(canvas, {
+        type: chartType,
+        data: chartData,
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#aaa', precision: 0 }, grid: { color: '#444' }, title: { display: true, text: yAxisLabel, color: '#fff' } },
+                x: { ticks: { color: '#aaa', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: '#444' }, title: { display: true, text: (mode === 'spectral') ? 'Wavelength (nm)' : 'Intensity', color: '#fff' } }
+            },
+            plugins: { legend: { labels: { color: '#fff' } } }
+        }
+    });
 }
 
 
