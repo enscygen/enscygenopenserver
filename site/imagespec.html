@@ -1071,43 +1071,48 @@ function createRoiSnapshot(roi) {
           };
         }
         function calculateAllAbsorbances() {
-    // 1. Find the Blank ROI object to get its properties (like its name).
-    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
-
-    // 2. --- CORRECTED: Conditional Blank Color Logic ---
-    // This now correctly looks inside the lockedBlankData object for the avgColor property.
+    // 1. Get the Blank's color. This part is already correct.
+    // It intelligently chooses between the locked snapshot or a live measurement.
     const blankColor = appState.isBlankLocked
-        ? appState.lockedBlankData?.avgColor // If locked, use the avgColor from the stored snapshot.
-        : (blankRoi ? getRoiAverageColor(blankRoi) : null); // If not locked, perform a live measurement.
+        ? appState.lockedBlankData?.avgColor
+        : (appState.rois.find(r => r.id === appState.blankRoiId) ? getRoiAverageColor(appState.rois.find(r => r.id === appState.blankRoiId)) : null);
 
-    // 3. Validate the Blank
-    // The calculation cannot proceed if there is no Blank ROI placed OR if there is no valid color data.
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
     if (!blankRoi || !blankColor) {
+        // This validation correctly handles cases where the blank is not set.
         liveAbsorbanceInfo.textContent = "No Blank ROI set";
-        // Clear old absorbance data from all samples since the calibration is invalid.
         appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
             sampleRoi.absorbance = {};
         });
-        // Update the UI to reflect the missing calibration.
         updateResultsTable();
         updateLiveAbsorbanceDisplay();
-        return; // Stop the function here.
+        return;
     }
 
-    // 4. If validation passes, proceed with calculations.
     liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
 
-    // Loop through every ROI in the list.
+    // 2. Loop through all ROIs to calculate their absorbance.
     appState.rois.forEach(roi => {
-        // We only calculate absorbance for ROIs marked as 'sample'.
         if (roi.type === 'sample') {
-            const sampleColor = getRoiAverageColor(roi);
+
+            // --- THIS IS THE CRITICAL FIX FOR THE "inf" BUG ---
+            let sampleColor;
+            // First, check if the current ROI is the one that has a locked snapshot.
+            if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id) {
+                // If it is, use the average color from the stored snapshot data.
+                sampleColor = appState.lockedSampleData.avgColor;
+            } else {
+                // Otherwise, perform a live measurement on the current canvas for any new/unlocked samples.
+                sampleColor = getRoiAverageColor(roi);
+            }
+            // --- END OF FIX ---
+
             if (!sampleColor) {
-                roi.absorbance = {}; // Clear data if sample color can't be read.
+                roi.absorbance = {}; // Clear data if color can't be read.
                 return;
             }
 
-            // For each sample, loop through every wavelength the user has added.
+            // 3. The rest of the calculation proceeds as normal, now using the correct sampleColor.
             appState.wavelengths.forEach(wl => {
                 const weights = getWavelengthChannelWeights(wl);
                 const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
@@ -1116,13 +1121,13 @@ function createRoiSnapshot(roi) {
                 if (blankIntensity > 0 && sampleIntensity > 0) {
                     roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3);
                 } else {
-                    roi.absorbance[wl] = 'inf'; // Set to 'inf' for total absorption.
+                    roi.absorbance[wl] = 'inf';
                 }
             });
         }
     });
 
-    // 5. After all calculations are done, update the entire UI.
+    // 4. Update the UI with the correct values.
     updateResultsTable();
     updateLiveAbsorbanceDisplay();
 }
