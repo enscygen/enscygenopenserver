@@ -1074,15 +1074,14 @@ function createRoiSnapshot(roi) {
     // 1. Find the Blank ROI object to get its properties (like its name).
     const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
 
-    // 2. --- NEW: Conditional Blank Color Logic ---
-    // Determine which blank color value to use based on the "Lock-in Blank" setting.
+    // 2. --- CORRECTED: Conditional Blank Color Logic ---
+    // This now correctly looks inside the lockedBlankData object for the avgColor property.
     const blankColor = appState.isBlankLocked
-        ? appState.lockedBlankColor // If locked, use the value stored in memory.
-        : (blankRoi ? getRoiAverageColor(blankRoi) : null); // If not locked, perform a live measurement from the canvas.
+        ? appState.lockedBlankData?.avgColor // If locked, use the avgColor from the stored snapshot.
+        : (blankRoi ? getRoiAverageColor(blankRoi) : null); // If not locked, perform a live measurement.
 
     // 3. Validate the Blank
-    // The calculation cannot proceed if there is no Blank ROI placed OR if there is no valid color data
-    // (either because it wasn't locked or couldn't be measured).
+    // The calculation cannot proceed if there is no Blank ROI placed OR if there is no valid color data.
     if (!blankRoi || !blankColor) {
         liveAbsorbanceInfo.textContent = "No Blank ROI set";
         // Clear old absorbance data from all samples since the calibration is invalid.
