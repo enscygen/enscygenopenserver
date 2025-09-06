@@ -2064,6 +2064,7 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
         });
 
         alert(`Wavelength scan complete for ${samplesToScan.length} sample(s).`);
+      updateResultsTable();
         
         // If only one sample was processed, open its chart automatically for convenience.
         if (samplesToScan.length === 1) {
@@ -2182,6 +2183,7 @@ async function runTimeSeries(roiId) {
 
     // 6. Provide final feedback to the user.
     alert(`Time series measurement complete for ${samplesToScan.length} sample(s).`);
+  updateResultsTable();
 }
         /**
  * Displays the measurement chart modal with a graph and a corresponding data table.
