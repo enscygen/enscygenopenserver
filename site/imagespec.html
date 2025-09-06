@@ -1985,158 +1985,194 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
           }
         });
         async function handleStartMeasurement() {
-          if (appState.isMeasuring) return;
-          appState.isMeasuring = true;
-          startMeasurementBtn.disabled = true;
-          const mode = measurementModeSelect.value;
-          try {
-            if (mode === "series") {
-              startMeasurementBtn.textContent = "Scanning...";
-              await runSeriesScan();
-            } else if (mode === "time") {
-              await runTimeSeries();
-            }
-          } catch (e) {
-            console.error("Measurement failed: ", e);
-            alert("An error occurred during measurement.");
-          } finally {
-            appState.isMeasuring = false;
-            startMeasurementBtn.textContent = "Start Measurement";
-            startMeasurementBtn.disabled = false;
-          }
+    if (appState.isMeasuring) return;
+    appState.isMeasuring = true;
+    startMeasurementBtn.disabled = true;
+    const mode = measurementModeSelect.value;
+
+    try {
+        if (mode === "series") {
+            // Update button text based on whether a sample is selected or not.
+            startMeasurementBtn.textContent = appState.selectedRoiId ? "Scanning Selected..." : "Scanning All Samples...";
+            // Pass the selected ID (or null if none is selected) to the function.
+            await runSeriesScan(appState.selectedRoiId);
+
+        } else if (mode === "time") {
+            // The same logic applies to the time series measurement.
+            startMeasurementBtn.textContent = appState.selectedRoiId ? "Measuring Selected..." : "Measuring All Samples...";
+            await runTimeSeries(appState.selectedRoiId);
         }
-        function runSeriesScan() {
-          return new Promise((resolve) => {
-            const sampleRoi = appState.rois.find((r) => r.type === "sample");
-            if (!sampleRoi) {
-              alert("Please add at least one Sample ROI.");
-              return resolve();
+    } catch (e) {
+        // This catch block handles intentional stops (like alerts) so the button text isn't reset.
+        console.error("Measurement stopped or failed: ", e.message);
+    } finally {
+        appState.isMeasuring = false;
+        startMeasurementBtn.textContent = "Start Measurement";
+        startMeasurementBtn.disabled = false;
+    }
+}
+        function runSeriesScan(roiId) {
+    return new Promise((resolve, reject) => {
+        let samplesToScan = [];
+
+        // --- Logic to Build the Scan List ---
+        if (roiId) {
+            // Case 1: A specific ROI was selected.
+            const selectedSample = appState.rois.find(r => r.id === roiId);
+            if (selectedSample) {
+                samplesToScan.push(selectedSample);
             }
-            const blankRoi = appState.rois.find(
-              (r) => r.id === appState.blankRoiId
-            );
-            if (!blankRoi) {
-              alert("Please set a Blank ROI.");
-              return resolve();
-            }
-            const start = parseInt(
-              document.getElementById("seriesStart").value
-            );
-            const end = parseInt(document.getElementById("seriesEnd").value);
-            const step = parseInt(document.getElementById("seriesStep").value);
-            const blankColor = getRoiAverageColor(blankRoi);
+        } else {
+            // Case 2: No ROI was selected. Get ALL sample ROIs.
+            samplesToScan = appState.rois.filter(r => r.type === 'sample');
+        }
+
+        // --- Validation ---
+        if (samplesToScan.length === 0) {
+            alert("No samples found to scan.");
+            return reject(new Error("No samples found."));
+        }
+        const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+        if (!blankRoi) {
+            alert("Please set a Blank ROI before starting a scan.");
+            return reject(new Error("No Blank ROI."));
+        }
+
+        const start = parseInt(document.getElementById("seriesStart").value);
+        const end = parseInt(document.getElementById("seriesEnd").value);
+        const step = parseInt(document.getElementById("seriesStep").value);
+        const blankColor = getRoiAverageColor(blankRoi);
+
+        // --- Main Processing Loop ---
+        samplesToScan.forEach(sampleRoi => {
             const sampleColor = getRoiAverageColor(sampleRoi);
             const seriesData = {
-              labels: [],
-              datasets: [
-                {
-                  label: "Absorbance",
-                  data: [],
-                  borderColor: "#03dac6",
-                  backgroundColor: "#03dac633",
-                  tension: 0.1,
-                  fill: true,
-                },
-              ],
+                labels: [],
+                datasets: [{ label: "Absorbance", data: [], borderColor: "#03dac6", backgroundColor: "#03dac633", tension: 0.1, fill: true }],
             };
+
             for (let wl = start; wl <= end; wl += step) {
-              const weights = getWavelengthChannelWeights(wl);
-              const blankIntensity =
-                weights.r * blankColor.r +
-                weights.g * blankColor.g +
-                weights.b * blankColor.b;
-              const sampleIntensity =
-                weights.r * sampleColor.r +
-                weights.g * sampleColor.g +
-                weights.b * sampleColor.b;
-              let absorbance = 0;
-              if (blankIntensity > 0 && sampleIntensity > 0) {
-                absorbance = -Math.log10(sampleIntensity / blankIntensity);
-              }
-              seriesData.labels.push(wl);
-              seriesData.datasets[0].data.push(absorbance);
+                const weights = getWavelengthChannelWeights(wl);
+                const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
+                const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
+                let absorbance = 0;
+                if (blankIntensity > 0 && sampleIntensity > 0) {
+                    absorbance = -Math.log10(sampleIntensity / blankIntensity);
+                }
+                seriesData.labels.push(wl);
+                seriesData.datasets[0].data.push(absorbance);
             }
+            // Save the calculated data directly to the corresponding ROI object.
             sampleRoi.seriesData = seriesData;
-            showChart(seriesData, 'Wavelength (nm)', 'Absorbance', `${sampleRoi.name} - Wavelength Scan`, 'series');
+        });
 
-            resolve();
-          });
+        alert(`Wavelength scan complete for ${samplesToScan.length} sample(s).`);
+        
+        // If only one sample was processed, open its chart automatically for convenience.
+        if (samplesToScan.length === 1) {
+            const singleSample = samplesToScan[0];
+            showChart(singleSample.seriesData, 'Wavelength (nm)', 'Absorbance', `${singleSample.name} - Wavelength Scan`, 'series');
         }
-        function runTimeSeries() {
-          return new Promise((resolve) => {
-            if (appState.sourceType !== "camera") {
-              alert("Time series measurement requires the live camera source.");
-              return resolve();
-            }
-            const sampleRoi = appState.rois.find((r) => r.type === "sample");
-            if (!sampleRoi || !appState.blankRoiId) {
-              alert("Please set one Blank and at least one Sample ROI.");
-              return resolve();
-            }
-            const timePointsInput = document.getElementById("timePoints").value;
-            const timePoints = timePointsInput
-              .split(",")
-              .map((t) => parseFloat(t.trim()))
-              .filter((t) => !isNaN(t) && t >= 0)
-              .sort((a, b) => a - b);
-            if (timePoints.length === 0) {
-              alert("Please enter valid, comma-separated time points.");
-              return resolve();
-            }
-            const timeData = { labels: [], datasets: [] };
-            appState.wavelengths.forEach((wl) => {
-              const rgb = wavelengthToRgb(wl);
-              timeData.datasets.push({
-                label: `${wl} nm`,
-                data: [],
-                borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`,
-                backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`,
-                tension: 0.1,
-                pointRadius: 4,
-                fill: true,
-              });
-            });
-            showChart(timeData, 'Time (s)', 'Absorbance', `${sampleRoi.name} - Time Series`, 'time');
+        
+        resolve(); // Signal completion.
+    });
+}
+        async function runTimeSeries(roiId) {
+    let samplesToScan = [];
 
-            let currentIndex = 0;
-            function takeMeasurementAtNextPoint() {
-              if (currentIndex >= timePoints.length) {
-                startMeasurementBtn.textContent = "Start Measurement";
-                resolve();
+    // --- Logic to Build the Scan List (This part is the same) ---
+    if (roiId) {
+        const selectedSample = appState.rois.find(r => r.id === roiId);
+        if (selectedSample) samplesToScan.push(selectedSample);
+    } else {
+        samplesToScan = appState.rois.filter(r => r.type === 'sample');
+    }
+
+    // --- Validation (This part is the same) ---
+    if (samplesToScan.length === 0) {
+        alert("No samples found to measure.");
+        throw new Error("No samples found.");
+    }
+    if (appState.sourceType !== "camera") {
+        alert("Time series measurement requires the live camera source.");
+        throw new Error("Camera not active.");
+    }
+    // ... (other validations for blank and time points remain the same) ...
+    const timePointsInput = document.getElementById("timePoints").value;
+    const timePoints = timePointsInput.split(",").map(t => parseFloat(t.trim())).filter(t => !isNaN(t) && t >= 0).sort((a, b) => a - b);
+    if (timePoints.length === 0) {
+        alert("Please enter valid, comma-separated time points.");
+        throw new Error("Invalid time points.");
+    }
+
+    // --- NEW: Prepare Data Structures for ALL Samples ---
+    // Create a data object for each sample upfront
+    samplesToScan.forEach(sample => {
+        const timeData = { labels: [], datasets: [] };
+        appState.wavelengths.forEach(wl => {
+            const rgb = wavelengthToRgb(wl);
+            timeData.datasets.push({ label: `${wl} nm`, data: [], borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`, tension: 0.1, pointRadius: 4, fill: true });
+        });
+        sample.timeSeriesData = timeData; // Attach the data structure to the sample
+    });
+
+    // If we are only measuring one sample, we can create its chart immediately.
+    if (samplesToScan.length === 1) {
+        const singleSample = samplesToScan[0];
+        showChart(singleSample.timeSeriesData, 'Time (s)', 'Absorbance', `${singleSample.name} - Time Series`, 'time');
+    }
+
+    // --- REBUILT: Synchronous Measurement Logic ---
+    // This is an outer promise that resolves only when all time points are complete.
+    await new Promise(resolve => {
+        let timeIndex = 0;
+
+        function measureAtNextTimePoint() {
+            if (timeIndex >= timePoints.length) {
+                resolve(); // All time points are done, finish the entire process.
                 return;
-              }
-              const targetTime = timePoints[currentIndex];
-              const previousTime =
-                currentIndex > 0 ? timePoints[currentIndex - 1] : 0;
-              const delay = (targetTime - previousTime) * 1000;
-              startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`;
-              setTimeout(() => {
-                startMeasurementBtn.textContent = `Measuring at ${targetTime}s...`;
-                mainCtx.drawImage(
-                  videoFeed,
-                  0,
-                  0,
-                  mainCanvas.width,
-                  mainCanvas.height
-                );
-                calculateAllAbsorbances();
-                timeData.labels.push(targetTime);
-                appState.wavelengths.forEach((wl, index) => {
-                  while (timeData.datasets[index].data.length < currentIndex) {
-                    timeData.datasets[index].data.push(null);
-                  }
-                  timeData.datasets[index].data.push(
-                    sampleRoi.absorbance[wl] || 0
-                  );
-                });
-                appState.measurementChart.update();
-                currentIndex++;
-                takeMeasurementAtNextPoint();
-              }, delay);
             }
-            takeMeasurementAtNextPoint();
-          });
+
+            const targetTime = timePoints[timeIndex];
+            const previousTime = timeIndex > 0 ? timePoints[timeIndex - 1] : 0;
+            const delay = (targetTime - previousTime) * 1000;
+
+            startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`;
+
+            setTimeout(() => {
+                startMeasurementBtn.textContent = `Measuring All Samples @ ${targetTime}s`;
+
+                // 1. Capture a single, definitive frame from the video.
+                mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height);
+
+                // 2. Loop through ALL samples for this single point in time.
+                samplesToScan.forEach(sampleRoi => {
+                    // This function now uses the single captured frame for all calculations.
+                    calculateAllAbsorbances();
+                    
+                    const timeData = sampleRoi.timeSeriesData;
+                    timeData.labels.push(targetTime);
+
+                    appState.wavelengths.forEach((wl, wlIndex) => {
+                        timeData.datasets[wlIndex].data.push(sampleRoi.absorbance[wl] || 0);
+                    });
+                });
+
+                // 3. Update the chart ONLY if we are in single-sample mode.
+                if (samplesToScan.length === 1 && appState.measurementChart) {
+                    appState.measurementChart.update();
+                }
+
+                timeIndex++;
+                measureAtNextTimePoint(); // Schedule the next time point.
+            }, delay);
         }
+
+        measureAtNextTimePoint(); // Start the timer for the first point (t=0).
+    });
+
+    alert(`Time series measurement complete for ${samplesToScan.length} sample(s).`);
+}
         /**
  * Displays the measurement chart modal with a graph and a corresponding data table.
  *
