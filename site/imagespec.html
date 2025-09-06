@@ -927,6 +927,13 @@
               >
                 <i class="bi bi-download"></i>
               </button>
+              <button
+    id="chartAllBtn"
+    class="icon-button"
+    title="Chart All Samples"
+>
+    <i class="bi bi-graph-up-arrow"></i>
+              </button>
             </h3>
             <i class="bi bi-chevron-up collapse-icon"></i>
           </div>
@@ -1014,6 +1021,43 @@
     </div>
 </div>
 
+
+<!-- Master Chart Modal for All Samples -->
+<div id="masterChartModal" class="modal">
+    <div class="modal-content" style="max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+            <h2 id="masterChartTitle">All Samples Chart</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        
+        <!-- Controls for the Master Chart -->
+        <div id="master-chart-controls" style="display: flex; gap: 20px; padding: 10px 0; align-items: center;">
+            <div class="form-group">
+                <label for="masterChartDataType">Data Source:</label>
+                <select id="masterChartDataType"></select>
+            </div>
+            <div class="form-group">
+                <label>Chart Type:</label>
+                <div class="radio-group" id="masterChartTypeToggle">
+                    <input type="radio" id="chartTypeLine" name="masterChartType" value="line" checked>
+                    <label for="chartTypeLine"><i class="bi bi-graph-up"></i> Line</label>
+                    <input type="radio" id="chartTypeBar" name="masterChartType" value="bar">
+                    <label for="chartTypeBar"><i class="bi bi-bar-chart-line"></i> Bar</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart and Table Container -->
+        <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px;">
+            <div style="flex: 1; min-height: 0; position: relative;">
+                 <canvas id="masterChartCanvas"></canvas>
+            </div>
+            <!-- We will add a data table here later if needed, following the same pattern -->
+        </div>
+    </div>
+</div>
+
+        
       </div>
     </div>
     <script>
@@ -1073,6 +1117,11 @@
         const chartDataTableContainer = document.getElementById('chartDataTableContainer');
 const chartDataTable = document.getElementById('chartDataTable');
 const downloadChartCsvBtn = document.getElementById('downloadChartCsvBtn');
+        const chartAllBtn = document.getElementById('chartAllBtn');
+const masterChartModal = document.getElementById('masterChartModal');
+const masterChartDataType = document.getElementById('masterChartDataType');
+const masterChartTypeToggle = document.getElementById('masterChartTypeToggle');
+
 
         
 const lockinBlankCheck = document.getElementById('lockinBlankCheck');
@@ -1104,6 +1153,7 @@ lockedSampleData: null, // Will hold the same for the locked sample
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
+          masterChart: null
         };
         
 function createRoiSnapshot(roi) {
@@ -1829,6 +1879,139 @@ settingsInfoModal.querySelector('.close-button').addEventListener('click', () =>
           });
         });
         startMeasurementBtn.addEventListener("click", handleStartMeasurement);
+
+        // Main button to open the master chart modal
+chartAllBtn.addEventListener('click', openMasterChartModal);
+
+// Close button for the new modal
+masterChartModal.querySelector('.close-button').addEventListener('click', () => {
+    masterChartModal.style.display = 'none';
+    if (appState.masterChart) {
+        appState.masterChart.destroy(); // Important: clean up the chart instance
+    }
+});
+
+
+        function generateMasterChart(dataType, chartType) {
+    if (appState.masterChart) {
+        appState.masterChart.destroy();
+    }
+
+    const samples = appState.rois.filter(r => r.type === 'sample');
+    if (samples.length === 0) return;
+
+    let chartData = { labels: [], datasets: [] };
+    let chartOptions = { responsive: true, maintainAspectRatio: false, /* ... other default options ... */ };
+    
+    // --- Logic for different data sources ---
+    if (dataType === 'static') {
+        chartData.labels = appState.wavelengths.map(wl => `${wl} nm`);
+        if (chartType === 'line') {
+            samples.forEach(sample => {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
+                    borderColor: sample.color,
+                    backgroundColor: `${sample.color}33`,
+                    tension: 0.1,
+                    fill: false
+                });
+            });
+        } else if (chartType === 'bar') { // Grouped Bar Chart
+            samples.forEach(sample => {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
+                    backgroundColor: sample.color,
+                });
+            });
+        }
+
+    } else if (dataType === 'series') {
+        const referenceSample = samples.find(s => s.seriesData);
+        if (!referenceSample) return;
+        chartData.labels = referenceSample.seriesData.labels; // Use labels from the first sample
+        samples.forEach(sample => {
+            if (sample.seriesData) {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: sample.seriesData.datasets[0].data,
+                    borderColor: sample.color,
+                    backgroundColor: `${sample.color}33`,
+                    tension: 0.1,
+                    fill: false
+                });
+            }
+        });
+
+    } else if (dataType === 'time') {
+        const referenceSample = samples.find(s => s.timeSeriesData);
+        if (!referenceSample) return;
+        chartData.labels = referenceSample.timeSeriesData.labels.map(t => `${t}s`); // Use labels from the first sample
+        samples.forEach(sample => {
+            if (sample.timeSeriesData) {
+                // For time series, we plot the data for the FIRST wavelength by default
+                if(sample.timeSeriesData.datasets.length > 0) {
+                     chartData.datasets.push({
+                        label: `${sample.name} (${sample.timeSeriesData.datasets[0].label})`,
+                        data: sample.timeSeriesData.datasets[0].data,
+                        borderColor: sample.color,
+                        backgroundColor: `${sample.color}33`,
+                        tension: 0.1,
+                        fill: false
+                    });
+                }
+            }
+        });
+    }
+
+    appState.masterChart = new Chart(document.getElementById('masterChartCanvas'), {
+        type: chartType,
+        data: chartData,
+        options: chartOptions
+    });
+}
+
+
+        function openMasterChartModal() {
+    const samples = appState.rois.filter(r => r.type === 'sample');
+    if (samples.length === 0) {
+        alert("Please add at least one sample ROI to generate a chart.");
+        return;
+    }
+
+    // --- Check what data types are available ---
+    const hasStatic = true; // Static data is always available
+    const hasSeries = samples.some(s => s.seriesData);
+    const hasTime = samples.some(s => s.timeSeriesData);
+
+    // --- Dynamically populate the data source dropdown ---
+    masterChartDataType.innerHTML = '';
+    if (hasStatic) masterChartDataType.innerHTML += `<option value="static">Static Absorbance</option>`;
+    if (hasSeries) masterChartDataType.innerHTML += `<option value="series">Series Wavelength Scan</option>`;
+    if (hasTime) masterChartDataType.innerHTML += `<option value="time">Time Series Data</option>`;
+
+    // Function to handle redrawing the chart when a control changes
+    const redrawMasterChart = () => {
+        const dataType = masterChartDataType.value;
+        const chartType = document.querySelector('input[name="masterChartType"]:checked').value;
+        // The bar chart toggle should only be enabled for static data
+        document.getElementById('chartTypeBar').disabled = (dataType !== 'static');
+        generateMasterChart(dataType, chartType);
+    };
+
+    // Attach listeners to the controls
+    masterChartDataType.removeEventListener('change', redrawMasterChart); // Clear old listeners
+    masterChartDataType.addEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.removeEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.addEventListener('change', redrawMasterChart);
+
+    // Initial draw
+    redrawMasterChart();
+    
+    masterChartModal.style.display = 'flex';
+}
+
         
         function addRoi(x, y) {
     // 1. Get all the properties for the new ROI from the UI controls.
