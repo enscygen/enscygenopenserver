@@ -1594,35 +1594,53 @@ function createRoiSnapshot(roi) {
         }
 
         
-        function calculateAllAbsorbances() {
-    // Determine the correct blank color (from snapshot or live)
+        /**
+ * REPLACEMENT for calculateAllAbsorbances
+ * This is the main calculation engine. It is now "snapshot-aware" and no longer
+ * interferes with the live absorbance display timer.
+ */
+function calculateAllAbsorbances() {
+    // 1. Determine the correct blank color to use for all calculations.
+    // First, check if a snapshot has been captured for the official blank ROI.
     const blankSnapshot = appState.referenceSnapshots[appState.blankRoiId];
+    // If a snapshot exists, use its stored average color. Otherwise, perform a live measurement.
     const blankColor = blankSnapshot ? blankSnapshot.avgColor : getRoiAverageColor(appState.rois.find(r => r.id === appState.blankRoiId));
+    
+    // Also get the blank ROI object itself for its name.
     const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
 
-    // Validate that a blank exists and has color data
+    // 2. Validate that a valid blank is set.
+    // The calculation cannot proceed without a reference.
     if (!blankRoi || !blankColor) {
         liveAbsorbanceInfo.textContent = "No Blank ROI set";
-        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => { sampleRoi.absorbance = {}; });
+        // Clear old absorbance data from all samples.
+        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
+            sampleRoi.absorbance = {};
+        });
+        // Update the UI to show the error state.
         updateResultsTable();
-        updateLiveAbsorbanceDisplay();
-        return;
+        drawROIs();
+        return; // Stop the function here.
     }
 
     liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
 
-    // Process all ROIs
+    // 3. Process all ROIs in the state.
     appState.rois.forEach(roi => {
         const snapshot = appState.referenceSnapshots[roi.id];
         
-        // If the ROI is a reference, restore its stored absorbance data.
+        // If the current ROI has a reference snapshot, restore its stored absorbance data.
         if (snapshot) {
             roi.absorbance = { ...snapshot.absorbance };
-        // If it's a live ROI (Blank or Sample), perform a live calculation.
+        // If it's a live ROI (either a sample or the blank itself), perform a live calculation.
         } else if (roi.type === 'sample' || roi.type === 'blank') {
             const sampleColor = getRoiAverageColor(roi);
-            if (!sampleColor) { roi.absorbance = {}; return; }
+            if (!sampleColor) {
+                roi.absorbance = {};
+                return; // Skip if color can't be read.
+            }
             
+            // For each wavelength, calculate the absorbance against the determined blank color.
             appState.wavelengths.forEach(wl => {
                 const weights = getWavelengthChannelWeights(wl);
                 const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
@@ -1636,12 +1654,10 @@ function createRoiSnapshot(roi) {
         }
     });
 
-    // Refresh the UI with the final, correct data
+    // 4. After all calculations are complete, refresh the necessary UI components.
+    // Crucially, this does NOT call updateLiveAbsorbanceDisplay() directly.
     updateResultsTable();
-          updateLiveAbsorbanceDisplay();
-          drawROIs();
-          
-    
+    drawROIs();
 }
 
 
