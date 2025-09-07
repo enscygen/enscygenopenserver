@@ -1638,7 +1638,8 @@ function createRoiSnapshot(roi) {
 
     // Refresh the UI with the final, correct data
     updateResultsTable();
-          updateLiveAbsorbanceDisplay();
+          drawROIs();
+          
     
 }
 
@@ -3277,26 +3278,26 @@ function openReleaseModal(roiId) {
 });
         
 
+// THE NEW, CORRECT init FUNCTION
 function init() {
     console.log("ImageSpec Pro Initialized");
     updateWavelengthList();
-    calculateAllAbsorbances(); // This performs the initial calculation and display.
+    calculateAllAbsorbances(); // This performs the initial data calculation.
 
-    // --- The Final, Universal Timer Logic ---
+    // Clear any old timer just in case.
     if (appState.liveAbsorbanceInterval) {
         clearInterval(appState.liveAbsorbanceInterval);
     }
-
+    // Create the one and only master timer for the display.
     appState.liveAbsorbanceInterval = setInterval(() => {
-        // This timer will now run for BOTH live video and static images.
-        // It will only advance the wavelength if we are NOT in the middle of a measurement.
+        // Only do something if the app is NOT busy with a measurement.
         if (!appState.isMeasuring) {
-            // If there's more than one wavelength, advance to the next one.
+            // --- THIS IS THE KEY LOGIC CHANGE ---
+            // Only advance the index if there is more than one wavelength to cycle through.
             if (appState.wavelengths.length > 1) {
                 appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
             }
-
-            // Animate the fade-out and fade-in for a smooth transition.
+            // Animate the fade-out and fade-in for a smooth visual transition.
             liveAbsorbanceValue.style.opacity = 0;
             setTimeout(() => {
                 // The timer itself is now responsible for telling the UI to update.
@@ -3306,6 +3307,7 @@ function init() {
         }
     }, 2500);
 }
+
 
 
 
