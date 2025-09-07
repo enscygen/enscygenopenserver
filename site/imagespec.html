@@ -3088,6 +3088,34 @@ releaseConfirmBtn.addEventListener('click', () => {
 
 releaseCancelBtn.addEventListener('click', closeAllModals);
 
+        /**
+ * Opens the "Capture & Lock" modal for a specific ROI.
+ * @param {string} roiId The ID of the ROI to capture.
+ */
+function openCaptureModal(roiId) {
+    appState.activeModalRoiId = roiId;
+    const roi = appState.rois.find(r => r.id === roiId);
+    if (!roi) return;
+    document.getElementById('captureModalTitle').textContent = `Capture & Lock "${roi.name}"`;
+    document.getElementById('captureModalText').innerHTML = `This will save a snapshot of the current data for this ROI. Locked data is preserved when you upload a new image or manipulate the current one, serving as a permanent reference for <strong>${roi.type === 'blank' ? 'calibration' : 'comparison'}</strong>.`;
+    // Only show the "Stable Reading" button if the camera is active
+    document.getElementById('captureStableBtn').style.display = appState.sourceType === 'camera' ? 'block' : 'none';
+    document.getElementById('captureModal').style.display = 'flex';
+}
+
+/**
+ * Opens the "Release" confirmation modal for a specific ROI.
+ * @param {string} roiId The ID of the ROI to release.
+ */
+function openReleaseModal(roiId) {
+    appState.activeModalRoiId = roiId;
+    const roi = appState.rois.find(r => r.id === roiId);
+    if (!roi) return;
+    document.getElementById('releaseModalTitle').textContent = `Release "${roi.name}"?`;
+    document.getElementById('releaseModalText').innerHTML = `Are you sure you want to release this reference? The stored snapshot data will be permanently deleted, and this ROI will revert to a <strong>live measurement</strong>.`;
+    document.getElementById('releaseModal').style.display = 'flex';
+}
+
         
         function init() {
           updateWavelengthList();
