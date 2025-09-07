@@ -1193,6 +1193,10 @@
                     <label for="chartTypeBar"><i class="bi bi-bar-chart-line"></i> Bar</label>
                 </div>
             </div>
+          <div class="form-group" id="masterChartWavelengthControl" style="display: none;">
+    <label for="masterChartWavelengthSelect">Wavelength:</label>
+    <select id="masterChartWavelengthSelect"></select>
+          </div>
         </div>
 
         <!-- Chart and Table Container -->
@@ -1303,6 +1307,8 @@ const contrastSlider = document.getElementById('contrastSlider');
 const contrastInput = document.getElementById('contrastInput');
 const grayscaleCheck = document.getElementById('grayscaleCheck');
 const revertFiltersBtn = document.getElementById('revertFiltersBtn');
+        const masterChartWavelengthControl = document.getElementById('masterChartWavelengthControl');
+const masterChartWavelengthSelect = document.getElementById('masterChartWavelengthSelect');
 
         // Add these new constants with your other element references
 
@@ -2140,7 +2146,7 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
 });
 
 
-        function generateMasterChart(dataType, chartType) {
+        function generateMasterChart(dataType, chartType, selectedWavelength) {
     if (appState.masterChart) {
         appState.masterChart.destroy();
     }
@@ -2149,43 +2155,45 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
     if (samples.length === 0) return;
 
     let chartData = { labels: [], datasets: [] };
-    let chartOptions = { responsive: true, maintainAspectRatio: false, /* ... other default options ... */ };
-    
-    // --- Logic for different data sources ---
+    let chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: { ticks: { color: '#aaa' }, grid: { color: '#444' } },
+            y: { ticks: { color: '#aaa' }, grid: { color: '#444' }, title: { display: true, text: 'Absorbance', color: '#fff' } }
+        },
+        plugins: {
+            legend: { labels: { color: '#fff' } },
+            title: { display: false }
+        }
+    };
+
     if (dataType === 'static') {
         chartData.labels = appState.wavelengths.map(wl => `${wl} nm`);
-        if (chartType === 'line') {
-            samples.forEach(sample => {
-                chartData.datasets.push({
-                    label: sample.name,
-                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
-                    borderColor: sample.color,
-                    backgroundColor: `${sample.color}33`,
-                    tension: 0.1,
-                    fill: false
-                });
+        chartOptions.scales.x.title = { display: true, text: 'Wavelength (nm)', color: '#fff' };
+        samples.forEach(sample => {
+            chartData.datasets.push({
+                label: sample.name,
+                data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
+                backgroundColor: chartType === 'bar' ? sample.color : `${sample.color}33`,
+                borderColor: sample.color,
+                tension: 0.1,
+                fill: chartType === 'line'
             });
-        } else if (chartType === 'bar') { // Grouped Bar Chart
-            samples.forEach(sample => {
-                chartData.datasets.push({
-                    label: sample.name,
-                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
-                    backgroundColor: sample.color,
-                });
-            });
-        }
+        });
 
     } else if (dataType === 'series') {
         const referenceSample = samples.find(s => s.seriesData);
         if (!referenceSample) return;
-        chartData.labels = referenceSample.seriesData.labels; // Use labels from the first sample
+        chartData.labels = referenceSample.seriesData.labels;
+        chartOptions.scales.x.title = { display: true, text: 'Wavelength (nm)', color: '#fff' };
         samples.forEach(sample => {
             if (sample.seriesData) {
                 chartData.datasets.push({
                     label: sample.name,
                     data: sample.seriesData.datasets[0].data,
                     borderColor: sample.color,
-                    backgroundColor: `${sample.color}33`,
+                    backgroundColor: 'transparent',
                     tension: 0.1,
                     fill: false
                 });
@@ -2195,22 +2203,24 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
     } else if (dataType === 'time') {
         const referenceSample = samples.find(s => s.timeSeriesData);
         if (!referenceSample) return;
-        chartData.labels = referenceSample.timeSeriesData.labels.map(t => `${t}s`); // Use labels from the first sample
+        chartData.labels = referenceSample.timeSeriesData.labels.map(t => `${t}s`);
+        chartOptions.scales.x.title = { display: true, text: 'Time (s)', color: '#fff' };
         samples.forEach(sample => {
             if (sample.timeSeriesData) {
-                // For time series, we plot the data for the FIRST wavelength by default
-                if(sample.timeSeriesData.datasets.length > 0) {
-                     chartData.datasets.push({
-                        label: `${sample.name} (${sample.timeSeriesData.datasets[0].label})`,
-                        data: sample.timeSeriesData.datasets[0].data,
+                const targetDataset = sample.timeSeriesData.datasets.find(ds => ds.label === `${selectedWavelength} nm`);
+                if (targetDataset) {
+                    chartData.datasets.push({
+                        label: sample.name,
+                        data: targetDataset.data,
                         borderColor: sample.color,
-                        backgroundColor: `${sample.color}33`,
+                        backgroundColor: 'transparent',
                         tension: 0.1,
                         fill: false
                     });
                 }
             }
         });
+        chartOptions.plugins.title = { display: true, text: `Time Series Comparison for ${selectedWavelength} nm`, color: '#fff', font: { size: 16 } };
     }
 
     appState.masterChart = new Chart(document.getElementById('masterChartCanvas'), {
@@ -2228,33 +2238,58 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
         return;
     }
 
-    // --- Check what data types are available ---
-    const hasStatic = true; // Static data is always available
+    const hasStatic = true;
     const hasSeries = samples.some(s => s.seriesData);
     const hasTime = samples.some(s => s.timeSeriesData);
 
-    // --- Dynamically populate the data source dropdown ---
     masterChartDataType.innerHTML = '';
     if (hasStatic) masterChartDataType.innerHTML += `<option value="static">Static Absorbance</option>`;
     if (hasSeries) masterChartDataType.innerHTML += `<option value="series">Series Wavelength Scan</option>`;
     if (hasTime) masterChartDataType.innerHTML += `<option value="time">Time Series Data</option>`;
 
-    // Function to handle redrawing the chart when a control changes
     const redrawMasterChart = () => {
         const dataType = masterChartDataType.value;
         const chartType = document.querySelector('input[name="masterChartType"]:checked').value;
-        // The bar chart toggle should only be enabled for static data
-        document.getElementById('chartTypeBar').disabled = (dataType !== 'static');
-        generateMasterChart(dataType, chartType);
+
+        if (dataType === 'time') {
+            masterChartWavelengthControl.style.display = 'block';
+            const referenceSample = samples.find(s => s.timeSeriesData);
+            if (referenceSample) {
+                const currentSelection = masterChartWavelengthSelect.value;
+                masterChartWavelengthSelect.innerHTML = '';
+                referenceSample.timeSeriesData.datasets.forEach(dataset => {
+                    const wl = dataset.label.replace(' nm', '');
+                    const option = document.createElement('option');
+                    option.value = wl;
+                    option.textContent = `${wl} nm`;
+                    masterChartWavelengthSelect.appendChild(option);
+                });
+                if (currentSelection) masterChartWavelengthSelect.value = currentSelection;
+            }
+        } else {
+            masterChartWavelengthControl.style.display = 'none';
+        }
+        
+        const barChartRadio = document.getElementById('chartTypeBar');
+        barChartRadio.disabled = (dataType !== 'static');
+        if (barChartRadio.disabled && barChartRadio.checked) {
+            document.getElementById('chartTypeLine').checked = true;
+        }
+        
+        const finalChartType = document.querySelector('input[name="masterChartType"]:checked').value;
+        const selectedWavelength = masterChartWavelengthSelect.value;
+        
+        generateMasterChart(dataType, finalChartType, selectedWavelength);
     };
 
-    // Attach listeners to the controls
-    masterChartDataType.removeEventListener('change', redrawMasterChart); // Clear old listeners
-    masterChartDataType.addEventListener('change', redrawMasterChart);
-    masterChartTypeToggle.removeEventListener('change', redrawMasterChart);
-    masterChartTypeToggle.addEventListener('change', redrawMasterChart);
+    masterChartDataType.removeEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.querySelectorAll('input').forEach(radio => radio.removeEventListener('change', redrawMasterChart));
+    masterChartWavelengthSelect.removeEventListener('change', redrawMasterChart);
 
-    // Initial draw
+    masterChartDataType.addEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.querySelectorAll('input').forEach(radio => radio.addEventListener('change', redrawMasterChart));
+    masterChartWavelengthSelect.addEventListener('change', redrawMasterChart);
+
     redrawMasterChart();
     
     masterChartModal.style.display = 'flex';
