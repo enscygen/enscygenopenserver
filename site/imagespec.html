@@ -1892,6 +1892,7 @@ if (isBatchTimeScanRunning && roi.type === 'sample') {
             // Recalculate and redraw the UI with the preserved reference ROIs.
             calculateAllAbsorbances();
             drawROIs();
+          startLiveAbsorbanceTimer();
         };
         img.src = event.target.result;
     };
