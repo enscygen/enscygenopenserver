@@ -768,18 +768,65 @@
 .styled-slider::-moz-range-thumb:hover {
     background: var(--secondary-color);
 }
+      /* --- CSS for Console Log Modal --- */
+
+/* Style for each individual log message */
+.log-entry {
+    padding: 2px 4px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    gap: 15px;
+}
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+/* Timestamp styling */
+.log-timestamp {
+    color: #666;
+    flex-shrink: 0; /* Prevents timestamp from wrapping */
+}
+
+/* Default message styling */
+.log-message {
+    color: var(--text-color);
+}
+
+/* Specific color for ERROR messages */
+.log-type-error .log-message {
+    color: var(--error-color);
+}
+
+/* Specific color for WARNING messages */
+.log-type-warn .log-message {
+    color: #f39c12; /* A distinct yellow for warnings */
+}
+
+/* Specific color for INFO messages */
+.log-type-info .log-message {
+    color: #3498db; /* A clear blue for info */
+}
     </style>
   </head>
 
   <body>
     <div class="app-container">
-      <header class="app-header"><div style="text-align:center; width:100%;">
+      <header class="app-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+    <!-- This empty span helps center the title -->
+    <span style="width: 50px;"></span>
+        <div style="text-align:center; width:100%;">
   <a href="https://enscygen.web.app/ORT/imagetools/imagespec-launcher" style="display:inline-block;">
     <img src="https://enscygen.web.app/assets/brand/imagespec-logo.png" 
          alt="Enscygen ImageSpec Pro" 
          style="max-width:200px; width:100%; height:auto; display:inline-block; border:none;">
   </a>
-</div></header>
+</div>
+      <button id="showConsoleBtn" class="icon-button" title="Show Console Log" style="width: 50px; font-size: 1.5em;">
+        <i class="bi bi-terminal"></i>
+      </button>
+        </div>
+      </header>
       <aside class="panel controls-panel">
         <section class="collapsible open">
           <div class="collapsible-header">
@@ -1244,7 +1291,25 @@
         </div>
     </div>
 </div>
+<!-- Console Log Modal -->
+<div id="consoleLogModal" class="modal">
+    <div class="modal-content" style="max-width: 80vw; height: 80vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+            <h2><i class="bi bi-terminal"></i> Application Console Log</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        
+        <!-- The scrollable content area for the logs -->
+        <div id="consoleLogContent" style="flex-grow: 1; background: #0c0c0c; border-radius: 4px; padding: 10px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word;">
+            <!-- Log messages will be inserted here by JavaScript -->
+        </div>
 
+        <!-- Action buttons at the bottom of the modal -->
+        <div style="display: flex; justify-content: flex-end; padding-top: 15px;">
+            <button id="clearLogBtn" class="button-secondary">Clear Log</button>
+        </div>
+    </div>
+</div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -1345,6 +1410,10 @@ const stabilityAverageCheck = document.getElementById('stabilityAverageCheck');
         // Add this with your other const declarations at the top of the script
 
 const timeSeriesCountdown = document.getElementById('timeSeriesCountdown');
+        const showConsoleBtn = document.getElementById('showConsoleBtn');
+const consoleLogModal = document.getElementById('consoleLogModal');
+const consoleLogContent = document.getElementById('consoleLogContent');
+const clearLogBtn = document.getElementById('clearLogBtn');
 
 
 
@@ -1379,6 +1448,7 @@ const settingsInfoContent = document.getElementById('settingsInfoContent');
     },
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
+          consoleLogs: [],
           selectedRoiId: null,
           masterChart: null,
           hideCapturedRois: true,
@@ -3301,7 +3371,94 @@ function openReleaseModal(roiId) {
     // Immediately redraw the canvas to apply the change
     drawROIs();
 });
-        
+
+
+        /**
+ * Overrides the default console methods to capture log messages.
+ * This should be called once at the very beginning of the script.
+ */
+function setupConsoleInterceptor() {
+    const originalConsole = {
+        log: console.log.bind(console),
+        error: console.error.bind(console),
+        warn: console.warn.bind(console),
+        info: console.info.bind(console),
+    };
+
+    const logHandler = (type, args) => {
+        // Convert all arguments to a readable string format
+        const message = args.map(arg => {
+            if (typeof arg === 'object' && arg !== null) {
+                try {
+                    return JSON.stringify(arg, null, 2);
+                } catch (e) {
+                    return '[Unserializable Object]';
+                }
+            }
+            return String(arg);
+        }).join(' ');
+
+        // Store the log with metadata
+        appState.consoleLogs.push({
+            type: type,
+            message: message,
+            timestamp: new Date()
+        });
+
+        // Call the original console method to keep the developer console working
+        originalConsole[type](...args);
+    };
+
+    console.log = (...args) => logHandler('log', args);
+    console.error = (...args) => logHandler('error', args);
+    console.warn = (...args) => logHandler('warn', args);
+    console.info = (...args) => logHandler('info', args);
+
+    // Capture unhandled errors as well
+    window.onerror = (message, source, lineno, colno, error) => {
+        console.error(`Unhandled Error: ${message}`, error);
+    };
+    
+    console.log("Console interceptor initialized. All logs are now being captured.");
+}
+
+        /**
+ * Opens the console log modal and populates it with captured messages.
+ */
+function openConsoleLogModal() {
+    consoleLogContent.innerHTML = ''; // Clear previous content
+
+    if (appState.consoleLogs.length === 0) {
+        consoleLogContent.innerHTML = '<span class="log-entry log-type-info"><span class="log-message">No logs recorded yet.</span></span>';
+    } else {
+        appState.consoleLogs.forEach(log => {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-type-${log.type}`;
+            
+            const time = log.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            entry.innerHTML = `<span class="log-timestamp">${time}</span><span class="log-message">${log.message}</span>`;
+            consoleLogContent.appendChild(entry);
+        });
+    }
+
+    // Scroll to the bottom to show the latest logs
+    consoleLogContent.scrollTop = consoleLogContent.scrollHeight;
+    consoleLogModal.style.display = 'flex';
+              }
+
+
+
+        showConsoleBtn.addEventListener('click', openConsoleLogModal);
+clearLogBtn.addEventListener('click', () => {
+    appState.consoleLogs = []; // Empty the array
+    openConsoleLogModal(); // Re-open the modal to show it's empty
+});
+
+// Add a listener to the new modal's close button
+consoleLogModal.querySelector('.close-button').addEventListener('click', () => {
+    consoleLogModal.style.display = 'none';
+});
 
 /**
  * REPLACEMENT for the init function.
@@ -3309,6 +3466,7 @@ function openReleaseModal(roiId) {
  * and creates the single, master timer that controls the live absorbance display cycling.
  */
 function init() {
+  setupConsoleInterceptor(); 
     console.log("ImageSpec Pro Initialized");
 
     // 1. Perform initial setup tasks.
