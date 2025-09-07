@@ -1610,8 +1610,36 @@ function createRoiSnapshot(roi) {
           updateLiveAbsorbanceDisplay();
     
 }
-        function updateLiveAbsorbanceDisplay() {
-          let targetRoi = null;
+
+
+
+// ADD THIS NEW HELPER FUNCTION SOMEWHERE NEAR THE TOP OF YOUR SCRIPT
+function resetLiveAbsorbanceTimer() {
+    // Clear the old timer
+    if (appState.liveAbsorbanceInterval) {
+        clearInterval(appState.liveAbsorbanceInterval);
+    }
+    // Start a new one
+    appState.liveAbsorbanceInterval = setInterval(() => {
+        if (appState.wavelengths.length > 1) { // Only cycle if there's more than one
+            appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
+        }
+        liveAbsorbanceValue.style.opacity = 0;
+        setTimeout(() => {
+            updateLiveAbsorbanceDisplay(false); // Call without resetting timer again
+            liveAbsorbanceValue.style.opacity = 1;
+        }, 300);
+    }, 2500);
+}
+
+
+
+        
+        function updateLiveAbsorbanceDisplay(shouldResetTimer = true) { // Add a parameter
+    if (shouldResetTimer) {
+        resetLiveAbsorbanceTimer();
+    }
+    let targetRoi = null;
 
           // Priority 1: Find the user-selected ROI
           if (appState.selectedRoiId) {
@@ -3123,25 +3151,13 @@ function openReleaseModal(roiId) {
 }
 
         
-        function init() {
-          updateWavelengthList();
-          calculateAllAbsorbances();
-          if (appState.liveAbsorbanceInterval)
-            clearInterval(appState.liveAbsorbanceInterval);
-          appState.liveAbsorbanceInterval = setInterval(() => {
-            if (appState.wavelengths.length > 0) {
-              appState.liveAbsorbanceIndex =
-                (appState.liveAbsorbanceIndex + 1) %
-                appState.wavelengths.length;
-            }
-            liveAbsorbanceValue.style.opacity = 0;
-            setTimeout(() => {
-              updateLiveAbsorbanceDisplay();
-              liveAbsorbanceValue.style.opacity = 1;
-            }, 300);
-          }, 2500);
-          console.log("Spectrophotometer Initialized");
-        }
+        
+function init() {
+    updateWavelengthList();
+    calculateAllAbsorbances(); // This will call updateLiveAbsorbanceDisplay, which now starts the timer.
+    console.log("ImageSpec Pro Initialized");
+}
+
         init();
       });
     </script>
