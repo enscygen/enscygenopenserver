@@ -1689,6 +1689,7 @@ function calculateAllAbsorbances() {
         });
         // Update the UI to show the error state.
         updateResultsTable();
+      updateLiveAbsorbanceDisplay();
         drawROIs();
         return; // Stop the function here.
     }
@@ -1727,6 +1728,7 @@ function calculateAllAbsorbances() {
     // 4. After all calculations are complete, refresh the necessary UI components.
     // Crucially, this does NOT call updateLiveAbsorbanceDisplay() directly.
     updateResultsTable();
+  updateLiveAbsorbanceDisplay();
     drawROIs();
 }
 
