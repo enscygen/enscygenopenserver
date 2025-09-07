@@ -3083,6 +3083,69 @@ revertFiltersBtn.addEventListener('click', () => {
     handleFilterChange();
 });
 
+
+
+
+// --- Event Listeners for New Modals & Settings ---
+
+// Listen for changes on the stability setting inputs
+document.getElementById('stabilityThreshold').addEventListener('change', (e) => { appState.stabilitySettings.threshold = parseFloat(e.target.value); });
+document.getElementById('stabilityTime').addEventListener('change', (e) => { appState.stabilitySettings.time = parseInt(e.target.value); });
+document.getElementById('stabilityAverageCheck').addEventListener('change', (e) => { appState.stabilitySettings.useAverage = e.target.checked; });
+
+// Listeners for the Capture Modal
+document.getElementById('captureNowBtn').addEventListener('click', () => {
+    const roi = appState.rois.find(r => r.id === appState.activeModalRoiId);
+    if (roi) {
+        const snapshot = createRoiSnapshot(roi);
+        if (snapshot) {
+            snapshot.absorbance = { ...roi.absorbance };
+            appState.referenceSnapshots[roi.id] = snapshot;
+        }
+    }
+    closeAllModals();
+    updateResultsTable();
+});
+
+document.getElementById('captureStableBtn').addEventListener('click', async (e) => {
+    const roi = appState.rois.find(r => r.id === appState.activeModalRoiId);
+    if (!roi) return;
+    const btn = e.target;
+    btn.disabled = true;
+    document.getElementById('captureNowBtn').disabled = true;
+    btn.textContent = "Stabilizing... (0%)";
+    try {
+        const finalRoiState = await waitForStableReading(roi);
+        const snapshot = createRoiSnapshot(finalRoiState); // Create snapshot from the potentially averaged final state
+        if (snapshot) {
+            snapshot.absorbance = { ...finalRoiState.absorbance };
+            appState.referenceSnapshots[roi.id] = snapshot;
+        }
+        closeAllModals();
+        updateResultsTable();
+    } catch (err) {
+        alert(err.message); // Show error message from the stability engine
+    } finally {
+        btn.disabled = false;
+        document.getElementById('captureNowBtn').disabled = false;
+        btn.textContent = "Capture at Stable Reading";
+    }
+});
+
+// Listeners for the Release Modal
+document.getElementById('releaseConfirmBtn').addEventListener('click', () => {
+    if (appState.activeModalRoiId) {
+        delete appState.referenceSnapshots[appState.activeModalRoiId];
+        if (appState.blankRoiId === appState.activeModalRoiId) {
+            appState.blankRoiId = null; // If we released the blank, there's no official blank anymore
+        }
+    }
+    closeAllModals();
+    updateResultsTable();
+});
+
+document.getElementById('releaseCancelBtn').addEventListener('click', closeAllModals);
+        
         function init() {
           updateWavelengthList();
           calculateAllAbsorbances();
