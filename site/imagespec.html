@@ -3479,6 +3479,7 @@ consoleLogModal.querySelector('.close-button').addEventListener('click', () => {
  */
 // REPLACE THE OLD FUNCTION WITH THIS NEW, FINAL VERSION
 function init() {
+  setupConsoleInterceptor();
           updateWavelengthList();
           calculateAllAbsorbances();
           if (appState.liveAbsorbanceInterval)
