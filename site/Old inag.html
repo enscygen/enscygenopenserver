@@ -1,0 +1,3026 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ImageSpec | Enscygen ORT</title>
+    <link rel="icon" type="image/x-icon" href="/Favicon.png" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+          --bg-color: #121212;
+          --surface-color: #1e1e1e;
+          --primary-color: #bb86fc;
+          --primary-variant-color: #3700b3;
+          --secondary-color: #03dac6;
+          --text-color: #e0e0e0;
+          --text-color-muted: #888;
+          --border-color: #333;
+          --error-color: #cf6679;
+          --font-family: 'Inter', sans-serif;
+      }
+
+      * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+      }
+
+      html,
+      body {
+          height: 100%;
+          
+          font-family: var(--font-family);
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          font-size: 14px;
+      }
+
+      .app-container {
+          display: grid;
+          grid-template-columns: 280px 1fr 280px;
+          grid-template-rows: auto 1fr auto;
+          grid-template-areas: "header header header" "controls canvas data" "results results results";
+          gap: 8px;
+          padding: 8px;
+      }
+
+      .app-header {
+          grid-area: header;
+      }
+
+      .controls-panel {
+          grid-area: controls;
+      }
+
+      .canvas-container {
+          grid-area: canvas;
+      }
+
+      .data-panel {
+          grid-area: data;
+      }
+
+      .results-panel {
+          grid-area: results;
+      }
+
+      .panel {
+          background-color: var(--surface-color);
+          border-radius: 8px;
+          border: 1px solid var(--border-color);
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          overflow-y: auto;
+      }
+
+      .panel-title {
+          font-size: 1.1em;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 0;
+      }
+
+      .collapsible-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          cursor: pointer;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border-color);
+          margin-bottom: 8px;
+      }
+
+      .collapse-icon {
+          font-size: 1.2em;
+          transition: transform 0.3s ease;
+      }
+
+      .collapsible-content {
+          max-height: 500px;
+          overflow: hidden;
+          transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+      }
+
+      .collapsible:not(.open) .collapsible-content {
+          max-height: 0;
+          padding-top: 0;
+          padding-bottom: 0;
+      }
+
+      .collapsible:not(.open) .collapse-icon {
+          transform: rotate(-90deg);
+      }
+
+      .app-header {
+          text-align: center;
+          padding: 4px 0;
+          font-size: 1.5em;
+          font-weight: 600;
+          color: var(--primary-color);
+      }
+
+      .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+      }
+
+      label {
+          font-weight: 500;
+          color: var(--text-color-muted);
+          font-size: 0.9em;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select {
+          width: 100%;
+          padding: 8px;
+          background-color: var(--bg-color);
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          color: var(--text-color);
+          font-size: 0.95em;
+      }
+
+      input:focus,
+      select:focus {
+          outline: none;
+          border-color: var(--primary-color);
+      }
+
+      button {
+          padding: 8px 12px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          background-color: var(--primary-variant-color);
+          color: #fff;
+          font-weight: 500;
+          transition: background-color 0.2s;
+      }
+
+      button:hover:not(:disabled) {
+          background-color: var(--primary-color);
+      }
+
+      button:disabled {
+          background-color: #333;
+          cursor: not-allowed;
+          color: #888;
+      }
+
+      .button-secondary {
+          background-color: #444;
+      }
+
+      .button-secondary:hover {
+          background-color: #555;
+      }
+
+      .icon-button {
+          background: none;
+          border: none;
+          color: var(--text-color-muted);
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 50%;
+      }
+
+      .icon-button:hover {
+          color: var(--secondary-color);
+          background-color: rgba(3, 218, 198, 0.1);
+      }
+
+      .canvas-container {
+          position: relative;
+          background-color: #000;
+          border-radius: 8px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 200px;
+      }
+
+      #mainCanvas,
+      #roiCanvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+      }
+
+      #videoFeed {
+          display: none;
+      }
+
+      #wavelengthList {
+          list-style: none;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+      }
+
+      #wavelengthList li {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 0.9em;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          border: 1px solid #fff3;
+      }
+
+      #wavelengthList li button {
+          background: none;
+          border: none;
+          color: inherit;
+          cursor: pointer;
+          padding: 0;
+          font-size: 1.1em;
+          line-height: 1;
+      }
+
+      #liveAbsorbanceValue {
+          font-size: 2em;
+          font-weight: 600;
+          color: var(--secondary-color);
+          text-align: center;
+          margin: auto 0;
+          transition: opacity 0.3s;
+      }
+
+      #liveAbsorbanceLabel {
+          font-size: 0.8em;
+          color: var(--text-color-muted);
+          text-align: center;
+          height: 1.2em;
+      }
+
+      .results-panel {
+          max-height: 30vh;
+      }
+
+      #resultsTable {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.9em;
+      }
+
+      #resultsTable th,
+      #resultsTable td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid var(--border-color);
+      }
+
+      #resultsTable thead {
+          position: sticky;
+          top: 0;
+          background: var(--surface-color);
+      }
+
+      #resultsTable th {
+          font-weight: 600;
+          color: var(--text-color-muted);
+      }
+
+      .roi-thumbnail {
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+          border: 1px solid #555;
+      }
+
+      .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          justify-content: center;
+          align-items: center;
+      }
+
+      .modal-content {
+          background-color: var(--surface-color);
+          padding: 20px;
+          border-radius: 8px;
+          width: 90%;
+          max-width: 500px;
+          border: 1px solid var(--border-color);
+      }
+
+      .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid var(--border-color);
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+      }
+
+      .close-button {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: var(--text-color);
+          cursor: pointer;
+      }
+
+      .radio-group {
+          display: flex;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          overflow: hidden;
+      }
+
+      .radio-group input[type="radio"] {
+          display: none;
+      }
+
+      .radio-group label {
+          flex: 1;
+          text-align: center;
+          padding: 8px;
+          cursor: pointer;
+          background-color: var(--bg-color);
+          color: var(--text-color-muted);
+          transition: all 0.2s;
+          font-size: 0.9em;
+      }
+
+      .radio-group input[type="radio"]:checked+label {
+          background-color: var(--primary-variant-color);
+          color: white;
+      }
+
+      .input-row {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+      }
+
+      .input-row>* {
+          flex: 1;
+      }
+
+      .info-preview-container {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          margin-top: 10px;
+      }
+
+      .info-preview-image {
+          max-width: 128px;
+          max-height: 128px;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          image-rendering: pixelated;
+      }
+
+      @media (max-width: 900px) {
+          .app-container {
+              grid-template-columns: 1fr;
+              grid-template-rows: auto auto auto auto 1fr;
+              grid-template-areas: "header" "controls" "data" "canvas" "results";
+              height: auto;
+              overflow-y: auto;
+          }
+
+          .panel {
+              min-height: auto;
+          }
+
+          .canvas-container {
+              min-height: 300px;
+              height: 50vh;
+          }
+
+          .results-panel {
+              max-height: none;
+          }
+      }
+
+      /* --- Styles for the new "ImageSpec Settings" section --- */
+
+/* 1. Main container for each setting row (e.g., "Lock-in Blank: [icon] [checkbox]") */
+/* This creates the perfect alignment between the label on the left and the controls on the right. */
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0; /* Adds a little vertical breathing room */
+}
+
+/* 2. Inner container for the controls (the icon and the checkbox) */
+/* This ensures the icon and checkbox are perfectly aligned with each other. */
+.setting-control {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Provides consistent spacing between the icon and the checkbox */
+}
+
+/* 3. Styling for the clickable info icon */
+.info-icon-settings {
+    color: var(--text-color-muted); /* Matches the muted text color of the app */
+    font-size: 1.2em; /* Makes the icon slightly larger and easier to click */
+    cursor: pointer;
+    transition: color 0.2s ease-in-out; /* Smooth transition for hover effect */
+}
+
+.info-icon-settings:hover {
+    color: var(--secondary-color); /* Matches the app's highlight color on hover */
+}
+
+/* 4. Styling for the custom checkbox */
+/* This uses a modern CSS property to style the native checkbox to match the dark theme. */
+.styled-checkbox {
+    /* This is the key property. It colors the checkmark and highlight with our app's primary purple. */
+    accent-color: var(--primary-color);
+
+    /* Appearance and Sizing */
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+
+    /* Styling for the UNCHECKED state */
+    background-color: var(--bg-color); /* Matches the app's darkest background */
+    border: 1px solid var(--border-color); /* Matches other borders */
+    border-radius: 4px; /* Slightly rounded corners */
+
+    /* Positioning and layout */
+    position: relative;
+    display: grid;
+    place-content: center;
+}
+
+/* Styling for the CHECKMARK itself (a pseudo-element) */
+.styled-checkbox::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    transform: scale(0); /* Hidden by default */
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--primary-color);
+    
+    /* Creates the checkmark shape */
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+/* Styling for the CHECKED state */
+.styled-checkbox:checked::before {
+    transform: scale(1); /* Makes the checkmark visible when checked */
+}
+
+      /* --- CSS for the Chart Data Table --- */
+
+/* 1. Styling for the scrollable container holding the table. */
+/* This creates a defined, bordered area that will scroll if the content is too tall. */
+#chartDataTableContainer div[style*="overflow-y: auto"] {
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* 2. Basic table setup for clean lines and full width. */
+#chartDataTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+/* 3. Table Header (thead) styling. */
+/* The "position: sticky" is the key feature that makes the header stay at the top when you scroll. */
+#chartDataTable thead {
+    position: sticky;
+    top: 0;
+    /* The background must match the panel color to hide scrolling content underneath. */
+    background: var(--surface-color);
+}
+
+/* 4. Table Header Cells (th) styling. */
+/* This makes the headers look distinct from the data. */
+#chartDataTable th {
+    font-weight: 600;
+    color: var(--text-color-muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border-color); /* A slightly thicker border for emphasis */
+}
+
+/* 5. Table Body Cells (td) styling. */
+/* This ensures data is clean and readable. */
+#chartDataTable td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    /* This helps with long numbers, but you can remove it if you prefer wrapping */
+    white-space: nowrap;
+}
+
+/* 6. Hover effect for table rows (tbody tr). */
+/* Provides visual feedback to the user as they move their mouse over the data. */
+#chartDataTable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* A subtle highlight */
+}
+
+/* 7. Remove the bottom border from the very last row in the table for a cleaner look. */
+#chartDataTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 8. Custom Scrollbar Styling (for WebKit browsers like Chrome, Edge, Safari). */
+/* This makes the scrollbar match the dark theme instead of using the default bright white one. */
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+    background: var(--surface-color); /* The background of the scrollbar track */
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+    background-color: #555; /* The color of the scrollbar itself */
+    border-radius: 6px;
+    border: 2px solid var(--surface-color); /* Creates a nice padding effect */
+}
+
+#chartDataTableContainer div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {
+    background-color: #777; /* A lighter color when you hover over the scrollbar */
+}
+
+      /* --- CSS for the Modernized ROI Info Modal --- */
+
+/* 1. Main flex container for the two-column layout */
+.info-modal-body {
+    display: flex;
+    align-items: flex-start; /* Aligns items to the top */
+    gap: 20px; /* Space between the thumbnail and the data table */
+}
+
+/* 2. Container for the thumbnail preview on the left */
+.info-modal-preview {
+    flex-shrink: 0; /* Prevents the image from shrinking */
+    width: 128px;
+}
+
+/* 3. The thumbnail image itself */
+.info-modal-preview img {
+    width: 100%;
+    height: 128px;
+    object-fit: cover; /* Ensures the image fills the space nicely */
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    image-rendering: pixelated; /* Keeps pixel art sharp */
+    background-color: #000; /* Background for transparent parts (e.g., circle mask) */
+}
+
+/* 4. Container for the data on the right */
+.info-modal-details {
+    flex-grow: 1; /* Allows the data section to take up the remaining space */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Space between each data row */
+}
+
+/* 5. Styling for each individual data row (e.g., "Name: Sample 1") */
+.info-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95em;
+}
+
+/* Remove border from the last row for a cleaner look */
+.info-data-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* 6. Styling for the label/key part of the row (e.g., "Name:") */
+.info-data-row .label {
+    color: var(--text-color-muted);
+    font-weight: 500;
+}
+
+/* 7. Styling for the value part of the row (e.g., "Sample 1") */
+.info-data-row .value {
+    color: var(--text-color);
+    font-weight: 400;
+    text-align: right;
+}
+
+/* 8. Specific styling for the color swatch in the "Avg RGB" row */
+.info-color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #fff;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+      /* 9. Container for the entire histogram section */
+.info-histogram-container {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 10. Container for the top-level (data source) toggle buttons */
+.histogram-data-source {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-color); /* Dashed border to separate controls */
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* 11. Container for the bottom-level (chart type) toggle buttons */
+.histogram-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* 12. The canvas for the chart itself */
+#roiHistogramCanvas {
+    max-height: 200px;
+    width: 100%;
+}
+
+      /* --- CSS for the Live Measurement Spinner --- */
+.spinner-icon {
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* --- CSS for the Image Manipulation Section --- */
+
+/* --- CSS for the Image Manipulation Section (Compact & Refined) --- */
+
+/* 1. Main container for each setting row. Reduced vertical padding for a tighter layout. */
+
+
+/* 2. Container for a slider and its number input. Tighter spacing. */
+.slider-control {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Reduced from 10px to bring elements closer */
+}
+
+/* 3. The number input next to a slider. Made significantly more compact. */
+.slider-input {
+    width: 30px; /* Reduced from 60px */
+    padding: 2px 4px; /* Reduced padding for a smaller vertical profile */
+    font-size: 0.8em; /* Smaller font for a more subtle look */
+    text-align: center;
+    background-color: #000; /* Darker background to blend in more */
+    -moz-appearance: textfield; /* Hides arrows in Firefox */
+}
+/* Hides arrows in Chrome/Safari/Edge */
+.slider-input::-webkit-outer-spin-button,
+.slider-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 4. General styling for the sliders (unchanged, but included for completeness) */
+.styled-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* 5. Styling for the slider's "thumb" or handle (unchanged) */
+.styled-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    border: 2px solid var(--surface-color);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    transition: background-color 0.2s;
+}
+.styled-slider::-webkit-slider-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Styling for Firefox thumb (unchanged) */
+.styled-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    border: 1px solid var(--surface-color);
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    transition: background-color 0.2s;
+}
+.styled-slider::-moz-range-thumb:hover {
+    background: var(--secondary-color);
+}
+    </style>
+  </head>
+
+  <body>
+    <div class="app-container">
+      <header class="app-header">Enscygen ImageSpec Pro</header>
+      <aside class="panel controls-panel">
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title"><i class="bi bi-camera"></i> Source</h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+          <div class="collapsible-content">
+            <div class="form-group">
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="sourceUpload"
+                  name="source"
+                  value="upload"
+                  checked
+                />
+                <label for="sourceUpload"
+                  ><i class="bi bi-upload"></i> Upload</label
+                >
+                <input
+                  type="radio"
+                  id="sourceCamera"
+                  name="source"
+                  value="camera"
+                />
+                <label for="sourceCamera"
+                  ><i class="bi bi-camera-video"></i> Camera</label
+                >
+              </div>
+              <input
+                type="file"
+                id="imageLoader"
+                accept="image/*"
+                style="display: none;"
+              />
+              <button id="uploadButton" class="button-secondary">
+                Select Image
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title">
+              <i class="bi bi-plus-circle-dotted"></i> ROI Selection
+            </h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+          <div class="collapsible-content">
+            <div class="form-group">
+              <label>ROI Type</label>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="roiTypeBlank"
+                  name="roiType"
+                  value="blank"
+                />
+                <label for="roiTypeBlank">Blank</label>
+                <input
+                  type="radio"
+                  id="roiTypeSample"
+                  name="roiType"
+                  value="sample"
+                  checked
+                />
+                <label for="roiTypeSample">Sample</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="roiShape">Shape</label>
+              <select id="roiShape">
+                <option value="square">Square</option>
+                <option value="circle">Circle</option>
+                <option value="pixel">Pixel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="roiSize">Size (px)</label>
+              <input type="number" id="roiSize" value="20" min="1" max="500" />
+            </div>
+            <div class="form-group">
+              <label for="roiName">Name (Optional)</label>
+              <input
+                type="text"
+                id="roiName"
+                placeholder="Auto (e.g., Sample 1)"
+              />
+            </div>
+            <small style="color:var(--text-color-muted); text-align:center;"
+              >Click on the image to place an ROI.</small
+            >
+          </div>
+        </section>
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title">
+              <i class="bi bi-spectrometer"></i> Wavelengths (nm)
+            </h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+          <div class="collapsible-content">
+            <div class="form-group">
+              <div class="input-row">
+                <input
+                  type="number"
+                  id="wavelengthInput"
+                  placeholder="e.g., 540"
+                  min="380"
+                  max="780"
+                />
+                <button id="addWavelengthBtn">Add</button>
+              </div>
+            </div>
+            <ul id="wavelengthList"></ul>
+          </div>
+        </section>
+      </aside>
+      <main class="canvas-container">
+        <video id="videoFeed" autoplay playsinline></video>
+        <canvas id="mainCanvas"></canvas> <canvas id="roiCanvas"></canvas>
+        <p id="canvas-placeholder" style="color:var(--text-color-muted);">
+          Upload an image or start the camera
+        </p>
+      </main>
+      <aside class="panel data-panel">
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title">
+              <i class="bi bi-graph-up"></i> Live Absorbance
+            </h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+          <div class="collapsible-content" style="justify-content: center;">
+            <div id="liveAbsorbanceLabel"></div>
+            <div id="liveAbsorbanceValue">-</div>
+            <small
+              style="color:var(--text-color-muted); text-align:center;"
+              id="liveAbsorbanceInfo"
+              >No Blank ROI set</small
+            >
+          </div>
+        </section>
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title">
+              <i class="bi bi-gear"></i> Measurement Mode
+            </h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+          <div class="collapsible-content">
+            <div class="form-group">
+              <select id="measurementMode">
+                <option value="static">Static Absorbance at Point</option>
+                <option value="series">Series Wavelength Scan</option>
+                <option value="time">Absorbance at Time Points</option>
+              </select>
+            </div>
+            <div
+              id="series-scan-options"
+              class="form-group"
+              style="display:none;"
+            >
+              <label>Wavelength Range (nm)</label>
+              <div class="input-row">
+                <input
+                  type="number"
+                  id="seriesStart"
+                  placeholder="Start"
+                  value="400"
+                />
+                <input
+                  type="number"
+                  id="seriesEnd"
+                  placeholder="End"
+                  value="700"
+                />
+              </div>
+              <input
+                type="number"
+                id="seriesStep"
+                placeholder="Step"
+                value="10"
+              />
+            </div>
+            <div
+              id="time-series-options"
+              class="form-group"
+              style="display:none;"
+            >
+              <label>Time Points (seconds, comma-separated)</label>
+              <input
+                type="text"
+                id="timePoints"
+                placeholder="e.g. 0, 30, 60, 120"
+                value="0, 5, 10"
+              />
+            </div>
+            <button id="startMeasurementBtn">Start Measurement</button>
+          </div>
+        </section>
+
+        
+<section class="collapsible open">
+    <div class="collapsible-header">
+        <h3 class="panel-title"><i class="bi bi-toggles"></i> ImageSpec Settings</h3>
+        <i class="bi bi-chevron-up collapse-icon"></i>
+    </div>
+    <div class="collapsible-content">
+        <div class="setting-row">
+    <label for="lockinBlankCheck">Lock-in Blank:</label>
+    <div class="setting-control">
+        <i class="bi bi-info-circle info-icon-settings" data-info="blank"></i>
+        <input type="checkbox" id="lockinBlankCheck" class="styled-checkbox">
+    </div>
+</div>
+<div class="setting-row">
+    <label for="lockinSampleCheck">Lock-in Sample:</label>
+    <div class="setting-control">
+        <i class="bi bi-info-circle info-icon-settings" data-info="sample"></i>
+        <input type="checkbox" id="lockinSampleCheck" class="styled-checkbox">
+    </div>
+</div>
+
+    </div>
+</section>
+
+        <!-- Insert this new section after "ImageSpec Settings" -->
+<section class="collapsible open">
+    <div class="collapsible-header">
+        <h3 class="panel-title"><i class="bi bi-sliders"></i> Image Manipulation</h3>
+        <i class="bi bi-chevron-up collapse-icon"></i>
+    </div>
+    <div class="collapsible-content">
+        <!-- Brightness Control -->
+        <div class="setting-row">
+            <label for="brightnessSlider">Brightness</label>
+            <div class="slider-control">
+                <input type="range" id="brightnessSlider" class="styled-slider" min="0" max="200" value="100">
+                <input type="number" id="brightnessInput" class="slider-input" min="0" max="200" value="100">
+            </div>
+        </div>
+        <!-- Contrast Control -->
+        <div class="setting-row">
+            <label for="contrastSlider">Contrast</label>
+            <div class="slider-control">
+                <input type="range" id="contrastSlider" class="styled-slider" min="0" max="200" value="100">
+                <input type="number" id="contrastInput" class="slider-input" min="0" max="200" value="100">
+            </div>
+        </div>
+        <!-- Grayscale Control -->
+        <div class="setting-row">
+            <label for="grayscaleCheck">Grayscale</label>
+            <input type="checkbox" id="grayscaleCheck" class="styled-checkbox">
+        </div>
+        <!-- Revert Button -->
+        <button id="revertFiltersBtn" class="button-secondary" style="margin-top: 10px;">Revert to Original</button>
+    </div>
+</section>
+
+
+
+<div id="settingsInfoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="settingsInfoTitle">Setting Information</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        <p id="settingsInfoContent" style="line-height: 1.6;"></p>
+    </div>
+</div>
+
+      </aside>
+      <footer class="panel results-panel">
+        <section class="collapsible open">
+          <div class="collapsible-header">
+            <h3 class="panel-title">
+              <i class="bi bi-table"></i> ROI Data
+              <!-- Add this new button -->
+              <button
+                id="downloadCsvBtn"
+                class="icon-button"
+                title="Download as CSV"
+                style="margin-left: auto;"
+              >
+                <i class="bi bi-download"></i>
+              </button>
+              <button
+    id="chartAllBtn"
+    class="icon-button"
+    title="Chart All Samples"
+>
+    <i class="bi bi-graph-up-arrow"></i>
+              </button>
+            </h3>
+            <i class="bi bi-chevron-up collapse-icon"></i>
+          </div>
+
+          <div class="collapsible-content">
+            <div style="overflow-x: auto; width: 100%;">
+              <table id="resultsTable">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </footer>
+    </div>
+    <div id="roiEditModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit ROI</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="form-group">
+          <label for="editRoiName">Name</label>
+          <input type="text" id="editRoiName" />
+        </div>
+        <div class="form-group">
+          <label for="editRoiShape">Shape</label>
+          <select id="editRoiShape">
+            <option value="square">Square</option>
+            <option value="circle">Circle</option>
+            <option value="pixel">Pixel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editRoiSize">Size</label>
+          <input type="number" id="editRoiSize" min="1" />
+        </div>
+        <div class="form-group">
+          <label for="editRoiColor">Border Color</label>
+          <input
+            type="color"
+            id="editRoiColor"
+            style="width:100%; height: 40px; padding: 0;"
+          />
+        </div>
+        <button id="saveRoiChangesBtn" style="margin-top: 20px;">
+          Save Changes
+        </button>
+      </div>
+    </div>
+    <div id="roiInfoModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>ROI Information</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div id="roiInfoContent"></div>
+      </div>
+    </div>
+    <div id="chartModal" class="modal">
+      <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+          <h2 id="chartTitle">Measurement Chart</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <canvas id="measurementChart"></canvas>
+      
+<div id="chartDataTableContainer" style="display: none; margin-top: 20px;">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <button id="downloadChartCsvBtn" class="icon-button" title="Download Chart Data as CSV">
+            <i class="bi bi-download"></i>
+        </button>
+    </div>
+    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px;">
+        <table id="chartDataTable" style="width: 100%; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: var(--surface-color);"></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+
+        
+      </div>
+    </div>
+
+    <!-- Master Chart Modal for All Samples -->
+<div id="masterChartModal" class="modal">
+    <div class="modal-content" style="max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+            <h2 id="masterChartTitle">All Samples Chart</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        
+        <!-- Controls for the Master Chart -->
+        <div id="master-chart-controls" style="display: flex; gap: 20px; padding: 10px 0; align-items: center;">
+            <div class="form-group">
+                <label for="masterChartDataType">Data Source:</label>
+                <select id="masterChartDataType"></select>
+            </div>
+            <div class="form-group">
+                <label>Chart Type:</label>
+                <div class="radio-group" id="masterChartTypeToggle">
+                    <input type="radio" id="chartTypeLine" name="masterChartType" value="line" checked>
+                    <label for="chartTypeLine"><i class="bi bi-graph-up"></i> Line</label>
+                    <input type="radio" id="chartTypeBar" name="masterChartType" value="bar">
+                    <label for="chartTypeBar"><i class="bi bi-bar-chart-line"></i> Bar</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart and Table Container -->
+        <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px;">
+            <div style="flex: 1; min-height: 0; position: relative;">
+                 <canvas id="masterChartCanvas"></canvas>
+            </div>
+            <!-- We will add a data table here later if needed, following the same pattern -->
+        </div>
+    </div>
+</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const imageLoader = document.getElementById("imageLoader");
+        const uploadButton = document.getElementById("uploadButton");
+        const mainCanvas = document.getElementById("mainCanvas");
+        const roiCanvas = document.getElementById("roiCanvas");
+        const videoFeed = document.getElementById("videoFeed");
+        const canvasPlaceholder = document.getElementById("canvas-placeholder");
+        const mainCtx = mainCanvas.getContext("2d", {
+          willReadFrequently: true,
+        });
+        const roiCtx = roiCanvas.getContext("2d");
+        const sourceRadios = document.querySelectorAll('input[name="source"]');
+        const wavelengthInput = document.getElementById("wavelengthInput");
+        const addWavelengthBtn = document.getElementById("addWavelengthBtn");
+        const wavelengthList = document.getElementById("wavelengthList");
+        const roiTypeRadios = document.querySelectorAll(
+          'input[name="roiType"]'
+        );
+        const roiShapeSelect = document.getElementById("roiShape");
+        const roiSizeInput = document.getElementById("roiSize");
+        const roiNameInput = document.getElementById("roiName");
+        const liveAbsorbanceValue = document.getElementById(
+          "liveAbsorbanceValue"
+        );
+        const liveAbsorbanceLabel = document.getElementById(
+          "liveAbsorbanceLabel"
+        );
+        const liveAbsorbanceInfo =
+          document.getElementById("liveAbsorbanceInfo");
+        const measurementModeSelect =
+          document.getElementById("measurementMode");
+        const seriesScanOptions = document.getElementById(
+          "series-scan-options"
+        );
+        const timeSeriesOptions = document.getElementById(
+          "time-series-options"
+        );
+        const startMeasurementBtn = document.getElementById(
+          "startMeasurementBtn"
+        );
+        const resultsTableBody = document.querySelector("#resultsTable tbody");
+        const resultsTableHead = document.querySelector(
+          "#resultsTable thead tr"
+        );
+        const roiEditModal = document.getElementById("roiEditModal");
+        const roiInfoModal = document.getElementById("roiInfoModal");
+        const chartModal = document.getElementById("chartModal");
+        const saveRoiChangesBtn = document.getElementById("saveRoiChangesBtn");
+        const editRoiName = document.getElementById("editRoiName");
+        const editRoiShape = document.getElementById("editRoiShape");
+        const editRoiSize = document.getElementById("editRoiSize");
+        const editRoiColor = document.getElementById("editRoiColor");
+        const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+        const chartDataTableContainer = document.getElementById('chartDataTableContainer');
+const chartDataTable = document.getElementById('chartDataTable');
+const downloadChartCsvBtn = document.getElementById('downloadChartCsvBtn');
+        const chartAllBtn = document.getElementById('chartAllBtn');
+const masterChartModal = document.getElementById('masterChartModal');
+const masterChartDataType = document.getElementById('masterChartDataType');
+const masterChartTypeToggle = document.getElementById('masterChartTypeToggle');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+const brightnessInput = document.getElementById('brightnessInput');
+const contrastSlider = document.getElementById('contrastSlider');
+const contrastInput = document.getElementById('contrastInput');
+const grayscaleCheck = document.getElementById('grayscaleCheck');
+const revertFiltersBtn = document.getElementById('revertFiltersBtn');
+
+
+        
+const lockinBlankCheck = document.getElementById('lockinBlankCheck');
+const lockinSampleCheck = document.getElementById('lockinSampleCheck');
+const settingsInfoModal = document.getElementById('settingsInfoModal');
+const settingsInfoTitle = document.getElementById('settingsInfoTitle');
+const settingsInfoContent = document.getElementById('settingsInfoContent');
+
+        let currentlyEditingRoiId = null;
+        let currentChartDataForCSV = null;
+
+        let appState = {
+          sourceType: "upload",
+          rois: [],
+          wavelengths: [540],
+          blankRoiId: null,
+          nextSampleId: 1,
+          isDragging: false,
+          draggedRoi: null,
+          dragOffsetX: 0,
+          dragOffsetY: 0,
+          videoStream: null,
+          measurementChart: null,
+          isMeasuring: false,
+          isBlankLocked: false,
+isSampleLocked: false,
+lockedBlankData: null, // Will hold the complete {avgColor, pixelCount, thumbnailDataUrl}
+lockedSampleData: null, // Will hold the same for the locked sample
+          liveAbsorbanceIndex: 0,
+          liveAbsorbanceInterval: null,
+          selectedRoiId: null,
+          masterChart: null,
+          originalImageData: null, // This will store the raw pixel data of the original image
+    imageFilters: {
+        brightness: 100,
+        contrast: 100,
+        grayscale: false,
+    },
+          roiHistogramChart: null
+        };
+        
+function createRoiSnapshot(roi) {
+    if (!roi) return null;
+
+    const avgColor = getRoiAverageColor(roi);
+    if (!avgColor) return null;
+
+    // Create the thumbnail image data
+    let thumbnailDataUrl = '';
+    try {
+        const size = roi.shape === 'pixel' ? 5 : roi.size;
+        const halfSize = Math.floor(size / 2);
+        const thumbCanvas = document.createElement('canvas');
+        thumbCanvas.width = size;
+        thumbCanvas.height = size;
+        const thumbCtx = thumbCanvas.getContext('2d');
+        const imageData = mainCtx.getImageData(roi.x - halfSize, roi.y - halfSize, size, size);
+        thumbCtx.putImageData(imageData, 0, 0);
+
+        if (roi.shape === 'circle') {
+            thumbCtx.globalCompositeOperation = 'destination-in';
+            thumbCtx.beginPath();
+            thumbCtx.arc(halfSize, halfSize, halfSize, 0, Math.PI * 2);
+            thumbCtx.fill();
+        }
+        thumbnailDataUrl = thumbCanvas.toDataURL();
+    } catch (e) {
+        console.error("Could not create thumbnail snapshot:", e);
+    }
+
+    return {
+        id: roi.id,
+        name: roi.name,
+        avgColor: avgColor,
+        pixelCount: avgColor.count,
+        thumbnailDataUrl: thumbnailDataUrl
+    };
+}
+
+        
+        function wavelengthToRgb(lambda) {
+          let r, g, b;
+          if (lambda >= 380 && lambda <= 439) {
+            r = -(lambda - 440) / (440 - 380);
+            g = 0.0;
+            b = 1.0;
+          } else if (lambda >= 440 && lambda <= 489) {
+            r = 0.0;
+            g = (lambda - 440) / (490 - 440);
+            b = 1.0;
+          } else if (lambda >= 490 && lambda <= 509) {
+            r = 0.0;
+            g = 1.0;
+            b = -(lambda - 510) / (510 - 490);
+          } else if (lambda >= 510 && lambda <= 579) {
+            r = (lambda - 510) / (580 - 510);
+            g = 1.0;
+            b = 0.0;
+          } else if (lambda >= 580 && lambda <= 644) {
+            r = 1.0;
+            g = -(lambda - 645) / (645 - 580);
+            b = 0.0;
+          } else if (lambda >= 645 && lambda <= 780) {
+            r = 1.0;
+            g = 0.0;
+            b = 0.0;
+          } else {
+            r = 0.0;
+            g = 0.0;
+            b = 0.0;
+          }
+          let factor;
+          if (lambda >= 380 && lambda <= 419) {
+            factor = 0.3 + (0.7 * (lambda - 380)) / (420 - 380);
+          } else if (lambda >= 420 && lambda <= 700) {
+            factor = 1.0;
+          } else if (lambda >= 701 && lambda <= 780) {
+            factor = 0.3 + (0.7 * (780 - lambda)) / (780 - 700);
+          } else {
+            factor = 0.0;
+          }
+          const gamma = 0.8;
+          const adjust = (color) =>
+            Math.round(255 * Math.pow(color * factor, gamma));
+          return { r: adjust(r), g: adjust(g), b: adjust(b) };
+        }
+        function getRoiAverageColor(roi) {
+          if (!mainCanvas.width || !mainCanvas.height) return null;
+          const size = roi.shape === "pixel" ? 1 : roi.size;
+          const halfSize = size / 2;
+          const startX = Math.round(roi.x - halfSize);
+          const startY = Math.round(roi.y - halfSize);
+          if (
+            startX + size < 0 ||
+            startX > mainCanvas.width ||
+            startY + size < 0 ||
+            startY > mainCanvas.height
+          )
+            return null;
+          const imageData = mainCtx.getImageData(
+            Math.max(0, startX),
+            Math.max(0, startY),
+            Math.min(size, mainCanvas.width - startX),
+            Math.min(size, mainCanvas.height - startY)
+          );
+          const data = imageData.data;
+          let r = 0,
+            g = 0,
+            b = 0,
+            count = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            const pixelX = Math.max(0, startX) + ((i / 4) % imageData.width);
+            const pixelY =
+              Math.max(0, startY) + Math.floor(i / 4 / imageData.width);
+            let inShape = false;
+            if (roi.shape === "square" || roi.shape === "pixel") {
+              inShape = true;
+            } else if (roi.shape === "circle") {
+              const dx = pixelX - roi.x;
+              const dy = pixelY - roi.y;
+              if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true;
+            }
+            if (inShape) {
+              r += data[i];
+              g += data[i + 1];
+              b += data[i + 2];
+              count++;
+            }
+          }
+          if (count === 0) return { r: 0, g: 0, b: 0, count: 0 };
+          return { r: r / count, g: g / count, b: b / count, count };
+        }
+        function getWavelengthChannelWeights(wl) {
+          const bluePeak = 450,
+            greenPeak = 540,
+            redPeak = 620;
+          const blueSpread = 60,
+            greenSpread = 70,
+            redSpread = 60;
+          const gaussian = (x, peak, spread) =>
+            Math.exp(-((x - peak) ** 2) / (2 * spread ** 2));
+          let bWeight = gaussian(wl, bluePeak, blueSpread);
+          let gWeight = gaussian(wl, greenPeak, greenSpread);
+          let rWeight = gaussian(wl, redPeak, redSpread);
+          const totalWeight = bWeight + gWeight + rWeight;
+          if (totalWeight === 0) return { r: 0, g: 0, b: 0 };
+          return {
+            r: rWeight / totalWeight,
+            g: gWeight / totalWeight,
+            b: bWeight / totalWeight,
+          };
+        }
+        function calculateAllAbsorbances() {
+    // 1. Get the Blank's color. This part is already correct.
+    // It intelligently chooses between the locked snapshot or a live measurement.
+    const blankColor = appState.isBlankLocked
+        ? appState.lockedBlankData?.avgColor
+        : (appState.rois.find(r => r.id === appState.blankRoiId) ? getRoiAverageColor(appState.rois.find(r => r.id === appState.blankRoiId)) : null);
+
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+    if (!blankRoi || !blankColor) {
+        // This validation correctly handles cases where the blank is not set.
+        liveAbsorbanceInfo.textContent = "No Blank ROI set";
+        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
+            sampleRoi.absorbance = {};
+        });
+        updateResultsTable();
+        updateLiveAbsorbanceDisplay();
+        return;
+    }
+
+    liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
+
+    // 2. Loop through all ROIs to calculate their absorbance.
+    appState.rois.forEach(roi => {
+        if (roi.type === 'sample') {
+
+            // --- THIS IS THE CRITICAL FIX FOR THE "inf" BUG ---
+            let sampleColor;
+            // First, check if the current ROI is the one that has a locked snapshot.
+            if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id) {
+                // If it is, use the average color from the stored snapshot data.
+                sampleColor = appState.lockedSampleData.avgColor;
+            } else {
+                // Otherwise, perform a live measurement on the current canvas for any new/unlocked samples.
+                sampleColor = getRoiAverageColor(roi);
+            }
+            // --- END OF FIX ---
+
+            if (!sampleColor) {
+                roi.absorbance = {}; // Clear data if color can't be read.
+                return;
+            }
+
+            // 3. The rest of the calculation proceeds as normal, now using the correct sampleColor.
+            appState.wavelengths.forEach(wl => {
+                const weights = getWavelengthChannelWeights(wl);
+                const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
+                const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
+
+                if (blankIntensity > 0 && sampleIntensity > 0) {
+                    roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3);
+                } else {
+                    roi.absorbance[wl] = 'inf';
+                }
+            });
+        }
+    });
+
+    // 4. Update the UI with the correct values.
+    updateResultsTable();
+    updateLiveAbsorbanceDisplay();
+}
+        function updateLiveAbsorbanceDisplay() {
+          let targetRoi = null;
+
+          // Priority 1: Find the user-selected ROI
+          if (appState.selectedRoiId) {
+            targetRoi = appState.rois.find(
+              (r) => r.id === appState.selectedRoiId
+            );
+          }
+
+          // Priority 2: If no selection, find the last added sample ROI
+          if (!targetRoi) {
+            const samples = appState.rois.filter((r) => r.type === "sample");
+            if (samples.length > 0) {
+              targetRoi = samples[samples.length - 1];
+            }
+          }
+
+          const blankRoi = appState.rois.find(
+            (r) => r.id === appState.blankRoiId
+          );
+
+          // Now, update the display based on the targetRoi we found
+          if (targetRoi && blankRoi && appState.wavelengths.length > 0) {
+            if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) {
+              appState.liveAbsorbanceIndex = 0;
+            }
+
+            const wl = appState.wavelengths[appState.liveAbsorbanceIndex];
+            const absorbance = targetRoi.absorbance[wl];
+            const rgb = wavelengthToRgb(wl);
+
+            // Update text content and apply the matching color
+            liveAbsorbanceLabel.textContent = `${targetRoi.name} @ ${wl} nm`;
+            liveAbsorbanceValue.textContent = absorbance || "-";
+            liveAbsorbanceValue.style.color = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
+          } else {
+            // Default state if no valid sample/blank/wavelength
+            liveAbsorbanceLabel.textContent = "";
+            liveAbsorbanceValue.textContent = "-";
+            liveAbsorbanceValue.style.color = "var(--secondary-color)"; // Reset to default color
+
+            if (!blankRoi) {
+              liveAbsorbanceInfo.textContent = "No Blank ROI set";
+            } else if (!targetRoi) {
+              liveAbsorbanceInfo.textContent = "No Sample ROI set";
+            } else {
+              liveAbsorbanceInfo.textContent = "No Wavelengths added";
+            }
+          }
+        }
+
+        document.querySelectorAll(".collapsible-header").forEach((header) => {
+          header.addEventListener("click", () => {
+            header.closest(".collapsible").classList.toggle("open");
+          });
+        });
+        function drawROIs() {
+    // 1. Clear the canvas for a fresh drawing
+    roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height);
+
+    // 2. Determine the current state before looping (this is more efficient)
+    // Check if at least one sample ROI exists on the canvas
+    const hasSample = appState.rois.some(r => r.type === 'sample');
+    // Check if at least one sample exists that ISN'T the locked one
+    const nonLockedSamplesExist = appState.rois.some(r => r.type === 'sample' && r.id !== appState.lockedSampleRoiId);
+
+    // 3. Loop through all ROIs and decide whether to draw them
+    appState.rois.forEach(roi => {
+
+        // --- NEW: Conditional Hiding Logic ---
+
+        // Condition A: Hide the Blank ROI if "Lock-in Blank" is active and a sample has been placed.
+        if (roi.type === 'blank' && appState.isBlankLocked && hasSample) {
+            return; // Skip the rest of the function for this ROI
+        }
+
+        // Condition B: Hide the "locked" Sample ROI if "Lock-in Sample" is active and a different sample has been placed.
+        if (roi.id === appState.lockedSampleRoiId && appState.isSampleLocked && nonLockedSamplesExist) {
+            return; // Skip the rest of the function for this ROI
+        }
+
+        // --- END: Conditional Hiding Logic ---
+
+
+        // 4. If the ROI was not hidden, proceed with the original drawing logic
+        const size = roi.shape === 'pixel' ? 5 : roi.size;
+        const halfSize = size / 2;
+        roiCtx.strokeStyle = roi.color;
+        roiCtx.lineWidth = 2;
+        roiCtx.fillStyle = `${roi.color}33`; // Semi-transparent fill
+        roiCtx.font = "12px Arial";
+        roiCtx.textAlign = "center";
+
+        // Draw the shape (circle or square/pixel)
+        roiCtx.beginPath();
+        if (roi.shape === 'circle') {
+            roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2);
+        } else {
+            roiCtx.rect(roi.x - halfSize, roi.y - halfSize, size, size);
+        }
+        roiCtx.stroke();
+        roiCtx.fill();
+
+        // Draw the name label above the ROI
+        roiCtx.fillStyle = roi.color;
+        roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5);
+
+        // Draw the manual lock icon if the user has locked it from the table
+        if (roi.locked) {
+            roiCtx.font = "15px Arial";
+            roiCtx.fillStyle = roi.color;
+            roiCtx.fillText('🔒', roi.x, roi.y + halfSize + 15);
+        }
+    });
+}
+        function updateWavelengthList() {
+          wavelengthList.innerHTML = "";
+          appState.wavelengths.forEach((wl) => {
+            const rgb = wavelengthToRgb(wl);
+            const li = document.createElement("li");
+            li.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+            li.style.color = brightness > 128 ? "#000" : "#fff";
+            li.innerHTML = `${wl} nm <button data-wl="${wl}" class="delete-wl">&times;</button>`;
+            wavelengthList.appendChild(li);
+          });
+          updateResultsTableHeader();
+        }
+        function updateResultsTableHeader() {
+          let headers = `<th></th><th>Name</th>`;
+          headers += appState.wavelengths
+            .map((wl) => `<th>${wl} nm</th>`)
+            .join("");
+          headers += `<th>Actions</th>`;
+          resultsTableHead.innerHTML = headers;
+        }
+        function updateResultsTable() {
+    resultsTableBody.innerHTML = '';
+    
+    // Check if a batch time-series scan is running
+    const isBatchTimeScanRunning = appState.isMeasuring && measurementModeSelect.value === 'time';
+
+    appState.rois.forEach(roi => {
+        const tr = document.createElement('tr');
+        // ... (The thumbnail logic remains the same) ...
+        let thumbCellHtml = '';
+        if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
+            thumbCellHtml = `<img src="${appState.lockedBlankData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Blank Snapshot">`;
+        } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
+            thumbCellHtml = `<img src="${appState.lockedSampleData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Sample Snapshot">`;
+        } else {
+            const avgColor = getRoiAverageColor(roi) || { r: 0, g: 0, b: 0 };
+            const thumbCanvas = document.createElement('canvas');
+            thumbCanvas.width = 24; thumbCanvas.height = 24;
+            const thumbCtx = thumbCanvas.getContext('2d');
+            thumbCtx.fillStyle = `rgb(${avgColor.r.toFixed(0)}, ${avgColor.g.toFixed(0)}, ${avgColor.b.toFixed(0)})`;
+            thumbCtx.fillRect(0, 0, 24, 24);
+            thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
+        }
+        
+        let absorbanceCells = '';
+
+        // --- NEW: Conditional Data Cell Rendering ---
+        if (isBatchTimeScanRunning && roi.type === 'sample') {
+            // If a scan is running, show a spinner for each wavelength column.
+            absorbanceCells = appState.wavelengths.map(() => `<td><i class="bi bi-arrow-repeat spinner-icon"></i></td>`).join('');
+        } else {
+            // Otherwise, show the actual absorbance values.
+            absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
+        }
+        // --- END of New Logic ---
+
+        const seriesChartBtn = roi.seriesData ? `<button class="icon-button chart-roi-btn" data-id="${roi.id}" title="View Wavelength Scan Chart"><i class="bi bi-bar-chart"></i></button>` : '';
+        const timeChartBtn = roi.timeSeriesData ? `<button class="icon-button timeseries-chart-btn" data-id="${roi.id}" title="View Time Series Chart"><i class="bi bi-clock"></i></button>` : '';
+
+        tr.innerHTML = `
+            <td>${thumbCellHtml}</td>
+            <td>${roi.name}</td>
+            ${absorbanceCells}
+            <td>
+                <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
+                <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button>
+                ${seriesChartBtn}
+                ${timeChartBtn}
+                <button class="icon-button delete-roi-btn" data-id="${roi.id}" title="Delete"><i class="bi bi-trash"></i></button>
+            </td>`;
+        resultsTableBody.appendChild(tr);
+    });
+}
+
+        function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            setCanvasSize(img.width, img.height);
+            mainCtx.drawImage(img, 0, 0);
+            canvasPlaceholder.style.display = 'none';
+
+          // Store a pristine copy of the raw pixel data for the new image.
+    appState.originalImageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+
+            // --- CORRECTED and UPGRADED LOGIC ---
+            // This block now correctly handles all locking scenarios.
+
+            // Case 1: BOTH Blank and Sample are locked.
+            if (appState.isBlankLocked && appState.isSampleLocked && appState.lockedSampleData) {
+                // Keep ONLY the blank and the one locked sample. Clear all other ROIs.
+                appState.rois = appState.rois.filter(r => r.type === 'blank' || r.id === appState.lockedSampleData.id);
+
+            // Case 2: ONLY the Blank is locked.
+            } else if (appState.isBlankLocked) {
+                // Keep ONLY the blank. Clear all samples.
+                appState.rois = appState.rois.filter(r => r.type === 'blank');
+                // Also ensure any previous sample lock is cleared.
+                appState.lockedSampleData = null;
+                appState.lockedSampleRoiId = null;
+
+            // Case 3: NO locks are active (Default behavior).
+            } else {
+                // Reset everything completely for a new experiment.
+                appState.rois = [];
+                appState.blankRoiId = null;
+                appState.lockedBlankData = null;
+                appState.lockedSampleData = null;
+                appState.lockedSampleRoiId = null;
+            }
+            // --- END of Corrected Logic ---
+
+            // Recalculate and redraw the UI with the corrected state.
+            calculateAllAbsorbances();
+            drawROIs();
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+        async function startCamera() {
+          try {
+            if (appState.videoStream) {
+              appState.videoStream.getTracks().forEach((track) => track.stop());
+            }
+            appState.videoStream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: "environment" },
+            });
+            videoFeed.srcObject = appState.videoStream;
+            videoFeed.onloadedmetadata = () => {
+              setCanvasSize(videoFeed.videoWidth, videoFeed.videoHeight);
+              canvasPlaceholder.style.display = "none";
+              requestAnimationFrame(drawVideoFrame);
+            };
+          } catch (err) {
+            console.error("Error accessing camera:", err);
+            alert("Could not access camera. Please check permissions.");
+          }
+        }
+        function stopCamera() {
+          if (appState.videoStream) {
+            appState.videoStream.getTracks().forEach((track) => track.stop());
+            appState.videoStream = null;
+          }
+        }
+        function drawVideoFrame() {
+          if (
+            appState.sourceType === "camera" &&
+            !videoFeed.paused &&
+            !videoFeed.ended &&
+            !appState.isMeasuring
+          ) {
+            mainCtx.drawImage(
+              videoFeed,
+              0,
+              0,
+              mainCanvas.width,
+              mainCanvas.height
+            );
+            calculateAllAbsorbances();
+            requestAnimationFrame(drawVideoFrame);
+          }
+        }
+        function setCanvasSize(width, height) {
+          mainCanvas.width = roiCanvas.width = width;
+          mainCanvas.height = roiCanvas.height = height;
+          drawROIs();
+        }
+        uploadButton.addEventListener("click", () => imageLoader.click());
+        imageLoader.addEventListener("change", handleImageUpload);
+        // REPLACE THE OLD FUNCTION WITH THIS ONE
+sourceRadios.forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+        appState.sourceType = e.target.value;
+        if (appState.sourceType === "camera") {
+            startCamera();
+            uploadButton.style.display = "none";
+            imageLoader.style.display = "none"; // This is correct
+        } else {
+            stopCamera();
+            uploadButton.style.display = "block";
+            // CORRECTED LINE:
+            imageLoader.style.display = "none"; // The native input should ALWAYS be hidden.
+        }
+    });
+});
+
+        addWavelengthBtn.addEventListener("click", () => {
+          const wl = parseInt(wavelengthInput.value);
+          if (wl >= 380 && wl <= 780 && !appState.wavelengths.includes(wl)) {
+            appState.wavelengths.push(wl);
+            appState.wavelengths.sort((a, b) => a - b);
+            wavelengthInput.value = "";
+            updateWavelengthList();
+            calculateAllAbsorbances();
+          }
+        });
+        wavelengthList.addEventListener("click", (e) => {
+          if (e.target.classList.contains("delete-wl")) {
+            const wlToRemove = parseInt(e.target.dataset.wl);
+            appState.wavelengths = appState.wavelengths.filter(
+              (wl) => wl !== wlToRemove
+            );
+            updateWavelengthList();
+            calculateAllAbsorbances();
+          }
+        });
+        roiCanvas.addEventListener("mousedown", (e) => {
+          const rect = roiCanvas.getBoundingClientRect();
+          const scaleX = roiCanvas.width / rect.width;
+          const scaleY = roiCanvas.height / rect.height;
+          const x = (e.clientX - rect.left) * scaleX;
+          const y = (e.clientY - rect.top) * scaleY;
+          let clickedOnRoi = null;
+          for (let i = appState.rois.length - 1; i >= 0; i--) {
+            const roi = appState.rois[i];
+            const dist = Math.sqrt(
+              Math.pow(x - roi.x, 2) + Math.pow(y - roi.y, 2)
+            );
+            if (dist < roi.size / 2) {
+              clickedOnRoi = roi;
+              break;
+            }
+          }
+          if (clickedOnRoi && !clickedOnRoi.locked) {
+            appState.isDragging = true;
+            appState.draggedRoi = clickedOnRoi;
+            appState.dragOffsetX = x - clickedOnRoi.x;
+            appState.dragOffsetY = y - clickedOnRoi.y;
+          } else if (!clickedOnRoi && mainCanvas.width > 0) {
+            addRoi(x, y);
+          }
+        });
+        roiCanvas.addEventListener("mousemove", (e) => {
+          if (appState.isDragging && appState.draggedRoi) {
+            const rect = roiCanvas.getBoundingClientRect();
+            const scaleX = roiCanvas.width / rect.width;
+            const scaleY = roiCanvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            appState.draggedRoi.x = x - appState.dragOffsetX;
+            appState.draggedRoi.y = y - appState.dragOffsetY;
+            appState.draggedRoi.x = Math.max(
+              0,
+              Math.min(mainCanvas.width, appState.draggedRoi.x)
+            );
+            appState.draggedRoi.y = Math.max(
+              0,
+              Math.min(mainCanvas.height, appState.draggedRoi.y)
+            );
+            drawROIs();
+            calculateAllAbsorbances();
+          }
+        });
+        window.addEventListener("mouseup", () => {
+          appState.isDragging = false;
+          appState.draggedRoi = null;
+        });
+        resultsTableBody.addEventListener("click", (e) => {
+    const row = e.target.closest("tr");
+    if (!row) return;
+
+    const buttonInRow = row.querySelector("td:last-child button");
+    if (buttonInRow) {
+        const id = buttonInRow.dataset.id;
+        const roi = appState.rois.find((r) => r.id === id);
+        if (roi && roi.type === "sample") {
+            if (appState.selectedRoiId === id) {
+                appState.selectedRoiId = null;
+                row.style.backgroundColor = "";
+            } else {
+                appState.selectedRoiId = id;
+                document.querySelectorAll("#resultsTable tbody tr").forEach((tr) => (tr.style.backgroundColor = ""));
+                row.style.backgroundColor = "rgba(187, 134, 252, 0.2)";
+            }
+        }
+        updateLiveAbsorbanceDisplay();
+    }
+
+    const button = e.target.closest("button");
+    if (!button) return;
+
+    const id = button.dataset.id;
+    const roi = appState.rois.find((r) => r.id === id);
+
+    if (button.classList.contains("lock-roi-btn")) {
+        if (roi) { roi.locked = !roi.locked; drawROIs(); updateResultsTable(); }
+    } else if (button.classList.contains("edit-roi-btn")) {
+        openEditModal(id);
+    } else if (button.classList.contains("info-roi-btn")) {
+        openInfoModal(id);
+    
+    // This block now ONLY handles the Wavelength Scan (bar-chart) button.
+    } else if (button.classList.contains("chart-roi-btn")) {
+        if (roi && roi.seriesData) {
+            showChart(roi.seriesData, "Wavelength (nm)", "Absorbance", `${roi.name} - Wavelength Scan`, 'series');
+        }
+
+    // This is the NEW block that specifically handles the Time Series (clock) button.
+    } else if (button.classList.contains("timeseries-chart-btn")) {
+        if (roi && roi.timeSeriesData) {
+            showChart(roi.timeSeriesData, 'Time (s)', 'Absorbance', `${roi.name} - Time Series`, 'time');
+        }
+
+    } else if (button.classList.contains("delete-roi-btn")) {
+        appState.rois = appState.rois.filter((roi) => roi.id !== id);
+        if (appState.blankRoiId === id) appState.blankRoiId = null;
+        if (appState.selectedRoiId === id) appState.selectedRoiId = null;
+        drawROIs();
+        calculateAllAbsorbances();
+    }
+});
+
+        
+downloadCsvBtn.addEventListener("click", (e) => {
+    // This stops the click from bubbling up to the collapsible header.
+    e.stopPropagation(); 
+    // This then runs the original function as intended.
+    downloadDataAsCSV();
+});
+
+
+        document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('info-icon-settings')) {
+        const infoType = e.target.dataset.info;
+        if (infoType === 'blank') {
+            settingsInfoTitle.textContent = 'Lock-in Blank Explained';
+            settingsInfoContent.textContent = 'When checked, the app "locks in" the color value of your Blank ROI. This allows you to change the image (e.g., upload a new one or swap samples in the live camera) without losing your calibration. Once a Sample ROI is placed, the Blank ROI will disappear from the view to reduce clutter, as its value is already stored in memory.';
+        } else if (infoType === 'sample') {
+            settingsInfoTitle.textContent = 'Lock-in Sample Explained';
+            settingsInfoContent.textContent = 'When checked, the app locks the first Sample ROI you place. This is useful for comparative analysis. The locked sample ROI will disappear from the view when you place a second sample, allowing you to use the full frame to measure a new sample against the original locked one.';
+        }
+        settingsInfoModal.style.display = 'flex';
+    }
+});
+
+settingsInfoModal.querySelector('.close-button').addEventListener('click', () => settingsInfoModal.style.display = 'none');
+
+        lockinBlankCheck.addEventListener('change', (e) => {
+    appState.isBlankLocked = e.target.checked;
+    if (!appState.isBlankLocked) {
+        appState.lockedBlankData = null; // Clear the snapshot
+    } else {
+        const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+        if (blankRoi) {
+            appState.lockedBlankData = createRoiSnapshot(blankRoi); // Create the snapshot
+        }
+    }
+    drawROIs();
+});
+
+        downloadChartCsvBtn.addEventListener('click', downloadChartDataAsCSV);
+
+
+        lockinSampleCheck.addEventListener('change', (e) => {
+    // 1. Update the state based on whether the box is checked or not.
+    appState.isSampleLocked = e.target.checked;
+
+    // 2. --- NEW and IMPROVED Logic ---
+    if (appState.isSampleLocked) {
+        // If the user just CHECKED the box, we need to find a sample to lock.
+        // The most intuitive choice is the most recently added sample.
+
+        // Find all ROIs that are samples.
+        const samples = appState.rois.filter(r => r.type === 'sample');
+
+        // If at least one sample exists...
+        if (samples.length > 0) {
+            // Get the last one from the array.
+            const lastSample = samples[samples.length - 1];
+
+            // ...and immediately create a data snapshot of it.
+            appState.lockedSampleData = createRoiSnapshot(lastSample);
+            appState.lockedSampleRoiId = lastSample.id;
+        }
+    } else {
+        // --- Original Logic ---
+        // If the user UNCHECKED the box, clear all locked sample data.
+        // This ensures the system is reset cleanly.
+        appState.lockedSampleData = null;
+        appState.lockedSampleRoiId = null;
+    }
+
+    // 3. Refresh the UI.
+    // This is important to potentially hide the newly locked sample if other samples exist.
+    drawROIs();
+});
+
+
+
+        measurementModeSelect.addEventListener("change", (e) => {
+          seriesScanOptions.style.display =
+            e.target.value === "series" ? "block" : "none";
+          timeSeriesOptions.style.display =
+            e.target.value === "time" ? "block" : "none";
+          document.querySelectorAll(".chart-roi-btn").forEach((btn) => {
+            btn.style.display =
+              e.target.value === "series" ? "inline-block" : "none";
+          });
+        });
+        startMeasurementBtn.addEventListener("click", handleStartMeasurement);
+
+        // Main button to open the master chart modal
+
+chartAllBtn.addEventListener('click', (e) => {
+    // This stops the click from bubbling up to the collapsible header.
+    e.stopPropagation();
+    // This then runs the original function as intended.
+    openMasterChartModal();
+});
+
+
+// Close button for the new modal
+masterChartModal.querySelector('.close-button').addEventListener('click', () => {
+    masterChartModal.style.display = 'none';
+    if (appState.masterChart) {
+        appState.masterChart.destroy(); // Important: clean up the chart instance
+    }
+});
+
+
+        function generateMasterChart(dataType, chartType) {
+    if (appState.masterChart) {
+        appState.masterChart.destroy();
+    }
+
+    const samples = appState.rois.filter(r => r.type === 'sample');
+    if (samples.length === 0) return;
+
+    let chartData = { labels: [], datasets: [] };
+    let chartOptions = { responsive: true, maintainAspectRatio: false, /* ... other default options ... */ };
+    
+    // --- Logic for different data sources ---
+    if (dataType === 'static') {
+        chartData.labels = appState.wavelengths.map(wl => `${wl} nm`);
+        if (chartType === 'line') {
+            samples.forEach(sample => {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
+                    borderColor: sample.color,
+                    backgroundColor: `${sample.color}33`,
+                    tension: 0.1,
+                    fill: false
+                });
+            });
+        } else if (chartType === 'bar') { // Grouped Bar Chart
+            samples.forEach(sample => {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: appState.wavelengths.map(wl => sample.absorbance[wl] || 0),
+                    backgroundColor: sample.color,
+                });
+            });
+        }
+
+    } else if (dataType === 'series') {
+        const referenceSample = samples.find(s => s.seriesData);
+        if (!referenceSample) return;
+        chartData.labels = referenceSample.seriesData.labels; // Use labels from the first sample
+        samples.forEach(sample => {
+            if (sample.seriesData) {
+                chartData.datasets.push({
+                    label: sample.name,
+                    data: sample.seriesData.datasets[0].data,
+                    borderColor: sample.color,
+                    backgroundColor: `${sample.color}33`,
+                    tension: 0.1,
+                    fill: false
+                });
+            }
+        });
+
+    } else if (dataType === 'time') {
+        const referenceSample = samples.find(s => s.timeSeriesData);
+        if (!referenceSample) return;
+        chartData.labels = referenceSample.timeSeriesData.labels.map(t => `${t}s`); // Use labels from the first sample
+        samples.forEach(sample => {
+            if (sample.timeSeriesData) {
+                // For time series, we plot the data for the FIRST wavelength by default
+                if(sample.timeSeriesData.datasets.length > 0) {
+                     chartData.datasets.push({
+                        label: `${sample.name} (${sample.timeSeriesData.datasets[0].label})`,
+                        data: sample.timeSeriesData.datasets[0].data,
+                        borderColor: sample.color,
+                        backgroundColor: `${sample.color}33`,
+                        tension: 0.1,
+                        fill: false
+                    });
+                }
+            }
+        });
+    }
+
+    appState.masterChart = new Chart(document.getElementById('masterChartCanvas'), {
+        type: chartType,
+        data: chartData,
+        options: chartOptions
+    });
+}
+
+
+        function openMasterChartModal() {
+    const samples = appState.rois.filter(r => r.type === 'sample');
+    if (samples.length === 0) {
+        alert("Please add at least one sample ROI to generate a chart.");
+        return;
+    }
+
+    // --- Check what data types are available ---
+    const hasStatic = true; // Static data is always available
+    const hasSeries = samples.some(s => s.seriesData);
+    const hasTime = samples.some(s => s.timeSeriesData);
+
+    // --- Dynamically populate the data source dropdown ---
+    masterChartDataType.innerHTML = '';
+    if (hasStatic) masterChartDataType.innerHTML += `<option value="static">Static Absorbance</option>`;
+    if (hasSeries) masterChartDataType.innerHTML += `<option value="series">Series Wavelength Scan</option>`;
+    if (hasTime) masterChartDataType.innerHTML += `<option value="time">Time Series Data</option>`;
+
+    // Function to handle redrawing the chart when a control changes
+    const redrawMasterChart = () => {
+        const dataType = masterChartDataType.value;
+        const chartType = document.querySelector('input[name="masterChartType"]:checked').value;
+        // The bar chart toggle should only be enabled for static data
+        document.getElementById('chartTypeBar').disabled = (dataType !== 'static');
+        generateMasterChart(dataType, chartType);
+    };
+
+    // Attach listeners to the controls
+    masterChartDataType.removeEventListener('change', redrawMasterChart); // Clear old listeners
+    masterChartDataType.addEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.removeEventListener('change', redrawMasterChart);
+    masterChartTypeToggle.addEventListener('change', redrawMasterChart);
+
+    // Initial draw
+    redrawMasterChart();
+    
+    masterChartModal.style.display = 'flex';
+}
+
+        
+        function addRoi(x, y) {
+    // 1. Get all the properties for the new ROI from the UI controls.
+    const type = document.querySelector('input[name="roiType"]:checked').value;
+    const id = 'roi-' + Date.now();
+    const name = roiNameInput.value || (type === 'blank' ? 'Blank' : `Sample ${appState.nextSampleId++}`);
+
+    const newRoi = {
+        id: id,
+        name: name,
+        type: type,
+        shape: roiShapeSelect.value,
+        size: parseInt(roiSizeInput.value),
+        x: x,
+        y: y,
+        color: type === 'blank' ? '#03dac6' : '#bb86fc',
+        absorbance: {},
+        locked: false
+    };
+
+    // 2. Handle logic specific to placing a "Blank" ROI.
+    if (type === 'blank') {
+        // Ensure only one blank exists by removing any previous ones.
+        appState.rois = appState.rois.filter(r => r.type !== 'blank');
+        appState.blankRoiId = id;
+
+        // --- "Lock-in Blank" Logic ---
+        // If the lock setting is active, create a complete snapshot of the blank's data
+        // at this exact moment and store it.
+        if (appState.isBlankLocked) {
+            appState.lockedBlankData = createRoiSnapshot(newRoi);
+        }
+    }
+
+    // 3. Handle logic specific to placing a "Sample" ROI.
+    if (type === 'sample') {
+        // --- "Lock-in Sample" Logic ---
+        // If the lock setting is active AND no sample has been locked yet,
+        // this new ROI becomes the locked one.
+        if (appState.isSampleLocked && !appState.lockedSampleData) {
+            // Create a complete data snapshot of this sample and store it.
+            appState.lockedSampleData = createRoiSnapshot(newRoi);
+            // Also store its ID for faster lookups in other functions (like drawROIs).
+            appState.lockedSampleRoiId = newRoi.id;
+        }
+    }
+
+    // 4. Add the newly created ROI to the main array.
+    appState.rois.push(newRoi);
+    roiNameInput.value = ''; // Clear the input field for the next ROI.
+
+    // 5. Trigger a full UI and data refresh.
+    // These functions will now use the new state (locked data, etc.) to render correctly.
+    drawROIs();
+    calculateAllAbsorbances();
+}
+        function openEditModal(id) {
+          const roi = appState.rois.find((r) => r.id === id);
+          if (roi) {
+            currentlyEditingRoiId = id;
+            editRoiName.value = roi.name;
+            editRoiShape.value = roi.shape;
+            editRoiSize.value = roi.size;
+            editRoiColor.value = roi.color;
+            roiEditModal.style.display = "flex";
+          }
+        }
+        saveRoiChangesBtn.addEventListener("click", () => {
+          const roi = appState.rois.find((r) => r.id === currentlyEditingRoiId);
+          if (roi) {
+            roi.name = editRoiName.value;
+            roi.shape = editRoiShape.value;
+            roi.size = parseInt(editRoiSize.value);
+            roi.color = editRoiColor.value;
+            if (roi.type === "blank") {
+              roi.color = "#03dac6";
+            }
+            drawROIs();
+            calculateAllAbsorbances();
+            closeAllModals();
+          }
+        });
+        function openInfoModal(id) {
+    const roi = appState.rois.find(r => r.id === id);
+    if (!roi) return;
+
+    let infoData;
+    let isSnapshot = false; // Flag to know if we are dealing with a live or locked ROI
+
+    // Determine if we're using a live ROI or a stored snapshot
+    if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
+        infoData = appState.lockedBlankData;
+        isSnapshot = true;
+    } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
+        infoData = appState.lockedSampleData;
+        isSnapshot = true;
+    } else {
+        infoData = createRoiSnapshot(roi);
+    }
+    
+    const content = document.getElementById('roiInfoContent');
+    if (!infoData) {
+        content.innerHTML = `<p>Could not retrieve data for this ROI.</p>`;
+        roiInfoModal.style.display = 'flex';
+        return;
+    }
+
+    // Conditionally build the data source toggle UI based on whether it's a snapshot
+    const dataSourceToggleHtml = isSnapshot
+        ? `<div class="histogram-data-source"><p style="color:var(--text-color-muted)">Showing histogram based on stored average value.</p></div>`
+        : `<div class="histogram-data-source">
+               <div class="radio-group">
+                   <input type="radio" id="histSourceActual" name="histSource" value="actual" checked>
+                   <label for="histSourceActual">Actual Pixels</label>
+                   <input type="radio" id="histSourceAveraged" name="histSource" value="averaged">
+                   <label for="histSourceAveraged">Averaged Value</label>
+               </div>
+           </div>`;
+
+    // Build the complete modal HTML, including the new histogram section
+    content.innerHTML = `
+        <div class="info-modal-body">
+            <div class="info-modal-preview">
+                <img src="${infoData.thumbnailDataUrl}" style="border-radius: ${roi.shape === 'circle' ? '50%' : '6px'};" title="ROI Snapshot">
+            </div>
+            <div class="info-modal-details">
+                <div class="info-data-row"><span class="label">Name:</span><span class="value">${infoData.name}</span></div>
+                <div class="info-data-row"><span class="label">Pixels in ROI:</span><span class="value">${infoData.pixelCount}</span></div>
+                <div class="info-data-row"><span class="label">Avg RGB:</span><span class="value"><span class="info-color-swatch" style="background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)})"></span>R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}</span></div>
+            </div>
+        </div>
+        <div class="info-histogram-container">
+            ${dataSourceToggleHtml}
+            <div class="histogram-controls">
+                <div class="radio-group">
+                    <input type="radio" id="histTypeRGB" name="histType" value="rgb" checked>
+                    <label for="histTypeRGB">RGB</label>
+                    <input type="radio" id="histTypeGrayscale" name="histType" value="grayscale">
+                    <label for="histTypeGrayscale">Grayscale</label>
+                    <input type="radio" id="histTypeSpectral" name="histType" value="spectral">
+                    <label for="histTypeSpectral">Spectral</label>
+                </div>
+            </div>
+            <div style="position: relative; height: 200px;">
+                <canvas id="roiHistogramCanvas"></canvas>
+            </div>
+        </div>
+    `;
+
+    // Calculate ALL potential data types upfront to make UI updates instantaneous.
+    const averagedHistData = calculateAveragedHistogramData(infoData.avgColor);
+    // Actual pixel data is only calculated if it's not a snapshot to save performance.
+    const actualHistData = isSnapshot ? null : calculateHistogramData(roi);
+
+    // This is the single function that will be called whenever a control changes.
+    const redrawHistogram = () => {
+        const sourceType = isSnapshot ? 'averaged' : document.querySelector('input[name="histSource"]:checked').value;
+        const histType = document.querySelector('input[name="histType"]:checked').value;
+        const dataToDraw = (sourceType === 'actual') ? actualHistData : averagedHistData;
+        
+        drawHistogram(dataToDraw, histType, sourceType, roi);
+    };
+
+    // Attach a single event listener to the entire modal content area.
+    // This is more efficient than attaching multiple listeners to each button.
+    content.addEventListener('change', (e) => {
+        if (e.target.name === 'histSource' || e.target.name === 'histType') {
+            redrawHistogram();
+        }
+    });
+
+    // Initial draw when the modal opens.
+    redrawHistogram();
+    
+    roiInfoModal.style.display = 'flex';
+}
+
+        function closeAllModals() {
+          document
+            .querySelectorAll(".modal")
+            .forEach((modal) => (modal.style.display = "none"));
+          currentlyEditingRoiId = null;
+        }
+        document
+          .querySelectorAll(".modal .close-button")
+          .forEach((btn) => btn.addEventListener("click", closeAllModals));
+        window.addEventListener("click", (e) => {
+          if (e.target.classList.contains("modal")) {
+            closeAllModals();
+          }
+        });
+        async function handleStartMeasurement() {
+    if (appState.isMeasuring) return;
+    appState.isMeasuring = true;
+    startMeasurementBtn.disabled = true;
+    const mode = measurementModeSelect.value;
+
+    try {
+        if (mode === "series") {
+            // Update button text based on whether a sample is selected or not.
+            startMeasurementBtn.textContent = appState.selectedRoiId ? "Scanning Selected..." : "Scanning All Samples...";
+            // Pass the selected ID (or null if none is selected) to the function.
+            await runSeriesScan(appState.selectedRoiId);
+
+        } else if (mode === "time") {
+            // The same logic applies to the time series measurement.
+            startMeasurementBtn.textContent = appState.selectedRoiId ? "Measuring Selected..." : "Measuring All Samples...";
+            await runTimeSeries(appState.selectedRoiId);
+        }
+    } catch (e) {
+        // This catch block handles intentional stops (like alerts) so the button text isn't reset.
+        console.error("Measurement stopped or failed: ", e.message);
+    } finally {
+        appState.isMeasuring = false;
+        startMeasurementBtn.textContent = "Start Measurement";
+        startMeasurementBtn.disabled = false;
+      updateResultsTable(); 
+    }
+}
+        function runSeriesScan(roiId) {
+    return new Promise((resolve, reject) => {
+        let samplesToScan = [];
+
+        // --- Logic to Build the Scan List ---
+        if (roiId) {
+            // Case 1: A specific ROI was selected.
+            const selectedSample = appState.rois.find(r => r.id === roiId);
+            if (selectedSample) {
+                samplesToScan.push(selectedSample);
+            }
+        } else {
+            // Case 2: No ROI was selected. Get ALL sample ROIs.
+            samplesToScan = appState.rois.filter(r => r.type === 'sample');
+        }
+
+        // --- Validation ---
+        if (samplesToScan.length === 0) {
+            alert("No samples found to scan.");
+            return reject(new Error("No samples found."));
+        }
+        const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+        if (!blankRoi) {
+            alert("Please set a Blank ROI before starting a scan.");
+            return reject(new Error("No Blank ROI."));
+        }
+
+        const start = parseInt(document.getElementById("seriesStart").value);
+        const end = parseInt(document.getElementById("seriesEnd").value);
+        const step = parseInt(document.getElementById("seriesStep").value);
+        const blankColor = getRoiAverageColor(blankRoi);
+
+        // --- Main Processing Loop ---
+        samplesToScan.forEach(sampleRoi => {
+            const sampleColor = getRoiAverageColor(sampleRoi);
+            const seriesData = {
+                labels: [],
+                datasets: [{ label: "Absorbance", data: [], borderColor: "#03dac6", backgroundColor: "#03dac633", tension: 0.1, fill: true }],
+            };
+
+            for (let wl = start; wl <= end; wl += step) {
+                const weights = getWavelengthChannelWeights(wl);
+                const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
+                const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
+                let absorbance = 0;
+                if (blankIntensity > 0 && sampleIntensity > 0) {
+                    absorbance = -Math.log10(sampleIntensity / blankIntensity);
+                }
+                seriesData.labels.push(wl);
+                seriesData.datasets[0].data.push(absorbance);
+            }
+            // Save the calculated data directly to the corresponding ROI object.
+            sampleRoi.seriesData = seriesData;
+        });
+
+        alert(`Wavelength scan complete for ${samplesToScan.length} sample(s).`);
+      updateResultsTable();
+        
+        // If only one sample was processed, open its chart automatically for convenience.
+        if (samplesToScan.length === 1) {
+            const singleSample = samplesToScan[0];
+            showChart(singleSample.seriesData, 'Wavelength (nm)', 'Absorbance', `${singleSample.name} - Wavelength Scan`, 'series');
+        }
+        
+        resolve(); // Signal completion.
+    });
+}
+        /**
+ * Asynchronously runs a time-series measurement.
+ * - If an roiId is provided, it measures that single sample and updates its chart/table in real-time.
+ * - If roiId is null, it measures ALL available samples synchronously at each time point.
+ * @param {string | null} roiId The ID of the specific sample to measure, or null to measure all.
+ */
+async function runTimeSeries(roiId) {
+    let samplesToScan = [];
+
+    // 1. Build the list of samples to be measured based on user selection.
+    if (roiId) {
+        const selectedSample = appState.rois.find(r => r.id === roiId);
+        if (selectedSample) samplesToScan.push(selectedSample);
+    } else {
+        samplesToScan = appState.rois.filter(r => r.type === 'sample');
+    }
+
+    // 2. Validate all necessary conditions before starting the measurement.
+    if (samplesToScan.length === 0) {
+        alert("No samples found to measure.");
+        throw new Error("No samples found.");
+    }
+    if (appState.sourceType !== "camera") {
+        alert("Time series measurement requires the live camera source.");
+        throw new Error("Camera not active.");
+    }
+    if (!appState.blankRoiId) {
+        alert("Please set a Blank ROI before starting a measurement.");
+        throw new Error("No Blank ROI.");
+    }
+    const timePointsInput = document.getElementById("timePoints").value;
+    const timePoints = timePointsInput.split(",").map(t => parseFloat(t.trim())).filter(t => !isNaN(t) && t >= 0).sort((a, b) => a - b);
+    if (timePoints.length === 0) {
+        alert("Please enter valid, comma-separated time points.");
+        throw new Error("Invalid time points.");
+    }
+
+    // 3. Prepare the data storage structures for each sample that will be measured.
+    samplesToScan.forEach(sample => {
+        const timeData = { labels: [], datasets: [] };
+        appState.wavelengths.forEach(wl => {
+            const rgb = wavelengthToRgb(wl);
+            timeData.datasets.push({ label: `${wl} nm`, data: [], borderColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`, tension: 0.1, pointRadius: 4, fill: true });
+        });
+        sample.timeSeriesData = timeData; // Attach the empty data structure to the sample's state.
+    });
+
+    // 4. If this is a single-sample run, open its chart modal immediately.
+    // The chart will be empty at first and will populate in real-time.
+    if (samplesToScan.length === 1) {
+        const singleSample = samplesToScan[0];
+        showChart(singleSample.timeSeriesData, 'Time (s)', 'Absorbance', `${singleSample.name} - Time Series`, 'time');
+    }
+
+    // 5. Start the main asynchronous measurement process.
+    // This outer promise ensures the function waits until all time points are complete.
+    await new Promise(resolve => {
+        let timeIndex = 0;
+
+        function measureAtNextTimePoint() {
+            if (timeIndex >= timePoints.length) {
+                resolve(); // All time points are measured; resolve the promise.
+                return;
+            }
+
+            const targetTime = timePoints[timeIndex];
+            const previousTime = timeIndex > 0 ? timePoints[timeIndex - 1] : 0;
+            const delay = (targetTime - previousTime) * 1000;
+
+            startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`;
+
+            setTimeout(() => {
+                startMeasurementBtn.textContent = `Measuring All Samples @ ${targetTime}s`;
+
+                // A. Capture a single, definitive frame from the video. This is the key to synchronicity.
+                mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height);
+
+                // B. Loop through ALL samples for this single point in time.
+                samplesToScan.forEach(sampleRoi => {
+                    // This function now uses the same captured frame for all sample calculations.
+                    calculateAllAbsorbances();
+                    
+                    const timeData = sampleRoi.timeSeriesData;
+                    timeData.labels.push(targetTime); // Add the time point to this sample's data.
+
+                    // Add the absorbance value for each wavelength to this sample's data.
+                    appState.wavelengths.forEach((wl, wlIndex) => {
+                        timeData.datasets[wlIndex].data.push(sampleRoi.absorbance[wl] || 0);
+                    });
+                });
+
+                // C. If this is a single-sample run, update its chart AND table in real-time.
+                if (samplesToScan.length === 1 && appState.measurementChart) {
+                    appState.measurementChart.update(); // Update the graph.
+                    const singleSample = samplesToScan[0];
+                    generateChartTable(singleSample.timeSeriesData, 'time', `${singleSample.name} - Time Series`); // Update the table.
+                }
+
+                timeIndex++;
+                measureAtNextTimePoint(); // Schedule the next measurement.
+            }, delay);
+        }
+
+        measureAtNextTimePoint(); // Initiate the first measurement (t=0).
+    });
+
+    // 6. Provide final feedback to the user.
+    alert(`Time series measurement complete for ${samplesToScan.length} sample(s).`);
+  
+}
+        /**
+ * Displays the measurement chart modal with a graph and a corresponding data table.
+ *
+ * @param {object} data The Chart.js data object (labels, datasets).
+ * @param {string} xLabel The label for the X-axis.
+ * @param {string} yLabel The label for the Y-axis.
+ * @param {string} titleText The main title for the chart and modal.
+ * @param {string} mode The type of measurement being displayed ('series' for wavelength or 'time' for time points).
+ */
+function showChart(data, xLabel, yLabel, titleText, mode) {
+    // 1. Get a reference to the canvas element for the chart.
+    const chartCanvas = document.getElementById('measurementChart');
+
+    // 2. Destroy any previously existing chart instance.
+    // This is crucial to prevent memory leaks and rendering glitches when showing a new chart.
+    if (appState.measurementChart) {
+        appState.measurementChart.destroy();
+    }
+
+    // 3. Set the title of the modal.
+    document.getElementById('chartTitle').textContent = titleText;
+
+    // 4. Create the new Chart.js instance with the provided data and styling options.
+    appState.measurementChart = new Chart(chartCanvas, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: xLabel, color: '#fff' },
+                    ticks: { color: '#aaa' },
+                    grid: { color: '#444' }
+                },
+                y: {
+                    title: { display: true, text: yLabel, color: '#fff' },
+                    ticks: { color: '#aaa' },
+                    grid: { color: '#444' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#fff' }
+                }
+            }
+        }
+    });
+
+    // --- NEW LOGIC for Data Table and CSV Preparation ---
+
+    // 5. Generate and populate the HTML table with the same data used by the chart.
+    generateChartTable(data, mode, titleText);
+
+    // 6. Store the chart's data in a globally accessible variable.
+    // This allows the separate "downloadChartCsvBtn" event listener to access the correct data when clicked.
+    currentChartDataForCSV = { data, mode, title: titleText };
+
+    // 7. Make the container for the table and download button visible.
+    chartDataTableContainer.style.display = 'block';
+
+    // --- END of New Logic ---
+
+
+    // 8. Finally, display the entire modal.
+    chartModal.style.display = 'flex';
+}
+
+        function downloadDataAsCSV() {
+          // 1. Define CSV Headers
+          const headers = [
+            "Name",
+            ...appState.wavelengths.map((wl) => `${wl} nm`),
+          ];
+
+          // 2. Map ROI data to CSV rows
+          const rows = appState.rois.map((roi) => {
+            // Enclose the name in double quotes to handle commas within names
+            const name = `"${roi.name}"`;
+
+            // Get the absorbance value for each wavelength in the correct order
+            const values = appState.wavelengths.map((wl) => {
+              return roi.absorbance ? roi.absorbance[wl] || "" : "";
+            });
+
+            // Combine the name and values into a single row string
+            return [name, ...values].join(",");
+          });
+
+          // 3. Combine headers and rows into a single CSV string
+          const csvContent = [headers.join(","), ...rows].join("\n");
+
+          // 4. Create a Blob and trigger the download
+          const blob = new Blob([csvContent], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const link = document.createElement("a");
+          if (link.download !== undefined) {
+            // Check for browser support
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "ImageSpec_ROI_Data.csv");
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        }
+
+        // REPLACE THE OLD FUNCTION WITH THIS NEW ONE
+function generateChartTable(chartData, mode, title) {
+    const tableHead = chartDataTable.querySelector('thead');
+    const tableBody = chartDataTable.querySelector('tbody');
+    tableHead.innerHTML = '';
+    tableBody.innerHTML = '';
+    let headHtml = '<tr>';
+    let bodyHtml = '';
+
+    // CORRECTED: Extract the sample name for both modes to ensure consistency.
+    const sampleName = title.split(' - ')[0];
+
+    if (mode === 'series') { // Wavelength Scan
+        // CORRECTED: The headers now match the format you requested.
+        headHtml += '<th>Measurement Point</th><th>Absorbance</th>';
+        chartData.labels.forEach((wl, index) => {
+            const absorbance = chartData.datasets[0].data[index].toFixed(4);
+            // CORRECTED: The first cell is now formatted with the sample name and wavelength.
+            bodyHtml += `<tr><td>${sampleName} @ ${wl}nm</td><td>${absorbance}</td></tr>`;
+        });
+    } else if (mode === 'time') { // Time Points (This part was already correct)
+        headHtml += '<th>Measurement Point</th>';
+        chartData.datasets.forEach(dataset => {
+            headHtml += `<th>${dataset.label}</th>`;
+        });
+        chartData.labels.forEach((time, timeIndex) => {
+            bodyHtml += `<tr><td>${sampleName} @ ${time}s</td>`;
+            chartData.datasets.forEach(dataset => {
+                const absorbance = dataset.data[timeIndex] !== null ? dataset.data[timeIndex].toFixed(4) : '-';
+                bodyHtml += `<td>${absorbance}</td>`;
+            });
+            bodyHtml += '</tr>';
+        });
+    }
+
+    headHtml += '</tr>';
+    tableHead.innerHTML = headHtml;
+    tableBody.innerHTML = bodyHtml;
+}
+
+
+        function downloadChartDataAsCSV() {
+    if (!currentChartDataForCSV) return;
+
+    const { data, mode, title } = currentChartDataForCSV;
+    let csvContent = '';
+    let headers = [];
+    let rows = [];
+
+    if (mode === 'series') {
+        headers = ['Wavelength (nm)', 'Absorbance'];
+        rows = data.labels.map((wl, index) => `${wl},${data.datasets[0].data[index].toFixed(4)}`);
+    } else if (mode === 'time') {
+        const sampleName = title.split(' - ')[0];
+        headers = ['Measurement Point', ...data.datasets.map(d => d.label)];
+        rows = data.labels.map((time, timeIndex) => {
+            const rowData = data.datasets.map(d => (d.data[timeIndex] !== null ? d.data[timeIndex].toFixed(4) : ''));
+            return `"${sampleName} @ ${time}s",${rowData.join(',')}`;
+        });
+    }
+
+    csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const filename = title.replace(/\s/g, '_') + '.csv';
+    link.setAttribute('href', URL.createObjectURL(blob));
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+        /**
+ * Creates a "perfect" histogram based on a single average color value.
+ * The result is a sharp spike at the average intensity for each channel.
+ * @param {object} avgColor An object with {r, g, b} properties.
+ * @returns {object} A histogram data object.
+ */
+function calculateAveragedHistogramData(avgColor) {
+    const redBins = new Array(256).fill(0);
+    const greenBins = new Array(256).fill(0);
+    const blueBins = new Array(256).fill(0);
+    const lumBins = new Array(256).fill(0);
+
+    const r = Math.round(avgColor.r);
+    const g = Math.round(avgColor.g);
+    const b = Math.round(avgColor.b);
+
+    redBins[r] = 1; // A single "count" at the average value
+    greenBins[g] = 1;
+    blueBins[b] = 1;
+
+    const luminance = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    lumBins[luminance] = 1;
+
+    return { red: redBins, green: greenBins, blue: blueBins, luminance: lumBins };
+}
+
+/**
+ * Calculates the frequency of each intensity value (0-255) for the R, G, B,
+ * and Luminance channels for all pixels within a given ROI's shape.
+ * @param {object} roi The ROI object to analyze.
+ * @returns {object|null} An object containing arrays for each channel's histogram data, or null.
+ */
+function calculateHistogramData(roi) {
+    if (!roi || !mainCanvas.width || !mainCanvas.height) return null;
+
+    const redBins = new Array(256).fill(0);
+    const greenBins = new Array(256).fill(0);
+    const blueBins = new Array(256).fill(0);
+    const lumBins = new Array(256).fill(0);
+
+    const size = roi.shape === 'pixel' ? 1 : roi.size;
+    const halfSize = size / 2;
+    const startX = Math.round(roi.x - halfSize);
+    const startY = Math.round(roi.y - halfSize);
+
+    try {
+        const imageData = mainCtx.getImageData(
+            Math.max(0, startX), Math.max(0, startY),
+            Math.min(size, mainCanvas.width - startX), Math.min(size, mainCanvas.height - startY)
+        );
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const pixelX = Math.max(0, startX) + ((i / 4) % imageData.width);
+            const pixelY = Math.max(0, startY) + Math.floor((i / 4) / imageData.width);
+
+            let inShape = false;
+            if (roi.shape === 'square' || roi.shape === 'pixel') {
+                inShape = true;
+            } else if (roi.shape === 'circle') {
+                const dx = pixelX - roi.x;
+                const dy = pixelY - roi.y;
+                if (dx * dx + dy * dy <= halfSize * halfSize) inShape = true;
+            }
+
+            if (inShape) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                redBins[r]++;
+                greenBins[g]++;
+                blueBins[b]++;
+                const luminance = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                lumBins[luminance]++;
+            }
+        }
+        return { red: redBins, green: greenBins, blue: blueBins, luminance: lumBins };
+    } catch (e) {
+        console.error("Error calculating histogram data:", e);
+        return null;
+    }
+}
+
+/**
+ * Draws a histogram on the modal's canvas, adapting its style for different data types.
+ * @param {object} histogramData The data object from one of the calculation functions.
+ * @param {string} mode The type of chart to draw: 'rgb', 'grayscale', or 'spectral'.
+ * @param {string} sourceType The source of the data: 'actual' or 'averaged'.
+ * @param {object} roi The ROI object, needed only for spectral calculation.
+ */
+/**
+ * Draws a histogram on the modal's canvas, adapting its style for different data types.
+ * @param {object} histogramData The data object from one of the calculation functions.
+ * @param {string} mode The type of chart to draw: 'rgb', 'grayscale', or 'spectral'.
+ * @param {string} sourceType The source of the data: 'actual' or 'averaged'.
+ * @param {object} roi The ROI object, needed only for spectral calculation.
+ */
+function drawHistogram(histogramData, mode, sourceType, roi) {
+    if (appState.roiHistogramChart) {
+        appState.roiHistogramChart.destroy();
+    }
+    const canvas = document.getElementById('roiHistogramCanvas');
+    if (!canvas) return;
+    if (!histogramData && mode !== 'spectral') {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    let chartData = { labels: [], datasets: [] };
+    const labels = Array.from(Array(256).keys());
+    let chartType = 'bar';
+    let yAxisLabel = 'Pixel Count';
+
+    if (sourceType === 'averaged') {
+        chartType = 'line';
+        yAxisLabel = 'Presence';
+    }
+    if (mode === 'spectral') {
+        chartType = 'line';
+        yAxisLabel = 'Relative Intensity';
+    }
+
+    if (mode === 'rgb') {
+        chartData = { labels: labels, datasets: [
+            { label: 'Red', data: histogramData.red, backgroundColor: 'rgba(255, 99, 132, 0.7)', borderColor: 'rgb(255, 99, 132)', stepped: sourceType === 'averaged', pointRadius: 0, borderWidth: 1 },
+            { label: 'Green', data: histogramData.green, backgroundColor: 'rgba(75, 192, 192, 0.7)', borderColor: 'rgb(75, 192, 192)', stepped: sourceType === 'averaged', pointRadius: 0, borderWidth: 1 },
+            { label: 'Blue', data: histogramData.blue, backgroundColor: 'rgba(54, 162, 235, 0.7)', borderColor: 'rgb(54, 162, 235)', stepped: sourceType === 'averaged', pointRadius: 0, borderWidth: 1 }
+        ]};
+    } else if (mode === 'grayscale') {
+        chartData = { labels: labels, datasets: [{ label: 'Luminance', data: histogramData.luminance, backgroundColor: 'rgba(200, 200, 200, 0.7)', borderColor: 'rgb(200, 200, 200)', stepped: sourceType === 'averaged', pointRadius: 0, borderWidth: 1 }]};
+    } else if (mode === 'spectral' && roi) {
+        const avgColor = getRoiAverageColor(roi);
+        const spectralLabels = [];
+        const spectralData = [];
+        for (let wl = 400; wl <= 700; wl += 5) {
+            const weights = getWavelengthChannelWeights(wl);
+            const intensity = weights.r * avgColor.r + weights.g * avgColor.g + weights.b * avgColor.b;
+            spectralLabels.push(wl);
+            spectralData.push(intensity);
+        }
+        chartData = {
+            labels: spectralLabels,
+            datasets: [{ label: 'Spectral Intensity', data: spectralData, borderColor: '#bb86fc', tension: 0.2, fill: false, pointRadius: 0 }]
+        };
+    }
+
+    appState.roiHistogramChart = new Chart(canvas, {
+        type: chartType,
+        data: chartData,
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#aaa', precision: 0 }, grid: { color: '#444' }, title: { display: true, text: yAxisLabel, color: '#fff' } },
+                x: { ticks: { color: '#aaa', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: '#444' }, title: { display: true, text: (mode === 'spectral') ? 'Wavelength (nm)' : 'Intensity', color: '#fff' } }
+            },
+            plugins: { legend: { labels: { color: '#fff' } } }
+        }
+    });
+}
+
+        /**
+ * Applies the current filter settings (brightness, contrast, grayscale)
+ * to the original image data and redraws it on the main canvas.
+ */
+function applyImageFilters() {
+    if (!appState.originalImageData) return; // Exit if there's no original image to work from
+
+    const originalData = appState.originalImageData.data;
+    const manipulatedData = new Uint8ClampedArray(originalData); // Create a copy to manipulate
+
+    const brightness = (appState.imageFilters.brightness - 100) * 2.55; // Scale to -255 to 255
+    const contrast = appState.imageFilters.contrast / 100; // Scale to 0 to 2
+    const grayscale = appState.imageFilters.grayscale;
+
+    const clamp = (value) => Math.max(0, Math.min(255, value)); // Helper to keep values in 0-255 range
+
+    for (let i = 0; i < manipulatedData.length; i += 4) {
+        let r = originalData[i];
+        let g = originalData[i + 1];
+        let b = originalData[i + 2];
+
+        // Apply Contrast
+        r = clamp(((r / 255 - 0.5) * contrast + 0.5) * 255);
+        g = clamp(((g / 255 - 0.5) * contrast + 0.5) * 255);
+        b = clamp(((b / 255 - 0.5) * contrast + 0.5) * 255);
+
+        // Apply Brightness
+        r = clamp(r + brightness);
+        g = clamp(g + brightness);
+        b = clamp(b + brightness);
+
+        // Apply Grayscale
+        if (grayscale) {
+            const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+            r = g = b = luminance;
+        }
+
+        manipulatedData[i] = r;
+        manipulatedData[i + 1] = g;
+        manipulatedData[i + 2] = b;
+    }
+
+    // Put the newly manipulated pixel data back onto the canvas
+    mainCtx.putImageData(new ImageData(manipulatedData, mainCanvas.width, mainCanvas.height), 0, 0);
+    
+    // After redrawing the canvas, all ROI measurements must be recalculated
+    calculateAllAbsorbances();
+}
+
+        // This function syncs the state and triggers a redraw.
+const handleFilterChange = () => {
+    // Update state from UI
+    appState.imageFilters.brightness = parseInt(brightnessInput.value);
+    appState.imageFilters.contrast = parseInt(contrastInput.value);
+    appState.imageFilters.grayscale = grayscaleCheck.checked;
+
+    // Apply the filters and recalculate everything
+    applyImageFilters();
+};
+
+// Link sliders to their input boxes
+brightnessSlider.addEventListener('input', () => { brightnessInput.value = brightnessSlider.value; handleFilterChange(); });
+brightnessInput.addEventListener('input', () => { brightnessSlider.value = brightnessInput.value; handleFilterChange(); });
+contrastSlider.addEventListener('input', () => { contrastInput.value = contrastSlider.value; handleFilterChange(); });
+contrastInput.addEventListener('input', () => { contrastSlider.value = contrastInput.value; handleFilterChange(); });
+
+// Listener for the checkbox
+grayscaleCheck.addEventListener('change', handleFilterChange);
+
+// Listener for the revert button
+revertFiltersBtn.addEventListener('click', () => {
+    // Reset the UI controls
+    brightnessSlider.value = 100;
+    brightnessInput.value = 100;
+    contrastSlider.value = 100;
+    contrastInput.value = 100;
+    grayscaleCheck.checked = false;
+
+    // Trigger a filter update, which will now use the default values.
+    handleFilterChange();
+});
+
+        function init() {
+          updateWavelengthList();
+          calculateAllAbsorbances();
+          if (appState.liveAbsorbanceInterval)
+            clearInterval(appState.liveAbsorbanceInterval);
+          appState.liveAbsorbanceInterval = setInterval(() => {
+            if (appState.wavelengths.length > 0) {
+              appState.liveAbsorbanceIndex =
+                (appState.liveAbsorbanceIndex + 1) %
+                appState.wavelengths.length;
+            }
+            liveAbsorbanceValue.style.opacity = 0;
+            setTimeout(() => {
+              updateLiveAbsorbanceDisplay();
+              liveAbsorbanceValue.style.opacity = 1;
+            }, 300);
+          }, 2500);
+          console.log("Spectrophotometer Initialized");
+        }
+        init();
+      });
+    </script>
+  </body>
+</html>
