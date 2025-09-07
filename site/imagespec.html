@@ -1806,7 +1806,21 @@ function drawROIs() {
             thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
         }
         
-        const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
+        // --- REPLACE THE LINE FROM STEP 2 WITH THIS ENTIRE BLOCK ---
+
+// First, check if a batch time-series scan is currently running.
+const isBatchTimeScanRunning = appState.isMeasuring && measurementModeSelect.value === 'time';
+let absorbanceCells = ''; // Initialize the variable
+
+// Now, decide what to put in the data cells.
+if (isBatchTimeScanRunning && roi.type === 'sample') {
+    // If a scan is running, fill the data cells with a spinning icon.
+    absorbanceCells = appState.wavelengths.map(() => `<td><i class="bi bi-arrow-repeat spinner-icon"></i></td>`).join('');
+} else {
+    // Otherwise (if not measuring or in another mode), show the actual absorbance values.
+    absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
+}
+// --- END OF THE REPLACEMENT BLOCK ---
 
         // Conditionally create the "Capture & Lock" button with the correct text.
         const isReference = !!snapshot;
