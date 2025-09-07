@@ -983,20 +983,20 @@
         <i class="bi bi-chevron-up collapse-icon"></i>
     </div>
     <div class="collapsible-content">
-        <div class="setting-row">
-    <label for="lockinBlankCheck">Lock-in Blank:</label>
-    <div class="setting-control">
-        <i class="bi bi-info-circle info-icon-settings" data-info="blank"></i>
-        <input type="checkbox" id="lockinBlankCheck" class="styled-checkbox">
-    </div>
+       <!-- Add these to the "ImageSpec Settings" collapsible-content -->
+<div class="setting-row">
+    <label for="stabilityThreshold">Stability Threshold (± Abs)</label>
+    <input type="number" id="stabilityThreshold" class="slider-input" value="0.005" step="0.001">
 </div>
 <div class="setting-row">
-    <label for="lockinSampleCheck">Lock-in Sample:</label>
-    <div class="setting-control">
-        <i class="bi bi-info-circle info-icon-settings" data-info="sample"></i>
-        <input type="checkbox" id="lockinSampleCheck" class="styled-checkbox">
-    </div>
+    <label for="stabilityTime">Stability Time (s)</label>
+    <input type="number" id="stabilityTime" class="slider-input" value="2">
 </div>
+<div class="setting-row">
+    <label for="stabilityAverageCheck">Average Final Reading</label>
+    <input type="checkbox" id="stabilityAverageCheck" class="styled-checkbox" checked>
+</div>
+
 
     </div>
 </section>
@@ -1196,6 +1196,37 @@
     </div>
 </div>
 
+    <!-- The Main Capture Modal -->
+<div id="captureModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="captureModalTitle">Capture & Lock ROI Data</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        <p id="captureModalText" style="line-height: 1.6;"></p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button id="captureStableBtn" class="button-secondary">Capture at Stable Reading</button>
+            <button id="captureNowBtn">Capture Immediately</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Release Confirmation Modal -->
+<div id="releaseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="releaseModalTitle">Release ROI?</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        <p id="releaseModalText"></p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button id="releaseCancelBtn" class="button-secondary">Cancel</button>
+            <button id="releaseConfirmBtn" style="background-color: var(--error-color);">Confirm Release</button>
+        </div>
+    </div>
+</div>
+
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const imageLoader = document.getElementById("imageLoader");
@@ -1288,10 +1319,12 @@ const settingsInfoContent = document.getElementById('settingsInfoContent');
           videoStream: null,
           measurementChart: null,
           isMeasuring: false,
-          isBlankLocked: false,
-isSampleLocked: false,
-lockedBlankData: null, // Will hold the complete {avgColor, pixelCount, thumbnailDataUrl}
-lockedSampleData: null, // Will hold the same for the locked sample
+  referenceSnapshots: {},
+    stabilitySettings: {
+        threshold: 0.005,
+        time: 2,
+        useAverage: true
+    },
           liveAbsorbanceIndex: 0,
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
@@ -1304,6 +1337,56 @@ lockedSampleData: null, // Will hold the same for the locked sample
     },
           roiHistogramChart: null
         };
+
+        async function waitForStableReading(roi) {
+    return new Promise((resolve, reject) => {
+        const { threshold, time, useAverage } = appState.stabilitySettings;
+        const checkInterval = 250; // Check 4 times per second
+        const requiredStableChecks = (time * 1000) / checkInterval;
+        const maxWaitTime = 30000; // 30 second timeout to prevent infinite loops
+
+        let readingHistory = [];
+        let stableCounter = 0;
+
+        const timeout = setTimeout(() => {
+            clearInterval(interval);
+            reject(new Error("Reading did not stabilize within 30 seconds."));
+        }, maxWaitTime);
+
+        const interval = setInterval(() => {
+            // Force a single frame draw and calculation
+            mainCtx.drawImage(videoFeed, 0, 0, mainCanvas.width, mainCanvas.height);
+            calculateAllAbsorbances();
+            
+            const currentAbsorbance = roi.absorbance[appState.wavelengths[0]] || 0;
+            readingHistory.push(parseFloat(currentAbsorbance));
+            if (readingHistory.length < 2) return; // Need at least two readings to compare
+
+            const lastReading = readingHistory[readingHistory.length - 2];
+            if (Math.abs(currentAbsorbance - lastReading) < threshold) {
+                stableCounter++;
+            } else {
+                stableCounter = 0; // Reset counter if it fluctuates
+            }
+
+            if (stableCounter >= requiredStableChecks) {
+                clearInterval(interval);
+                clearTimeout(timeout);
+                let finalReadingRoi = roi;
+                if (useAverage) {
+                    // Create a temporary copy to not mutate the live ROI
+                    const finalRoiState = JSON.parse(JSON.stringify(roi));
+                    const stableReadings = readingHistory.slice(-requiredStableChecks);
+                    const avgAbs = stableReadings.reduce((a, b) => a + b, 0) / stableReadings.length;
+                    finalRoiState.absorbance[appState.wavelengths[0]] = avgAbs.toFixed(3);
+                    finalReadingRoi = finalRoiState;
+                }
+                resolve(finalReadingRoi);
+            }
+        }, checkInterval);
+    });
+}
+
         
 function createRoiSnapshot(roi) {
     if (!roi) return null;
