@@ -2153,7 +2153,7 @@ sourceRadios.forEach((radio) => {
                 row.style.backgroundColor = "rgba(187, 134, 252, 0.2)";
             }
         }
-        updateLiveAbsorbanceDisplay();
+        
     }
 
     // --- Part 2: Handle Specific Action Button Clicks ---
@@ -3475,24 +3475,22 @@ consoleLogModal.querySelector('.close-button').addEventListener('click', () => {
  * This is the main entry point for the application. It performs initial setup
  * and creates the single, master timer that controls the live absorbance display cycling.
  */
+// REPLACE THE OLD FUNCTION WITH THIS NEW, FINAL VERSION
 function init() {
-  setupConsoleInterceptor(); 
     console.log("ImageSpec Pro Initialized");
-
-    // 1. Perform initial setup tasks.
     updateWavelengthList();
-    calculateAllAbsorbances(); // This performs the first data calculation and UI draw.
+    calculateAllAbsorbances();
 
-    // 2. Clear any old, lingering timer from a previous state to prevent conflicts.
+    // --- The New, Universal, and Correct Timer ---
+    // Clear any old timer just in case.
     if (appState.liveAbsorbanceInterval) {
         clearInterval(appState.liveAbsorbanceInterval);
     }
-
-    // 3. Create the one and only master timer for the live display.
+    // Create the one and only master timer for the display.
     appState.liveAbsorbanceInterval = setInterval(() => {
-        // This timer runs continuously in the background.
+        // This timer will now run for BOTH live video and static images.
 
-        // It only takes action if the application is NOT busy with a measurement.
+        // It only takes action if the app is NOT busy with a measurement.
         if (!appState.isMeasuring) {
             
             // It only advances the wavelength if there is more than one to cycle through.
@@ -3503,12 +3501,16 @@ function init() {
             // Animate a fade-out/fade-in for a smooth visual transition.
             liveAbsorbanceValue.style.opacity = 0;
             setTimeout(() => {
-                // The timer itself is now responsible for telling the UI to update with the new index.
+                // The timer itself is now responsible for telling the UI to update.
                 updateLiveAbsorbanceDisplay();
                 liveAbsorbanceValue.style.opacity = 1;
             }, 300);
         }
-    }, 2500); // The timer runs every 2.5 seconds.
+    }, 2500);
+
+    // This call is crucial to ensure the display shows the default sample's data
+    // immediately on startup, solving the "-" bug.
+    updateLiveAbsorbanceDisplay();
 }
 
 
