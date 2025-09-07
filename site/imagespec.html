@@ -1605,7 +1605,7 @@ function createRoiSnapshot(roi) {
 
     // Refresh the UI with the final, correct data
     updateResultsTable();
-    updateLiveAbsorbanceDisplay();
+    
 }
         function updateLiveAbsorbanceDisplay() {
           let targetRoi = null;
@@ -1964,6 +1964,8 @@ sourceRadios.forEach((radio) => {
           appState.isDragging = false;
           appState.draggedRoi = null;
         });
+
+        
         resultsTableBody.addEventListener("click", (e) => {
     const row = e.target.closest("tr");
     if (!row) return;
@@ -1983,7 +1985,7 @@ sourceRadios.forEach((radio) => {
                 row.style.backgroundColor = "rgba(187, 134, 252, 0.2)";
             }
         }
-        updateLiveAbsorbanceDisplay();
+        
     }
 
     // This part handles specific button clicks
