@@ -1666,58 +1666,66 @@ function calculateAllAbsorbances() {
 
 
         
-        function updateLiveAbsorbanceDisplay() {
+        /**
+ * REPLACEMENT for updateLiveAbsorbanceDisplay
+ * This function updates the "Live Absorbance" panel. It's designed to be called
+ * by the main timer to show cycling wavelengths, or by other functions for an instant update.
+ * It contains no timer logic itself.
+ */
+function updateLiveAbsorbanceDisplay() {
     let targetRoi = null;
 
-          // Priority 1: Find the user-selected ROI
-          if (appState.selectedRoiId) {
-            targetRoi = appState.rois.find(
-              (r) => r.id === appState.selectedRoiId
-            );
-          }
+    // 1. Determine which ROI to display data for.
+    // Priority 1: Check if the user has actively selected a sample in the results table.
+    if (appState.selectedRoiId) {
+        targetRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
+    }
 
-          // Priority 2: If no selection, find the last added sample ROI
-          if (!targetRoi) {
-            const samples = appState.rois.filter((r) => r.type === "sample");
-            if (samples.length > 0) {
-              targetRoi = samples[samples.length - 1];
-            }
-          }
-
-          const blankRoi = appState.rois.find(
-            (r) => r.id === appState.blankRoiId
-          );
-
-          // Now, update the display based on the targetRoi we found
-          if (targetRoi && blankRoi && appState.wavelengths.length > 0) {
-            if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) {
-              appState.liveAbsorbanceIndex = 0;
-            }
-
-            const wl = appState.wavelengths[appState.liveAbsorbanceIndex];
-            const absorbance = targetRoi.absorbance[wl];
-            const rgb = wavelengthToRgb(wl);
-
-            // Update text content and apply the matching color
-            liveAbsorbanceLabel.textContent = `${targetRoi.name} @ ${wl} nm`;
-            liveAbsorbanceValue.textContent = absorbance || "-";
-            liveAbsorbanceValue.style.color = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-            liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
-          } else {
-            // Default state if no valid sample/blank/wavelength
-            liveAbsorbanceLabel.textContent = "";
-            liveAbsorbanceValue.textContent = "-";
-            liveAbsorbanceValue.style.color = "var(--secondary-color)"; // Reset to default color
-
-            if (!blankRoi) {
-              liveAbsorbanceInfo.textContent = "No Blank ROI set";
-            } else if (!targetRoi) {
-              liveAbsorbanceInfo.textContent = "No Sample ROI set";
-            } else {
-              liveAbsorbanceInfo.textContent = "No Wavelengths added";
-            }
-          }
+    // Priority 2: If no sample is selected, default to the most recently added sample.
+    if (!targetRoi) {
+        const samples = appState.rois.filter(r => r.type === "sample");
+        if (samples.length > 0) {
+            targetRoi = samples[samples.length - 1];
         }
+    }
+
+    // 2. Get a reference to the current blank to display its name.
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+
+    // 3. Render the display if all necessary components exist.
+    if (targetRoi && blankRoi && appState.wavelengths.length > 0) {
+        // Sanity check to ensure the wavelength index is always valid.
+        if (appState.liveAbsorbanceIndex >= appState.wavelengths.length) {
+            appState.liveAbsorbanceIndex = 0;
+        }
+
+        // Get the current wavelength to display based on the index controlled by the timer.
+        const wl = appState.wavelengths[appState.liveAbsorbanceIndex];
+        // Get the corresponding absorbance value from the target ROI's data.
+        const absorbance = targetRoi.absorbance[wl];
+        // Get the display color for this wavelength.
+        const rgb = wavelengthToRgb(wl);
+
+        // Update all the text and color elements in the UI.
+        liveAbsorbanceLabel.textContent = `${targetRoi.name} @ ${wl} nm`;
+        liveAbsorbanceValue.textContent = absorbance || "-";
+        liveAbsorbanceValue.style.color = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
+    } else {
+        // 4. If conditions aren't met, render a helpful default or error state.
+        liveAbsorbanceLabel.textContent = "";
+        liveAbsorbanceValue.textContent = "-";
+        liveAbsorbanceValue.style.color = "var(--secondary-color)"; // Reset to default color
+
+        if (!blankRoi) {
+            liveAbsorbanceInfo.textContent = "No Blank ROI set";
+        } else if (!targetRoi) {
+            liveAbsorbanceInfo.textContent = "No Sample ROI set";
+        } else {
+            liveAbsorbanceInfo.textContent = "No Wavelengths added";
+        }
+    }
+}
 
         document.querySelectorAll(".collapsible-header").forEach((header) => {
           header.addEventListener("click", () => {
@@ -3295,34 +3303,44 @@ function openReleaseModal(roiId) {
 });
         
 
-// THE NEW, CORRECT init FUNCTION
+/**
+ * REPLACEMENT for the init function.
+ * This is the main entry point for the application. It performs initial setup
+ * and creates the single, master timer that controls the live absorbance display cycling.
+ */
 function init() {
     console.log("ImageSpec Pro Initialized");
-    updateWavelengthList();
-    calculateAllAbsorbances(); // This performs the initial data calculation.
 
-    // Clear any old timer just in case.
+    // 1. Perform initial setup tasks.
+    updateWavelengthList();
+    calculateAllAbsorbances(); // This performs the first data calculation and UI draw.
+
+    // 2. Clear any old, lingering timer from a previous state to prevent conflicts.
     if (appState.liveAbsorbanceInterval) {
         clearInterval(appState.liveAbsorbanceInterval);
     }
-    // Create the one and only master timer for the display.
+
+    // 3. Create the one and only master timer for the live display.
     appState.liveAbsorbanceInterval = setInterval(() => {
-        // Only do something if the app is NOT busy with a measurement.
+        // This timer runs continuously in the background.
+
+        // It only takes action if the application is NOT busy with a measurement.
         if (!appState.isMeasuring) {
-            // --- THIS IS THE KEY LOGIC CHANGE ---
-            // Only advance the index if there is more than one wavelength to cycle through.
+            
+            // It only advances the wavelength if there is more than one to cycle through.
             if (appState.wavelengths.length > 1) {
                 appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
             }
-            // Animate the fade-out and fade-in for a smooth visual transition.
+
+            // Animate a fade-out/fade-in for a smooth visual transition.
             liveAbsorbanceValue.style.opacity = 0;
             setTimeout(() => {
-                // The timer itself is now responsible for telling the UI to update.
+                // The timer itself is now responsible for telling the UI to update with the new index.
                 updateLiveAbsorbanceDisplay();
                 liveAbsorbanceValue.style.opacity = 1;
             }, 300);
         }
-    }, 2500);
+    }, 2500); // The timer runs every 2.5 seconds.
 }
 
 
