@@ -996,7 +996,10 @@
     <label for="stabilityAverageCheck">Average Final Reading</label>
     <input type="checkbox" id="stabilityAverageCheck" class="styled-checkbox" checked>
 </div>
-
+<div class="setting-row">
+    <label for="hideCapturedCheck" title="If checked, any ROI that is 'Captured & Locked' will be hidden from the image canvas.">Hide Captured ROI from image</label>
+    <input type="checkbox" id="hideCapturedCheck" class="styled-checkbox" checked>
+</div>
 
     </div>
 </section>
@@ -1316,6 +1319,8 @@ const stabilityThresholdInput = document.getElementById('stabilityThreshold');
 const stabilityTimeInput = document.getElementById('stabilityTime');
 const stabilityAverageCheck = document.getElementById('stabilityAverageCheck');
 
+        const hideCapturedCheck = document.getElementById('hideCapturedCheck');
+
 
 
 
@@ -1351,6 +1356,7 @@ const settingsInfoContent = document.getElementById('settingsInfoContent');
           liveAbsorbanceInterval: null,
           selectedRoiId: null,
           masterChart: null,
+          hideCapturedRois: true,
           originalImageData: null, // This will store the raw pixel data of the original image
     imageFilters: {
         brightness: 100,
@@ -1696,35 +1702,31 @@ function resetLiveAbsorbanceTimer() {
             header.closest(".collapsible").classList.toggle("open");
           });
         });
-        function drawROIs() {
-    // 1. Clear the canvas for a fresh drawing
+        /**
+ * REPLACEMENT for drawROIs
+ * This new version checks the "Hide Captured ROI" setting before deciding whether to
+ * hide a captured reference from the canvas.
+ */
+function drawROIs() {
+    // 1. Clear the canvas for a fresh render.
     roiCtx.clearRect(0, 0, roiCanvas.width, roiCanvas.height);
 
-    // 2. Determine the current state before looping (this is more efficient)
-    // Check if at least one sample ROI exists on the canvas
-    const hasSample = appState.rois.some(r => r.type === 'sample');
-    // Check if at least one sample exists that ISN'T the locked one
-    const nonLockedSamplesExist = appState.rois.some(r => r.type === 'sample' && r.id !== appState.lockedSampleRoiId);
-
-    // 3. Loop through all ROIs and decide whether to draw them
+    // 2. Loop through every ROI in the application state.
     appState.rois.forEach(roi => {
 
         // --- NEW: Conditional Hiding Logic ---
+        // First, check if a snapshot exists for this ROI.
+        const isCaptured = !!appState.referenceSnapshots[roi.id];
 
-        // Condition A: Hide the Blank ROI if "Lock-in Blank" is active and a sample has been placed.
-        if (roi.type === 'blank' && appState.isBlankLocked && hasSample) {
-            return; // Skip the rest of the function for this ROI
+        // THEN, check if the "hide" setting is enabled AND the ROI is captured.
+        if (isCaptured && appState.hideCapturedRois) {
+            // If both are true, skip drawing this ROI.
+            return;
         }
-
-        // Condition B: Hide the "locked" Sample ROI if "Lock-in Sample" is active and a different sample has been placed.
-        if (roi.id === appState.lockedSampleRoiId && appState.isSampleLocked && nonLockedSamplesExist) {
-            return; // Skip the rest of the function for this ROI
-        }
-
-        // --- END: Conditional Hiding Logic ---
+        // --- END of New Logic ---
 
 
-        // 4. If the ROI was not hidden, proceed with the original drawing logic
+        // 3. If the ROI was not hidden, proceed with the original drawing logic.
         const size = roi.shape === 'pixel' ? 5 : roi.size;
         const halfSize = size / 2;
         roiCtx.strokeStyle = roi.color;
@@ -1733,7 +1735,7 @@ function resetLiveAbsorbanceTimer() {
         roiCtx.font = "12px Arial";
         roiCtx.textAlign = "center";
 
-        // Draw the shape (circle or square/pixel)
+        // Draw the shape (circle or square)
         roiCtx.beginPath();
         if (roi.shape === 'circle') {
             roiCtx.arc(roi.x, roi.y, halfSize, 0, Math.PI * 2);
@@ -1747,7 +1749,7 @@ function resetLiveAbsorbanceTimer() {
         roiCtx.fillStyle = roi.color;
         roiCtx.fillText(roi.name, roi.x, roi.y - halfSize - 5);
 
-        // Draw the manual lock icon if the user has locked it from the table
+        // Draw the positional lock icon
         if (roi.locked) {
             roiCtx.font = "15px Arial";
             roiCtx.fillStyle = roi.color;
@@ -3142,7 +3144,13 @@ function openReleaseModal(roiId) {
     document.getElementById('releaseModal').style.display = 'flex';
 }
 
-        
+
+        hideCapturedCheck.addEventListener('change', (e) => {
+    // Update the app's state to match the checkbox
+    appState.hideCapturedRois = e.target.checked;
+    // Immediately redraw the canvas to apply the change
+    drawROIs();
+});
         
 function init() {
     updateWavelengthList();
