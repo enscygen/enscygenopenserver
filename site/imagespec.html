@@ -2433,7 +2433,9 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
     if (appState.isMeasuring) return;
     appState.isMeasuring = true;
     startMeasurementBtn.disabled = true;
+          updateResultsTable();
     const mode = measurementModeSelect.value;
+           
 
     try {
         if (mode === "series") {
