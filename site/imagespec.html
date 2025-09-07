@@ -3276,36 +3276,37 @@ function openReleaseModal(roiId) {
     drawROIs();
 });
         
-// REPLACE THE OLD FUNCTION WITH THIS NEW ONE
+
 function init() {
     console.log("ImageSpec Pro Initialized");
     updateWavelengthList();
-    calculateAllAbsorbances(); // This is still needed for the first data calculation.
+    calculateAllAbsorbances(); // This performs the initial calculation and display.
 
-    // --- The New, Correct, Independent Timer ---
-    // Clear any old timer just in case.
+    // --- The Final, Universal Timer Logic ---
     if (appState.liveAbsorbanceInterval) {
         clearInterval(appState.liveAbsorbanceInterval);
     }
-    // Create the one and only master timer that controls the display cycling.
+
     appState.liveAbsorbanceInterval = setInterval(() => {
-        // Only perform the cycle if the app is NOT busy with a measurement.
+        // This timer will now run for BOTH live video and static images.
+        // It will only advance the wavelength if we are NOT in the middle of a measurement.
         if (!appState.isMeasuring) {
-            // If there is more than one wavelength, advance to the next index.
+            // If there's more than one wavelength, advance to the next one.
             if (appState.wavelengths.length > 1) {
                 appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
             }
-            // Animate the fade-out and fade-in for a smooth visual transition.
+
+            // Animate the fade-out and fade-in for a smooth transition.
             liveAbsorbanceValue.style.opacity = 0;
             setTimeout(() => {
-                // This function will now use the newly updated index to show the correct value
-                // without being interfered with by other parts of the code.
+                // The timer itself is now responsible for telling the UI to update.
                 updateLiveAbsorbanceDisplay();
                 liveAbsorbanceValue.style.opacity = 1;
             }, 300);
         }
     }, 2500);
 }
+
 
 
         init();
