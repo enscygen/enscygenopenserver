@@ -1904,6 +1904,11 @@ if (isBatchTimeScanRunning && roi.type === 'sample') {
  * This new version uses the video.play() Promise to eliminate race conditions
  * and guarantee that the animation loop starts correctly every time.
  */
+/**
+ * REPLACEMENT for startCamera
+ * This version corrects the video-height typo, ensuring the function
+ * completes successfully after the video starts playing.
+ */
 async function startCamera() {
     try {
         if (appState.videoStream) {
@@ -1914,24 +1919,18 @@ async function startCamera() {
         });
         videoFeed.srcObject = appState.videoStream;
 
-        // The old, unreliable onloadedmetadata event is now completely removed.
-
-        // --- NEW, ROBUST LOGIC ---
-        // The video.play() method returns a Promise that resolves only when the video
-        // has actually begun to play. This is a guaranteed, race-proof signal.
+        // The video.play() promise correctly prevents the race condition.
         await videoFeed.play();
         
-        // Because we 'await' the line above, this code is now GUARANTEED
-        // to run only AFTER the video is successfully playing.
-        setCanvasSize(videoFeed.videoWidth, videoFeed.video-height);
+        // This code is now guaranteed to run after the video is playing.
+        // CORRECTED: videoHeight (was video-height)
+        setCanvasSize(videoFeed.videoWidth, videoFeed.videoHeight);
         canvasPlaceholder.style.display = "none";
         
-        // This is the "ignition spark" that is now guaranteed to fire at the correct time.
+        // This will now be called successfully, starting the animation loop.
         requestAnimationFrame(drawVideoFrame);
-        // --- END of New Logic ---
 
     } catch (err) {
-        // This will catch errors from both getUserMedia and video.play()
         console.error("Error starting camera:", err);
         alert("Could not access camera. Please check permissions and ensure no other app is using it.");
     }
