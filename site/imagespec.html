@@ -1645,24 +1645,21 @@ function createRoiSnapshot(roi) {
 
 
 
-function startLiveAbsorbanceTimer() {
-    // If a timer is already running or not needed, do nothing.
-    if (appState.liveAbsorbanceInterval || appState.wavelengths.length <= 1) {
-        return;
-    }
-
-    // Create a new timer that cycles through the wavelengths every 2.5 seconds
-    appState.liveAbsorbanceInterval = setInterval(() => {
-        appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
-        updateLiveAbsorbanceDisplay(); // Update the display with the new wavelength data
-    }, 2500);
-}
-
-function stopLiveAbsorbanceTimer() {
-    // If a timer is active, clear it and reset the state variable.
+function updateLiveAbsorbanceTimer() {
+    // 1. Always clear any timer that might be running.
     if (appState.liveAbsorbanceInterval) {
         clearInterval(appState.liveAbsorbanceInterval);
         appState.liveAbsorbanceInterval = null;
+    }
+
+    // 2. Check if we even need a timer now.
+    // If there are 2 or more wavelengths, we need to cycle.
+    if (appState.wavelengths.length > 1) {
+        // 3. Create a brand new timer that uses the UPDATED wavelength count.
+        appState.liveAbsorbanceInterval = setInterval(() => {
+            appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
+            updateLiveAbsorbanceDisplay();
+        }, 2500);
     }
 }
 
@@ -1892,7 +1889,7 @@ if (isBatchTimeScanRunning && roi.type === 'sample') {
             // Recalculate and redraw the UI with the preserved reference ROIs.
             calculateAllAbsorbances();
             drawROIs();
-          startLiveAbsorbanceTimer();
+          updateLiveAbsorbanceTimer();
         };
         img.src = event.target.result;
     };
@@ -1940,7 +1937,7 @@ async function startCamera() {
             appState.videoStream.getTracks().forEach((track) => track.stop());
             appState.videoStream = null;
           }
-          stopLiveAbsorbanceTimer();
+          updateLiveAbsorbanceTimer();
         }
         function drawVideoFrame() {
           if (
@@ -1992,7 +1989,7 @@ sourceRadios.forEach((radio) => {
             wavelengthInput.value = "";
             updateWavelengthList();
             calculateAllAbsorbances();
-            startLiveAbsorbanceTimer();
+            updateLiveAbsorbanceTimer();
           }
         });
         wavelengthList.addEventListener("click", (e) => {
@@ -2003,7 +2000,7 @@ sourceRadios.forEach((radio) => {
             );
             updateWavelengthList();
             calculateAllAbsorbances();
-            stopLiveAbsorbanceTimer();
+            updateLiveAbsorbanceTimer();
           }
         });
         roiCanvas.addEventListener("mousedown", (e) => {
