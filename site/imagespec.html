@@ -979,6 +979,7 @@
               />
             </div>
             <button id="startMeasurementBtn">Start Measurement</button>
+            <small id="timeSeriesCountdown" style="display: none; text-align: center; color: var(--text-color-muted); margin-top: 8px;"></small>
           </div>
         </section>
 
@@ -1197,11 +1198,16 @@
     <label for="masterChartWavelengthSelect">Wavelength:</label>
     <select id="masterChartWavelengthSelect"></select>
           </div>
+
+          <div class="form-group">
+    <label for="masterChartHeightInput">Chart Height (px):</label>
+    <input type="number" id="masterChartHeightInput" class="slider-input" value="300" min="150" step="50">
+          </div>
         </div>
 
         <!-- Chart and Table Container -->
         <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px;">
-            <div style="flex: 1; min-height: 0; position: relative;">
+            <div id="masterChartCanvasContainer" style="flex: 1; min-height: 0; position: relative; height: 300px;">
                  <canvas id="masterChartCanvas"></canvas>
             </div>
             <!-- We will add a data table here later if needed, following the same pattern -->
@@ -1309,6 +1315,9 @@ const grayscaleCheck = document.getElementById('grayscaleCheck');
 const revertFiltersBtn = document.getElementById('revertFiltersBtn');
         const masterChartWavelengthControl = document.getElementById('masterChartWavelengthControl');
 const masterChartWavelengthSelect = document.getElementById('masterChartWavelengthSelect');
+        const masterChartHeightInput = document.getElementById('masterChartHeightInput');
+const masterChartCanvasContainer = document.getElementById('masterChartCanvasContainer');
+
 
         // Add these new constants with your other element references
 
@@ -2231,32 +2240,41 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
 }
 
 
-        function openMasterChartModal() {
+        /**
+ * REPLACEMENT for openMasterChartModal
+ * This is the main controller function that opens and manages the master chart modal.
+ * It dynamically configures the UI controls and orchestrates chart redraws.
+ */
+function openMasterChartModal() {
     const samples = appState.rois.filter(r => r.type === 'sample');
     if (samples.length === 0) {
         alert("Please add at least one sample ROI to generate a chart.");
         return;
     }
 
-    const hasStatic = true;
+    // 1. Check which types of measurement data are available across all samples.
+    const hasStatic = true; // Static data is always considered available.
     const hasSeries = samples.some(s => s.seriesData);
     const hasTime = samples.some(s => s.timeSeriesData);
 
+    // 2. Dynamically populate the "Data Source" dropdown with only the available options.
     masterChartDataType.innerHTML = '';
     if (hasStatic) masterChartDataType.innerHTML += `<option value="static">Static Absorbance</option>`;
     if (hasSeries) masterChartDataType.innerHTML += `<option value="series">Series Wavelength Scan</option>`;
     if (hasTime) masterChartDataType.innerHTML += `<option value="time">Time Series Data</option>`;
 
+    // 3. Define the main function that redraws the chart when data source or type changes.
     const redrawMasterChart = () => {
         const dataType = masterChartDataType.value;
         const chartType = document.querySelector('input[name="masterChartType"]:checked').value;
 
+        // Conditionally show/hide and populate the wavelength selector for time-series data.
         if (dataType === 'time') {
             masterChartWavelengthControl.style.display = 'block';
             const referenceSample = samples.find(s => s.timeSeriesData);
             if (referenceSample) {
                 const currentSelection = masterChartWavelengthSelect.value;
-                masterChartWavelengthSelect.innerHTML = '';
+                masterChartWavelengthSelect.innerHTML = ''; // Clear old options
                 referenceSample.timeSeriesData.datasets.forEach(dataset => {
                     const wl = dataset.label.replace(' nm', '');
                     const option = document.createElement('option');
@@ -2270,31 +2288,53 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
             masterChartWavelengthControl.style.display = 'none';
         }
         
+        // Disable the Bar chart option if the data source isn't "Static Absorbance".
         const barChartRadio = document.getElementById('chartTypeBar');
         barChartRadio.disabled = (dataType !== 'static');
         if (barChartRadio.disabled && barChartRadio.checked) {
-            document.getElementById('chartTypeLine').checked = true;
+            document.getElementById('chartTypeLine').checked = true; // Default back to Line chart
         }
         
         const finalChartType = document.querySelector('input[name="masterChartType"]:checked').value;
         const selectedWavelength = masterChartWavelengthSelect.value;
         
+        // Call the main generator with all the current settings.
         generateMasterChart(dataType, finalChartType, selectedWavelength);
     };
 
+    // 4. Define a separate, lightweight function to handle only the height change.
+    const handleHeightChange = () => {
+        const newHeight = parseInt(masterChartHeightInput.value);
+        if (newHeight >= 150) {
+            masterChartCanvasContainer.style.height = `${newHeight}px`;
+            // Tell the Chart.js instance to resize to its container without a full redraw.
+            if (appState.masterChart) {
+                appState.masterChart.resize();
+            }
+        }
+    };
+    
+    // 5. Initialize the chart height when the modal is first opened.
+    handleHeightChange();
+
+    // 6. Remove any old, lingering event listeners to prevent bugs from multiple clicks.
     masterChartDataType.removeEventListener('change', redrawMasterChart);
     masterChartTypeToggle.querySelectorAll('input').forEach(radio => radio.removeEventListener('change', redrawMasterChart));
     masterChartWavelengthSelect.removeEventListener('change', redrawMasterChart);
+    masterChartHeightInput.removeEventListener('input', handleHeightChange);
 
+    // 7. Attach fresh event listeners to all controls.
     masterChartDataType.addEventListener('change', redrawMasterChart);
     masterChartTypeToggle.querySelectorAll('input').forEach(radio => radio.addEventListener('change', redrawMasterChart));
     masterChartWavelengthSelect.addEventListener('change', redrawMasterChart);
+    masterChartHeightInput.addEventListener('input', handleHeightChange);
 
+    // 8. Perform the initial draw of the chart based on the default values of the controls.
     redrawMasterChart();
     
+    // 9. Finally, display the entire modal.
     masterChartModal.style.display = 'flex';
 }
-
         
         function addRoi(x, y) {
     // 1. Get all the properties for the new ROI from the UI controls.
