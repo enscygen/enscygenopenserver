@@ -2534,6 +2534,7 @@ function openMasterChartModal() {
             await runSeriesScan(appState.selectedRoiId);
 
         } else if (mode === "time") {
+          timeSeriesCountdown.style.display = 'block';
             // The same logic applies to the time series measurement.
             startMeasurementBtn.textContent = appState.selectedRoiId ? "Measuring Selected..." : "Measuring All Samples...";
             await runTimeSeries(appState.selectedRoiId);
@@ -2545,6 +2546,8 @@ function openMasterChartModal() {
         appState.isMeasuring = false;
         startMeasurementBtn.textContent = "Start Measurement";
         startMeasurementBtn.disabled = false;
+      timeSeriesCountdown.style.display = 'none';
+        timeSeriesCountdown.textContent = '';
       updateResultsTable(); 
     }
 }
@@ -2652,6 +2655,8 @@ async function runTimeSeries(roiId) {
         throw new Error("Invalid time points.");
     }
 
+  let countdownInterval = null;
+
     // 3. Prepare the data storage structures for each sample that will be measured.
     samplesToScan.forEach(sample => {
         const timeData = { labels: [], datasets: [] };
@@ -2676,6 +2681,7 @@ async function runTimeSeries(roiId) {
 
         function measureAtNextTimePoint() {
             if (timeIndex >= timePoints.length) {
+              if(countdownInterval) clearInterval(countdownInterval);
                 resolve(); // All time points are measured; resolve the promise.
                 return;
             }
@@ -2684,9 +2690,26 @@ async function runTimeSeries(roiId) {
             const previousTime = timeIndex > 0 ? timePoints[timeIndex - 1] : 0;
             const delay = (targetTime - previousTime) * 1000;
 
+          if(countdownInterval) clearInterval(countdownInterval); // Clear any previous timer
+            let secondsLeft = Math.ceil(delay / 1000);
+            
+            if (delay > 0) {
+                timeSeriesCountdown.textContent = `Next measurement in ${secondsLeft}s...`;
+                countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    timeSeriesCountdown.textContent = `Next measurement in ${secondsLeft}s...`;
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            } else {
+                 timeSeriesCountdown.textContent = 'Measuring now...';
+            }
+
             startMeasurementBtn.textContent = `Waiting for ${targetTime}s...`;
 
             setTimeout(() => {
+              if(countdownInterval) clearInterval(countdownInterval); // Ensure timer is stopped
                 startMeasurementBtn.textContent = `Measuring All Samples @ ${targetTime}s`;
 
                 // A. Capture a single, definitive frame from the video. This is the key to synchronicity.
