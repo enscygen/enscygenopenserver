@@ -1297,8 +1297,7 @@ const revertFiltersBtn = document.getElementById('revertFiltersBtn');
 
 
         
-const lockinBlankCheck = document.getElementById('lockinBlankCheck');
-const lockinSampleCheck = document.getElementById('lockinSampleCheck');
+
 const settingsInfoModal = document.getElementById('settingsInfoModal');
 const settingsInfoTitle = document.getElementById('settingsInfoTitle');
 const settingsInfoContent = document.getElementById('settingsInfoContent');
@@ -2022,55 +2021,12 @@ downloadCsvBtn.addEventListener("click", (e) => {
 
 settingsInfoModal.querySelector('.close-button').addEventListener('click', () => settingsInfoModal.style.display = 'none');
 
-        lockinBlankCheck.addEventListener('change', (e) => {
-    appState.isBlankLocked = e.target.checked;
-    if (!appState.isBlankLocked) {
-        appState.lockedBlankData = null; // Clear the snapshot
-    } else {
-        const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
-        if (blankRoi) {
-            appState.lockedBlankData = createRoiSnapshot(blankRoi); // Create the snapshot
-        }
-    }
-    drawROIs();
-});
+        
 
         downloadChartCsvBtn.addEventListener('click', downloadChartDataAsCSV);
 
 
-        lockinSampleCheck.addEventListener('change', (e) => {
-    // 1. Update the state based on whether the box is checked or not.
-    appState.isSampleLocked = e.target.checked;
-
-    // 2. --- NEW and IMPROVED Logic ---
-    if (appState.isSampleLocked) {
-        // If the user just CHECKED the box, we need to find a sample to lock.
-        // The most intuitive choice is the most recently added sample.
-
-        // Find all ROIs that are samples.
-        const samples = appState.rois.filter(r => r.type === 'sample');
-
-        // If at least one sample exists...
-        if (samples.length > 0) {
-            // Get the last one from the array.
-            const lastSample = samples[samples.length - 1];
-
-            // ...and immediately create a data snapshot of it.
-            appState.lockedSampleData = createRoiSnapshot(lastSample);
-            appState.lockedSampleRoiId = lastSample.id;
-        }
-    } else {
-        // --- Original Logic ---
-        // If the user UNCHECKED the box, clear all locked sample data.
-        // This ensures the system is reset cleanly.
-        appState.lockedSampleData = null;
-        appState.lockedSampleRoiId = null;
-    }
-
-    // 3. Refresh the UI.
-    // This is important to potentially hide the newly locked sample if other samples exist.
-    drawROIs();
-});
+        
 
 
 
