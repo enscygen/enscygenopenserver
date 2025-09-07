@@ -3479,42 +3479,24 @@ consoleLogModal.querySelector('.close-button').addEventListener('click', () => {
  */
 // REPLACE THE OLD FUNCTION WITH THIS NEW, FINAL VERSION
 function init() {
-    console.log("ImageSpec Pro Initialized");
-    updateWavelengthList();
-    calculateAllAbsorbances();
-
-    // --- The New, Universal, and Correct Timer ---
-    // Clear any old timer just in case.
-    if (appState.liveAbsorbanceInterval) {
-        clearInterval(appState.liveAbsorbanceInterval);
-    }
-    // Create the one and only master timer for the display.
-    appState.liveAbsorbanceInterval = setInterval(() => {
-        // This timer will now run for BOTH live video and static images.
-
-        // It only takes action if the app is NOT busy with a measurement.
-        if (!appState.isMeasuring) {
-            
-            // It only advances the wavelength if there is more than one to cycle through.
-            if (appState.wavelengths.length > 1) {
-                appState.liveAbsorbanceIndex = (appState.liveAbsorbanceIndex + 1) % appState.wavelengths.length;
+          updateWavelengthList();
+          calculateAllAbsorbances();
+          if (appState.liveAbsorbanceInterval)
+            clearInterval(appState.liveAbsorbanceInterval);
+          appState.liveAbsorbanceInterval = setInterval(() => {
+            if (appState.wavelengths.length > 0) {
+              appState.liveAbsorbanceIndex =
+                (appState.liveAbsorbanceIndex + 1) %
+                appState.wavelengths.length;
             }
-
-            // Animate a fade-out/fade-in for a smooth visual transition.
             liveAbsorbanceValue.style.opacity = 0;
             setTimeout(() => {
-                // The timer itself is now responsible for telling the UI to update.
-                updateLiveAbsorbanceDisplay();
-                liveAbsorbanceValue.style.opacity = 1;
+              updateLiveAbsorbanceDisplay();
+              liveAbsorbanceValue.style.opacity = 1;
             }, 300);
+          }, 2500);
+          console.log("Spectrophotometer Initialized");
         }
-    }, 2500);
-
-    // This call is crucial to ensure the display shows the default sample's data
-    // immediately on startup, solving the "-" bug.
-    updateLiveAbsorbanceDisplay();
-}
-
 
 
 
