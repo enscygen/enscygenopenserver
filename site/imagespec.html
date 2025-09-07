@@ -1540,19 +1540,15 @@ function createRoiSnapshot(roi) {
           };
         }
         function calculateAllAbsorbances() {
-    // 1. Get the Blank's color. This part is already correct.
-    // It intelligently chooses between the locked snapshot or a live measurement.
-    const blankColor = appState.isBlankLocked
-        ? appState.lockedBlankData?.avgColor
-        : (appState.rois.find(r => r.id === appState.blankRoiId) ? getRoiAverageColor(appState.rois.find(r => r.id === appState.blankRoiId)) : null);
-
+    // Determine the correct blank color (from snapshot or live)
+    const blankSnapshot = appState.referenceSnapshots[appState.blankRoiId];
+    const blankColor = blankSnapshot ? blankSnapshot.avgColor : getRoiAverageColor(appState.rois.find(r => r.id === appState.blankRoiId));
     const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+
+    // Validate that a blank exists and has color data
     if (!blankRoi || !blankColor) {
-        // This validation correctly handles cases where the blank is not set.
         liveAbsorbanceInfo.textContent = "No Blank ROI set";
-        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
-            sampleRoi.absorbance = {};
-        });
+        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => { sampleRoi.absorbance = {}; });
         updateResultsTable();
         updateLiveAbsorbanceDisplay();
         return;
@@ -1560,33 +1556,22 @@ function createRoiSnapshot(roi) {
 
     liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
 
-    // 2. Loop through all ROIs to calculate their absorbance.
+    // Process all ROIs
     appState.rois.forEach(roi => {
-        if (roi.type === 'sample') {
-
-            // --- THIS IS THE CRITICAL FIX FOR THE "inf" BUG ---
-            let sampleColor;
-            // First, check if the current ROI is the one that has a locked snapshot.
-            if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id) {
-                // If it is, use the average color from the stored snapshot data.
-                sampleColor = appState.lockedSampleData.avgColor;
-            } else {
-                // Otherwise, perform a live measurement on the current canvas for any new/unlocked samples.
-                sampleColor = getRoiAverageColor(roi);
-            }
-            // --- END OF FIX ---
-
-            if (!sampleColor) {
-                roi.absorbance = {}; // Clear data if color can't be read.
-                return;
-            }
-
-            // 3. The rest of the calculation proceeds as normal, now using the correct sampleColor.
+        const snapshot = appState.referenceSnapshots[roi.id];
+        
+        // If the ROI is a reference, restore its stored absorbance data.
+        if (snapshot) {
+            roi.absorbance = { ...snapshot.absorbance };
+        // If it's a live ROI (Blank or Sample), perform a live calculation.
+        } else if (roi.type === 'sample' || roi.type === 'blank') {
+            const sampleColor = getRoiAverageColor(roi);
+            if (!sampleColor) { roi.absorbance = {}; return; }
+            
             appState.wavelengths.forEach(wl => {
                 const weights = getWavelengthChannelWeights(wl);
                 const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
                 const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
-
                 if (blankIntensity > 0 && sampleIntensity > 0) {
                     roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3);
                 } else {
@@ -1596,7 +1581,7 @@ function createRoiSnapshot(roi) {
         }
     });
 
-    // 4. Update the UI with the correct values.
+    // Refresh the UI with the final, correct data
     updateResultsTable();
     updateLiveAbsorbanceDisplay();
 }
@@ -1738,20 +1723,18 @@ function createRoiSnapshot(roi) {
           headers += `<th>Actions</th>`;
           resultsTableHead.innerHTML = headers;
         }
+
+        
         function updateResultsTable() {
     resultsTableBody.innerHTML = '';
-    
-    // Check if a batch time-series scan is running
-    const isBatchTimeScanRunning = appState.isMeasuring && measurementModeSelect.value === 'time';
-
     appState.rois.forEach(roi => {
         const tr = document.createElement('tr');
-        // ... (The thumbnail logic remains the same) ...
         let thumbCellHtml = '';
-        if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
-            thumbCellHtml = `<img src="${appState.lockedBlankData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Blank Snapshot">`;
-        } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
-            thumbCellHtml = `<img src="${appState.lockedSampleData.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Locked Sample Snapshot">`;
+        const snapshot = appState.referenceSnapshots[roi.id];
+
+        // Use the snapshot for the thumbnail if it exists, otherwise generate a live one.
+        if (snapshot) {
+            thumbCellHtml = `<img src="${snapshot.thumbnailDataUrl}" class="roi-thumbnail" style="border-radius: ${roi.shape === 'circle' ? '50%' : '4px'};" title="Reference Snapshot">`;
         } else {
             const avgColor = getRoiAverageColor(roi) || { r: 0, g: 0, b: 0 };
             const thumbCanvas = document.createElement('canvas');
@@ -1762,18 +1745,14 @@ function createRoiSnapshot(roi) {
             thumbCellHtml = `<img src="${thumbCanvas.toDataURL()}" class="roi-thumbnail" title="Live ROI">`;
         }
         
-        let absorbanceCells = '';
+        const absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
 
-        // --- NEW: Conditional Data Cell Rendering ---
-        if (isBatchTimeScanRunning && roi.type === 'sample') {
-            // If a scan is running, show a spinner for each wavelength column.
-            absorbanceCells = appState.wavelengths.map(() => `<td><i class="bi bi-arrow-repeat spinner-icon"></i></td>`).join('');
-        } else {
-            // Otherwise, show the actual absorbance values.
-            absorbanceCells = appState.wavelengths.map(wl => `<td>${roi.absorbance ? (roi.absorbance[wl] || '-') : '-'}</td>`).join('');
-        }
-        // --- END of New Logic ---
-
+        // Conditionally create the "Capture & Lock" button with the correct text.
+        const isReference = !!snapshot;
+        const captureBtnText = isReference ? 'Captured! Release?' : 'Capture & Lock';
+        const captureBtnTitle = isReference ? 'Release this reference and make it a live ROI again' : 'Save a snapshot of this data as a permanent reference';
+        const captureBtn = `<button class="button-secondary capture-lock-btn" data-id="${roi.id}" title="${captureBtnTitle}" style="padding: 2px 6px; font-size: 0.8em; white-space: nowrap;">${captureBtnText}</button>`;
+        
         const seriesChartBtn = roi.seriesData ? `<button class="icon-button chart-roi-btn" data-id="${roi.id}" title="View Wavelength Scan Chart"><i class="bi bi-bar-chart"></i></button>` : '';
         const timeChartBtn = roi.timeSeriesData ? `<button class="icon-button timeseries-chart-btn" data-id="${roi.id}" title="View Time Series Chart"><i class="bi bi-clock"></i></button>` : '';
 
@@ -1782,7 +1761,8 @@ function createRoiSnapshot(roi) {
             <td>${roi.name}</td>
             ${absorbanceCells}
             <td>
-                <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
+                ${captureBtn}
+                <button class="icon-button lock-roi-btn" data-id="${roi.id}" title="Toggle Position Lock">${roi.locked ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>'}</button>
                 <button class="icon-button edit-roi-btn" data-id="${roi.id}" title="Edit"><i class="bi bi-pencil"></i></button>
                 <button class="icon-button info-roi-btn" data-id="${roi.id}" title="Info"><i class="bi bi-info-circle"></i></button>
                 ${seriesChartBtn}
@@ -1803,38 +1783,19 @@ function createRoiSnapshot(roi) {
             setCanvasSize(img.width, img.height);
             mainCtx.drawImage(img, 0, 0);
             canvasPlaceholder.style.display = 'none';
+            appState.originalImageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
 
-          // Store a pristine copy of the raw pixel data for the new image.
-    appState.originalImageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
-
-            // --- CORRECTED and UPGRADED LOGIC ---
-            // This block now correctly handles all locking scenarios.
-
-            // Case 1: BOTH Blank and Sample are locked.
-            if (appState.isBlankLocked && appState.isSampleLocked && appState.lockedSampleData) {
-                // Keep ONLY the blank and the one locked sample. Clear all other ROIs.
-                appState.rois = appState.rois.filter(r => r.type === 'blank' || r.id === appState.lockedSampleData.id);
-
-            // Case 2: ONLY the Blank is locked.
-            } else if (appState.isBlankLocked) {
-                // Keep ONLY the blank. Clear all samples.
-                appState.rois = appState.rois.filter(r => r.type === 'blank');
-                // Also ensure any previous sample lock is cleared.
-                appState.lockedSampleData = null;
-                appState.lockedSampleRoiId = null;
-
-            // Case 3: NO locks are active (Default behavior).
-            } else {
-                // Reset everything completely for a new experiment.
-                appState.rois = [];
-                appState.blankRoiId = null;
-                appState.lockedBlankData = null;
-                appState.lockedSampleData = null;
-                appState.lockedSampleRoiId = null;
-            }
-            // --- END of Corrected Logic ---
-
-            // Recalculate and redraw the UI with the corrected state.
+            // --- NEW, SIMPLIFIED LOGIC ---
+            // Get the IDs of all ROIs that have been saved as references.
+            const referenceIds = Object.keys(appState.referenceSnapshots);
+            // Filter the main ROIs array, keeping ONLY those that are references.
+            appState.rois = appState.rois.filter(r => referenceIds.includes(r.id));
+            
+            // After filtering, update the official blankRoiId to be the ID of the
+            // blank ROI if it still exists in the filtered array.
+            appState.blankRoiId = appState.rois.find(r => r.type === 'blank')?.id || null;
+            
+            // Recalculate and redraw the UI with the preserved reference ROIs.
             calculateAllAbsorbances();
             drawROIs();
         };
@@ -1985,6 +1946,7 @@ sourceRadios.forEach((radio) => {
     const row = e.target.closest("tr");
     if (!row) return;
 
+    // This part handles row selection/highlighting
     const buttonInRow = row.querySelector("td:last-child button");
     if (buttonInRow) {
         const id = buttonInRow.dataset.id;
@@ -2002,40 +1964,39 @@ sourceRadios.forEach((radio) => {
         updateLiveAbsorbanceDisplay();
     }
 
+    // This part handles specific button clicks
     const button = e.target.closest("button");
     if (!button) return;
 
     const id = button.dataset.id;
     const roi = appState.rois.find((r) => r.id === id);
 
-    if (button.classList.contains("lock-roi-btn")) {
+    // --- NEW LOGIC for the Capture & Lock button ---
+    if (button.classList.contains("capture-lock-btn")) {
+        if (appState.referenceSnapshots[id]) {
+            openReleaseModal(id); // If it's already a reference, open the release modal.
+        } else {
+            openCaptureModal(id); // Otherwise, open the capture modal.
+        }
+    } else if (button.classList.contains("lock-roi-btn")) {
         if (roi) { roi.locked = !roi.locked; drawROIs(); updateResultsTable(); }
     } else if (button.classList.contains("edit-roi-btn")) {
         openEditModal(id);
     } else if (button.classList.contains("info-roi-btn")) {
         openInfoModal(id);
-    
-    // This block now ONLY handles the Wavelength Scan (bar-chart) button.
     } else if (button.classList.contains("chart-roi-btn")) {
-        if (roi && roi.seriesData) {
-            showChart(roi.seriesData, "Wavelength (nm)", "Absorbance", `${roi.name} - Wavelength Scan`, 'series');
-        }
-
-    // This is the NEW block that specifically handles the Time Series (clock) button.
+        if (roi && roi.seriesData) { showChart(roi.seriesData, "Wavelength (nm)", "Absorbance", `${roi.name} - Wavelength Scan`, 'series'); }
     } else if (button.classList.contains("timeseries-chart-btn")) {
-        if (roi && roi.timeSeriesData) {
-            showChart(roi.timeSeriesData, 'Time (s)', 'Absorbance', `${roi.name} - Time Series`, 'time');
-        }
-
+        if (roi && roi.timeSeriesData) { showChart(roi.timeSeriesData, 'Time (s)', 'Absorbance', `${roi.name} - Time Series`, 'time'); }
     } else if (button.classList.contains("delete-roi-btn")) {
         appState.rois = appState.rois.filter((roi) => roi.id !== id);
+        delete appState.referenceSnapshots[id]; // Also delete its snapshot
         if (appState.blankRoiId === id) appState.blankRoiId = null;
         if (appState.selectedRoiId === id) appState.selectedRoiId = null;
         drawROIs();
         calculateAllAbsorbances();
     }
 });
-
         
 downloadCsvBtn.addEventListener("click", (e) => {
     // This stops the click from bubbling up to the collapsible header.
