@@ -1309,6 +1309,14 @@ const captureStableBtn = document.getElementById('captureStableBtn');
 const releaseConfirmBtn = document.getElementById('releaseConfirmBtn');
 const releaseCancelBtn = document.getElementById('releaseCancelBtn');
 
+          
+
+// --- References for New Stability Settings ---
+const stabilityThresholdInput = document.getElementById('stabilityThreshold');
+const stabilityTimeInput = document.getElementById('stabilityTime');
+const stabilityAverageCheck = document.getElementById('stabilityAverageCheck');
+
+
 
 
         
@@ -3018,15 +3026,17 @@ revertFiltersBtn.addEventListener('click', () => {
 
 
 
+// REPLACE THE OLD BLOCK WITH THIS NEW ONE
+
 // --- Event Listeners for New Modals & Settings ---
 
-// Listen for changes on the stability setting inputs
-document.getElementById('stabilityThreshold').addEventListener('change', (e) => { appState.stabilitySettings.threshold = parseFloat(e.target.value); });
-document.getElementById('stabilityTime').addEventListener('change', (e) => { appState.stabilitySettings.time = parseInt(e.target.value); });
-document.getElementById('stabilityAverageCheck').addEventListener('change', (e) => { appState.stabilitySettings.useAverage = e.target.checked; });
+// Listeners for the Stability Settings inputs, now using cached constants.
+stabilityThresholdInput.addEventListener('change', (e) => { appState.stabilitySettings.threshold = parseFloat(e.target.value); });
+stabilityTimeInput.addEventListener('change', (e) => { appState.stabilitySettings.time = parseInt(e.target.value); });
+stabilityAverageCheck.addEventListener('change', (e) => { appState.stabilitySettings.useAverage = e.target.checked; });
 
 // Listeners for the Capture Modal
-document.getElementById('captureNowBtn').addEventListener('click', () => {
+captureNowBtn.addEventListener('click', () => {
     const roi = appState.rois.find(r => r.id === appState.activeModalRoiId);
     if (roi) {
         const snapshot = createRoiSnapshot(roi);
@@ -3039,7 +3049,7 @@ document.getElementById('captureNowBtn').addEventListener('click', () => {
     updateResultsTable();
 });
 
-document.getElementById('captureStableBtn').addEventListener('click', async (e) => {
+captureStableBtn.addEventListener('click', async (e) => {
     const roi = appState.rois.find(r => r.id === appState.activeModalRoiId);
     if (!roi) return;
     const btn = e.target;
@@ -3048,7 +3058,7 @@ document.getElementById('captureStableBtn').addEventListener('click', async (e) 
     btn.textContent = "Stabilizing... (0%)";
     try {
         const finalRoiState = await waitForStableReading(roi);
-        const snapshot = createRoiSnapshot(finalRoiState); // Create snapshot from the potentially averaged final state
+        const snapshot = createRoiSnapshot(finalRoiState);
         if (snapshot) {
             snapshot.absorbance = { ...finalRoiState.absorbance };
             appState.referenceSnapshots[roi.id] = snapshot;
@@ -3056,7 +3066,7 @@ document.getElementById('captureStableBtn').addEventListener('click', async (e) 
         closeAllModals();
         updateResultsTable();
     } catch (err) {
-        alert(err.message); // Show error message from the stability engine
+        alert(err.message);
     } finally {
         btn.disabled = false;
         document.getElementById('captureNowBtn').disabled = false;
@@ -3065,18 +3075,19 @@ document.getElementById('captureStableBtn').addEventListener('click', async (e) 
 });
 
 // Listeners for the Release Modal
-document.getElementById('releaseConfirmBtn').addEventListener('click', () => {
+releaseConfirmBtn.addEventListener('click', () => {
     if (appState.activeModalRoiId) {
         delete appState.referenceSnapshots[appState.activeModalRoiId];
         if (appState.blankRoiId === appState.activeModalRoiId) {
-            appState.blankRoiId = null; // If we released the blank, there's no official blank anymore
+            appState.blankRoiId = null;
         }
     }
     closeAllModals();
     updateResultsTable();
 });
 
-document.getElementById('releaseCancelBtn').addEventListener('click', closeAllModals);
+releaseCancelBtn.addEventListener('click', closeAllModals);
+
         
         function init() {
           updateWavelengthList();
