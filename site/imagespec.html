@@ -2325,18 +2325,19 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
     if (!roi) return;
 
     let infoData;
-    let isSnapshot = false; // Flag to know if we are dealing with a live or locked ROI
 
-    // Determine if we're using a live ROI or a stored snapshot
-    if (appState.isBlankLocked && roi.type === 'blank' && appState.lockedBlankData) {
-        infoData = appState.lockedBlankData;
-        isSnapshot = true;
-    } else if (appState.isSampleLocked && roi.id === appState.lockedSampleData?.id && appState.lockedSampleData) {
-        infoData = appState.lockedSampleData;
-        isSnapshot = true;
+    // --- THIS IS THE CRITICAL FIX ---
+    // First, check the new, correct reference system to see if a snapshot exists for this ROI.
+    const snapshot = appState.referenceSnapshots[roi.id];
+
+    if (snapshot) {
+        // If a snapshot exists, use that as the source of truth for all data.
+        infoData = snapshot;
     } else {
+        // If no snapshot exists, it's a live ROI, so create a snapshot on-the-fly from the current canvas.
         infoData = createRoiSnapshot(roi);
     }
+    // --- END OF FIX ---
     
     const content = document.getElementById('roiInfoContent');
     if (!infoData) {
@@ -2345,19 +2346,12 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
         return;
     }
 
-    // Conditionally build the data source toggle UI based on whether it's a snapshot
-    const dataSourceToggleHtml = isSnapshot
-        ? `<div class="histogram-data-source"><p style="color:var(--text-color-muted)">Showing histogram based on stored average value.</p></div>`
-        : `<div class="histogram-data-source">
-               <div class="radio-group">
-                   <input type="radio" id="histSourceActual" name="histSource" value="actual" checked>
-                   <label for="histSourceActual">Actual Pixels</label>
-                   <input type="radio" id="histSourceAveraged" name="histSource" value="averaged">
-                   <label for="histSourceAveraged">Averaged Value</label>
-               </div>
-           </div>`;
+    // This section now correctly uses `infoData` which is guaranteed to be from the right source (snapshot or live).
+    const previewImageHtml = `<div class="info-preview-container">
+        <img src="${infoData.thumbnailDataUrl}" class="info-preview-image" title="ROI Snapshot" style="border-radius: ${roi.shape === 'circle' ? '50%' : '6px'};">
+        <p><strong>Average Color:</strong> <span style="display:inline-block; width: 16px; height: 16px; background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)}); border: 1px solid #fff; vertical-align: middle;"></span></p>
+    </div>`;
 
-    // Build the complete modal HTML, including the new histogram section
     content.innerHTML = `
         <div class="info-modal-body">
             <div class="info-modal-preview">
@@ -2369,47 +2363,45 @@ masterChartModal.querySelector('.close-button').addEventListener('click', () => 
                 <div class="info-data-row"><span class="label">Avg RGB:</span><span class="value"><span class="info-color-swatch" style="background-color: rgb(${infoData.avgColor.r.toFixed(0)}, ${infoData.avgColor.g.toFixed(0)}, ${infoData.avgColor.b.toFixed(0)})"></span>R:${infoData.avgColor.r.toFixed(1)}, G:${infoData.avgColor.g.toFixed(1)}, B:${infoData.avgColor.b.toFixed(1)}</span></div>
             </div>
         </div>
-        <div class="info-histogram-container">
-            ${dataSourceToggleHtml}
-            <div class="histogram-controls">
-                <div class="radio-group">
-                    <input type="radio" id="histTypeRGB" name="histType" value="rgb" checked>
-                    <label for="histTypeRGB">RGB</label>
-                    <input type="radio" id="histTypeGrayscale" name="histType" value="grayscale">
-                    <label for="histTypeGrayscale">Grayscale</label>
-                    <input type="radio" id="histTypeSpectral" name="histType" value="spectral">
-                    <label for="histTypeSpectral">Spectral</label>
-                </div>
-            </div>
-            <div style="position: relative; height: 200px;">
-                <canvas id="roiHistogramCanvas"></canvas>
-            </div>
-        </div>
+        <!-- The rest of your histogram logic will go here -->
     `;
 
+    // (The histogram logic that follows this block will also now work correctly because it uses 'infoData')
+    // ... all the existing, correct histogram logic ...
+    
     // Calculate ALL potential data types upfront to make UI updates instantaneous.
     const averagedHistData = calculateAveragedHistogramData(infoData.avgColor);
     // Actual pixel data is only calculated if it's not a snapshot to save performance.
-    const actualHistData = isSnapshot ? null : calculateHistogramData(roi);
+    const actualHistData = snapshot ? null : calculateHistogramData(roi); // Use the snapshot flag here
 
-    // This is the single function that will be called whenever a control changes.
     const redrawHistogram = () => {
-        const sourceType = isSnapshot ? 'averaged' : document.querySelector('input[name="histSource"]:checked').value;
+        const sourceType = snapshot ? 'averaged' : document.querySelector('input[name="histSource"]:checked').value;
         const histType = document.querySelector('input[name="histType"]:checked').value;
         const dataToDraw = (sourceType === 'actual') ? actualHistData : averagedHistData;
         
         drawHistogram(dataToDraw, histType, sourceType, roi);
     };
 
-    // Attach a single event listener to the entire modal content area.
-    // This is more efficient than attaching multiple listeners to each button.
+    // (Code to add the histogram HTML and attach listeners remains the same as your current correct version)
+    // For completeness, here is the rest of the function:
+    const dataSourceToggleHtml = snapshot
+        ? `<div class="histogram-data-source"><p style="color:var(--text-color-muted)">Showing histogram based on stored average value.</p></div>`
+        : `<div class="histogram-data-source"><div class="radio-group"><input type="radio" id="histSourceActual" name="histSource" value="actual" checked><label for="histSourceActual">Actual Pixels</label><input type="radio" id="histSourceAveraged" name="histSource" value="averaged"><label for="histSourceAveraged">Averaged Value</label></div></div>`;
+
+    content.querySelector('.info-modal-body').insertAdjacentHTML('afterend', `
+        <div class="info-histogram-container">
+            ${dataSourceToggleHtml}
+            <div class="histogram-controls"><div class="radio-group"><input type="radio" id="histTypeRGB" name="histType" value="rgb" checked><label for="histTypeRGB">RGB</label><input type="radio" id="histTypeGrayscale" name="histType" value="grayscale"><label for="histTypeGrayscale">Grayscale</label><input type="radio" id="histTypeSpectral" name="histType" value="spectral"><label for="histTypeSpectral">Spectral</label></div></div>
+            <div style="position: relative; height: 200px;"><canvas id="roiHistogramCanvas"></canvas></div>
+        </div>
+    `);
+    
     content.addEventListener('change', (e) => {
         if (e.target.name === 'histSource' || e.target.name === 'histType') {
             redrawHistogram();
         }
     });
 
-    // Initial draw when the modal opens.
     redrawHistogram();
     
     roiInfoModal.style.display = 'flex';
