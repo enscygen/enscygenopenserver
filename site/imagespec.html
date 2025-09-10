@@ -1515,7 +1515,7 @@ const addStandardModal = document.getElementById('addStandardModal');
 const addStandardModalTitle = document.getElementById('addStandardModalTitle');
 const knownAbsorbanceInput = document.getElementById('knownAbsorbanceInput');
 const saveStandardBtn = document.getElementById('saveStandardBtn');
-
+const calibrationDetailsDisplay = document.getElementById('calibration-details-display');
 
 
             // --- References for New Stability Settings ---
@@ -1745,7 +1745,7 @@ function buildMultiPointModel() {
  * Updates the UI to display the details of the currently active calibration model.
  */
 function updateCalibrationDetailsDisplay() {
-    const container = document.getElementById('calibration-details-display');
+    const container = calibrationDetailsDisplay;
     let html = '';
 
     switch (appState.calibrationMode) {
