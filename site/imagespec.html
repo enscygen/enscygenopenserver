@@ -855,6 +855,41 @@
         div#masterChartTypeToggle {
             min-width: 170px;
         }
+        /* --- CSS for the new Calibration Mode Section --- */
+
+/* 1. Main container for the hidden control panels */
+/* This adds spacing and a separator line. */
+.calibration-controls {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 12px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 2. Styling for the Multi-Point standards table to match the main results table */
+#multiPointTableContainer .resultsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+#multiPointTableContainer .resultsTable th,
+#multiPointTableContainer .resultsTable td {
+    padding: 6px 8px; /* Slightly tighter padding */
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#multiPointTableContainer .resultsTable thead {
+    background: var(--bg-color); /* Darker background for distinction */
+}
+
+#multiPointTableContainer .resultsTable th {
+    font-weight: 500;
+    color: var(--text-color-muted);
+}
     </style>
 </head>
 
@@ -950,6 +985,59 @@
                     <ul id="wavelengthList"></ul>
                 </div>
             </section>
+            <!-- Insert this new section after the "Wavelengths" section in the controls-panel -->
+<section class="collapsible open">
+    <div class="collapsible-header">
+        <h3 class="panel-title"><i class="bi bi-rulers"></i> Calibration Mode</h3>
+        <i class="bi bi-chevron-up collapse-icon"></i>
+    </div>
+    <div class="collapsible-content">
+        <div class="form-group">
+            <div class="radio-group" id="calibrationModeToggle">
+                <input type="radio" id="modeRaw" name="calMode" value="raw" checked>
+                <label for="modeRaw" title="Fastest, least accurate. Uses raw RGB values.">Raw</label>
+                
+                <input type="radio" id="modeDarkWhite" name="calMode" value="darkwhite">
+                <label for="modeDarkWhite" title="Corrects for camera sensor's dynamic range.">Dark/White</label>
+                
+                <input type="radio" id="modeSinglePoint" name="calMode" value="singlepoint">
+                <label for="modeSinglePoint" title="Anchors data to one known real-world value.">Single-Point</label>
+                
+                <input type="radio" id="modeMultiPoint" name="calMode" value="multipoint">
+                <label for="modeMultiPoint" title="Builds a predictive model from multiple standards. Most accurate.">Multi-Point</label>
+            </div>
+        </div>
+
+        <!-- Hidden controls for Dark/White mode -->
+        <div id="dark-white-controls" class="calibration-controls" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+             <p style="font-size: 0.9em; color: var(--text-color-muted);">Select an ROI on a dark/white area, then click to capture.</p>
+            <div class="input-row">
+                <button id="captureDarkBtn" class="button-secondary">Capture Dark Ref</button>
+                <button id="captureWhiteBtn" class="button-secondary">Capture White Ref</button>
+            </div>
+        </div>
+
+        <!-- Hidden controls for Single-Point mode -->
+        <div id="single-point-controls" class="calibration-controls" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <p style="font-size: 0.9em; color: var(--text-color-muted);">Enter the known absorbance of your Blank ROI at one wavelength.</p>
+            <div class="input-row">
+                <input type="number" id="singlePointWl" placeholder="Wavelength (nm)" value="540">
+                <input type="number" id="singlePointAbs" placeholder="Known Absorbance" value="0.1">
+            </div>
+        </div>
+        
+        <!-- Hidden controls for Multi-Point mode -->
+        <div id="multi-point-controls" class="calibration-controls" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <p style="font-size: 0.9em; color: var(--text-color-muted);">Add 3+ standards by selecting an ROI and entering its known absorbance. Then build the model.</p>
+            <div id="multiPointTableContainer" style="max-height: 150px; overflow-y: auto;"></div>
+            <div class="input-row" style="margin-top: 10px;">
+                 <button id="addStandardBtn" class="button-secondary">Add Standard</button>
+                 <button id="buildModelBtn" disabled>Build Model</button>
+                 <button id="clearStandardsBtn" class="button-secondary"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
         </aside>
         <main class="canvas-container">
             <video id="videoFeed" autoplay playsinline muted></video>
@@ -1354,6 +1442,28 @@
             const releaseConfirmBtn = document.getElementById('releaseConfirmBtn');
             const releaseCancelBtn = document.getElementById('releaseCancelBtn');
 
+            // --- Add these with your other const declarations ---
+
+// --- References for New Calibration Controls ---
+const calibrationModeToggle = document.getElementById('calibrationModeToggle');
+const darkWhiteControls = document.getElementById('dark-white-controls');
+const singlePointControls = document.getElementById('single-point-controls');
+const multiPointControls = document.getElementById('multi-point-controls');
+
+// Dark/White Buttons
+const captureDarkBtn = document.getElementById('captureDarkBtn');
+const captureWhiteBtn = document.getElementById('captureWhiteBtn');
+
+// Single-Point Inputs
+const singlePointWlInput = document.getElementById('singlePointWl');
+const singlePointAbsInput = document.getElementById('singlePointAbs');
+
+// Multi-Point Controls
+const multiPointTableContainer = document.getElementById('multiPointTableContainer');
+const addStandardBtn = document.getElementById('addStandardBtn');
+const buildModelBtn = document.getElementById('buildModelBtn');
+const clearStandardsBtn = document.getElementById('clearStandardsBtn');
+
 
 
             // --- References for New Stability Settings ---
@@ -1413,7 +1523,17 @@
                     contrast: 100,
                     grayscale: false,
                 },
-                roiHistogramChart: null
+                roiHistogramChart: null,
+                  // --- NEW Calibration State ---
+    calibrationMode: 'raw', // Default to the current method.
+    darkRefColor: null,     // For Dark/White mode
+    whiteRefColor: null,    // For Dark/White mode
+    singlePointAnchor: {    // For Single-Point mode
+        wavelength: 540,
+        absorbance: 0.1
+    },
+    multiPointStandards: [],// For Multi-Point mode: Array of { r, g, b, knownAbsorbance }
+    multiPointModel: null    // For Multi-Point mode: Stores the calculated regression coefficients
             };
 
 
@@ -1456,6 +1576,178 @@
                     appState.selectedDeviceId = appState.videoDevices[0].deviceId;
                 }
             }
+
+
+
+            /**
+ * This is the new central "conductor" for calibration.
+ */
+function getCalibratedIntensity(rawColor, wavelength) {
+    switch (appState.calibrationMode) {
+        case 'darkwhite':
+            return linearizeIntensity(rawColor, wavelength);
+        case 'singlepoint':
+        case 'multipoint': // Multi-point is handled at the absorbance level
+        case 'raw':
+        default:
+            return rawIntensity(rawColor, wavelength);
+    }
+}
+
+/**
+ * [Mode: Raw] Calculates intensity.
+ */
+function rawIntensity(color, wavelength) {
+    if (!color) return 0;
+    const weights = getWavelengthChannelWeights(wavelength);
+    return weights.r * color.r + weights.g * color.g + weights.b * color.b;
+}
+
+/**
+ * [Mode: Dark/White] Calculates linearized intensity.
+ */
+function linearizeIntensity(color, wavelength) {
+    const { darkRefColor, whiteRefColor } = appState;
+    if (!darkRefColor || !whiteRefColor || !color) return rawIntensity(color, wavelength);
+    const r_lin = (whiteRefColor.r > darkRefColor.r) ? (color.r - darkRefColor.r) / (whiteRefColor.r - darkRefColor.r) : 0;
+    const g_lin = (whiteRefColor.g > darkRefColor.g) ? (color.g - darkRefColor.g) / (whiteRefColor.g - darkRefColor.g) : 0;
+    const b_lin = (whiteRefColor.b > darkRefColor.b) ? (color.b - darkRefColor.b) / (whiteRefColor.b - darkRefColor.b) : 0;
+    const weights = getWavelengthChannelWeights(wavelength);
+    return (weights.r * r_lin + weights.g * g_lin + weights.b * b_lin) * 255;
+}
+
+/**
+ * [Mode: Multi-Point] Renders the table of calibration standards.
+ */
+function renderMultiPointTable() {
+    const container = document.getElementById('multiPointTableContainer');
+    let tableHtml = '<table class="resultsTable" style="width: 100%;"><thead><tr><th>Std</th><th>R</th><th>G</th><th>B</th><th>Abs</th></tr></thead><tbody>';
+    appState.multiPointStandards.forEach((std, i) => {
+        tableHtml += `<tr><td>${i+1}</td><td>${std.r.toFixed(1)}</td><td>${std.g.toFixed(1)}</td><td>${std.b.toFixed(1)}</td><td>${std.knownAbsorbance}</td></tr>`;
+    });
+    tableHtml += '</tbody></table>';
+    container.innerHTML = tableHtml;
+    document.getElementById('buildModelBtn').disabled = appState.multiPointStandards.length < 3;
+}
+
+/**
+ * [Mode: Multi-Point] Builds the regression model from the standards.
+ * This is a complex mathematical function involving matrix algebra.
+ */
+function buildMultiPointModel() {
+    const standards = appState.multiPointStandards;
+    if (standards.length < 3) {
+        alert("At least 3 standards are required to build a reliable model.");
+        return;
+    }
+
+    // --- Mini Matrix Math Library ---
+    const dot = (a, b) => a.map((x, i) => b[i] * x).reduce((m, n) => m + n);
+    const transpose = m => m[0].map((x, i) => m.map(y => y[i]));
+    const multiply = (a, b) => a.map(x => transpose(b).map(y => dot(x, y)));
+    
+    // Using a library for matrix inversion is best, but for a 3x3 this is manageable.
+    function invert3x3(m) {
+        const [a, b, c] = m[0], [d, e, f] = m[1], [g, h, i] = m[2];
+        const det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+        if (det === 0) return null;
+        const invDet = 1 / det;
+        return [
+            [(e * i - f * h) * invDet, (c * h - b * i) * invDet, (b * f - c * e) * invDet],
+            [(f * g - d * i) * invDet, (a * i - c * g) * invDet, (c * d - a * f) * invDet],
+            [(d * h - e * g) * invDet, (b * g - a * h) * invDet, (a * e - b * d) * invDet]
+        ];
+    }
+    // --- End of Library ---
+
+    // Build the matrices for regression: Y = X * B
+    // We are solving for B (the coefficients)
+    const Y = standards.map(s => [s.knownAbsorbance]);
+    const X = standards.map(s => [1, s.r, s.g]); // Use R and G channels as predictors (B is often redundant)
+
+    try {
+        const Xt = transpose(X);
+        const XtX = multiply(Xt, X);
+        const XtX_inv = invert3x3(XtX);
+        if (!XtX_inv) throw new Error("Matrix is singular, cannot build model. Please use different standards.");
+        const XtY = multiply(Xt, Y);
+        const B = multiply(XtX_inv, XtY);
+
+        appState.multiPointModel = {
+            c0: B[0][0], // Intercept
+            c1: B[1][0], // R coefficient
+            c2: B[2][0]  // G coefficient
+        };
+
+        alert("Calibration model built successfully!");
+        calculateAllAbsorbances();
+    } catch (e) {
+        alert(`Error building model: ${e.message}`);
+        console.error(e);
+        appState.multiPointModel = null;
+    }
+}
+
+            // --- Event Listeners for Calibration Controls ---
+document.getElementById('calibrationModeToggle').addEventListener('change', (e) => {
+    appState.calibrationMode = e.target.value;
+    document.querySelectorAll('.calibration-controls').forEach(div => div.style.display = 'none');
+    if (appState.calibrationMode === 'darkwhite') {
+        document.getElementById('dark-white-controls').style.display = 'block';
+    } else if (appState.calibrationMode === 'singlepoint') {
+        document.getElementById('single-point-controls').style.display = 'block';
+    } else if (appState.calibrationMode === 'multipoint') {
+        document.getElementById('multi-point-controls').style.display = 'block';
+        renderMultiPointTable();
+    }
+    calculateAllAbsorbances();
+});
+
+document.getElementById('captureDarkBtn').addEventListener('click', () => {
+    const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
+    if (!selectedRoi) { alert("Please select an ROI to use as the dark reference."); return; }
+    appState.darkRefColor = getRoiAverageColor(selectedRoi);
+    if(appState.darkRefColor) { alert(`Dark reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); }
+});
+
+document.getElementById('captureWhiteBtn').addEventListener('click', () => {
+    const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
+    if (!selectedRoi) { alert("Please select an ROI to use as the white reference."); return; }
+    appState.whiteRefColor = getRoiAverageColor(selectedRoi);
+    if(appState.whiteRefColor) { alert(`White reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); }
+});
+
+document.getElementById('singlePointWl').addEventListener('change', (e) => {
+    const wl = parseInt(e.target.value);
+    if (!isNaN(wl)) { appState.singlePointAnchor.wavelength = wl; calculateAllAbsorbances(); }
+});
+document.getElementById('singlePointAbs').addEventListener('change', (e) => {
+    const abs = parseFloat(e.target.value);
+    if (!isNaN(abs)) { appState.singlePointAnchor.absorbance = abs; calculateAllAbsorbances(); }
+});
+
+document.getElementById('addStandardBtn').addEventListener('click', () => {
+    const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
+    if (!selectedRoi) { alert("Please select a sample ROI to add as a standard."); return; }
+    const knownAbsorbance = parseFloat(prompt(`Enter the known absorbance for "${selectedRoi.name}":`));
+    if (!isNaN(knownAbsorbance)) {
+        const color = getRoiAverageColor(selectedRoi);
+        if (color) {
+            appState.multiPointStandards.push({ ...color, knownAbsorbance });
+            renderMultiPointTable();
+        }
+    }
+});
+
+document.getElementById('buildModelBtn').addEventListener('click', buildMultiPointModel);
+document.getElementById('clearStandardsBtn').addEventListener('click', () => {
+    if (confirm("Are you sure you want to clear all calibration standards?")) {
+        appState.multiPointStandards = [];
+        appState.multiPointModel = null;
+        renderMultiPointTable();
+        calculateAllAbsorbances();
+    }
+});
 
             function requestTableRefresh() {
                 if (appState.sourceType === 'camera') {
@@ -1695,69 +1987,116 @@
 
             /**
  * REPLACEMENT for calculateAllAbsorbances
- * This version is more robust. It adds a "guard clause" at the beginning to prevent
- * it from running calculations before a Blank ROI has been created.
+ * This is the final, upgraded version that incorporates all selectable calibration modes.
+ * It is the central calculation engine for the entire application.
  */
-            function calculateAllAbsorbances() {
-                // 1. Find the Blank ROI object itself.
-                const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
+function calculateAllAbsorbances() {
+    // 1. Find the Blank ROI and its color. This is the primary reference for most modes.
+    const blankRoi = appState.rois.find(r => r.id === appState.blankRoiId);
 
-                // --- THIS IS THE CRITICAL FIX (Guard Clause) ---
-                // If no Blank ROI exists in the state at all, stop the function immediately.
-                // This prevents the error on initial page load.
-                if (!blankRoi) {
-                    liveAbsorbanceInfo.textContent = "No Blank ROI set";
-                    // Ensure any existing samples have their old data cleared.
-                    appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
-                        sampleRoi.absorbance = {};
-                    });
-                    // We still call updateResultsTable to ensure the UI is clean.
-                    updateResultsTable();
-                    return; // Stop the function here.
-                }
-                // --- END OF FIX ---
+    // Guard Clause: Stop immediately if no blank is set.
+    if (!blankRoi) {
+        liveAbsorbanceInfo.textContent = "No Blank ROI set";
+        appState.rois.filter(r => r.type === 'sample').forEach(sampleRoi => {
+            sampleRoi.absorbance = {};
+        });
+        // On startup error, we need to ensure the table is structurally clean.
+        appState.isTableStructureDirty = true;
+        updateResultsTable();
+        drawROIs();
+        return;
+    }
 
-                // 2. Now that we know a Blank ROI exists, we can safely get its color.
-                const blankSnapshot = appState.referenceSnapshots[appState.blankRoiId];
-                const blankColor = blankSnapshot ? blankSnapshot.avgColor : getRoiAverageColor(blankRoi);
+    const blankColor = getRoiAverageColor(blankRoi);
+    if (!blankColor) {
+        liveAbsorbanceInfo.textContent = "Cannot read Blank ROI color.";
+        return;
+    }
+    
+    liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
 
-                // 3. A second validation to handle cases where the color couldn't be read (e.g., ROI off-canvas).
-                if (!blankColor) {
-                    liveAbsorbanceInfo.textContent = "Cannot read Blank ROI color.";
-                    updateResultsTable();
-                    return;
-                }
-
-                liveAbsorbanceInfo.textContent = `Blank: ${blankRoi.name}`;
-
-                // 4. Process all ROIs (the rest of the function is the same).
-                appState.rois.forEach(roi => {
-                    const snapshot = appState.referenceSnapshots[roi.id];
-
-                    if (snapshot) {
-                        roi.absorbance = { ...snapshot.absorbance };
-                    } else if (roi.type === 'sample' || roi.type === 'blank') {
-                        const sampleColor = getRoiAverageColor(roi);
-                        if (!sampleColor) { roi.absorbance = {}; return; }
-
-                        appState.wavelengths.forEach(wl => {
-                            const weights = getWavelengthChannelWeights(wl);
-                            const blankIntensity = weights.r * blankColor.r + weights.g * blankColor.g + weights.b * blankColor.b;
-                            const sampleIntensity = weights.r * sampleColor.r + weights.g * sampleColor.g + weights.b * sampleColor.b;
-                            if (blankIntensity > 0 && sampleIntensity > 0) {
-                                roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity).toFixed(3);
-                            } else {
-                                roi.absorbance[wl] = 'inf';
-                            }
-                        });
-                    }
-                });
-
-
-                updateLiveAbsorbanceDisplay();
-                updateLiveTableValues()
-                drawROIs();
+    // 2. Process all ROIs.
+    appState.rois.forEach(roi => {
+        const snapshot = appState.referenceSnapshots[roi.id];
+        if (snapshot) {
+            // If an ROI is a captured reference, restore its stored data.
+            roi.absorbance = { ...snapshot.absorbance };
+        } else if (roi.type === 'sample' || roi.type === 'blank') {
+            const sampleColor = getRoiAverageColor(roi);
+            if (!sampleColor) {
+                roi.absorbance = {};
+                return;
             }
+            
+            // For each wavelength, calculate the absorbance using the selected calibration mode.
+            appState.wavelengths.forEach(wl => {
+                // --- MULTI-POINT MODEL APPLICATION ---
+                // If a multi-point model has been built, it overrides all other calculations.
+                if (appState.calibrationMode === 'multipoint' && appState.multiPointModel) {
+                    const { c0, c1, c2 } = appState.multiPointModel;
+                    // We use linearized color values for the model prediction for better accuracy.
+                    const r_lin = appState.darkRefColor ? (sampleColor.r - appState.darkRefColor.r) / (appState.whiteRefColor.r - appState.darkRefColor.r) : sampleColor.r / 255;
+                    const g_lin = appState.darkRefColor ? (sampleColor.g - appState.darkRefColor.g) / (appState.whiteRefColor.g - appState.darkRefColor.g) : sampleColor.g / 255;
+                    
+                    // Predict absorbance directly from the regression formula.
+                    roi.absorbance[wl] = c0 + (c1 * r_lin) + (c2 * g_lin);
+                } else {
+                    // --- STANDARD CALIBRATION WORKFLOW ---
+                    // Use the central "getCalibratedIntensity" function for Raw and Dark/White modes.
+                    const blankIntensity = getCalibratedIntensity(blankColor, wl);
+                    const sampleIntensity = getCalibratedIntensity(sampleColor, wl);
+                    
+                    if (blankIntensity > 0 && sampleIntensity > 0) {
+                        // Calculate raw absorbance first (without formatting).
+                        roi.absorbance[wl] = -Math.log10(sampleIntensity / blankIntensity);
+                    } else {
+                        roi.absorbance[wl] = Infinity;
+                    }
+                }
+            });
+        }
+    });
+
+    // 3. Apply Post-Calculation Adjustments for Specific Modes.
+    // This runs after the initial calculations are complete.
+    if (appState.calibrationMode === 'singlepoint' && blankRoi.absorbance) {
+        const { wavelength, absorbance: knownAbsorbance } = appState.singlePointAnchor;
+        const measuredBlankAbs = blankRoi.absorbance[wavelength];
+
+        if (measuredBlankAbs !== undefined && measuredBlankAbs !== 0 && isFinite(measuredBlankAbs)) {
+            // Calculate a single correction factor based on the known value.
+            const scaleFactor = knownAbsorbance / measuredBlankAbs;
+            // Apply this correction factor to ALL ROIs and ALL their wavelengths.
+            appState.rois.forEach(roi => {
+                if (roi.absorbance) {
+                    Object.keys(roi.absorbance).forEach(wl => {
+                        if (roi.absorbance[wl] !== undefined && isFinite(roi.absorbance[wl])) {
+                            roi.absorbance[wl] *= scaleFactor;
+                        }
+                    });
+                }
+            });
+        }
+    }
+    
+    // 4. Final Formatting.
+    // Loop through all ROIs one last time to apply the .toFixed(3) formatting for display.
+    appState.rois.forEach(roi => {
+        if (roi.absorbance) {
+            Object.keys(roi.absorbance).forEach(wl => {
+                if (roi.absorbance[wl] === Infinity) {
+                    roi.absorbance[wl] = 'inf';
+                } else if (typeof roi.absorbance[wl] === 'number') {
+                    roi.absorbance[wl] = roi.absorbance[wl].toFixed(3);
+                }
+            });
+        }
+    });
+
+    updateLiveAbsorbanceDisplay();
+                updateLiveTableValues();
+    drawROIs();
+} 
 
 
 
