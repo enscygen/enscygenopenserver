@@ -1354,7 +1354,28 @@
         </div>
     </div>
 
+<!-- Add Standard Modal for Multi-Point Calibration -->
+<div id="addStandardModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="addStandardModalTitle">Add Calibration Standard</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        
+        <p style="color: var(--text-color-muted); margin-bottom: 15px;">
+            Enter the known, true absorbance value for the selected ROI.
+        </p>
 
+        <div class="form-group">
+            <label for="knownAbsorbanceInput">Known Absorbance (Abs)</label>
+            <input type="number" id="knownAbsorbanceInput" placeholder="e.g., 0.52" step="0.01">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button id="saveStandardBtn">Save Standard</button>
+        </div>
+    </div>
+</div>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const imageLoader = document.getElementById("imageLoader");
@@ -1463,6 +1484,14 @@ const multiPointTableContainer = document.getElementById('multiPointTableContain
 const addStandardBtn = document.getElementById('addStandardBtn');
 const buildModelBtn = document.getElementById('buildModelBtn');
 const clearStandardsBtn = document.getElementById('clearStandardsBtn');
+
+            // Add these with your other const declarations
+
+// --- References for New "Add Standard" Modal ---
+const addStandardModal = document.getElementById('addStandardModal');
+const addStandardModalTitle = document.getElementById('addStandardModalTitle');
+const knownAbsorbanceInput = document.getElementById('knownAbsorbanceInput');
+const saveStandardBtn = document.getElementById('saveStandardBtn');
 
 
 
@@ -1726,17 +1755,15 @@ document.getElementById('singlePointAbs').addEventListener('change', (e) => {
     if (!isNaN(abs)) { appState.singlePointAnchor.absorbance = abs; calculateAllAbsorbances(); }
 });
 
+// REPLACE THE OLD LISTENER WITH THIS NEW ONE
 document.getElementById('addStandardBtn').addEventListener('click', () => {
     const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
-    if (!selectedRoi) { alert("Please select a sample ROI to add as a standard."); return; }
-    const knownAbsorbance = parseFloat(prompt(`Enter the known absorbance for "${selectedRoi.name}":`));
-    if (!isNaN(knownAbsorbance)) {
-        const color = getRoiAverageColor(selectedRoi);
-        if (color) {
-            appState.multiPointStandards.push({ ...color, knownAbsorbance });
-            renderMultiPointTable();
-        }
+    if (!selectedRoi) {
+        alert("Please select a sample ROI from the table to use as a standard.");
+        return;
     }
+    // Now, instead of a prompt, we open our new, styled modal.
+    openAddStandardModal(selectedRoi);
 });
 
 document.getElementById('buildModelBtn').addEventListener('click', buildMultiPointModel);
@@ -1747,6 +1774,57 @@ document.getElementById('clearStandardsBtn').addEventListener('click', () => {
         renderMultiPointTable();
         calculateAllAbsorbances();
     }
+});
+
+            /**
+ * Opens the modal for adding a new multi-point calibration standard.
+ * @param {object} roi The selected ROI to be used as a standard.
+ */
+function openAddStandardModal(roi) {
+    if (!roi) return;
+    
+    // Store the ID of the ROI we are working with.
+    appState.activeModalRoiId = roi.id;
+
+    // Customize the modal title for clarity.
+    addStandardModalTitle.textContent = `Standard for "${roi.name}"`;
+    
+    // Clear any previous value from the input field.
+    knownAbsorbanceInput.value = '';
+
+    // Display the modal.
+    addStandardModal.style.display = 'flex';
+    
+    // Focus the input field so the user can start typing immediately.
+    knownAbsorbanceInput.focus();
+}
+
+            // Add this with your other main event listeners.
+saveStandardBtn.addEventListener('click', () => {
+    const knownAbsorbance = parseFloat(knownAbsorbanceInput.value);
+
+    // Validate the user's input.
+    if (isNaN(knownAbsorbance)) {
+        alert("Please enter a valid number for the absorbance.");
+        return;
+    }
+
+    // Get the ROI we are working with using the ID we saved earlier.
+    const roi = appState.rois.find(r => r.id === appState.activeModalRoiId);
+    if (roi) {
+        const color = getRoiAverageColor(roi);
+        if (color) {
+            // Add the complete standard (color data + known value) to our array.
+            appState.multiPointStandards.push({ ...color, knownAbsorbance });
+            
+            // Update the list of standards visible in the UI.
+            renderMultiPointTable();
+        }
+    }
+
+    // Close the modal and reset the active ROI ID.
+    closeAllModals();
+    appState.activeModalRoiId = null;
 });
 
             function requestTableRefresh() {
