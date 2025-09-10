@@ -1786,20 +1786,21 @@ document.getElementById('calibrationModeToggle').addEventListener('change', (e) 
         renderMultiPointTable();
     }
     calculateAllAbsorbances();
+    updateCalibrationDetailsDisplay();
 });
 
 document.getElementById('captureDarkBtn').addEventListener('click', () => {
     const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
     if (!selectedRoi) { alert("Please select an ROI to use as the dark reference."); return; }
     appState.darkRefColor = getRoiAverageColor(selectedRoi);
-    if(appState.darkRefColor) { alert(`Dark reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); }
+    if(appState.darkRefColor) { alert(`Dark reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); updateCalibrationDetailsDisplay();}
 });
 
 document.getElementById('captureWhiteBtn').addEventListener('click', () => {
     const selectedRoi = appState.rois.find(r => r.id === appState.selectedRoiId);
     if (!selectedRoi) { alert("Please select an ROI to use as the white reference."); return; }
     appState.whiteRefColor = getRoiAverageColor(selectedRoi);
-    if(appState.whiteRefColor) { alert(`White reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); }
+    if(appState.whiteRefColor) { alert(`White reference set from "${selectedRoi.name}".`); calculateAllAbsorbances(); updateCalibrationDetailsDisplay();}
 });
 
 document.getElementById('singlePointWl').addEventListener('change', (e) => {
@@ -1822,13 +1823,18 @@ document.getElementById('addStandardBtn').addEventListener('click', () => {
     openAddStandardModal(selectedRoi);
 });
 
-document.getElementById('buildModelBtn').addEventListener('click', buildMultiPointModel);
+document.getElementById('buildModelBtn').addEventListener('click', () => {
+    buildMultiPointModel();
+    updateCalibrationDetailsDisplay(); // <-- ADD THIS LINE
+});
+
 document.getElementById('clearStandardsBtn').addEventListener('click', () => {
     if (confirm("Are you sure you want to clear all calibration standards?")) {
         appState.multiPointStandards = [];
         appState.multiPointModel = null;
         renderMultiPointTable();
         calculateAllAbsorbances();
+        updateCalibrationDetailsDisplay();
     }
 });
 
@@ -2200,6 +2206,7 @@ function calculateAllAbsorbances() {
         if (measuredBlankAbs !== undefined && measuredBlankAbs !== 0 && isFinite(measuredBlankAbs)) {
             // Calculate a single correction factor based on the known value.
             const scaleFactor = knownAbsorbance / measuredBlankAbs;
+            appState.singlePointAnchor.scaleFactor = scaleFactor;
             // Apply this correction factor to ALL ROIs and ALL their wavelengths.
             appState.rois.forEach(roi => {
                 if (roi.absorbance) {
@@ -2228,6 +2235,7 @@ function calculateAllAbsorbances() {
     });
 
     updateLiveAbsorbanceDisplay();
+    updateCalibrationDetailsDisplay();
                 updateLiveTableValues();
     drawROIs();
 } 
@@ -3884,6 +3892,7 @@ function calculateAllAbsorbances() {
                 updateWavelengthList();
                 calculateAllAbsorbances(); // This will call updateLiveAbsorbanceDisplay, which now starts the timer.
                 console.log("ImageSpec Pro Initialized");
+                updateCalibrationDetailsDisplay();
             }
 
             init();
