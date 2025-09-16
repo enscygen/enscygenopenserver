@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
-            --bg-color: #2b2b2b;
-            --panel-bg: #3c3f41;
-            --text-color: #bbbbbb;
-            --border-color: #555555;
+            --bg-color: #1a1a1a;
+            --panel-bg: #222222;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
             --highlight-color: #6a95f0;
             --font-size-sm: 10px;
             --font-size-md: 12px;
@@ -97,8 +97,8 @@
 
         input[type="text"], input[type="number"], input[type="file"], select {
             width: 100%;
-            background-color: #535456;
-            border: 1px solid #666;
+            background-color: #333333;
+            border: 1px solid #444444;
             color: var(--text-color);
             padding: 4px 6px;
             border-radius: 4px;
@@ -106,9 +106,9 @@
         }
 
         input[type="file"]::file-selector-button {
-            background-color: #535456;
+            background-color: #333333;
             color: var(--text-color);
-            border: 1px solid #666;
+            border: 1px solid #444444;
             border-radius: 4px;
             padding: 2px 6px;
             font-size: var(--font-size-sm);
@@ -117,8 +117,8 @@
 
         button {
             padding: 5px 10px;
-            background-color: #535456;
-            border: 1px solid #666;
+            background-color: #333333;
+            border: 1px solid #444444;
             color: var(--text-color);
             border-radius: 4px;
             cursor: pointer;
@@ -131,7 +131,7 @@
         }
         
         button:hover {
-            background-color: #6a95f0;
+            background-color: var(--highlight-color);
             color: #ffffff;
         }
 
@@ -154,7 +154,7 @@
             align-items: center;
             gap: 5px;
             padding: 5px;
-            background-color: #4a4a4a;
+            background-color: #333333;
             border-radius: 4px;
             border: 1px solid transparent;
             font-size: var(--font-size-sm);
@@ -165,7 +165,7 @@
         }
         
         .lane-item:hover, .band-item:hover {
-            background-color: #555555;
+            background-color: #444444;
         }
 
         .lane-item > span, .band-item > span {
@@ -195,7 +195,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #3c3f41;
+            background-color: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -245,15 +245,15 @@
         }
 
         .results-table th {
-            background-color: #4a4a4a;
+            background-color: #333333;
             font-weight: normal;
         }
 
         .results-table tr:nth-child(even) {
-            background-color: #3c3f41;
+            background-color: var(--panel-bg);
         }
         .results-table tr:nth-child(odd) {
-            background-color: #444749;
+            background-color: #2b2b2b;
         }
         
         .toggle-lines-group {
@@ -267,6 +267,44 @@
             align-items: center;
             gap: 5px;
             font-size: var(--font-size-sm);
+        }
+        
+        input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+            background-color: var(--panel-bg);
+            cursor: pointer;
+            position: relative;
+            top: 1px;
+            margin: 0;
+            flex-shrink: 0;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: var(--highlight-color);
+            border-color: var(--highlight-color);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 6px;
+            height: 6px;
+            background-color: #ffffff;
+            border-radius: 1px;
+        }
+        
+        .line-toggle-item label {
+            font-size: var(--font-size-sm);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -342,6 +380,7 @@
                 <div class="section-title"><i class="bi bi-graph-up-arrow"></i> Analysis</div>
                 <div class="btn-group">
                     <button id="analyze-btn"><i class="bi bi-calculator"></i> Analyze</button>
+                    <button id="auto-detect-btn"><i class="bi bi-magic"></i> Auto Detect</button>
                 </div>
                 <div class="section-title"><i class="bi bi-eye"></i> Visualization</div>
                 <div class="toggle-lines-group">
@@ -969,6 +1008,10 @@
                 analyzeGel();
             });
             
+            document.getElementById('auto-detect-btn').addEventListener('click', () => {
+                autoDetect();
+            });
+
             document.getElementById('export-gel-btn').addEventListener('click', () => {
                 const link = document.createElement('a');
                 link.download = 'gel_analyzer.png';
@@ -1077,6 +1120,108 @@
                     resultsTableBody.appendChild(tr);
                 });
                 resultsModal.style.display = 'flex';
+            }
+
+            function autoDetect() {
+                if (!state.image) {
+                    alert('Please upload an image first.');
+                    return;
+                }
+
+                const img = state.image;
+                const offscreenCanvas = document.createElement('canvas');
+                offscreenCanvas.width = img.width;
+                offscreenCanvas.height = img.height;
+                const offscreenCtx = offscreenCanvas.getContext('2d');
+                offscreenCtx.drawImage(img, 0, 0);
+
+                const imageData = offscreenCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                const data = imageData.data;
+
+                // Convert to grayscale and find horizontal intensity profile
+                const horizontalProfile = new Array(offscreenCanvas.height).fill(0);
+                const verticalProfile = new Array(offscreenCanvas.width).fill(0);
+
+                for (let y = 0; y < offscreenCanvas.height; y++) {
+                    for (let x = 0; x < offscreenCanvas.width; x++) {
+                        const i = (y * offscreenCanvas.width + x) * 4;
+                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                        horizontalProfile[y] += avg;
+                        verticalProfile[x] += avg;
+                    }
+                }
+                
+                // --- Lane Detection (Vertical Profile) ---
+                state.lanes = [];
+                let isInsideLane = false;
+                let laneStart = 0;
+                const verticalThreshold = offscreenCanvas.height * 10;
+                const minLaneWidth = 30;
+
+                for (let x = 0; x < offscreenCanvas.width; x++) {
+                    if (verticalProfile[x] < verticalThreshold && !isInsideLane) {
+                        isInsideLane = true;
+                        laneStart = x;
+                    } else if (verticalProfile[x] >= verticalThreshold && isInsideLane) {
+                        isInsideLane = false;
+                        const laneWidth = x - laneStart;
+                        if (laneWidth > minLaneWidth) {
+                            state.lanes.push({
+                                id: uuid(),
+                                name: `Lane ${state.lanes.length + 1}`,
+                                color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                                type: 'sample',
+                                isLocked: false,
+                                x: laneStart,
+                                y: 20,
+                                width: laneWidth,
+                                bands: []
+                            });
+                        }
+                    }
+                }
+
+                // --- Band Detection (Horizontal Profile) ---
+                const horizontalThreshold = offscreenCanvas.width * 20;
+                const minBandHeight = 10;
+                let isInsideBand = false;
+                let bandStart = 0;
+                const detectedBands = [];
+
+                for (let y = 0; y < offscreenCanvas.height; y++) {
+                    if (horizontalProfile[y] < horizontalThreshold && !isInsideBand) {
+                        isInsideBand = true;
+                        bandStart = y;
+                    } else if (horizontalProfile[y] >= horizontalThreshold && isInsideBand) {
+                        isInsideBand = false;
+                        const bandHeight = y - bandStart;
+                        if (bandHeight > minBandHeight) {
+                            detectedBands.push({ y: bandStart + bandHeight / 2 });
+                        }
+                    }
+                }
+
+                // Assign bands to lanes
+                state.lanes.forEach(lane => {
+                    detectedBands.forEach(band => {
+                        const newBand = {
+                            id: uuid(),
+                            name: `Band`,
+                            color: lane.color,
+                            xOffset: lane.width / 4,
+                            width: lane.width / 2,
+                            y: band.y,
+                            showLine: false,
+                            size: null
+                        };
+                        lane.bands.push(newBand);
+                    });
+                });
+
+                state.selectedLaneIndex = -1;
+                state.selectedBandIndex = -1;
+                updateUI();
+                draw();
             }
             
             // Initial canvas setup
