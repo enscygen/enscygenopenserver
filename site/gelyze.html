@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gel Analyzer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-color: #2b2b2b;
+            --panel-bg: #3c3f41;
+            --text-color: #bbbbbb;
+            --border-color: #555555;
+            --highlight-color: #6a95f0;
+            --font-size-sm: 10px;
+            --font-size-md: 12px;
+            --font-size-lg: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            font-size: var(--font-size-md);
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .left-panel {
+            width: 280px;
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .canvas-container {
+            flex-grow: 1;
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            cursor: crosshair;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: var(--font-size-md);
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .input-group, .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="text"], input[type="number"], input[type="file"], select {
+            width: 100%;
+            background-color: #535456;
+            border: 1px solid #666;
+            color: var(--text-color);
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: var(--font-size-sm);
+        }
+
+        input[type="file"]::file-selector-button {
+            background-color: #535456;
+            color: var(--text-color);
+            border: 1px solid #666;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #535456;
+            border: 1px solid #666;
+            color: var(--text-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #6a95f0;
+            color: #ffffff;
+        }
+
+        .btn-sm {
+            padding: 3px 6px;
+            font-size: var(--font-size-sm);
+        }
+
+        .lane-list, .band-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .lane-item, .band-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+            background-color: #4a4a4a;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            font-size: var(--font-size-sm);
+        }
+
+        .lane-item.selected, .band-item.selected {
+            border-color: var(--highlight-color);
+        }
+        
+        .lane-item:hover, .band-item:hover {
+            background-color: #555555;
+        }
+
+        .lane-item > span, .band-item > span {
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .color-preview {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lock-btn {
+            color: var(--text-color);
+        }
+        
+        .lock-btn.locked {
+            color: #ff6347;
+        }
+        
+        .result-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #3c3f41;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: var(--font-size-lg);
+            font-weight: bold;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+        }
+
+        .results-table-container {
+            overflow-y: auto;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-sm);
+        }
+
+        .results-table th, .results-table td {
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            text-align: left;
+        }
+
+        .results-table th {
+            background-color: #4a4a4a;
+            font-weight: normal;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #3c3f41;
+        }
+        .results-table tr:nth-child(odd) {
+            background-color: #444749;
+        }
+        
+        .toggle-lines-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .line-toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: var(--font-size-sm);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Control Panel -->
+        <div class="left-panel">
+            
+            <div class="section">
+                <div class="section-title"><i class="bi bi-image"></i> Gel Image</div>
+                <div class="input-group">
+                    <input type="file" id="image-upload" accept="image/*">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="bi bi-grid-3x3"></i> Lanes</div>
+                <div class="btn-group">
+                    <button id="add-lane-btn"><i class="bi bi-plus-lg"></i> Add Lane</button>
+                    <button id="remove-lane-btn" disabled><i class="bi bi-trash"></i> Remove</button>
+                </div>
+                <ul id="lane-list" class="lane-list"></ul>
+            </div>
+            
+            <div class="section" id="lane-controls" style="display: none;">
+                <div class="section-title"><i class="bi bi-sliders"></i> Lane Controls</div>
+                <div class="input-group">
+                    <label style="width: 50px; font-size: var(--font-size-sm);">Name:</label>
+                    <input type="text" id="lane-name-input">
+                </div>
+                <div class="input-group">
+                    <label style="width: 50px; font-size: var(--font-size-sm);">Color:</label>
+                    <input type="color" id="lane-color-input" value="#ffffff">
+                </div>
+                <div class="input-group">
+                    <label style="width: 50px; font-size: var(--font-size-sm);">Type:</label>
+                    <select id="lane-type-select">
+                        <option value="sample">Sample</option>
+                        <option value="ladder">Ladder</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label style="width: 50px; font-size: var(--font-size-sm);">Width:</label>
+                    <input type="number" id="lane-width-input" min="30" max="150">
+                </div>
+            </div>
+
+            <div class="section" id="band-controls" style="display: none;">
+                <div class="section-title"><i class="bi bi-dot"></i> Bands</div>
+                <div class="btn-group">
+                    <button id="add-band-btn"><i class="bi bi-plus-lg"></i> Add Band</button>
+                    <button id="remove-band-btn" disabled><i class="bi bi-trash"></i> Remove</button>
+                </div>
+                <div id="band-details" style="display: none;">
+                    <div class="input-group">
+                        <label style="width: 50px; font-size: var(--font-size-sm);">Name:</label>
+                        <input type="text" id="band-name-input">
+                    </div>
+                    <div class="input-group">
+                        <label style="width: 50px; font-size: var(--font-size-sm);">Color:</label>
+                        <input type="color" id="band-color-input" value="#ffffff">
+                    </div>
+                    <div id="ladder-band-size-group" class="input-group" style="display: none;">
+                        <label style="width: 50px; font-size: var(--font-size-sm);">Size:</label>
+                        <input type="number" id="ladder-band-size-input" placeholder="e.g., 1000">
+                    </div>
+                </div>
+                <ul id="band-list" class="band-list"></ul>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="bi bi-graph-up-arrow"></i> Analysis</div>
+                <div class="btn-group">
+                    <button id="analyze-btn"><i class="bi bi-calculator"></i> Analyze</button>
+                </div>
+                <div class="section-title"><i class="bi bi-eye"></i> Visualization</div>
+                <div class="toggle-lines-group">
+                    <div class="line-toggle-item">
+                        <input type="checkbox" id="show-all-lines">
+                        <label for="show-all-lines">Show All Lines</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="bi bi-download"></i> Export</div>
+                <div class="btn-group">
+                    <button id="export-gel-btn"><i class="bi bi-image"></i> Gel as PNG</button>
+                    <button id="export-csv-btn"><i class="bi bi-filetype-csv"></i> Results as CSV</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-container">
+            <canvas id="gel-canvas"></canvas>
+            <div id="status-message" style="position: absolute; text-align: center; color: var(--text-color);">
+                Upload an image to get started.
+            </div>
+        </div>
+
+        <!-- Results Modal -->
+        <div class="result-modal" id="results-modal">
+            <div class="modal-header">
+                <span class="modal-title">Analysis Results</span>
+                <button class="modal-close-btn" id="close-modal-btn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="results-table-container">
+                <table class="results-table" id="results-table">
+                    <thead>
+                        <tr>
+                            <th>Lane Name</th>
+                            <th>Band Name</th>
+                            <th>Relative Position</th>
+                            <th>Predicted Size</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="btn-group">
+                <button id="download-csv-btn"><i class="bi bi-filetype-csv"></i> Download CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Globals & State ---
+            const canvas = document.getElementById('gel-canvas');
+            const ctx = canvas.getContext('2d');
+            const imageUpload = document.getElementById('image-upload');
+            const statusMessage = document.getElementById('status-message');
+            const laneList = document.getElementById('lane-list');
+            const bandList = document.getElementById('band-list');
+            const resultsModal = document.getElementById('results-modal');
+            const resultsTableBody = resultsModal.querySelector('tbody');
+
+            let state = {
+                image: null,
+                lanes: [],
+                selectedLaneIndex: -1,
+                selectedBandIndex: -1,
+                isDragging: false,
+                dragType: null, // 'lane-move', 'lane-resize', 'band-move'
+                initialMouseX: 0,
+                initialMouseY: 0,
+                initialObjectX: 0,
+                initialObjectY: 0,
+                initialObjectWidth: 0,
+                showAllLines: false,
+                analysisResults: []
+            };
+
+            const DEFAULT_LANE_WIDTH = 50;
+            const LANE_HEIGHT = 20;
+            const BAND_HEIGHT = 4;
+            const HIGHLIGHT_COLOR = '#6a95f0';
+            const FONT_SIZE = 10;
+            const MIN_BAND_Y = 20; // Margin from top of lane box
+
+            // --- Helper Functions ---
+            function uuid() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            
+            function saveState() {
+                localStorage.setItem('gelAnalyzerState', JSON.stringify(state));
+            }
+
+            function loadState() {
+                const savedState = localStorage.getItem('gelAnalyzerState');
+                if (savedState) {
+                    const parsedState = JSON.parse(savedState);
+                    state.lanes = parsedState.lanes;
+                    state.showAllLines = parsedState.showAllLines;
+                    state.analysisResults = parsedState.analysisResults;
+                    
+                    if (parsedState.image) {
+                        const img = new Image();
+                        img.onload = () => {
+                            state.image = img;
+                            draw();
+                        };
+                        img.src = parsedState.image.src;
+                    }
+                    updateUI();
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (state.image) {
+                    // Draw image scaled to fit
+                    const imgRatio = state.image.width / state.image.height;
+                    const canvasRatio = canvas.width / canvas.height;
+                    let drawWidth, drawHeight, offsetX, offsetY;
+                    
+                    if (imgRatio > canvasRatio) { // Image is wider
+                        drawWidth = canvas.width;
+                        drawHeight = canvas.width / imgRatio;
+                        offsetX = 0;
+                        offsetY = (canvas.height - drawHeight) / 2;
+                    } else { // Image is taller
+                        drawWidth = canvas.height * imgRatio;
+                        drawHeight = canvas.height;
+                        offsetX = (canvas.width - drawWidth) / 2;
+                        offsetY = 0;
+                    }
+                    
+                    ctx.drawImage(state.image, offsetX, offsetY, drawWidth, drawHeight);
+                    
+                    state.lanes.forEach((lane, laneIndex) => {
+                        // Draw lane box
+                        const laneColor = lane.color;
+                        ctx.strokeStyle = laneColor;
+                        ctx.lineWidth = laneIndex === state.selectedLaneIndex ? 2 : 1;
+                        ctx.strokeRect(lane.x, lane.y, lane.width, LANE_HEIGHT);
+                        
+                        // Draw lane name
+                        ctx.fillStyle = laneColor;
+                        ctx.font = `${FONT_SIZE}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText(lane.name, lane.x + lane.width / 2, lane.y - 5);
+
+                        // Draw bands
+                        lane.bands.forEach((band, bandIndex) => {
+                            const bandX = lane.x + band.xOffset;
+                            const bandY = band.y;
+                            const bandColor = band.color;
+                            ctx.fillStyle = bandColor;
+                            ctx.fillRect(bandX, bandY, band.width, BAND_HEIGHT);
+
+                            // Draw band name
+                            ctx.fillStyle = bandColor;
+                            ctx.textAlign = 'right';
+                            ctx.fillText(band.name, lane.x - 5, bandY + BAND_HEIGHT / 2 + 3);
+
+                            // Highlight selected band
+                            if (laneIndex === state.selectedLaneIndex && bandIndex === state.selectedBandIndex) {
+                                ctx.strokeStyle = HIGHLIGHT_COLOR;
+                                ctx.lineWidth = 2;
+                                ctx.strokeRect(bandX, bandY, band.width, BAND_HEIGHT);
+                            }
+
+                            // Draw horizontal lines
+                            if (state.showAllLines || band.showLine) {
+                                ctx.beginPath();
+                                ctx.strokeStyle = bandColor;
+                                ctx.lineWidth = 1;
+                                ctx.moveTo(0, bandY + BAND_HEIGHT / 2);
+                                ctx.lineTo(canvas.width, bandY + BAND_HEIGHT / 2);
+                                ctx.stroke();
+                            }
+                        });
+                        
+                        // Highlight selected lane
+                        if (laneIndex === state.selectedLaneIndex) {
+                            ctx.strokeStyle = HIGHLIGHT_COLOR;
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(lane.x, lane.y, lane.width, canvas.height - lane.y);
+                        }
+                    });
+                }
+            }
+            
+            function updateUI() {
+                // Update lane list
+                laneList.innerHTML = '';
+                state.lanes.forEach((lane, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add('lane-item');
+                    if (index === state.selectedLaneIndex) {
+                        li.classList.add('selected');
+                    }
+                    li.setAttribute('data-index', index);
+                    
+                    const colorPreview = document.createElement('div');
+                    colorPreview.className = 'color-preview';
+                    colorPreview.style.backgroundColor = lane.color;
+                    
+                    const span = document.createElement('span');
+                    span.textContent = `${lane.name} (${lane.type})`;
+                    
+                    const lockBtn = document.createElement('button');
+                    lockBtn.className = 'btn-sm lock-btn';
+                    lockBtn.innerHTML = `<i class="bi bi-lock${lane.isLocked ? '-fill' : '2-fill'}"></i>`;
+                    lockBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        lane.isLocked = !lane.isLocked;
+                        updateUI();
+                        draw();
+                    });
+
+                    const upBtn = document.createElement('button');
+                    upBtn.className = 'btn-sm';
+                    upBtn.innerHTML = `<i class="bi bi-arrow-up"></i>`;
+                    upBtn.disabled = lane.isLocked || index === 0;
+                    upBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (index > 0) {
+                            [state.lanes[index], state.lanes[index - 1]] = [state.lanes[index - 1], state.lanes[index]];
+                            state.selectedLaneIndex = index - 1;
+                            updateUI();
+                            draw();
+                        }
+                    });
+                    
+                    const downBtn = document.createElement('button');
+                    downBtn.className = 'btn-sm';
+                    downBtn.innerHTML = `<i class="bi bi-arrow-down"></i>`;
+                    downBtn.disabled = lane.isLocked || index === state.lanes.length - 1;
+                    downBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (index < state.lanes.length - 1) {
+                            [state.lanes[index], state.lanes[index + 1]] = [state.lanes[index + 1], state.lanes[index]];
+                            state.selectedLaneIndex = index + 1;
+                            updateUI();
+                            draw();
+                        }
+                    });
+
+                    li.append(colorPreview, span, lockBtn, upBtn, downBtn);
+                    laneList.appendChild(li);
+                });
+                
+                // Update band list & controls
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                const laneControls = document.getElementById('lane-controls');
+                const bandControls = document.getElementById('band-controls');
+                const removeLaneBtn = document.getElementById('remove-lane-btn');
+                const removeBandBtn = document.getElementById('remove-band-btn');
+                const laneNameInput = document.getElementById('lane-name-input');
+                const laneColorInput = document.getElementById('lane-color-input');
+                const laneTypeSelect = document.getElementById('lane-type-select');
+                const laneWidthInput = document.getElementById('lane-width-input');
+                const bandNameInput = document.getElementById('band-name-input');
+                const bandColorInput = document.getElementById('band-color-input');
+                const ladderBandSizeGroup = document.getElementById('ladder-band-size-group');
+                const ladderBandSizeInput = document.getElementById('ladder-band-size-input');
+                const bandDetails = document.getElementById('band-details');
+
+                if (selectedLane) {
+                    laneControls.style.display = 'flex';
+                    bandControls.style.display = 'flex';
+                    removeLaneBtn.disabled = false;
+                    
+                    laneNameInput.value = selectedLane.name;
+                    laneColorInput.value = selectedLane.color;
+                    laneTypeSelect.value = selectedLane.type;
+                    laneWidthInput.value = selectedLane.width;
+                    
+                    bandList.innerHTML = '';
+                    selectedLane.bands.forEach((band, index) => {
+                        const li = document.createElement('li');
+                        li.classList.add('band-item');
+                        if (index === state.selectedBandIndex) {
+                            li.classList.add('selected');
+                        }
+                        li.setAttribute('data-index', index);
+                        
+                        const colorPreview = document.createElement('div');
+                        colorPreview.className = 'color-preview';
+                        colorPreview.style.backgroundColor = band.color;
+                        
+                        const span = document.createElement('span');
+                        span.textContent = `${band.name} (${band.size ? band.size + 'bp' : '?'})`;
+
+                        const showLineCheckbox = document.createElement('input');
+                        showLineCheckbox.type = 'checkbox';
+                        showLineCheckbox.checked = band.showLine;
+                        showLineCheckbox.addEventListener('change', (e) => {
+                            band.showLine = e.target.checked;
+                            draw();
+                        });
+
+                        li.append(colorPreview, span, showLineCheckbox);
+                        bandList.appendChild(li);
+                    });
+                    
+                    if (state.selectedBandIndex !== -1) {
+                        const selectedBand = selectedLane.bands[state.selectedBandIndex];
+                        bandDetails.style.display = 'flex';
+                        removeBandBtn.disabled = false;
+                        bandNameInput.value = selectedBand.name;
+                        bandColorInput.value = selectedBand.color;
+                        ladderBandSizeGroup.style.display = selectedLane.type === 'ladder' ? 'flex' : 'none';
+                        ladderBandSizeInput.value = selectedLane.type === 'ladder' ? selectedBand.size || '' : '';
+                    } else {
+                        bandDetails.style.display = 'none';
+                        removeBandBtn.disabled = true;
+                    }
+                } else {
+                    laneControls.style.display = 'none';
+                    bandControls.style.display = 'none';
+                    removeLaneBtn.disabled = true;
+                }
+
+                document.getElementById('show-all-lines').checked = state.showAllLines;
+                
+                saveState();
+            }
+
+            // --- Event Listeners ---
+            canvas.addEventListener('mousedown', (e) => {
+                if (!state.image) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                state.isDragging = false;
+                
+                // Check for dragging a band
+                for (let i = 0; i < state.lanes.length; i++) {
+                    const lane = state.lanes[i];
+                    if (lane.isLocked) continue;
+                    for (let j = 0; j < lane.bands.length; j++) {
+                        const band = lane.bands[j];
+                        const bandXStart = lane.x + band.xOffset;
+                        const bandXEnd = bandXStart + band.width;
+                        if (mouseX >= bandXStart && mouseX <= bandXEnd &&
+                            mouseY >= band.y && mouseY <= band.y + BAND_HEIGHT) {
+                            state.isDragging = true;
+                            state.dragType = 'band-move';
+                            state.selectedLaneIndex = i;
+                            state.selectedBandIndex = j;
+                            state.initialMouseX = mouseX;
+                            state.initialMouseY = mouseY;
+                            state.initialObjectX = band.xOffset;
+                            state.initialObjectY = band.y;
+                            draw();
+                            updateUI();
+                            return;
+                        }
+                    }
+                }
+                
+                // Check for resizing a lane
+                for (let i = 0; i < state.lanes.length; i++) {
+                    const lane = state.lanes[i];
+                    if (lane.isLocked) continue;
+                    if (mouseX >= lane.x + lane.width - 5 && mouseX <= lane.x + lane.width + 5 &&
+                        mouseY >= lane.y && mouseY <= canvas.height) {
+                        state.isDragging = true;
+                        state.dragType = 'lane-resize';
+                        state.selectedLaneIndex = i;
+                        state.initialMouseX = mouseX;
+                        state.initialObjectWidth = lane.width;
+                        draw();
+                        return;
+                    }
+                }
+
+                // Check for moving a lane
+                for (let i = 0; i < state.lanes.length; i++) {
+                    const lane = state.lanes[i];
+                    if (lane.isLocked) continue;
+                    if (mouseX >= lane.x && mouseX <= lane.x + lane.width &&
+                        mouseY >= lane.y && mouseY <= lane.y + LANE_HEIGHT) {
+                        state.isDragging = true;
+                        state.dragType = 'lane-move';
+                        state.selectedLaneIndex = i;
+                        state.selectedBandIndex = -1;
+                        state.initialMouseX = mouseX;
+                        state.initialObjectX = lane.x;
+                        draw();
+                        updateUI();
+                        return;
+                    }
+                }
+
+                // If no drag event, handle clicks
+                state.selectedBandIndex = -1;
+                state.selectedLaneIndex = -1;
+                let clickedLane = state.lanes.find(lane => mouseX >= lane.x && mouseX <= lane.x + lane.width);
+                if(clickedLane) {
+                    state.selectedLaneIndex = state.lanes.indexOf(clickedLane);
+                    const newBand = {
+                        id: uuid(),
+                        name: `New Band`,
+                        color: clickedLane.color,
+                        xOffset: clickedLane.width / 4, // Default to center
+                        width: clickedLane.width / 2, // Default width
+                        y: mouseY,
+                        showLine: false,
+                        size: null
+                    };
+                    clickedLane.bands.push(newBand);
+                }
+
+                draw();
+                updateUI();
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!state.isDragging) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+
+                if (state.dragType === 'lane-move') {
+                    const newX = state.initialObjectX + (mouseX - state.initialMouseX);
+                    selectedLane.x = Math.max(0, Math.min(canvas.width - selectedLane.width, newX));
+                } else if (state.dragType === 'lane-resize') {
+                    const newWidth = state.initialObjectWidth + (mouseX - state.initialMouseX);
+                    selectedLane.width = Math.max(30, Math.min(150, newWidth)); // Enforce min/max width
+                } else if (state.dragType === 'band-move') {
+                    const selectedBand = selectedLane.bands[state.selectedBandIndex];
+                    const newY = state.initialObjectY + (mouseY - state.initialMouseY);
+                    selectedBand.y = Math.max(selectedLane.y + MIN_BAND_Y, Math.min(canvas.height - BAND_HEIGHT, newY));
+                    const newXOffset = state.initialObjectX + (mouseX - state.initialMouseX);
+                    selectedBand.xOffset = Math.max(0, Math.min(selectedLane.width - selectedBand.width, newXOffset));
+                }
+                draw();
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                state.isDragging = false;
+                state.dragType = null;
+                saveState();
+            });
+            
+            canvas.addEventListener('mouseleave', () => {
+                state.isDragging = false;
+                state.dragType = null;
+            });
+            
+            imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            statusMessage.style.display = 'none';
+                            state.image = img;
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            state.lanes = []; // Reset lanes for new image
+                            state.selectedLaneIndex = -1;
+                            state.selectedBandIndex = -1;
+                            draw();
+                            updateUI();
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            document.getElementById('add-lane-btn').addEventListener('click', () => {
+                const newLane = {
+                    id: uuid(),
+                    name: `Lane ${state.lanes.length + 1}`,
+                    color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                    type: 'sample',
+                    isLocked: false,
+                    x: state.lanes.length * (DEFAULT_LANE_WIDTH + 10) + 10,
+                    y: 20,
+                    width: DEFAULT_LANE_WIDTH,
+                    bands: []
+                };
+                state.lanes.push(newLane);
+                state.selectedLaneIndex = state.lanes.length - 1;
+                state.selectedBandIndex = -1;
+                draw();
+                updateUI();
+            });
+
+            document.getElementById('remove-lane-btn').addEventListener('click', () => {
+                if (state.selectedLaneIndex !== -1) {
+                    state.lanes.splice(state.selectedLaneIndex, 1);
+                    state.selectedLaneIndex = -1;
+                    state.selectedBandIndex = -1;
+                    draw();
+                    updateUI();
+                }
+            });
+
+            document.getElementById('lane-name-input').addEventListener('input', (e) => {
+                if (state.selectedLaneIndex !== -1) {
+                    state.lanes[state.selectedLaneIndex].name = e.target.value;
+                    updateUI();
+                    draw();
+                }
+            });
+
+            document.getElementById('lane-color-input').addEventListener('input', (e) => {
+                if (state.selectedLaneIndex !== -1) {
+                    state.lanes[state.selectedLaneIndex].color = e.target.value;
+                    updateUI();
+                    draw();
+                }
+            });
+
+            document.getElementById('lane-type-select').addEventListener('change', (e) => {
+                if (state.selectedLaneIndex !== -1) {
+                    state.lanes[state.selectedLaneIndex].type = e.target.value;
+                    updateUI();
+                }
+            });
+
+            document.getElementById('lane-width-input').addEventListener('input', (e) => {
+                if (state.selectedLaneIndex !== -1) {
+                    state.lanes[state.selectedLaneIndex].width = parseFloat(e.target.value) || DEFAULT_LANE_WIDTH;
+                    updateUI();
+                    draw();
+                }
+            });
+            
+            laneList.addEventListener('click', (e) => {
+                const li = e.target.closest('.lane-item');
+                if (li) {
+                    state.selectedLaneIndex = parseInt(li.getAttribute('data-index'));
+                    state.selectedBandIndex = -1;
+                    updateUI();
+                    draw();
+                }
+            });
+            
+            bandList.addEventListener('click', (e) => {
+                const li = e.target.closest('.band-item');
+                if (li) {
+                    state.selectedBandIndex = parseInt(li.getAttribute('data-index'));
+                    updateUI();
+                    draw();
+                }
+            });
+            
+            document.getElementById('add-band-btn').addEventListener('click', () => {
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                if (selectedLane) {
+                    const newBand = {
+                        id: uuid(),
+                        name: `Band ${selectedLane.bands.length + 1}`,
+                        color: selectedLane.color,
+                        xOffset: selectedLane.width / 4,
+                        width: selectedLane.width / 2,
+                        y: selectedLane.y + 40 + selectedLane.bands.length * 20,
+                        showLine: false,
+                        size: null
+                    };
+                    selectedLane.bands.push(newBand);
+                    state.selectedBandIndex = selectedLane.bands.length - 1;
+                    updateUI();
+                    draw();
+                }
+            });
+
+            document.getElementById('remove-band-btn').addEventListener('click', () => {
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                if (selectedLane && state.selectedBandIndex !== -1) {
+                    selectedLane.bands.splice(state.selectedBandIndex, 1);
+                    state.selectedBandIndex = -1;
+                    updateUI();
+                    draw();
+                }
+            });
+            
+            document.getElementById('band-name-input').addEventListener('input', (e) => {
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                if (selectedLane && state.selectedBandIndex !== -1) {
+                    selectedLane.bands[state.selectedBandIndex].name = e.target.value;
+                    updateUI();
+                    draw();
+                }
+            });
+
+            document.getElementById('band-color-input').addEventListener('input', (e) => {
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                if (selectedLane && state.selectedBandIndex !== -1) {
+                    selectedLane.bands[state.selectedBandIndex].color = e.target.value;
+                    updateUI();
+                    draw();
+                }
+            });
+
+            document.getElementById('ladder-band-size-input').addEventListener('input', (e) => {
+                const selectedLane = state.lanes[state.selectedLaneIndex];
+                if (selectedLane && state.selectedBandIndex !== -1 && selectedLane.type === 'ladder') {
+                    selectedLane.bands[state.selectedBandIndex].size = parseFloat(e.target.value) || null;
+                    updateUI();
+                }
+            });
+
+            document.getElementById('show-all-lines').addEventListener('change', (e) => {
+                state.showAllLines = e.target.checked;
+                draw();
+            });
+
+            document.getElementById('analyze-btn').addEventListener('click', () => {
+                analyzeGel();
+            });
+            
+            document.getElementById('export-gel-btn').addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.download = 'gel_analyzer.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            document.getElementById('export-csv-btn').addEventListener('click', () => {
+                downloadCSV();
+            });
+
+            document.getElementById('close-modal-btn').addEventListener('click', () => {
+                resultsModal.style.display = 'none';
+            });
+            
+            document.getElementById('download-csv-btn').addEventListener('click', () => {
+                downloadCSV();
+            });
+            
+            function downloadCSV() {
+                const csvRows = [
+                    ['Lane Name', 'Band Name', 'Relative Position (px)', 'Predicted Size (bp)']
+                ];
+                state.analysisResults.forEach(row => {
+                    csvRows.push([
+                        row.laneName,
+                        row.bandName,
+                        row.relativeY.toFixed(2),
+                        row.predictedSize ? row.predictedSize.toFixed(2) : 'N/A'
+                    ]);
+                });
+                const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', 'analysis_results.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            function analyzeGel() {
+                const ladderLanes = state.lanes.filter(lane => lane.type === 'ladder');
+                if (ladderLanes.length === 0) {
+                    alert('Please define at least one ladder lane to perform analysis.');
+                    return;
+                }
+                
+                let allLadderBands = [];
+                ladderLanes.forEach(lane => {
+                    allLadderBands.push(...lane.bands.map(b => ({ y: b.y, size: b.size })));
+                });
+                
+                const validLadderBands = allLadderBands.filter(b => b.size && b.y);
+                if (validLadderBands.length < 2) {
+                    alert('A ladder lane must have at least two bands with defined sizes.');
+                    return;
+                }
+                
+                // Simple logarithmic fit for size vs. migration distance
+                const xData = validLadderBands.map(b => b.y);
+                const yData = validLadderBands.map(b => Math.log(b.size));
+                
+                let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+                const n = validLadderBands.length;
+                
+                for (let i = 0; i < n; i++) {
+                    sumX += xData[i];
+                    sumY += yData[i];
+                    sumXY += xData[i] * yData[i];
+                    sumXX += xData[i] * xData[i];
+                }
+                
+                const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+                const intercept = (sumY - slope * sumX) / n;
+                
+                state.analysisResults = [];
+                state.lanes.forEach(lane => {
+                    lane.bands.forEach(band => {
+                        let predictedSize = null;
+                        if (band.y && !band.size) { // Only predict for sample bands without a defined size
+                             predictedSize = Math.exp(slope * band.y + intercept);
+                        } else if (band.size) { // For ladder bands, use their defined size
+                             predictedSize = band.size;
+                        }
+
+                        state.analysisResults.push({
+                            laneName: lane.name,
+                            bandName: band.name,
+                            relativeY: band.y,
+                            predictedSize: predictedSize
+                        });
+                    });
+                });
+
+                // Display results in the modal
+                resultsTableBody.innerHTML = '';
+                state.analysisResults.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.laneName}</td>
+                        <td>${row.bandName}</td>
+                        <td>${row.relativeY.toFixed(2)}</td>
+                        <td>${row.predictedSize ? row.predictedSize.toFixed(2) : 'N/A'}</td>
+                    `;
+                    resultsTableBody.appendChild(tr);
+                });
+                resultsModal.style.display = 'flex';
+            }
+            
+            // Initial canvas setup
+            window.addEventListener('resize', () => {
+                if (state.image) {
+                    draw();
+                }
+            });
+            
+            // Initial load
+            loadState();
+        });
+    </script>
+</body>
+</html>
+
