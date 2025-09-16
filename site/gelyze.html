@@ -383,10 +383,19 @@
                     <button id="auto-detect-btn"><i class="bi bi-magic"></i> Auto Detect</button>
                 </div>
                 <div class="section-title"><i class="bi bi-eye"></i> Visualization</div>
+                <div class="input-group">
+                    <label style="width: 50px; font-size: var(--font-size-sm);">Move by:</label>
+                    <input type="number" id="pixel-move-input" value="1" min="1" max="50">
+                    <label style="font-size: var(--font-size-sm);">px</label>
+                </div>
                 <div class="toggle-lines-group">
                     <div class="line-toggle-item">
                         <input type="checkbox" id="show-all-lines">
                         <label for="show-all-lines">Show All Lines</label>
+                    </div>
+                    <div class="line-toggle-item">
+                        <input type="checkbox" id="show-lanes-checkbox" checked>
+                        <label for="show-lanes-checkbox">Show Lanes</label>
                     </div>
                 </div>
             </div>
@@ -460,7 +469,9 @@
                 initialObjectY: 0,
                 initialObjectWidth: 0,
                 showAllLines: false,
-                analysisResults: []
+                showLanes: true,
+                analysisResults: [],
+                movePixels: 1
             };
 
             const DEFAULT_LANE_WIDTH = 50;
@@ -489,6 +500,7 @@
                     state.lanes = parsedState.lanes;
                     state.showAllLines = parsedState.showAllLines;
                     state.analysisResults = parsedState.analysisResults;
+                    state.showLanes = parsedState.showLanes;
                     
                     if (parsedState.image) {
                         const img = new Image();
@@ -525,14 +537,20 @@
                     ctx.drawImage(state.image, offsetX, offsetY, drawWidth, drawHeight);
                     
                     state.lanes.forEach((lane, laneIndex) => {
-                        // Draw lane box
-                        const laneColor = lane.color;
-                        ctx.strokeStyle = laneColor;
-                        ctx.lineWidth = laneIndex === state.selectedLaneIndex ? 2 : 1;
-                        ctx.strokeRect(lane.x, lane.y, lane.width, LANE_HEIGHT);
+                        // Draw vertical lines for the lane
+                        if (state.showLanes) {
+                            ctx.strokeStyle = lane.color;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(lane.x, 0);
+                            ctx.lineTo(lane.x, canvas.height);
+                            ctx.moveTo(lane.x + lane.width, 0);
+                            ctx.lineTo(lane.x + lane.width, canvas.height);
+                            ctx.stroke();
+                        }
                         
                         // Draw lane name
-                        ctx.fillStyle = laneColor;
+                        ctx.fillStyle = lane.color;
                         ctx.font = `${FONT_SIZE}px sans-serif`;
                         ctx.textAlign = 'center';
                         ctx.fillText(lane.name, lane.x + lane.width / 2, lane.y - 5);
@@ -568,11 +586,14 @@
                             }
                         });
                         
-                        // Highlight selected lane
+                        // Highlight selected lane with a line down the middle
                         if (laneIndex === state.selectedLaneIndex) {
                             ctx.strokeStyle = HIGHLIGHT_COLOR;
                             ctx.lineWidth = 2;
-                            ctx.strokeRect(lane.x, lane.y, lane.width, canvas.height - lane.y);
+                            ctx.beginPath();
+                            ctx.moveTo(lane.x + lane.width / 2, 0);
+                            ctx.lineTo(lane.x + lane.width / 2, canvas.height);
+                            ctx.stroke();
                         }
                     });
                 }
@@ -606,35 +627,29 @@
                         draw();
                     });
 
-                    const upBtn = document.createElement('button');
-                    upBtn.className = 'btn-sm';
-                    upBtn.innerHTML = `<i class="bi bi-arrow-up"></i>`;
-                    upBtn.disabled = lane.isLocked || index === 0;
-                    upBtn.addEventListener('click', (e) => {
+                    const leftBtn = document.createElement('button');
+                    leftBtn.className = 'btn-sm';
+                    leftBtn.innerHTML = `<i class="bi bi-arrow-left"></i>`;
+                    leftBtn.disabled = lane.isLocked;
+                    leftBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        if (index > 0) {
-                            [state.lanes[index], state.lanes[index - 1]] = [state.lanes[index - 1], state.lanes[index]];
-                            state.selectedLaneIndex = index - 1;
-                            updateUI();
-                            draw();
-                        }
+                        lane.x = Math.max(0, lane.x - state.movePixels);
+                        draw();
+                        saveState();
                     });
                     
-                    const downBtn = document.createElement('button');
-                    downBtn.className = 'btn-sm';
-                    downBtn.innerHTML = `<i class="bi bi-arrow-down"></i>`;
-                    downBtn.disabled = lane.isLocked || index === state.lanes.length - 1;
-                    downBtn.addEventListener('click', (e) => {
+                    const rightBtn = document.createElement('button');
+                    rightBtn.className = 'btn-sm';
+                    rightBtn.innerHTML = `<i class="bi bi-arrow-right"></i>`;
+                    rightBtn.disabled = lane.isLocked;
+                    rightBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        if (index < state.lanes.length - 1) {
-                            [state.lanes[index], state.lanes[index + 1]] = [state.lanes[index + 1], state.lanes[index]];
-                            state.selectedLaneIndex = index + 1;
-                            updateUI();
-                            draw();
-                        }
+                        lane.x = Math.min(canvas.width - lane.width, lane.x + state.movePixels);
+                        draw();
+                        saveState();
                     });
 
-                    li.append(colorPreview, span, lockBtn, upBtn, downBtn);
+                    li.append(colorPreview, span, lockBtn, leftBtn, rightBtn);
                     laneList.appendChild(li);
                 });
                 
@@ -688,12 +703,34 @@
                             draw();
                         });
 
-                        li.append(colorPreview, span, showLineCheckbox);
+                        const upBtn = document.createElement('button');
+                        upBtn.className = 'btn-sm';
+                        upBtn.innerHTML = `<i class="bi bi-arrow-up"></i>`;
+                        upBtn.disabled = selectedLane.isLocked;
+                        upBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            band.y = Math.max(selectedLane.y + MIN_BAND_Y, band.y - state.movePixels);
+                            draw();
+                            saveState();
+                        });
+                        
+                        const downBtn = document.createElement('button');
+                        downBtn.className = 'btn-sm';
+                        downBtn.innerHTML = `<i class="bi bi-arrow-down"></i>`;
+                        downBtn.disabled = selectedLane.isLocked;
+                        downBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            band.y = Math.min(canvas.height - BAND_HEIGHT, band.y + state.movePixels);
+                            draw();
+                            saveState();
+                        });
+
+                        li.append(colorPreview, span, showLineCheckbox, upBtn, downBtn);
                         bandList.appendChild(li);
                     });
                     
                     if (state.selectedBandIndex !== -1) {
-                        const selectedBand = selectedLane.bands[state.selectedBandIndex];
+                        const selectedBand = selectedLane.bands[state.selectedLaneIndex];
                         bandDetails.style.display = 'flex';
                         removeBandBtn.disabled = false;
                         bandNameInput.value = selectedBand.name;
@@ -711,6 +748,8 @@
                 }
 
                 document.getElementById('show-all-lines').checked = state.showAllLines;
+                document.getElementById('show-lanes-checkbox').checked = state.showLanes;
+                document.getElementById('pixel-move-input').value = state.movePixels;
                 
                 saveState();
             }
@@ -1004,6 +1043,11 @@
                 draw();
             });
 
+            document.getElementById('show-lanes-checkbox').addEventListener('change', (e) => {
+                state.showLanes = e.target.checked;
+                draw();
+            });
+
             document.getElementById('analyze-btn').addEventListener('click', () => {
                 analyzeGel();
             });
@@ -1011,6 +1055,12 @@
             document.getElementById('auto-detect-btn').addEventListener('click', () => {
                 autoDetect();
             });
+            
+            document.getElementById('pixel-move-input').addEventListener('input', (e) => {
+                const value = parseInt(e.target.value, 10);
+                state.movePixels = isNaN(value) || value < 1 ? 1 : value;
+            });
+
 
             document.getElementById('export-gel-btn').addEventListener('click', () => {
                 const link = document.createElement('a');
