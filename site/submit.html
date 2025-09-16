@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Submission Portal | Enscygen CBPSR</title>
+    <!-- External Libraries (Non-CSS) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Custom CSS Stylesheet -->
+    <style>
+        /* --- 1. Global Styles & Variables --- */
+        :root {
+            --primary-color: #2563eb; /* Blue */
+            --secondary-color: #4b5563; /* Gray */
+            --success-color: #16a34a; /* Green */
+            --danger-color: #dc2626; /* Red */
+            --light-gray: #f3f4f6;
+            --medium-gray: #d1d5db;
+            --dark-gray: #374151;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --border-radius: 0.5rem;
+            --box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        /* --- 2. Layout & Container --- */
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+        
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-col-span-2 {
+                grid-column: span 2 / span 2;
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- 3. Header & Typography --- */
+        .header {
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+        .header p {
+            margin-top: 0.5rem;
+            color: #6b7280;
+        }
+        h2 { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
+        h3 { font-size: 1.125rem; font-weight: 600; color: var(--dark-gray); }
+        
+        /* --- 4. Form & Multi-Step Logic --- */
+        
+        /* --- FIX IS HERE --- */
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        /* --- END OF FIX --- */
+
+        .input-field {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 0.375rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* --- 5. Buttons --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: var(--box-shadow);
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-secondary { background-color: var(--secondary-color); color: white; }
+        .btn-secondary:hover { background-color: #374151; }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .btn-success:hover { background-color: #15803d; }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-danger:hover { background-color: #b91c1c; }
+        .btn-lg { padding: 0.75rem 2rem; }
+        .link-button {
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* --- 6. Component-Specific Styles --- */
+        /* Progress Bar */
+        .progress-bar-container { background-color: #e5e7eb; width: 100%; border-radius: 9999px; height: 0.625rem; }
+        .progress-bar-fill { background-color: var(--primary-color); height: 100%; border-radius: 9999px; transition: width 0.4s ease-in-out; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 0.25rem; }
+        .progress-label-active { font-weight: 600; color: var(--primary-color); }
+        
+        /* Guidelines */
+        .guideline-item { border: 1px solid var(--medium-gray); border-radius: 0.375rem; padding: 0.75rem; }
+        .guideline-item summary { font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .guideline-item .arrow-icon { transition: transform 0.2s; }
+        .guideline-item[open] > summary .arrow-icon { transform: rotate(90deg); }
+        .guideline-content { margin-top: 0.5rem; padding-left: 1rem; border-left: 2px solid #93c5fd; }
+        
+        /* Sample Block */
+        .sample-block {
+            position: relative;
+            border: 1px solid var(--medium-gray);
+            padding: 1rem;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .remove-sample-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--danger-color);
+            cursor: pointer;
+            line-height: 1;
+        }
+        .analyses-container {
+            display: grid;
+            gap: 0.5rem;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (min-width: 640px) {
+            .analyses-container { grid-template-columns: repeat(3, 1fr); }
+        }
+        .analyses-container label {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: var(--light-gray);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+        }
+        .analyses-container input { margin-right: 0.5rem; }
+
+        /* Tables */
+        .styled-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        .styled-table th, .styled-table td { border: 1px solid var(--medium-gray); padding: 0.5rem; text-align: left; vertical-align: top; }
+        .styled-table thead { background-color: #e5e7eb; }
+        .styled-table tbody tr:nth-child(even) { background-color: #f9fafb; }
+        .styled-table .label-cell { background-color: #f9fafb; font-weight: 600; width: 25%; }
+
+        /* Footer & Controls */
+        .form-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--medium-gray);
+            padding-top: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* --- 7. Print Styles --- */
+        @media print {
+            body * { visibility: hidden; }
+            .no-print, .no-print * { display: none !important; }
+            #form-to-print, #form-to-print * { visibility: visible; }
+            #form-to-print { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="card header">
+            <h1>Enscygen Centre for Bioanalytical Profiling and Scientific Research (CBPSR)</h1>
+            <p>Advanced Sample Submission Portal</p>
+        </header>
+
+        <!-- Section 1: Guidelines -->
+        <section id="guidelines-section" class="card">
+             <h2 style="margin-bottom: 1rem; border-bottom: 1px solid var(--medium-gray); padding-bottom: 0.75rem;"><i class="bi bi-journal-richtext"></i> Mandatory Submission Guidelines</h2>
+             <div style="max-height: 65vh; overflow-y: auto; padding-right: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                 <details class="guideline-item" open>
+                    <summary>General Policies <i class="bi bi-chevron-right arrow-icon"></i></summary>
+                    <div class="guideline-content">
+                        <p><strong>Eligibility:</strong> Open to all academic and industrial researchers.</p>
+                        <p><strong>Data Handling:</strong> Raw data and a basic analysis report will be delivered electronically. Users are responsible for their own data backup.</p>
+                        <p><strong>Acknowledgement:</strong> Users MUST acknowledge CBPSR in all publications and presentations.</p>
+                        <p><strong>Digital Submissions:</strong> For digital/computational analysis, please upload data to a secure cloud service (e.g., Google Drive, Dropbox) and provide a shareable link.</p>
+                    </div>
+                </details>
+                <details class="guideline-item">
+                    <summary>Safety Protocols (Bio & Chemical) <i class="bi bi-chevron-right arrow-icon"></i></summary>
+                    <div class="guideline-content">
+                        <p><strong>Biosafety Levels (BSL):</strong> We handle BSL-1 and BSL-2 samples. We DO NOT accept BSL-3 or BSL-4 samples.</p>
+                        <p><strong>Chemical Safety:</strong> A Material Safety Data Sheet (MSDS) is MANDATORY for all hazardous materials.</p>
+                        <p><strong>Labeling:</strong> Every physical sample must be labeled with: 1) Unique Sample Name, 2) Applicant's Name, 3) Date.</p>
+                    </div>
+                </details>
+             </div>
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--medium-gray); text-align: center;">
+                <button id="proceed-to-form-btn" class="btn btn-primary btn-lg">
+                    Acknowledge & Proceed to Form <i class="bi bi-arrow-right-circle-fill" style="margin-left: 0.5rem;"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: Form -->
+        <section id="form-section" class="card hidden">
+            <div class="no-print" style="margin-bottom: 1.5rem;">
+                <h2 style="margin-bottom: 0.5rem;">New Sample Submission Form</h2>
+                <div class="progress-bar-container"><div id="progress-bar" class="progress-bar-fill" style="width: 0%"></div></div>
+                <div class="progress-labels">
+                    <span id="step-label-1" class="progress-label-active">Applicant</span>
+                    <span id="step-label-2">Project</span>
+                    <span id="step-label-3">Samples</span>
+                    <span id="step-label-4">Review</span>
+                </div>
+            </div>
+            
+            <form id="submission-form">
+                <div id="step-1" class="form-step active">
+                     <h3 style="margin-bottom: 0.75rem;">Step 1: Applicant & Organization</h3>
+                    <div class="grid-container">
+                        <input type="text" id="applicantName" placeholder="Full Name *" class="input-field" required>
+                        <input type="text" id="designation" placeholder="Designation *" class="input-field" required>
+                        <input type="email" id="email" placeholder="Email Address *" class="input-field" required>
+                        <input type="tel" id="phone" placeholder="Phone Number *" class="input-field" required>
+                        <input type="text" id="orgName" placeholder="Affiliated Organization Name *" class="input-field grid-col-span-2" required>
+                        <textarea id="orgAddress" rows="2" placeholder="Organization Full Address *" class="input-field grid-col-span-2" required></textarea>
+                    </div>
+                </div>
+                <div id="step-2" class="form-step">
+                    <h3 style="margin-bottom: 0.75rem;">Step 2: Project Details</h3>
+                    <div class="grid-container">
+                         <input type="text" id="projectTitle" placeholder="Project Title *" class="input-field" required>
+                    </div>
+                </div>
+                <div id="step-3" class="form-step">
+                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3>Step 3: Sample Details</h3>
+                        <button type="button" id="add-sample-btn" class="btn btn-primary"><i class="bi bi-plus-circle-fill" style="margin-right: 0.25rem;"></i> Add Sample</button>
+                    </div>
+                    <div id="samples-container" style="max-height: 60vh; overflow-y: auto; padding: 0.5rem; background-color: var(--light-gray); border-radius: 0.375rem; border: 1px solid var(--medium-gray); display: flex; flex-direction: column; gap: 1rem;"></div>
+                </div>
+                <div id="step-4" class="form-step">
+                    <h3 style="margin-bottom: 0.75rem;">Step 4: Review & Confirm</h3>
+                    <div id="review-pane" style="max-height: 60vh; overflow-y: auto;"></div>
+                    <div class="no-print" style="text-align: center; margin-top: 1rem;">
+                        <button type="button" id="show-json-btn" class="link-button">Show Form Data as JSON</button>
+                    </div>
+                </div>
+                
+                <div class="form-controls no-print">
+                    <button type="button" id="back-btn" class="btn btn-secondary">Back</button>
+                    <p style="font-weight: 600;">SSID: <span id="ssid-display" style="font-family: monospace;"></span></p>
+                    <button type="button" id="next-btn" class="btn btn-primary">Next</button>
+                    <button type="button" id="generate-form-btn" class="btn btn-success hidden">Generate Form</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Preview Section -->
+        <section id="preview-section" class="card hidden">
+            <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--medium-gray); padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h2>Final Submission Document</h2>
+                <button id="download-pdf-btn" class="btn btn-danger"><i class="bi bi-file-earmark-arrow-down-fill" style="margin-right: 0.5rem;"></i>Download PDF</button>
+            </div>
+            <div id="form-to-print"></div>
+        </section>
+    </div>
+
+<script>
+    // --- JSON CONFIGURATION ---
+    const formConfig = {
+        'Biological': {
+            analyses: ['SEM', 'TEM', 'HPLC', 'GC-MS', 'TGA/DSC'],
+            fields: [
+                { name: 'sourceOrganism', label: 'Source Organism', type: 'text', placeholder: 'e.g., E. coli, Human cell line' },
+                { name: 'purity', label: 'Purity/Concentration', type: 'text', placeholder: 'e.g., A260/280, 50 ng/uL' },
+                { name: 'bsl', label: 'Biosafety Level', type: 'radio', options: ['BSL-1', 'BSL-2'] }
+            ]
+        },
+        'Chemical Compound': {
+            analyses: ['FTIR', 'UV-Vis', 'HPLC', 'GC-MS', 'XRD'],
+            fields: [
+                { name: 'casNumber', label: 'Chemical Formula / CAS No.', type: 'text', placeholder: 'e.g., C9H8O4, 50-78-2' },
+                { name: 'solvent', label: 'Solvent & Concentration', type: 'text', placeholder: 'e.g., Ethanol, 1 mg/mL' },
+                { name: 'msdsAttached', label: 'MSDS Provided', type: 'checkbox', options: ['Yes'] }
+            ]
+        },
+        'Material/Nanomaterial': {
+            analyses: ['SEM', 'TEM', 'XRD', 'TGA/DSC', 'FTIR'],
+            fields: [
+                { name: 'materialType', label: 'Material Type', type: 'text', placeholder: 'e.g., Thin film, Powder' },
+                { name: 'substrate', label: 'Substrate (if any)', type: 'text', placeholder: 'e.g., Silicon wafer' }
+            ]
+        },
+        'Digital/Computational': {
+            analyses: ['Data Visualization', 'Sequence Analysis', 'Statistical Modeling', 'Image Processing'],
+            fields: [
+                 { name: 'dataType', label: 'Data Type', type: 'select', options: ['Raw sequencing data', 'Microscopy images', 'Spectroscopy data', 'Tabular data (.csv)'] },
+                 { name: 'dataLink', label: 'Data Access Link', type: 'text', placeholder: 'https://... (Google Drive, Dropbox, etc.)' },
+                 { name: 'softwareReq', label: 'Software Requirements', type: 'text', placeholder: 'e.g., Python (pandas, matplotlib), R' }
+            ]
+        }
+    };
+
+    // --- State & Core Elements ---
+    let currentStep = 1, sampleCounter = 0, ssid = '';
+    const totalSteps = 4;
+    
+    function switchView() {
+        document.getElementById('guidelines-section').style.display = 'none';
+        document.getElementById('form-section').classList.remove('hidden');
+        updateUI();
+    }
+
+    function generateSSID() {
+        const d = new Date();
+        return `SSID-${d.getFullYear()}${(d.getMonth() + 1).toString().padStart(2, '0')}${d.getDate().toString().padStart(2, '0')}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    }
+
+    function updateUI() {
+        document.querySelectorAll('.form-step').forEach((step, index) => {
+            step.classList.toggle('active', (index + 1) === currentStep)
+        });
+        document.getElementById('progress-bar').style.width = `${((currentStep -1) / (totalSteps-1)) * 100}%`;
+        document.querySelectorAll('[id^="step-label-"]').forEach((label, index) => {
+            label.classList.toggle('progress-label-active', (index + 1) === currentStep);
+        });
+
+        document.getElementById('back-btn').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+        document.getElementById('next-btn').style.display = currentStep < totalSteps ? 'inline-flex' : 'none';
+        document.getElementById('generate-form-btn').classList.toggle('hidden', currentStep !== totalSteps);
+    }
+
+    function navigate(direction) {
+        if (direction === 1 && !validateStep(currentStep)) return;
+        currentStep = Math.max(1, Math.min(totalSteps, currentStep + direction));
+        if (currentStep === totalSteps) populateReviewPane();
+        updateUI();
+    }
+    
+    function validateStep(step) {
+        for (const input of document.getElementById(`step-${step}`).querySelectorAll('[required]')) {
+            if (!input.value.trim()) {
+                alert(`Please fill out the '${input.placeholder || input.name}' field.`);
+                input.focus();
+                return false;
+            }
+        }
+        if (step === 3 && document.querySelectorAll('.sample-block').length === 0) {
+            alert('You must add at least one sample.');
+            return false;
+        }
+        return true;
+    }
+
+    function addSample() {
+        sampleCounter++;
+        const sampleId = `sample-${sampleCounter}`;
+        const container = document.getElementById('samples-container');
+        const block = document.createElement('div');
+        block.id = sampleId;
+        block.className = 'sample-block';
+        
+        let conditionalFieldsHTML = Object.keys(formConfig).map(category => {
+            const config = formConfig[category];
+            let fieldsHTML = config.fields.map(field => {
+                let inputHTML = '';
+                switch (field.type) {
+                    case 'text':
+                        inputHTML = `<input type="text" name="${field.name}" placeholder="${field.placeholder}" class="input-field">`;
+                        break;
+                    case 'select':
+                         inputHTML = `<select name="${field.name}" class="input-field">${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}</select>`;
+                         break;
+                    case 'radio':
+                        inputHTML = `<div style="display:flex; gap: 1rem; margin-top: 0.25rem;">${field.options.map((opt, i) => `<label style="font-weight:400;"><input type="radio" name="${field.name}-${sampleCounter}" value="${opt}" ${i===0 ? 'checked' : ''}> ${opt}</label>`).join('')}</div>`;
+                        break;
+                    case 'checkbox':
+                        inputHTML = `<div style="display:flex; gap: 1rem; margin-top: 0.25rem;"><label style="font-weight:400; display:flex; align-items:center;"><input type="checkbox" name="${field.name}" value="Yes" style="margin-right: 0.5rem;"> Yes</label></div>`;
+                        break;
+                }
+                return `<div><label>${field.label}</label>${inputHTML}</div>`;
+            }).join('');
+            return `<div class="conditional-fields hidden grid-container grid-col-span-2" data-category="${category}">${fieldsHTML}</div>`;
+        }).join('');
+
+        block.innerHTML = `
+            <button type="button" onclick="removeSample('${sampleId}')" class="remove-sample-btn">&times;</button>
+            <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Sample #${sampleCounter}</p>
+            <div class="grid-container">
+                <input type="text" name="sampleName" placeholder="Unique Sample Name/ID *" class="input-field" required>
+                <select name="sampleCategory" onchange="updateDynamicFields(this)" class="input-field" required>
+                    <option value="">Select Sample Category *</option>
+                    ${Object.keys(formConfig).map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                </select>
+                ${conditionalFieldsHTML}
+                <div class="grid-col-span-2">
+                    <label>Requested Analyses:</label>
+                    <div class="analyses-container">
+                        <p style="color: #6b7280; grid-column: 1 / -1;">Please select a sample category first.</p>
+                    </div>
+                </div>
+                <textarea name="description" rows="2" placeholder="General Description (storage, hazards, etc.)" class="input-field grid-col-span-2"></textarea>
+            </div>
+        `;
+        container.appendChild(block);
+    }
+    
+    function updateDynamicFields(selectElement) {
+        const category = selectElement.value;
+        const sampleBlock = selectElement.closest('.sample-block');
+        
+        sampleBlock.querySelectorAll('.conditional-fields').forEach(div => {
+            div.classList.add('hidden');
+        });
+        if (category) {
+            const activeFieldSet = sampleBlock.querySelector(`.conditional-fields[data-category="${category}"]`);
+            if (activeFieldSet) {
+                activeFieldSet.classList.remove('hidden');
+            }
+        }
+        
+        const analysesContainer = sampleBlock.querySelector('.analyses-container');
+        const analyses = formConfig[category]?.analyses || [];
+        if (analyses.length > 0) {
+            analysesContainer.innerHTML = analyses.map(a => `<label><input type="checkbox" name="analysis" value="${a}">${a}</label>`).join('');
+        } else {
+            analysesContainer.innerHTML = `<p style="color: #6b7280; grid-column: 1 / -1;">Please select a sample category first.</p>`;
+        }
+    }
+
+    function removeSample(sampleId) { document.getElementById(sampleId).remove(); }
+    
+    function collectAllData() {
+        const formData = {
+            ssid: ssid,
+            submissionDate: new Date().toISOString(),
+            applicant: {
+                name: document.getElementById('applicantName').value,
+                designation: document.getElementById('designation').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            },
+            organization: {
+                name: document.getElementById('orgName').value,
+                address: document.getElementById('orgAddress').value
+            },
+            projectTitle: document.getElementById('projectTitle').value,
+            samples: Array.from(document.querySelectorAll('.sample-block')).map((block, index) => {
+                const category = block.querySelector('[name="sampleCategory"]').value;
+                const config = formConfig[category];
+                const sampleData = {
+                    sampleNumber: index + 1,
+                    sampleName: block.querySelector('[name="sampleName"]').value,
+                    category: category,
+                    requestedAnalyses: Array.from(block.querySelectorAll('[name="analysis"]:checked')).map(cb => cb.value),
+                    generalDescription: block.querySelector('[name="description"]').value || '',
+                    specificDetails: {}
+                };
+
+                if (config) {
+                    config.fields.forEach(field => {
+                        let value;
+                        if (field.type === 'radio') {
+                            value = block.querySelector(`[name^="${field.name}"]:checked`)?.value || null;
+                        } else if (field.type === 'checkbox') {
+                            value = block.querySelector(`[name="${field.name}"]`)?.checked ? 'Yes' : 'No';
+                        } else {
+                            value = block.querySelector(`[name="${field.name}"]`)?.value || null;
+                        }
+                        if (value) {
+                            sampleData.specificDetails[field.name] = value;
+                        }
+                    });
+                }
+                return sampleData;
+            })
+        };
+        return formData;
+    }
+    
+    function showJsonData() {
+        const data = collectAllData();
+        alert('Check the browser console (F12 > Console) for the complete JSON object.');
+        console.log("--- Form Data as JSON ---");
+        console.log(JSON.stringify(data, null, 2));
+    }
+
+    function populateReviewPane() {
+        const data = collectAllData();
+        const reviewPane = document.getElementById('review-pane');
+        const applicantHTML = `
+            <h3>Applicant & Project Information</h3>
+            <table class="styled-table" style="margin-top: 0.5rem;"><tbody>
+                <tr><td class="label-cell">Applicant</td><td>${data.applicant.name} (${data.applicant.designation})</td></tr>
+                <tr><td class="label-cell">Contact</td><td>${data.applicant.email} | ${data.applicant.phone}</td></tr>
+                <tr><td class="label-cell">Organization</td><td>${data.organization.name}</td></tr>
+                <tr><td class="label-cell">Project Title</td><td>${data.projectTitle}</td></tr>
+            </tbody></table>`;
+        const samplesHTML = `
+            <h3 style="margin-top: 1.5rem;">Sample Information</h3>
+            <table class="styled-table" style="margin-top: 0.5rem;">
+                <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Analyses</th><th>Details</th></tr></thead>
+                <tbody>${data.samples.map(s => {
+                    const config = formConfig[s.category];
+                    let detailsList = [`<b>Desc:</b> ${s.generalDescription || 'N/A'}`];
+                    if (config) {
+                        config.fields.forEach(field => {
+                            if (s.specificDetails[field.name]) {
+                                detailsList.push(`<b>${field.label}:</b> ${s.specificDetails[field.name]}`);
+                            }
+                        });
+                    }
+                    return `<tr><td>${s.sampleNumber}</td><td>${s.sampleName}</td><td>${s.category}</td><td>${s.requestedAnalyses.join(', ') || 'None'}</td><td>${detailsList.join('<br>')}</td></tr>`
+                }).join('')}</tbody>
+            </table>`;
+        reviewPane.innerHTML = applicantHTML + (data.samples.length ? samplesHTML : '');
+    }
+    
+    function generateFinalForm() {
+        if (![1, 2, 3].every(validateStep)) return;
+        document.getElementById('form-section').classList.add('hidden');
+        const data = collectAllData();
+        const printArea = document.getElementById('form-to-print');
+        
+        const applicantTable = `
+         <table class="styled-table">
+                <tr><td class="label-cell">Submission ID (SSID)</td><td colspan="3" style="font-family: monospace; font-weight: 700;">${data.ssid}</td></tr>
+                <tr><td class="label-cell">Applicant Name</td><td>${data.applicant.name}</td><td class="label-cell">Designation</td><td>${data.applicant.designation}</td></tr>
+                <tr><td class="label-cell">Contact</td><td>${data.applicant.email} | ${data.applicant.phone}</td><td class="label-cell">Project Title</td><td>${data.projectTitle}</td></tr>
+                <tr><td class="label-cell">Organization</td><td colspan="3">${data.organization.name}, ${data.organization.address}</td></tr>
+            </table>`;
+            
+        const samplesTable = `
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Sample Information</h3>
+            <table class="styled-table">
+                <thead><tr><th>#</th><th>Sample Name</th><th>Category</th><th>Requested Analyses</th><th>Additional Details</th></tr></thead>
+                <tbody>${data.samples.map(s => {
+                    const config = formConfig[s.category];
+                    let detailsList = [`<b>Desc:</b> ${s.generalDescription || 'N/A'}`];
+                    if (config) {
+                        config.fields.forEach(field => {
+                           if (s.specificDetails[field.name]) {
+                                detailsList.push(`<b>${field.label}:</b> ${s.specificDetails[field.name]}`);
+                           }
+                        });
+                    }
+                    return `<tr><td>${s.sampleNumber}</td><td>${s.sampleName}</td><td>${s.category}</td><td>${s.requestedAnalyses.join(', ') || 'None'}</td><td>${detailsList.join('<br>')}</td></tr>`
+                }).join('') || `<tr><td colspan="5" style="text-align: center; padding: 1rem;">No samples submitted.</td></tr>`}</tbody>
+            </table>`;
+
+        printArea.innerHTML = `
+            <div style="text-align: center; margin-bottom: 1rem; border-bottom: 1px solid var(--medium-gray); padding-bottom: 0.75rem;"><h1 style="font-size: 1.5rem;">CBPSR - Sample Submission Form</h1></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <h3>Submission Details</h3>
+                <div style="text-align: right;">
+                     <div><canvas id="barcode" style="height: 40px;"></canvas></div>
+                     <div id="qrcode-container" style="margin-top: 0.25rem;"></div>
+                </div>
+            </div>
+            ${applicantTable}
+            ${samplesTable}
+            <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; align-items: end; font-size: 0.75rem;">
+                <p><strong>Declaration:</strong> I declare all information is true and samples are prepared as per CBPSR guidelines.</p>
+                <div style="text-align: center; border-top: 2px solid var(--dark-gray); padding-top: 0.25rem; font-weight: 600;">Applicant's Signature</div>
+            </div>`;
+            
+        JsBarcode("#barcode", data.ssid, { format: "CODE128", displayValue: false, margin: 0, height: 40 });
+        const qr = qrcode(0, 'M');
+        qr.addData(`SSID: ${data.ssid}\nApplicant: ${data.applicant.name}\nSamples: ${data.samples.length}`);
+        qr.make();
+        document.getElementById('qrcode-container').innerHTML = qr.createImgTag(3, 4);
+        document.getElementById('preview-section').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+        
+    async function downloadPDF() {
+        const element = document.getElementById('form-to-print');
+        const canvas = await html2canvas(element, { scale: 3, useCORS: true });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgWidth = pdfWidth - 20; // margins
+        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+        let heightLeft = imgHeight;
+        let position = 10;
+
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - 20);
+
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight + 10;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - 20);
+        }
+        pdf.save(`CBPSR_Submission_${ssid}.pdf`);
+    }
+
+    // --- Event Listeners & Initialization ---
+    window.addEventListener('load', () => {
+        ssid = generateSSID();
+        document.getElementById('ssid-display').textContent = ssid;
+        document.getElementById('proceed-to-form-btn').addEventListener('click', switchView);
+        document.getElementById('back-btn').addEventListener('click', () => navigate(-1));
+        document.getElementById('next-btn').addEventListener('click', () => navigate(1));
+        document.getElementById('add-sample-btn').addEventListener('click', addSample);
+        document.getElementById('generate-form-btn').addEventListener('click', generateFinalForm);
+        document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+        document.getElementById('show-json-btn').addEventListener('click', showJsonData);
+    });
+</script>
+</body>
+</html>
+
