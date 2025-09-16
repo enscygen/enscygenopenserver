@@ -730,7 +730,7 @@
                     });
                     
                     if (state.selectedBandIndex !== -1) {
-                        const selectedBand = selectedLane.bands[state.selectedLaneIndex];
+                        const selectedBand = selectedLane.bands[state.selectedBandIndex];
                         bandDetails.style.display = 'flex';
                         removeBandBtn.disabled = false;
                         bandNameInput.value = selectedBand.name;
@@ -935,7 +935,6 @@
             document.getElementById('lane-name-input').addEventListener('input', (e) => {
                 if (state.selectedLaneIndex !== -1) {
                     state.lanes[state.selectedLaneIndex].name = e.target.value;
-                    updateUI();
                     draw();
                 }
             });
@@ -943,7 +942,6 @@
             document.getElementById('lane-color-input').addEventListener('input', (e) => {
                 if (state.selectedLaneIndex !== -1) {
                     state.lanes[state.selectedLaneIndex].color = e.target.value;
-                    updateUI();
                     draw();
                 }
             });
@@ -958,7 +956,6 @@
             document.getElementById('lane-width-input').addEventListener('input', (e) => {
                 if (state.selectedLaneIndex !== -1) {
                     state.lanes[state.selectedLaneIndex].width = parseFloat(e.target.value) || DEFAULT_LANE_WIDTH;
-                    updateUI();
                     draw();
                 }
             });
@@ -1016,7 +1013,6 @@
                 const selectedLane = state.lanes[state.selectedLaneIndex];
                 if (selectedLane && state.selectedBandIndex !== -1) {
                     selectedLane.bands[state.selectedBandIndex].name = e.target.value;
-                    updateUI();
                     draw();
                 }
             });
@@ -1025,7 +1021,6 @@
                 const selectedLane = state.lanes[state.selectedLaneIndex];
                 if (selectedLane && state.selectedBandIndex !== -1) {
                     selectedLane.bands[state.selectedBandIndex].color = e.target.value;
-                    updateUI();
                     draw();
                 }
             });
@@ -1034,7 +1029,6 @@
                 const selectedLane = state.lanes[state.selectedLaneIndex];
                 if (selectedLane && state.selectedBandIndex !== -1 && selectedLane.type === 'ladder') {
                     selectedLane.bands[state.selectedBandIndex].size = parseFloat(e.target.value) || null;
-                    updateUI();
                 }
             });
 
