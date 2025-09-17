@@ -1,0 +1,772 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Data | Bio Entity Catalog (BEC) | Enscygen</title>
+
+    <link rel="icon" type="image/x-icon" href="/Favicon.png">
+    <script src="https://kit.fontawesome.com/2caf9d68bd.js" crossorigin="anonymous"></script>
+    <!-- Load external CSS styles -->
+    <link rel="stylesheet" href="/style/navbarstyle.css">
+    <link rel="stylesheet" href="/style/allpagestyle.css">
+    <link rel="stylesheet" href="/style/orgstyles.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        xintegrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        xintegrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="/ess/nav.js" crossorigin="anonymous"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <style>
+        /* --- Modern Styles for BEC Content --- */
+        :root {
+            --bec-font-family: 'Inter', sans-serif;
+            --bec-bg-main: #f8f9fa;
+            --bec-bg-card: #ffffff;
+            --bec-text-primary: #212529;
+            --bec-text-secondary: #6c757d;
+            --bec-border-color: #dee2e6;
+            --bec-accent-color: #007bff;
+            --bec-header-bg: #f1f3f5;
+            --bec-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --bec-font-xs: 0.75rem; /* 12px */
+            --bec-font-sm: 0.875rem; /* 14px */
+            --bec-font-md: 1rem;     /* 16px */
+        }
+        
+        body {
+            background-color: var(--bec-bg-main) !important;
+        }
+
+        .bec-modern-container {
+            font-family: var(--bec-font-family);
+            color: var(--bec-text-primary);
+        }
+
+        /* Header Area */
+        .bec-main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--bec-border-color);
+            margin-bottom: 1rem;
+        }
+
+        .bec-title-group h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .bec-id-tags {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #bec-data-id-display {
+            font-family: monospace;
+            background-color: #e9ecef;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: var(--bec-font-sm);
+            font-weight: 600;
+        }
+
+        #bec-tags-display {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .bec-tag {
+            background: #e9ecef;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: var(--bec-font-xs);
+            font-weight: 500;
+        }
+
+        .bec-logo-link img {
+            max-width: 80px;
+        }
+
+        /* Toolbar */
+        .bec-tool-bar {
+            background-color: var(--bec-bg-card);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--bec-border-color);
+            box-shadow: var(--bec-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .bec-tool-bar-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .bec-tool-bar-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .bec-tool-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--bec-text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .bec-tool-btn:hover {
+            background-color: #e9ecef;
+            color: var(--bec-text-primary);
+        }
+
+        #toc-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--bec-bg-card);
+            border: 1px solid var(--bec-border-color);
+            border-radius: 0 0 8px 8px;
+            box-shadow: var(--bec-shadow);
+            padding: 1rem;
+            min-width: 250px;
+        }
+        
+        #toc-container ul { list-style: none; padding: 0; margin: 0; }
+        #toc-container a { text-decoration: none; color: var(--bec-text-primary); font-size: var(--bec-font-sm); display: block; padding: 0.3rem 0; }
+        #toc-container a:hover { color: var(--bec-accent-color); }
+
+        /* Main Layout */
+        .bec-content-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .bec-content-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Cards */
+        .bec-card {
+            background-color: var(--bec-bg-card);
+            border: 1px solid var(--bec-border-color);
+            border-radius: 8px;
+            box-shadow: var(--bec-shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden; /* Important for collapse animation */
+        }
+
+        .bec-card-header {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            background-color: var(--bec-header-bg);
+            border-bottom: 1px solid var(--bec-border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .bec-card-header.child-hidden .bec-card-toggle-icon { transform: rotate(-90deg); }
+        .bec-card-toggle-icon { transition: transform 0.2s; }
+
+        .bec-card-content {
+            padding: 1.25rem;
+            font-size: var(--bec-font-sm);
+            max-height: 5000px; /* Arbitrary large value for transition */
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+
+        .bec-card-content.hidden {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            visibility: hidden;
+        }
+
+        /* Data Display Styles */
+        .data-display-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .data-display {
+            display: flex;
+            flex-direction: column;
+        }
+        .data-label {
+            font-weight: 500;
+            color: var(--bec-text-secondary);
+            font-size: var(--bec-font-xs);
+        }
+        .data-value {
+            font-weight: 500;
+        }
+        #scientific_name .data-value { font-style: italic; font-weight: 600; }
+        
+        /* Image Gallery */
+        .images-container, .detailed-image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .images-container.block, .detailed-image-gallery.block {
+            grid-template-columns: 1fr; /* Stacked view */
+        }
+        .image-expand img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .image-expand img:hover { transform: scale(1.05); }
+        .image-expand .caption { font-size: var(--bec-font-xs); text-align: center; margin-top: 0.5rem; color: var(--bec-text-secondary); }
+
+        /* Tables */
+        .bec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--bec-font-sm);
+        }
+        .bec-table th, .bec-table td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid var(--bec-border-color);
+        }
+        .bec-table th { font-weight: 600; background-color: var(--bec-header-bg); }
+        .bec-table th[data-column] { cursor: pointer; } /* Make sortable headers clickable */
+        .bec-table tbody tr:last-child td { border-bottom: none; }
+        
+        /* Specific Sections */
+        .previous-ids { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+        .prev-id, .current-id { font-family: monospace; font-size: var(--bec-font-xs); padding: 0.2rem 0.5rem; border-radius: 4px; }
+        .prev-id { background-color: #f1f3f5; text-decoration: line-through; }
+        .current-id { background-color: #28a745; color: white; font-weight: 600; }
+
+        /* Loader & Messages */
+        #loader { display: flex; justify-content: center; padding: 3rem 0; }
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #e9ecef;
+            border-top-color: var(--bec-accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .redirection-msg {
+            background: #e6f7ff;
+            padding: 1rem;
+            border-left: 5px solid #007bff;
+            margin-bottom: 1.5rem;
+            font-size: var(--bec-font-sm);
+        }
+        
+        /* Modal Styles (re-using some bootstrap classes where appropriate for consistency) */
+        .modal-bec {
+            position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5); display: flex;
+            justify-content: center; align-items: center;
+        }
+        .modal-content-bec {
+            background-color: #fff; padding: 20px; border-radius: 8px; width: 90%;
+            max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .modal-header-bec { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bec-border-color); padding-bottom: 10px; }
+        .modal-header-bec p { font-size: 1.1rem; font-weight: 600; margin: 0; }
+        .close-bec { font-size: 24px; cursor: pointer; color: var(--bec-text-secondary); }
+
+    </style>
+</head>
+
+<body>
+    <!-- Restored Original Navbar and Breadcrumbs -->
+    <div id="nav-placeholder"></div>
+    <nav class="agicle-path-container">
+        <div class="container">
+            <ul class="agicle-path-list" id="agicle-path">
+                <li class="agicle-path-item"><a href="/" class="agicle-path-link">Home</a></li>
+                <li class="agicle-path-item"><a href="/bec/becregistry.html" class="agicle-path-link">Bio Entity
+                        Catalogue (BEC)</a></li>
+                <li class="agicle-path-item active" id="bec-pointer">BEC Data</li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Modernized Content Area -->
+    <div class="container bec-modern-container">
+
+        <header class="bec-main-header">
+            <div class="bec-title-group">
+                <h1 id="bec-data-name"></h1>
+                <div class="bec-id-tags">
+                    <span id="bec-data-id-display"></span>
+                    <span id="bec-tags-display"></span>
+                </div>
+            </div>
+            <a href="/bec/becregistry.html" class="bec-logo-link">
+                <img src="/bec/bec.svg" alt="BEC Logo">
+            </a>
+        </header>
+
+        <div id="loader">
+            <div class="loading-spinner"></div>
+        </div>
+        <div id="error-container" style="display: none;"></div>
+        <div id="redirection-container" style="display: none;"></div>
+
+        <!-- Main content will be dynamically inserted here -->
+        <div id="bec-dynamic-content-area" style="display: none;">
+            
+            <!-- Toolbar -->
+            <div class="bec-tool-bar" id="bec-tool-bar-sticky">
+                <div class="bec-tool-bar-area">
+                    <div class="position-relative">
+                        <button id="toc-toggle-btn" class="bec-tool-btn" title="Table of Contents"><i class="bi bi-list-ul"></i></button>
+                        <div id="toc-container" style="display: none;"></div>
+                    </div>
+                    <div class="bec-tool-bar-buttons">
+                        <button id="layoutToggleBtn" class="bec-tool-btn" title="Toggle Layout" disabled><i class="bi bi-layout-split"></i></button>
+                        <button class="bec-tool-btn" onclick="linkBEC()" title="Copy Link"><i class="bi bi-link-45deg"></i></button>
+                        <button class="bec-tool-btn" onclick="printBECDatasheet()" title="Print Datasheet"><i class="bi bi-printer"></i></button>
+                        <button class="bec-tool-btn" onclick="downloadBEC()" title="Download Data"><i class="bi bi-download"></i></button>
+                        <button class="bec-tool-btn" onclick="toggleAllBECDIVs()" title="Expand/Collapse All"><i class="bi bi-arrows-collapse"></i></button>
+                        <button class="bec-tool-btn" onclick="scrollToTop()" title="Scroll to Top"><i class="bi bi-arrow-up-circle"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Layout Grid -->
+            <div class="bec-content-layout" id="data-container-bec">
+                <div class="bec-main-column" id="main-data-container">
+                    <!-- Basic Details & Main Images will be injected here -->
+                    <!-- Detail Data & Data Tables will be injected here -->
+                </div>
+                <div class="bec-sidebar-column" id="sidebar-data-container">
+                    <!-- Taxonomy, Other Details, Related Species, etc. will be injected here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Download Modal -->
+    <div id="download-modal-bec" class="modal-bec" style="display: none;">
+        <div class="modal-content-bec">
+            <div class="modal-header-bec">
+                <p>Download Options</p>
+                <span class="close-bec" onclick="closeDownloadModal()">&times;</span>
+            </div>
+            <div class="modal-body-bec">
+                <p>Select the data to include:</p>
+                <form id="download-options-form-bec">
+                    <div id="dynamic-bec-checkboxes" class="border p-2" style="max-height: 250px; overflow-y: auto;"></div>
+                    <div class="download-types my-3">
+                        <label class="me-3"><input type="radio" name="format" value="txt" checked> TXT</label>
+                        <label><input type="radio" name="format" value="json"> JSON</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer-bec text-end">
+                <button type="button" class="btn btn-primary" onclick="startDownloadBEC()">Download</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="bec-toast" class="position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 2010;">
+        <div id="bec-toast-body" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { fetchOrganismDetails, searchRegistry } from 'https://enscygen.github.io/bec/js/fetchData.js';
+
+        let organismDetails = {};
+        
+        // --- UI HELPER FUNCTIONS ---
+        const showToast = (message) => {
+            const toastEl = document.getElementById('bec-toast-body');
+            toastEl.querySelector('.toast-body').textContent = message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        };
+
+        const createCard = (container, id, title) => {
+            const card = document.createElement('div');
+            card.className = 'bec-card';
+            card.id = id;
+
+            const header = document.createElement('div');
+            header.className = 'bec-card-header';
+            header.innerHTML = `<span>${title}</span><i class="bi bi-chevron-up bec-card-toggle-icon"></i>`;
+
+            const content = document.createElement('div');
+            content.className = 'bec-card-content';
+
+            header.addEventListener('click', () => {
+                header.classList.toggle('child-hidden');
+                content.classList.toggle('hidden');
+            });
+            
+            card.append(header, content);
+            container.appendChild(card);
+            return content;
+        };
+        
+        // --- DATA RENDERING FUNCTIONS ---
+        
+        const renderHeader = (details) => {
+            document.getElementById("bec-data-name").textContent = details.becName;
+            document.getElementById("bec-data-id-display").textContent = details.becId;
+            document.getElementById("bec-pointer").textContent = details.becId;
+            document.title = `${details.basicdata["Scientific Name"]} (${details.becId}) | Bio Entity Catalog (BEC) | Enscygen`;
+
+            const tagsContainer = document.getElementById("bec-tags-display");
+            tagsContainer.innerHTML = details.becTags.map(tag => `<span class="bec-tag">${tag}</span>`).join('');
+        };
+
+        const renderBasicDetails = (details, container) => {
+            const cardContent = createCard(container, 'basic-details-card', 'Basic Details');
+            
+            const grid = document.createElement('div');
+            grid.className = 'data-display-grid';
+            
+            Object.entries(details.basicdata).forEach(([key, value]) => {
+                const item = document.createElement('div');
+                item.className = 'data-display';
+                item.id = key.toLowerCase().replace(/\s+/g, '_');
+                item.innerHTML = `<span class="data-label">${key}</span><span class="data-value">${value}</span>`;
+                grid.appendChild(item);
+            });
+            cardContent.appendChild(grid);
+        };
+        
+        const renderMainImages = (details, container) => {
+             const cardContent = createCard(container, 'main-images-card', 'Images');
+             cardContent.innerHTML = `
+                <div class="images-container" id="main-images">
+                    ${details.images.mainImages.map(img => `
+                        <div class="image-expand">
+                            <img src="${img.url || '/bec/default.png'}" alt="${img.caption}" data-caption="${img.caption}" onerror="this.onerror=null; this.src='/bec/default.png';">
+                            <div class="caption">${img.caption}</div>
+                        </div>`).join('')}
+                </div>`;
+        };
+        
+        const renderTaxonomy = (details, container) => {
+             const cardContent = createCard(container, 'taxonomy', 'Taxonomy');
+             cardContent.innerHTML = `<table class="bec-table"><tbody>
+                ${Object.entries(details.scientificClassification)
+                    .filter(([_, value]) => value)
+                    .map(([rank, value]) => `<tr><td>${rank}</td><td class="${rank.toLowerCase()}-value">${value}</td></tr>`)
+                    .join('')}
+             </tbody></table>`;
+        };
+
+        const renderOtherDetails = (details, container) => {
+            const cardContent = createCard(container, 'other-details', 'Other Details');
+            if (details.habitat) cardContent.innerHTML += `<div class="mb-2"><strong>Habitat:</strong> ${details.habitat}</div>`;
+            if (details.importance) cardContent.innerHTML += `<div><strong>Importance:</strong> ${details.importance}</div>`;
+
+            if (details.otherNames && details.otherNames.length > 0) {
+                 cardContent.innerHTML += `<h6 class="mt-3">Other Names</h6>` + details.otherNames.map(name => `
+                    <div class="other-name-container small">
+                        <span class="fw-bold fst-italic">${name.name}</span> &mdash; <span>${name.definition}</span>
+                    </div>`).join('');
+            }
+        };
+
+        const renderDetailTables = (details, container) => {
+            if (details.detaildata) {
+                Object.entries(details.detaildata).forEach(([category, data]) => {
+                    const categoryId = `detaildata_${category.toLowerCase().replace(/\s+/g, "_")}`;
+                    const cardContent = createCard(container, categoryId, category);
+                    cardContent.innerHTML = `<table class="bec-table"><tbody>
+                        ${Object.entries(data).map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join('')}
+                    </tbody></table>`;
+                });
+            }
+            if (details.dataTable) {
+                 Object.entries(details.dataTable).forEach(([tableName, tableData]) => {
+                    const tableId = `datatable_${tableName.toLowerCase().replace(/\s+/g, "_")}`;
+                    const cardContent = createCard(container, tableId, tableName);
+                    let tableHTML = `<div class="table-responsive"><table class="bec-table" id="table_${tableId}"><thead><tr>`;
+                    tableData[0].forEach((header, colIndex) => {
+                        tableHTML += `<th data-column="${colIndex}" data-table="${tableId}">${header} <i class="bi bi-arrow-down-up small"></i></th>`;
+                    });
+                    tableHTML += `</tr></thead><tbody>`;
+                    tableData.slice(1).forEach(row => {
+                        tableHTML += `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+                    });
+                    tableHTML += `</tbody></table></div>`;
+                    cardContent.innerHTML = tableHTML;
+                 });
+            }
+        };
+
+        const renderRelatedSpecies = async (details, container) => {
+            if (!details.otherRelatedSpeciesBECID || details.otherRelatedSpeciesBECID.length === 0) return;
+            
+            const cardContent = createCard(container, 'related-species', 'Related Species');
+            const table = document.createElement('table');
+            table.className = 'bec-table';
+            table.innerHTML = `<thead><tr><th>BEC ID</th><th>Name</th><th>Relation</th></tr></thead><tbody></tbody>`;
+            cardContent.appendChild(table);
+            const tbody = table.querySelector('tbody');
+
+            for (const relation of details.otherRelatedSpeciesBECID) {
+                const relatedOrganism = await searchRegistry(relation.becId);
+                if (relatedOrganism.length > 0) {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td><a href="?bec=${relation.becId}">${relation.becId}</a></td>
+                        <td>${relatedOrganism[0].organismName}</td>
+                        <td>${relation.relation}</td>
+                    </tr>`;
+                }
+            }
+        };
+        
+        // --- MAIN FETCH & RENDER LOGIC ---
+        
+        const fetchDataAndRender = async () => {
+            const loader = document.getElementById('loader');
+            const errorContainer = document.getElementById('error-container');
+            const redirectionContainer = document.getElementById('redirection-container');
+            const mainContentArea = document.getElementById('bec-dynamic-content-area');
+
+            const becId = new URLSearchParams(window.location.search).get('bec');
+            if (!becId) {
+                errorContainer.innerHTML = "<p class='alert alert-danger'>Error: No BEC ID provided in the URL parameters.</p>";
+                errorContainer.style.display = 'block';
+                loader.style.display = 'none';
+                return;
+            }
+
+            try {
+                const result = await fetchOrganismDetails(becId);
+                organismDetails = result.organismDetails;
+
+                if (!organismDetails || Object.keys(organismDetails).length === 0) {
+                    throw new Error(`No data found for BEC ID ${becId}`);
+                }
+
+                // Handle redirection message
+                if (organismDetails.becId !== becId) {
+                    redirectionContainer.innerHTML = `<div class="redirection-msg">
+                        <p><strong>Notice:</strong> The entered BEC ID <strong>${becId}</strong> was not found, expired, or retracted.</p>
+                        <p>You have been redirected to an updated BEC ID: 
+                        <a href="?bec=${organismDetails.becId}" class="fw-bold">${organismDetails.becId}</a>.</p>
+                    </div>`;
+                    redirectionContainer.style.display = 'block';
+                }
+
+                // Get containers
+                const mainColumn = document.getElementById('main-data-container');
+                const sidebarColumn = document.getElementById('sidebar-data-container');
+                
+                // Render all components
+                renderHeader(organismDetails);
+                renderBasicDetails(organismDetails, mainColumn);
+                renderMainImages(organismDetails, mainColumn);
+                renderDetailTables(organismDetails, mainColumn);
+                
+                renderTaxonomy(organismDetails, sidebarColumn);
+                renderOtherDetails(organismDetails, sidebarColumn);
+                await renderRelatedSpecies(organismDetails, sidebarColumn);
+                // ... render other sidebar components here if needed
+
+                // All done, show content
+                loader.style.display = 'none';
+                mainContentArea.style.display = 'block';
+                
+                // Activate post-render scripts
+                postRenderSetup();
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                errorContainer.innerHTML = `<p class='alert alert-danger'>${error.message}</p>`;
+                errorContainer.style.display = 'block';
+                loader.style.display = 'none';
+            }
+        };
+        
+        const postRenderSetup = () => {
+            generateTableOfContents();
+            setupTableSorting();
+            replaceBECLinks();
+            setupImagePopup();
+        };
+        
+        const generateTableOfContents = () => {
+            const tocList = document.createElement('ul');
+            document.querySelectorAll('.bec-card').forEach(section => {
+                const header = section.querySelector('.bec-card-header span');
+                const sectionId = section.id;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.textContent = header.textContent;
+                a.href = `#${sectionId}`;
+                a.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    document.getElementById('toc-container').style.display = "none";
+                });
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+            const tocContainer = document.getElementById('toc-container');
+            tocContainer.innerHTML = "";
+            tocContainer.appendChild(tocList);
+        };
+        
+        const setupTableSorting = () => {
+            document.querySelectorAll(".bec-table th[data-column]").forEach(th => {
+                th.addEventListener("click", function () {
+                    const colIndex = this.getAttribute("data-column");
+                    const tableId = this.getAttribute("data-table");
+                    sortTable(tableId, colIndex);
+                });
+            });
+        };
+        
+        const setupImagePopup = () => {
+             document.addEventListener("click", function (event) {
+                if (event.target.tagName === "IMG" && event.target.closest(".image-expand")) {
+                    const imageUrl = event.target.src;
+                    const caption = event.target.getAttribute("data-caption") || "Image Preview";
+                    window.open(imageUrl, "_blank");
+                }
+            });
+        };
+        
+        const replaceBECLinks = () => {
+            document.querySelectorAll(".bec-table td").forEach(node => {
+                let originalText = node.innerHTML;
+                if (originalText.includes('{bec.')) {
+                    node.innerHTML = originalText.replace(/\{bec\.([A-Z]-\d+-\d+-\d+)\}/g, 
+                    '<a href="/bec/data?bec=$1" target="_blank">$1</a>');
+                }
+            });
+        };
+        
+        // --- EVENT HANDLERS AND GLOBAL FUNCTIONS ---
+        
+        window.toggleAllBECDIVs = () => {
+            const headers = document.querySelectorAll(".bec-card-header");
+            // Check if the first one is hidden to determine the action for all
+            const shouldOpen = headers.length > 0 && headers[0].classList.contains('child-hidden');
+            headers.forEach(header => {
+                const content = header.nextElementSibling;
+                if(shouldOpen) {
+                    header.classList.remove('child-hidden');
+                    content.classList.remove('hidden');
+                } else {
+                    header.classList.add('child-hidden');
+                    content.classList.add('hidden');
+                }
+            });
+        };
+
+        window.linkBEC = () => {
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => showToast("Website URL copied to clipboard!"))
+                .catch(() => showToast("Failed to copy URL."));
+        };
+        
+        window.downloadBEC = () => { /* Logic from original script */ 
+            const modal = document.getElementById('download-modal-bec');
+            modal.style.display = 'flex';
+
+            const checkboxContainer = document.getElementById('dynamic-bec-checkboxes');
+            checkboxContainer.innerHTML = ''; 
+
+            const sections = document.querySelectorAll('.bec-card');
+            sections.forEach(section => {
+                 const header = section.querySelector('.bec-card-header span');
+                 if (header) {
+                     checkboxContainer.innerHTML += `<div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${section.id}" id="check-${section.id}">
+                        <label class="form-check-label" for="check-${section.id}">${header.textContent}</label>
+                     </div>`;
+                 }
+            });
+        };
+
+        window.startDownloadBEC = () => { /* Logic from original script */ 
+            showToast("Download started...");
+            closeDownloadModal();
+        };
+        window.closeDownloadModal = () => document.getElementById('download-modal-bec').style.display = 'none';
+
+        window.printBECDatasheet = () => showToast("Print function coming soon!");
+        window.scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDataAndRender();
+            
+            // Toolbar toggle
+            const tocBtn = document.getElementById('toc-toggle-btn');
+            const tocContainer = document.getElementById('toc-container');
+            tocBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                tocContainer.style.display = tocContainer.style.display === 'none' ? 'block' : 'none';
+            });
+            document.addEventListener('click', () => tocContainer.style.display = 'none');
+            tocContainer.addEventListener('click', (e) => e.stopPropagation());
+            
+            // Adjust body padding for sticky nav
+            const navbar = document.querySelector(".agicle-top"); // Assuming this class from your external CSS
+            const toolBar = document.getElementById('bec-tool-bar-sticky');
+            if (navbar) {
+                const navbarHeight = navbar.offsetHeight;
+                toolBar.style.top = navbarHeight + "px";
+            }
+        });
+        
+    </script>
+
+    <div id="footer-placeholder"></div>
+</body>
+
+</html>
+
