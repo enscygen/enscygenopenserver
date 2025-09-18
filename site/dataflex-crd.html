@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataFlex-CRD | Enscygen</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+    
+    <style>
+        /* --- General Styling & Resets --- */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --text-color: #333;
+            --light-text-color: #666;
+            --bg-color: #f4f7fa;
+            --container-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --border-radius: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Header & Title --- */
+        .app-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .app-header p {
+            font-size: 0.95rem;
+            color: var(--light-text-color);
+        }
+
+        /* --- Main App Wrapper --- */
+        .app-wrapper {
+            background-color: var(--container-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        /* --- Input Section --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+
+        .input-group input[type="file"],
+        .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .input-group input[type="file"]::file-selector-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .input-group input[type="file"]::file-selector-button:hover {
+             background-color: var(--primary-hover);
+        }
+
+
+        .input-group input[type="file"]:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        .analyze-button {
+            grid-column: 1 / -1; 
+        }
+        
+        @media (min-width: 880px) {
+            .analyze-button {
+                grid-column: auto;
+            }
+        }
+
+
+        .enscy-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .enscy-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* --- Progress Bar Styling --- */
+        .progress-container {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 10px;
+            width: 0%;
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        .progress-bar.loaded {
+            background-color: #28a745;
+        }
+
+        .progress-text {
+            padding-top: 5px;
+            font-size: 0.8rem;
+            color: var(--light-text-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- Output & Tables --- */
+        #output {
+            margin-top: 25px;
+        }
+        
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        .pro-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .pro-table th,
+        .pro-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pro-table thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .pro-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pro-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .pro-table .check-groups-assigned {
+            font-weight: 600;
+        }
+
+        .app-message {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            font-size: 0.9rem;
+            border-left-width: 4px;
+            border-left-style: solid;
+        }
+        
+        .msg-info {
+            background-color: #e6f2ff;
+            border-color: var(--primary-color);
+            color: #004085;
+        }
+
+        .msg-success {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .msg-warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .msg-error {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .form-check-container {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .form-check-input {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* --- Custom Modal Styling --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 450px;
+            font-size: 0.9rem;
+        }
+
+        .modal-content h4 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .modal-params {
+            background-color: #f4f7fa;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        .modal-input-group {
+            margin: 20px 0;
+        }
+
+        .modal-input-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        .modal-input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .modal-error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .modal-btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .modal-btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .modal-btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        .modal-btn-cancel:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>DataFlex-CRD</h1>
+            <p>Statistical Core for Completely Randomized Design Analysis</p>
+        </header>
+
+        <main class="app-wrapper">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="csvFile"><i class="bi bi-file-earmark-spreadsheet"></i> Upload Data File</label>
+                    <input type="file" id="csvFile" accept=".csv" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="alpha"><i class="bi bi-sliders"></i> Significance Level (α)</label>
+                    <select id="alpha">
+                        <option value="0.05">0.05</option>
+                        <option value="0.01">0.01</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="transform"><i class="bi bi-arrow-repeat"></i> Data Transformation</label>
+                    <select id="transform">
+                        <option value="auto">Detect Automatically</option>
+                        <option value="none">None</option>
+                        <option value="log">Log10(x)</option>
+                        <option value="sqrt">Square Root(x)</option>
+                        <option value="arcsine">Arcsine √x</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="comparisonTest"><i class="bi bi-diagram-3"></i> Comparison Test</label>
+                    <select id="comparisonTest">
+                        <option value="lsd">Fisher's LSD (CD)</option>
+                        <option value="tukey">Tukey's HSD</option>
+                    </select>
+                </div>
+                
+                <div class="input-group analyze-button">
+                    <button onclick="analyzeCRD()" class="enscy-btn">
+                        <i class="bi bi-bar-chart-line-fill"></i> Analyze
+                    </button>
+                </div>
+            </div>
+            
+            <div id="progress-container" class="progress-container" style="display: none;">
+                <div class="progress-bar-wrapper">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="file-name-display"></span>
+                    <span id="progress-percentage"></span>
+                </div>
+            </div>
+
+            <div id="output"></div>
+        </main>
+      <div style="margin: 25px 0; padding: 15px; border: 1px solid #dee2e6; border-left: 4px solid #007bff; border-radius: 6px; background-color: #f8f9fa; display: flex; align-items: center; gap: 15px;">
+    <div style="flex-shrink: 0;">
+        <!-- Replaced SVG with Bootstrap Icon -->
+        <i class="bi bi-shield-check" style="font-size: 32px; color: #007bff; line-height: 1;"></i>
+    </div>
+    <div>
+        <h5 style="margin: 0 0 5px 0; font-size: 1rem; font-weight: 600; color: #333;">Your Data's Privacy</h5>
+        <p style="margin: 0; font-size: 0.85rem; color: #666; line-height: 1.5;">
+            The data you upload to DataFlex-CRD is processed entirely within your browser. No information is ever sent to or stored on our servers, ensuring your work remains completely private on your own device.
+        </p>
+    </div>
+</div>
+
+    </div>
+
+    <div id="qValueModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h4>Tukey's HSD Input Required</h4>
+            <p>Could not find the required 'q' value in the internal table. Please provide it manually.</p>
+            <p id="modalSearchInstructions" style="font-weight: 500;"></p>
+            <div class="modal-params">
+                <div>Significance Level (α): <strong id="modalAlpha"></strong></div>
+                <div>Number of Treatments (k): <strong id="modalK"></strong></div>
+                <div>Error Degrees of Freedom (df): <strong id="modalDf"></strong></div>
+            </div>
+            <div class="modal-input-group">
+                <label for="qValueInput">'q' Value:</label>
+                <input type="number" id="qValueInput" placeholder="Enter the q-value here" step="0.001">
+                <div id="modalError" class="modal-error-message" style="display: none;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button id="modalCancelBtn" class="modal-btn modal-btn-cancel">Cancel</button>
+                <button id="modalSubmitBtn" class="modal-btn modal-btn-submit">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const qValueData = {
+            "0.05": {
+                "1": { "2": 17.97, "3": 26.98, "4": 32.82, "5": 37.08, "6": 40.41, "7": 43.12, "8": 45.4, "9": 47.36, "10": 49.07 },
+                "2": { "2": 6.08, "3": 8.33, "4": 9.8, "5": 10.88, "6": 11.74, "7": 12.44, "8": 13.03, "9": 13.54, "10": 13.99 },
+                "3": { "2": 4.5, "3": 5.91, "4": 6.82, "5": 7.5, "6": 8.04, "7": 8.48, "8": 8.85, "9": 9.18, "10": 9.46 },
+                "4": { "2": 3.93, "3": 5.04, "4": 5.76, "5": 6.29, "6": 6.71, "7": 7.05, "8": 7.35, "9": 7.6, "10": 7.83 },
+                "5": { "2": 3.64, "3": 4.6, "4": 5.22, "5": 5.67, "6": 6.03, "7": 6.33, "8": 6.58, "9": 6.8, "10": 6.99 },
+                "10": { "2": 3.15, "3": 3.88, "4": 4.33, "5": 4.65, "6": 4.91, "7": 5.12, "8": 5.3, "9": 5.46, "10": 5.6 },
+                "15": { "2": 3.01, "3": 3.67, "4": 4.08, "5": 4.37, "6": 4.59, "7": 4.78, "8": 4.94, "9": 5.08, "10": 5.2 },
+                "20": { "2": 2.95, "3": 3.58, "4": 3.96, "5": 4.23, "6": 4.45, "7": 4.62, "8": 4.77, "9": 4.9, "10": 5.01 },
+                "30": { "2": 2.89, "3": 3.49, "4": 3.85, "5": 4.1, "6": 4.3, "7": 4.46, "8": 4.59, "9": 4.7, "10": 4.81 },
+                "60": { "2": 2.83, "3": 3.4, "4": 3.74, "5": 3.98, "6": 4.16, "7": 4.31, "8": 4.44, "9": 4.55, "10": 4.65 },
+                "120": { "2": 2.8, "3": 3.36, "4": 3.68, "5": 3.92, "6": 4.1, "7": 4.24, "8": 4.36, "9": 4.47, "10": 4.56 }
+            },
+            "0.01": {
+                "1": { "2": 90.03, "3": 135.0, "4": 164.3, "5": 185.6, "6": 202.3, "7": 215.8, "8": 227.2, "9": 237.0, "10": 245.6 },
+                "2": { "2": 14.04, "3": 19.02, "4": 22.29, "5": 24.72, "6": 26.63, "7": 28.2, "8": 29.53, "9": 30.68, "10": 31.69 },
+                "3": { "2": 8.26, "3": 10.62, "4": 12.17, "5": 13.33, "6": 14.24, "7": 15.0, "8": 15.64, "9": 16.2, "10": 16.69 },
+                "4": { "2": 6.51, "3": 8.12, "4": 9.17, "5": 9.96, "6": 10.58, "7": 11.1, "8": 11.55, "9": 11.93, "10": 12.27 },
+                "5": { "2": 5.7, "3": 6.98, "4": 7.8, "5": 8.42, "6": 8.91, "7": 9.32, "8": 9.67, "9": 9.97, "10": 10.24 },
+                "10": { "2": 4.48, "3": 5.27, "4": 5.77, "5": 6.14, "6": 6.43, "7": 6.67, "8": 6.87, "9": 7.05, "10": 7.21 },
+                "15": { "2": 4.2, "3": 4.89, "4": 5.32, "5": 5.63, "6": 5.88, "7": 6.08, "8": 6.26, "9": 6.41, "10": 6.55 },
+                "20": { "2": 4.1, "3": 4.73, "4": 5.12, "5": 5.4, "6": 5.62, "7": 5.8, "8": 5.95, "9": 6.09, "10": 6.21 },
+                "30": { "2": 3.87, "3": 4.45, "4": 8, "5": 5.05, "6": 5.24, "7": 5.4, "8": 5.54, "9": 5.66, "10": 5.76 },
+                "60": { "2": 3.76, "3": 4.28, "4": 4.59, "5": 4.82, "6": 4.99, "7": 5.13, "8": 5.25, "9": 5.36, "10": 5.46 },
+                "120": { "2": 3.7, "3": 4.2, "4": 4.5, "5": 4.71, "6": 4.87, "7": 5.0, "8": 5.12, "9": 5.22, "10": 5.31 }
+            }
+        };
+
+        let sortedTreatmentsData = [];
+
+        async function analyzeCRD() {
+            const fileInput = document.getElementById('csvFile');
+            if (!fileInput.files.length) {
+                document.getElementById('output').innerHTML = `<div class="app-message msg-warning">Please upload a CSV file to begin analysis.</div>`;
+                return;
+            }
+            const alpha = parseFloat(document.getElementById('alpha').value);
+            const transformType = document.getElementById('transform').value;
+            const comparisonTest = document.getElementById('comparisonTest').value;
+            const file = fileInput.files[0];
+
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const percentageDisplay = document.getElementById('progress-percentage');
+            const fileNameDisplay = document.getElementById('file-name-display');
+
+            fileNameDisplay.textContent = `Loading: ${file.name}`;
+            percentageDisplay.textContent = '0%';
+            progressBar.style.width = '0%';
+            progressBar.classList.remove('loaded');
+            progressContainer.style.display = 'block';
+            document.getElementById('output').innerHTML = '';
+
+            const reader = new FileReader();
+
+            reader.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentLoaded = Math.round((event.loaded / event.total) * 100);
+                    progressBar.style.width = `${percentLoaded}%`;
+                    percentageDisplay.textContent = `${percentLoaded}%`;
+                }
+            };
+
+            reader.onerror = function() {
+                document.getElementById('output').innerHTML = `<div class="app-message msg-error"><strong>Error:</strong> Could not read the selected file.</div>`;
+                progressContainer.style.display = 'none';
+            };
+
+            reader.onload = function(event) {
+                progressBar.style.width = '100%';
+                percentageDisplay.textContent = '100%';
+                progressBar.classList.add('loaded');
+                fileNameDisplay.textContent = `File loaded: ${file.name}`;
+
+                const fileContent = event.target.result;
+                Papa.parse(fileContent, {
+                    complete: async function (results) {
+                        try {
+                            const data = results.data.filter(row => row.length && row.some(cell => cell.trim() !== ""));
+                            if (data.length < 2 || data[0].length < 2) {
+                                throw new Error("CSV file must have at least one treatment row and one replication column.");
+                            }
+
+                            const repNames = data[0].slice(1);
+                            const treatments = data.slice(1).map(row => row[0]);
+                            const originalValues = data.slice(1).map(row => row.slice(1).map(cell => cell.trim() === "" ? NaN : parseFloat(cell)));
+
+                            if (originalValues.some(row => row.filter(v => !isNaN(v)).length === 0)) {
+                                throw new Error("Each treatment must have at least one valid numeric value.");
+                            }
+                            
+                            let actualTransform = 'none';
+                            let analysisData = originalValues;
+                            let transformNote = '';
+
+                            if (transformType === 'auto') {
+                                const suggestion = suggestTransformation(originalValues);
+                                actualTransform = suggestion.type;
+                                transformNote = suggestion.note;
+                            } else {
+                                actualTransform = transformType;
+                            }
+
+                            let transformedValues;
+                            if (actualTransform !== 'none') {
+                               transformedValues = applyTransformation(originalValues, actualTransform);
+                               analysisData = transformedValues.data;
+                               transformNote = transformNote || transformedValues.note;
+                            }
+
+                            const t = treatments.length;
+                            const repCounts = analysisData.map(row => row.filter(v => !isNaN(v)).length);
+                            const flatData = analysisData.flat().filter(v => !isNaN(v));
+                            const grandMean = jStat.mean(flatData);
+                            const treatmentMeans = analysisData.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+                            const originalMeans = originalValues.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+                            const originalSDs = originalValues.map(row => jStat.stdev(row.filter(v => !isNaN(v)), true));
+
+                            let SSR = 0, SSE = 0, SST = 0;
+                            for (let i = 0; i < t; i++) {
+                                const cleanRow = analysisData[i].filter(v => !isNaN(v));
+                                for (let j = 0; j < cleanRow.length; j++) {
+                                    SST += Math.pow(cleanRow[j] - grandMean, 2);
+                                    SSE += Math.pow(cleanRow[j] - treatmentMeans[i], 2);
+                                }
+                                SSR += cleanRow.length * Math.pow(treatmentMeans[i] - grandMean, 2);
+                            }
+                            
+                            const dfTreatment = t - 1;
+                            const dfTotal = flatData.length - 1;
+                            const dfError = dfTotal - dfTreatment;
+
+                            if (dfTreatment <= 0 || dfError <= 0) {
+                                throw new Error("Not enough data for ANOVA. Ensure at least two treatments and more than one total observation.");
+                            }
+
+                            const MSTreatment = SSR / dfTreatment;
+                            const MSError = SSE / dfError;
+                            const F = MSTreatment / MSError;
+                            const FCritical = getCriticalValue('F', 1 - alpha, dfTreatment, dfError);
+                            const tTab = getCriticalValue('t', 1 - alpha / 2, dfError);
+
+                            let html = '';
+                            html += generateTable('Raw Data', ['Treatment', ...repNames], originalValues.map((row, i) => [treatments[i], ...data.slice(1)[i].slice(1)]));
+
+                            if (actualTransform !== 'none') {
+                                 html += `<div class="app-message msg-info"><strong>Transformation Applied:</strong> ${transformedValues.name}. ${transformNote}</div>`;
+                                 html += generateTable('Transformed Data', ['Treatment', ...repNames], transformedValues.data.map((row, i) => [treatments[i], ...row.map(v => isNaN(v) ? "" : v.toFixed(3))]));
+                            } else if (transformType === 'auto') {
+                                 html += `<div class="app-message msg-info"><strong>Transformation Check:</strong> ${transformNote} No transformation was applied.</div>`;
+                            }
+                            
+                            const originalDetailsData = treatments.map((name, i) => {
+                                const validVals = originalValues[i].filter(v => !isNaN(v));
+                                return [ name, originalMeans[i].toFixed(3), originalSDs[i].toFixed(3), validVals.length > 0 ? Math.min(...validVals).toFixed(3) : 'N/A', validVals.length > 0 ? Math.max(...validVals).toFixed(3) : 'N/A', repCounts[i] ];
+                            });
+                            html += generateTable('Treatment Details (Original Data)', ['Treatment', 'Mean', 'SD', 'Min', 'Max', 'n'], originalDetailsData);
+
+                            const anovaSignificance = F > FCritical ? "Yes" : "No";
+                            const anovaData = [
+                                ['Treatment', dfTreatment, SSR.toFixed(3), MSTreatment.toFixed(3), F.toFixed(3), FCritical.toFixed(3), anovaSignificance],
+                                ['Error', dfError, SSE.toFixed(3), MSError.toFixed(3), '-', '-', '-'],
+                                ['Total', dfTotal, SST.toFixed(3), '-', '-', '-', '-']
+                            ];
+                            html += generateTable(`ANOVA Table ${actualTransform !== 'none' ? '(on Transformed Data)' : ''}`, ['Source', 'DF', 'SS', 'MS', 'F', 'F-Critical', 'Significant?'], anovaData);
+                            
+                            let qValue; 
+                            if (F > FCritical && comparisonTest === 'tukey') {
+                                try {
+                                    const k = treatments.length;
+                                    qValue = await getQValue(alpha, k, dfError);
+                                } catch (error) {
+                                    document.getElementById('output').innerHTML = `<div class="app-message msg-error"><strong>Error:</strong> ${error.message}</div>`;
+                                    return;
+                                }
+                            }
+
+                            const cv = (Math.sqrt(MSError) / grandMean) * 100;
+                            let paramsHeaders, paramsData, comparisonMessage;
+                            const unequalReplications = repCounts.some(count => count !== repCounts[0]);
+
+                            if (F > FCritical) {
+                                if (comparisonTest === 'tukey') {
+                                    paramsHeaders = ['F', 'F-Critical', 'q-value', 'MSE', 'CV (%)'];
+                                    paramsData = [[F.toFixed(3), FCritical.toFixed(3), qValue.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                                    if (unequalReplications) {
+                                        comparisonMessage = `Pairwise comparison by Tukey's HSD (Tukey-Kramer for unequal n).`;
+                                    } else {
+                                        const hsd = qValue * Math.sqrt(MSError / repCounts[0]);
+                                        comparisonMessage = `HSD (Tukey) = ${hsd.toFixed(3)} (for n = ${repCounts[0]})`;
+                                    }
+                                } else { // LSD
+                                    paramsHeaders = ['F', 'F-Critical', 't-value', 'MSE', 'CV (%)'];
+                                    paramsData = [[F.toFixed(3), FCritical.toFixed(3), tTab.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                                    if (unequalReplications) {
+                                        comparisonMessage = `Pairwise comparison by Fisher's LSD.`;
+                                    } else {
+                                        const cd = tTab * Math.sqrt(MSError * (2 / repCounts[0]));
+                                        comparisonMessage = `CD (LSD) = ${cd.toFixed(3)} (for n = ${repCounts[0]})`;
+                                    }
+                                }
+                            } else { // Not significant
+                                paramsHeaders = ['F', 'F-Critical', 't-value', 'MSE', 'CV (%)'];
+                                paramsData = [[F.toFixed(3), FCritical.toFixed(3), tTab.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                                comparisonMessage = `Pairwise comparison not required (non-significant).`;
+                            }
+
+                            html += generateTable('Statistical Parameters', paramsHeaders, paramsData);
+                            html += `<div class="app-message msg-info">${comparisonMessage}</div>`;
+                            
+                            let getCriticalValueCallback;
+                            if (comparisonTest === 'tukey') {
+                                getCriticalValueCallback = (index1, index2) => qValue * Math.sqrt((MSError / 2) * (1 / repCounts[index1] + 1 / repCounts[index2]));
+                            } else {
+                                getCriticalValueCallback = (index1, index2) => tTab * Math.sqrt(MSError * (1 / repCounts[index1] + 1 / repCounts[index2]));
+                            }
+
+                            if (F > FCritical && unequalReplications) {
+                                const matrixTitle = comparisonTest === 'tukey' ? "Honestly Significant Difference (HSD) Matrix" : "Critical Difference (CD) Matrix";
+                                html += generateComparisonMatrix(matrixTitle, treatments, repCounts, getCriticalValueCallback);
+                            }
+
+                            if (F > FCritical) {
+                                html += `<div class="app-message msg-success">The treatments are <strong>significantly different</strong>. Proceeding with pairwise comparison.</div>`;
+                                const sortedData = treatments.map((treatment, i) => ({ name: treatment, mean: treatmentMeans[i], originalMean: originalMeans[i], originalSD: originalSDs[i], repCount: repCounts[i], originalIndex: i })).sort((a, b) => b.mean - a.mean);
+                                const sortedMeans = sortedData.map(item => item.mean);
+                                const sortedRepCounts = sortedData.map(item => item.repCount);
+                                
+                                const groups = performGrouping(sortedMeans, sortedRepCounts, MSError, getCriticalValueCallback);
+                                
+                                sortedTreatmentsData = sortedData.map((item, i) => ({ ...item, group: groups[i] }));
+                                
+                                let finalTableHeaders;
+                                if (actualTransform !== 'none') {
+                                    finalTableHeaders = ['Treatment', 'Mean ± SD (Original)', 'Mean (Transformed)', 'Group'];
+                                } else {
+                                    finalTableHeaders = ['Treatment', 'Mean ± SD', 'Group'];
+                                }
+                                
+                                html += `<h3 class="section-header">Final Result Table</h3><div class="table-container"><table class="pro-table"><thead><tr>${finalTableHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody id="finalResultTableBody"></tbody></table></div>`;
+                                html += `<div class="app-message msg-info">Treatments sharing the same letter(s) are not significantly different.</div>`;
+                                html += `<div class="form-check-container">
+                                            <input class="form-check-input" type="checkbox" value="" id="toggleOriginalOrder">
+                                            <label class="form-check-label" for="toggleOriginalOrder">
+                                                Restore original data order
+                                            </label>
+                                        </div>`;
+                                
+                                document.getElementById('output').innerHTML = html;
+
+                                renderFinalTable(false);
+
+                                document.getElementById('toggleOriginalOrder').addEventListener('change', function() {
+                                    renderFinalTable(this.checked);
+                                });
+
+                            } else {
+                                html += `<div class="app-message msg-warning">The treatments are <strong>not significantly different</strong>. Pairwise comparison and grouping are not required.</div>`;
+                                document.getElementById('output').innerHTML = html;
+                            }
+                        } catch (error) {
+                             document.getElementById('output').innerHTML = `<div class="app-message msg-error"><strong>Error:</strong> ${error.message}</div>`;
+                        }
+                    }
+                });
+            };
+
+            reader.readAsText(file);
+        }
+        
+        function suggestTransformation(data) {
+            const means = data.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+            const variances = data.map(row => jStat.variance(row.filter(v => !isNaN(v)), true));
+            if(means.some(isNaN) || variances.some(isNaN)) return { type: 'none', note: 'Could not perform automatic detection due to insufficient data in one or more treatments.' };
+
+            const maxMean = Math.max(...means);
+            const minMean = Math.min(...means);
+            const maxVar = Math.max(...variances);
+            const minVar = Math.min(...variances);
+            const allValues = data.flat().filter(v => !isNaN(v));
+
+            if (minMean <= 0 || minVar <= 0) return { type: 'none', note: 'Data contains non-positive values; automatic transformation may be unreliable.' };
+            if (allValues.every(v => v >= 0 && v <= 100)) return { type: 'arcsine', note: 'Data appears to be in percentage/proportion form.' };
+            if ((maxMean / minMean > 5 || maxVar / minVar > 5) && !allValues.some(v => v < 0)) return { type: 'log', note: 'High variation detected between treatment means/variances.' };
+            const meanVarCorrelation = jStat.corr(means, variances);
+            if (meanVarCorrelation > 0.7 && !allValues.some(v => v < 0)) return { type: 'sqrt', note: 'Variance appears proportional to the mean (common in count data).' };
+            return { type: 'none', note: 'Data appears to meet ANOVA assumptions.' };
+        }
+
+        function applyTransformation(data, type) {
+            let transformedData, name, note = '';
+            const hasZero = data.flat().some(v => v === 0);
+            const hasNegative = data.flat().some(v => v < 0);
+
+            switch (type) {
+                case 'log':
+                    name = hasZero ? 'Log10(x + 1)' : 'Log10(x)';
+                    note = hasZero ? 'Added 1 to values to handle zeros.' : '';
+                    if(hasNegative) throw new Error("Log transformation cannot be applied to negative numbers.");
+                    transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.log10(hasZero ? v + 1 : v)));
+                    break;
+                case 'sqrt':
+                    name = hasZero ? '√(x + 0.5)' : '√(x)';
+                    note = hasZero ? 'Added 0.5 to values to handle zeros.' : '';
+                     if(hasNegative) throw new Error("Square root transformation cannot be applied to negative numbers.");
+                    transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.sqrt(hasZero ? v + 0.5 : v)));
+                    break;
+                case 'arcsine':
+                    name = 'Arcsine √(x/100)';
+                    if(data.flat().filter(v=>!isNaN(v)).some(v => v < 0 || v > 100)) {
+                        throw new Error("Arcsine transformation requires data in percentages (0-100).");
+                    }
+                    transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.asin(Math.sqrt(v / 100))));
+                    break;
+                default:
+                    return { data: data, name: 'None' };
+            }
+            return { data: transformedData, name: name, note: note };
+        }
+
+        function getCriticalValue(type, p, df1, df2) {
+            let value;
+            try {
+                value = type === 'F' ? jStat.centralF.inv(p, df1, df2) : jStat.studentt.inv(p, df1);
+                if (isNaN(value) || !isFinite(value)) throw new Error();
+                return value;
+            } catch {
+                const manualVal = parseFloat(prompt(`Could not find ${type}-table value for ${type === 'F' ? `df(${df1}, ${df2})` : `df=${df1}`}. Please enter manually:`));
+                if (isNaN(manualVal) || !isFinite(manualVal)) throw new Error(`Invalid manual ${type}-critical value.`);
+                return manualVal;
+            }
+        }
+
+        function performGrouping(sortedMeans, sortedRepCounts, MSError, getCriticalValueCallback) {
+            const t = sortedMeans.length;
+            const groups = Array(t).fill('');
+            if (t === 0) return [];
+            let groupIndex = 0;
+            groups[0] = String.fromCharCode(97 + groupIndex);
+            const assignedGroups = [[0]];
+            for (let i = 1; i < t; i++) {
+                const currentMean = sortedMeans[i];
+                let foundGroup = false;
+                for (let j = 0; j < assignedGroups.length; j++) {
+                    if (assignedGroups[j].every(k => Math.abs(currentMean - sortedMeans[k]) <= getCriticalValueCallback(i, k))) {
+                        assignedGroups[j].push(i);
+                        groups[i] = String.fromCharCode(97 + j);
+                        foundGroup = true;
+                        break;
+                    }
+                }
+                if (!foundGroup) {
+                    groupIndex++;
+                    assignedGroups.push([i]);
+                    groups[i] = String.fromCharCode(97 + groupIndex);
+                }
+            }
+            for (let j = 1; j < t - 1; j++) {
+                for (let i = 0; i < j; i++) {
+                    for (let k = j + 1; k < t; k++) {
+                        const crit_ij = getCriticalValueCallback(i, j);
+                        const crit_jk = getCriticalValueCallback(j, k);
+                        if (Math.abs(sortedMeans[i] - sortedMeans[j]) <= crit_ij && Math.abs(sortedMeans[j] - sortedMeans[k]) <= crit_jk) {
+                            groups[j] = [...new Set([...groups[i].split(''), ...groups[k].split('')])].join('');
+                        }
+                    }
+                }
+            }
+            return groups;
+        }
+
+        async function getQValue(alpha, k, df) {
+            const findQValueInData = () => {
+                const alphaTable = qValueData[alpha];
+                if (!alphaTable) return null;
+                const availableDfs = Object.keys(alphaTable).map(Number).sort((a, b) => b - a);
+                const dfToUse = availableDfs.find(d => d <= df);
+                if (!dfToUse) return null;
+                const dfRow = alphaTable[dfToUse];
+                if (k < 2 || k > 10) return null;
+                return dfRow[k];
+            };
+
+            const qVal = findQValueInData();
+            if (qVal) return qVal;
+
+            return new Promise((resolve, reject) => {
+                const modal = document.getElementById('qValueModal');
+                const submitBtn = document.getElementById('modalSubmitBtn');
+                const cancelBtn = document.getElementById('modalCancelBtn');
+                const qInput = document.getElementById('qValueInput');
+                const errorDiv = document.getElementById('modalError');
+                const instructions = document.getElementById('modalSearchInstructions');
+
+                document.getElementById('modalAlpha').textContent = alpha;
+                document.getElementById('modalK').textContent = k;
+                document.getElementById('modalDf').textContent = df;
+                instructions.innerHTML = `Search a q-table for <strong>k = ${k}</strong> and <strong>df = ${df}</strong> at <strong>α = ${alpha}</strong>. If your exact df is not listed, use the next lowest value.`;
+                
+                qInput.value = '';
+                errorDiv.style.display = 'none';
+                modal.style.display = 'flex';
+                qInput.focus();
+
+                const handleSubmit = () => {
+                    const value = parseFloat(qInput.value);
+                    if (isNaN(value) || value <= 0) {
+                        errorDiv.textContent = 'Please enter a valid, positive number.';
+                        errorDiv.style.display = 'block';
+                    } else {
+                        cleanup();
+                        resolve(value);
+                    }
+                };
+
+                const handleCancel = () => {
+                    cleanup();
+                    reject(new Error("Tukey's HSD analysis was canceled by the user."));
+                };
+
+                const handleKeypress = (event) => { if (event.key === 'Enter') handleSubmit(); };
+
+                const cleanup = () => {
+                    modal.style.display = 'none';
+                    submitBtn.removeEventListener('click', handleSubmit);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                    qInput.removeEventListener('keypress', handleKeypress);
+                };
+
+                submitBtn.addEventListener('click', handleSubmit);
+                cancelBtn.addEventListener('click', handleKeypress);
+            });
+        }
+
+        function generateTable(title, headers, data) {
+            let tableHtml = `<h3 class="section-header">${title}</h3><div class="table-container"><table class="pro-table"><thead><tr>`;
+            headers.forEach(h => tableHtml += `<th>${h}</th>`);
+            tableHtml += `</tr></thead><tbody>`;
+            data.forEach(row => {
+                tableHtml += `<tr>`;
+                row.forEach(cell => tableHtml += `<td>${String(cell)}</td>`);
+                tableHtml += `</tr>`;
+            });
+            tableHtml += `</tbody></table></div>`;
+            return tableHtml;
+        }
+
+        function renderFinalTable(orderByOriginal) {
+            const tableBody = document.getElementById('finalResultTableBody');
+            if (!tableBody) return;
+
+            const transformApplied = sortedTreatmentsData[0] && (sortedTreatmentsData[0].mean !== sortedTreatmentsData[0].originalMean);
+            
+            let dataToRender = [...sortedTreatmentsData];
+
+            if (orderByOriginal) {
+                dataToRender.sort((a, b) => a.originalIndex - b.originalIndex);
+            } else {
+                dataToRender.sort((a, b) => b.mean - a.mean);
+            }
+
+            let tbodyHtml = '';
+            for (const item of dataToRender) {
+                tbodyHtml += `<tr>`;
+                tbodyHtml += `<td>${item.name}</td>`;
+                tbodyHtml += `<td>${item.originalMean.toFixed(3)} ± ${item.originalSD.toFixed(3)}</td>`;
+                if (transformApplied) {
+                    tbodyHtml += `<td>${item.mean.toFixed(3)}</td>`;
+                }
+                tbodyHtml += `<td class="check-groups-assigned">${item.group}</td>`;
+                tbodyHtml += `</tr>`;
+            }
+            tableBody.innerHTML = tbodyHtml;
+        }
+
+        function generateComparisonMatrix(title, treatments, repCounts, getCriticalValueCallback) {
+            const t = treatments.length;
+            let tableData = [];
+
+            const matrix = [];
+            for (let i = 0; i < t; i++) {
+                const row = [];
+                for (let j = 0; j < t; j++) {
+                    if (i === j) {
+                        row.push("-");
+                    } else {
+                        const critVal = getCriticalValueCallback(treatments.indexOf(treatments[i]), treatments.indexOf(treatments[j]));
+                        row.push(critVal.toFixed(3));
+                    }
+                }
+                matrix.push(row);
+            }
+            
+            for (let i = 0; i < t; i++) {
+                tableData.push([treatments[i], ...matrix[i]]);
+            }
+
+            return generateTable(title, ['Treatment', ...treatments], tableData);
+        }
+
+    </script>
+</body>
+</html>
+
+
