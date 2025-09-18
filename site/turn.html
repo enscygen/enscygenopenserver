@@ -400,18 +400,51 @@
             const g2fDownloadBtn = document.getElementById('g2f-download-btn');
             
             // --- Utility Functions ---
-            const parseCSV = (text) => {
-                const lines = text.trim().replace(/\r/g, '').split('\n');
-                const header = lines[0].split(',').map(h => h.trim());
-                const data = lines.slice(1).map(line => {
-                    const values = line.split(',').map(v => v.trim());
-                    return header.reduce((obj, h, i) => {
-                        obj[h] = values[i];
-                        return obj;
-                    }, {});
-                });
-                return { header, data };
-            };
+            // Replace the old function with this new, smarter version.
+const parseCSV = (text) => {
+    const lines = text.trim().replace(/\r/g, '').split('\n');
+    
+    // This powerful regex correctly handles various CSV formats, including:
+    // 1. Quoted fields (e.g., "value, with comma")
+    // 2. Unquoted fields (e.g., value)
+    // 3. Escaped quotes within a field (e.g., "this has a ""quote"" inside")
+    const csvRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^",\r\n]*))(?=,|$)/g;
+
+    const parseLine = (line) => {
+        const values = [];
+        // The regex needs its starting position reset for each new line.
+        csvRegex.lastIndex = 0;
+        let match;
+        while (match = csvRegex.exec(line)) {
+            // The actual value is in one of two places:
+            // match[1] is for a quoted value. We must "un-escape" any double quotes ("" -> ").
+            // match[2] is for a simple, unquoted value.
+            let value = match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2];
+            values.push(value);
+        }
+        return values;
+    };
+    
+    // Use our new smart parser for the header and data.
+    const header = parseLine(lines[0]);
+    
+    const data = lines.slice(1).map(line => {
+        // Skip any blank lines in the CSV file
+        if (!line.trim()) return null;
+        
+        const values = parseLine(line);
+        // If a line is malformed and doesn't have enough columns, we stop to prevent errors.
+        if (values.length !== header.length) return null;
+
+        return header.reduce((obj, h, i) => {
+            obj[h] = values[i];
+            return obj;
+        }, {});
+    }).filter(Boolean); // This removes any null entries from blank or malformed lines.
+    
+    return { header, data };
+};
+
 
             const renderTable = (header, data, container) => {
                 if (!data || data.length === 0) {
