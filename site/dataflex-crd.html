@@ -615,6 +615,24 @@
                             const originalMeans = originalValues.map(row => jStat.mean(row.filter(v => !isNaN(v))));
                             const originalSDs = originalValues.map(row => jStat.stdev(row.filter(v => !isNaN(v)), true));
 
+
+// --- ADD THIS NEW CODE BLOCK IMMEDIATELY AFTER IT ---
+let transformedSDs, transformedMins, transformedMaxs;
+if (actualTransform !== 'none') {
+    // Calculate SD, Min, and Max for the transformed data
+    transformedSDs = analysisData.map(row => jStat.stdev(row.filter(v => !isNaN(v)), true));
+    transformedMins = analysisData.map(row => {
+        const validVals = row.filter(v => !isNaN(v));
+        return validVals.length > 0 ? Math.min(...validVals) : NaN;
+    });
+    transformedMaxs = analysisData.map(row => {
+        const validVals = row.filter(v => !isNaN(v));
+        return validVals.length > 0 ? Math.max(...validVals) : NaN;
+    });
+}
+
+
+                            
                             let SSR = 0, SSE = 0, SST = 0;
                             for (let i = 0; i < t; i++) {
                                 const cleanRow = analysisData[i].filter(v => !isNaN(v));
@@ -654,6 +672,22 @@
                                 return [ name, originalMeans[i].toFixed(3), originalSDs[i].toFixed(3), validVals.length > 0 ? Math.min(...validVals).toFixed(3) : 'N/A', validVals.length > 0 ? Math.max(...validVals).toFixed(3) : 'N/A', repCounts[i] ];
                             });
                             html += generateTable('Treatment Details (Original Data)', ['Treatment', 'Mean', 'SD', 'Min', 'Max', 'n'], originalDetailsData);
+
+                            // --- ADD THIS NEW CODE BLOCK IMMEDIATELY AFTER IT ---
+if (actualTransform !== 'none') {
+    const transformedDetailsData = treatments.map((name, i) => {
+        return [
+            name,
+            treatmentMeans[i].toFixed(3), // This is the transformed mean, already calculated
+            transformedSDs[i].toFixed(3),
+            !isNaN(transformedMins[i]) ? transformedMins[i].toFixed(3) : 'N/A',
+            !isNaN(transformedMaxs[i]) ? transformedMaxs[i].toFixed(3) : 'N/A',
+            repCounts[i] // repCounts is the same for original and transformed
+        ];
+    });
+    html += generateTable('Treatment Details (Transformed Data)', ['Treatment', 'Mean', 'SD', 'Min', 'Max', 'n'], transformedDetailsData);
+}
+
 
                             const anovaSignificance = F > FCritical ? "Yes" : "No";
                             const anovaData = [
