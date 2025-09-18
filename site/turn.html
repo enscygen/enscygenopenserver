@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CSV Data Converter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --surface-color: #2a2a2a;
+            --primary-color: #4a90e2;
+            --text-color: #e0e0e0;
+            --text-muted-color: #888;
+            --border-color: #444;
+            --hover-color: #3c3c3c;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            font-size: 13px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            background-color: #252525;
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .tabs {
+            margin-left: 30px;
+            display: flex;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted-color);
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .converter-panel {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .converter-panel.active {
+            display: flex;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-family);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #3a80d2;
+        }
+        
+        .btn.secondary {
+            background-color: #555;
+        }
+        .btn.secondary:hover {
+             background-color: #666;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-info {
+            color: var(--text-muted-color);
+            font-size: 12px;
+            flex-grow: 1;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .control-group label {
+            font-size: 11px;
+            color: var(--text-muted-color);
+            margin-left: 2px;
+        }
+
+        .control-select {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-family: var(--font-family);
+            font-size: 13px;
+        }
+
+        .control-select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .control-group.checkbox {
+            flex-direction: row;
+            align-items: center;
+            align-self: flex-end;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+        .control-group.checkbox label {
+            margin: 0;
+            font-size: 12px;
+        }
+        
+        .data-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        .data-section {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .data-header {
+            padding: 10px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #252525;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-header .btn {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .table-container {
+            overflow: auto;
+            padding: 5px;
+        }
+        
+        .output-container .table-wrapper {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .output-container .table-wrapper-header {
+            padding: 8px 10px;
+            background-color: #333;
+            font-weight: 500;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted-color);
+        }
+
+        tbody tr:hover {
+            background-color: var(--hover-color);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>CSV Data Format Converter</h1>
+            <nav class="tabs">
+                <div class="tab active" data-tab="f2g">Flattened <i class="bi bi-arrow-right"></i> Grid</div>
+                <div class="tab" data-tab="g2f">Grid <i class="bi bi-arrow-right"></i> Flattened</div>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Flattened to Grid Panel -->
+            <section id="f2g" class="converter-panel active">
+                <div class="controls">
+                    <div class="file-upload-wrapper">
+                        <button class="btn"><i class="bi bi-upload"></i> Upload Flattened CSV</button>
+                        <input type="file" id="f2g-file-input" accept=".csv">
+                    </div>
+                    <div class="control-group">
+                        <label for="f2g-identifier-col">Identifier</label>
+                        <select id="f2g-identifier-col" class="control-select" disabled></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="f2g-replication-col">Replication (Optional)</label>
+                        <select id="f2g-replication-col" class="control-select" disabled></select>
+                    </div>
+                    <button id="f2g-convert-btn" class="btn secondary" disabled><i class="bi bi-arrow-repeat"></i> Convert</button>
+                    <span id="f2g-file-info" class="file-info">No file selected.</span>
+                </div>
+                <div class="data-area">
+                    <section class="data-section">
+                        <div class="data-header">Input: Flattened Data</div>
+                        <div id="f2g-input-table" class="table-container"></div>
+                    </section>
+                    <section class="data-section">
+                        <div class="data-header">Output: Grid Data</div>
+                        <div id="f2g-output-tables" class="table-container output-container"></div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- Grid to Flattened Panel -->
+            <section id="g2f" class="converter-panel">
+                <div class="controls">
+                     <div class="file-upload-wrapper">
+                        <button class="btn"><i class="bi bi-upload"></i> Upload Grid CSV(s)</button>
+                        <input type="file" id="g2f-file-input" accept=".csv" multiple>
+                    </div>
+                    <div class="control-group checkbox">
+                        <input type="checkbox" id="g2f-include-replication" checked>
+                        <label for="g2f-include-replication">Include Replication Column</label>
+                    </div>
+                     <button id="g2f-convert-btn" class="btn secondary" disabled><i class="bi bi-arrow-repeat"></i> Convert</button>
+                    <span id="g2f-file-info" class="file-info">No file selected.</span>
+                </div>
+                 <div class="data-area">
+                    <section class="data-section">
+                        <div class="data-header">Input: Grid Data</div>
+                        <div id="g2f-input-tables" class="table-container output-container"></div>
+                    </section>
+                    <section class="data-section">
+                        <div class="data-header">
+                            <span>Output: Flattened Data</span>
+                             <button id="g2f-download-btn" class="btn secondary" disabled><i class="bi bi-download"></i> Download</button>
+                        </div>
+                        <div id="g2f-output-table" class="table-container"></div>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Core State ---
+            let f2gData = null;
+            let g2fData = [];
+            let g2fFlattenedData = null;
+
+            // --- DOM Elements ---
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.converter-panel');
+            
+            // F2G Elements
+            const f2gFileInput = document.getElementById('f2g-file-input');
+            const f2gFileInfo = document.getElementById('f2g-file-info');
+            const f2gIdentifierCol = document.getElementById('f2g-identifier-col');
+            const f2gReplicationCol = document.getElementById('f2g-replication-col');
+            const f2gConvertBtn = document.getElementById('f2g-convert-btn');
+            const f2gInputTable = document.getElementById('f2g-input-table');
+            const f2gOutputTables = document.getElementById('f2g-output-tables');
+
+            // G2F Elements
+            const g2fFileInput = document.getElementById('g2f-file-input');
+            const g2fFileInfo = document.getElementById('g2f-file-info');
+            const g2fIncludeReplication = document.getElementById('g2f-include-replication');
+            const g2fConvertBtn = document.getElementById('g2f-convert-btn');
+            const g2fInputTables = document.getElementById('g2f-input-tables');
+            const g2fOutputTable = document.getElementById('g2f-output-table');
+            const g2fDownloadBtn = document.getElementById('g2f-download-btn');
+            
+            // --- Utility Functions ---
+            const parseCSV = (text) => {
+                const lines = text.trim().replace(/\r/g, '').split('\n');
+                const header = lines[0].split(',').map(h => h.trim());
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',').map(v => v.trim());
+                    return header.reduce((obj, h, i) => {
+                        obj[h] = values[i];
+                        return obj;
+                    }, {});
+                });
+                return { header, data };
+            };
+
+            const renderTable = (header, data, container) => {
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div style="padding:10px; color:var(--text-muted-color);">No data to display.</div>`;
+                    return;
+                }
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const headerRow = `<tr>${header.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                thead.innerHTML = headerRow;
+                const bodyRows = data.map(rowData => `<tr>${header.map(h => `<td>${rowData[h] || ''}</td>`).join('')}</tr>`).join('');
+                tbody.innerHTML = bodyRows;
+                table.append(thead, tbody);
+                container.innerHTML = '';
+                container.appendChild(table);
+            };
+
+            const downloadCSV = (header, data, filename) => {
+                const csvRows = [header.join(',')];
+                data.forEach(row => {
+                    const values = header.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`);
+                    csvRows.push(values.join(','));
+                });
+                const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('href', url);
+                a.setAttribute('download', filename);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+            
+            const populateSelect = (selectEl, options, includeNone = false) => {
+                selectEl.innerHTML = '';
+                if (includeNone) {
+                    const noneOption = document.createElement('option');
+                    noneOption.value = 'none';
+                    noneOption.textContent = 'None';
+                    selectEl.appendChild(noneOption);
+                }
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    selectEl.appendChild(option);
+                });
+            };
+
+            // --- Tab Switching Logic ---
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // --- Flattened to Grid Logic ---
+            f2gFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    f2gData = parseCSV(event.target.result);
+                    renderTable(f2gData.header, f2gData.data, f2gInputTable);
+                    
+                    populateSelect(f2gIdentifierCol, f2gData.header);
+                    populateSelect(f2gReplicationCol, f2gData.header, true);
+                    f2gIdentifierCol.disabled = false;
+                    f2gReplicationCol.disabled = false;
+                    // Sensible defaults
+                    f2gIdentifierCol.value = f2gData.header[0] || '';
+                    f2gReplicationCol.value = f2gData.header.find(h => h.toLowerCase().includes('rep')) || 'none';
+
+                    f2gFileInfo.textContent = file.name;
+                    f2gConvertBtn.disabled = false;
+                    f2gOutputTables.innerHTML = '';
+                };
+                reader.readAsText(file);
+            });
+
+            f2gConvertBtn.addEventListener('click', () => {
+                if (!f2gData) return;
+
+                const identifierCol = f2gIdentifierCol.value;
+                const replicationCol = f2gReplicationCol.value;
+                
+                f2gOutputTables.innerHTML = '';
+                const valueCols = f2gData.header.filter(h => h !== identifierCol && (replicationCol === 'none' || h !== replicationCol));
+
+                const groupedData = f2gData.data.reduce((acc, row) => {
+                    const key = row[identifierCol];
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(row);
+                    return acc;
+                }, {});
+
+                valueCols.forEach(col => {
+                    const gridData = [];
+                    let replicationHeaders = [];
+                    const maxReplicates = Math.max(...Object.values(groupedData).map(group => group.length));
+
+                    if (replicationCol !== 'none') {
+                         replicationHeaders = [...new Set(f2gData.data.map(row => row[replicationCol]))].sort();
+                    } else {
+                        for (let i = 1; i <= maxReplicates; i++) replicationHeaders.push(`R${i}`);
+                    }
+                    
+                    const gridHeader = [`${identifierCol}@${col}`, ...replicationHeaders];
+
+                    Object.keys(groupedData).sort().forEach(key => {
+                        const rows = groupedData[key];
+                        const newRow = { [`${identifierCol}@${col}`]: key };
+                        rows.forEach((row, index) => {
+                            const repKey = replicationCol !== 'none' ? row[replicationCol] : `R${index + 1}`;
+                            newRow[repKey] = row[col];
+                        });
+                        gridData.push(newRow);
+                    });
+                    
+                    // Create and display the table
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-wrapper';
+                    const wrapperHeader = document.createElement('div');
+                    wrapperHeader.className = 'table-wrapper-header';
+                    wrapperHeader.innerHTML = `<span>${identifierCol}@${col}</span>`;
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'btn secondary';
+                    downloadBtn.innerHTML = `<i class="bi bi-download"></i>`;
+                    downloadBtn.onclick = () => downloadCSV(gridHeader, gridData, `${identifierCol}_${col}.csv`);
+                    wrapperHeader.appendChild(downloadBtn);
+                    const tableContainer = document.createElement('div');
+                    renderTable(gridHeader, gridData, tableContainer);
+                    wrapper.append(wrapperHeader, tableContainer);
+                    f2gOutputTables.appendChild(wrapper);
+                });
+            });
+
+            // --- Grid to Flattened Logic ---
+            g2fFileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length === 0) return;
+
+                g2fData = [];
+                g2fInputTables.innerHTML = '';
+                g2fConvertBtn.disabled = true;
+                g2fOutputTable.innerHTML = '';
+                g2fDownloadBtn.disabled = true;
+
+                const filePromises = Array.from(files).map(file => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => resolve({ name: file.name, content: event.target.result });
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                }));
+
+                Promise.all(filePromises).then(fileContents => {
+                    fileContents.forEach(({ name, content }) => {
+                        const parsed = parseCSV(content);
+                        g2fData.push({ ...parsed, replicationHeaders: parsed.header.slice(1) });
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'table-wrapper';
+                        wrapper.innerHTML = `<div class="table-wrapper-header"><span>${name}</span></div>`;
+                        const tableContainer = document.createElement('div');
+                        renderTable(parsed.header, parsed.data, tableContainer);
+                        wrapper.appendChild(tableContainer);
+                        g2fInputTables.appendChild(wrapper);
+                    });
+                    g2fFileInfo.textContent = `${files.length} file(s) selected.`;
+                    g2fConvertBtn.disabled = false;
+                });
+            });
+            
+            g2fConvertBtn.addEventListener('click', () => {
+                if (g2fData.length === 0) return;
+
+                const includeReplication = g2fIncludeReplication.checked;
+                const aggregatedData = {};
+                let identifierKey = '';
+                const variableKeys = new Set();
+                
+                g2fData.forEach(grid => {
+                    const combinedHeader = grid.header[0];
+                    const [currentIdentifier, variableName] = combinedHeader.split('@');
+                    if (!identifierKey) identifierKey = currentIdentifier;
+                    variableKeys.add(variableName);
+
+                    grid.data.forEach(row => {
+                        const idValue = row[combinedHeader];
+                        if (!aggregatedData[idValue]) aggregatedData[idValue] = {};
+                        if (!aggregatedData[idValue][variableName]) aggregatedData[idValue][variableName] = {};
+
+                        grid.replicationHeaders.forEach(rKey => {
+                            if (row[rKey] !== undefined && row[rKey] !== '') aggregatedData[idValue][variableName][rKey] = row[rKey];
+                        });
+                    });
+                });
+
+                const allReplicationKeys = [...new Set(g2fData.flatMap(g => g.replicationHeaders))].sort();
+                const finalHeader = [identifierKey];
+                if (includeReplication) finalHeader.push('Replication');
+                finalHeader.push(...Array.from(variableKeys).sort());
+                
+                const flattenedRows = [];
+                Object.keys(aggregatedData).sort().forEach(idValue => {
+                    allReplicationKeys.forEach(rKey => {
+                        const rowDataForRep = {};
+                        let hasData = false;
+                        variableKeys.forEach(varKey => {
+                            const val = aggregatedData[idValue]?.[varKey]?.[rKey];
+                            if(val !== undefined) {
+                               rowDataForRep[varKey] = val;
+                               hasData = true;
+                            }
+                        });
+
+                        if(hasData) {
+                            const newRow = { [identifierKey]: idValue, ...rowDataForRep };
+                            if (includeReplication) newRow['Replication'] = rKey;
+                            flattenedRows.push(newRow);
+                        }
+                    });
+                });
+
+                g2fFlattenedData = { header: finalHeader, data: flattenedRows };
+                renderTable(finalHeader, flattenedRows, g2fOutputTable);
+                g2fDownloadBtn.disabled = false;
+            });
+
+            g2fDownloadBtn.addEventListener('click', () => {
+                if (!g2fFlattenedData) return;
+                downloadCSV(g2fFlattenedData.header, g2fFlattenedData.data, 'flattened_data.csv');
+            });
+
+        });
+    </script>
+</body>
+</html>
+
+
