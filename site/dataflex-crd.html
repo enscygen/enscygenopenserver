@@ -929,14 +929,31 @@
             const alpha = document.getElementById('alpha').value;
             const headers = ['Treatment', ...results.map(r => r.variable)];
             
-            let rows = treatments.map(t => {
-                const row = [t];
-                results.forEach(res => {
-                    const treatmentStats = res.originalDetails.find(d => d[0] === t);
-                    row.push(treatmentStats ? `${treatmentStats[1]} ± ${treatmentStats[2]}` : 'N/A');
-                });
-                return row;
-            });
+            // --- REPLACE THE OLD BLOCK WITH THIS NEW ONE ---
+let rows = treatments.map(t => {
+    const row = [t];
+    results.forEach(res => {
+        const treatmentStats = res.originalDetails.find(d => d[0] === t);
+        let cellContent = 'N/A';
+
+        if (treatmentStats) {
+            // Start with the Mean ± SD
+            cellContent = `${treatmentStats[1]} ± ${treatmentStats[2]}`;
+            
+            // Find the corresponding group letter
+            if (res.groupingData) {
+                const groupingInfo = res.groupingData.find(d => d.name === t);
+                if (groupingInfo && groupingInfo.group) {
+                    // Append the group letter in brackets
+                    cellContent += ` <sup>${groupingInfo.group}</sup>`;
+                }
+            }
+        }
+        row.push(cellContent);
+    });
+    return row;
+});
+
             
             const semRow = ['SEm ±'];
             const cdRow = [`CD (${alpha})`];
@@ -1136,6 +1153,9 @@
                 
                 const groups = performGrouping(sortedMeans, sortedRepCounts, MSError, getCriticalValueCallback);
                 sortedTreatmentsData = sortedData.map((item, i) => ({ ...item, group: groups[i] }));
+                // --- ADD THIS LINE ---
+stats.groupingData = sortedTreatmentsData;
+
                 
                 let finalTableHeaders = (actualTransform !== 'none') ? ['Treatment', 'Mean ± SD (Original)', 'Mean (Transformed)', 'Group'] : ['Treatment', 'Mean ± SD', 'Group'];
                 
@@ -1164,6 +1184,9 @@
 
             } else {
                 html += `<div class="app-message msg-warning">The treatments are <strong>not significantly different</strong>.</div>`;
+                // --- ADD THIS LINE ---
+stats.groupingData = null; // No grouping was performed
+
             }
 
             return { html, stats };
