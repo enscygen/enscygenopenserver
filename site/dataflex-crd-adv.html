@@ -1134,11 +1134,11 @@ let rows = treatments.map(t => {
 
             let html = `<h2 class="section-header">Analysis for: ${analysisName}</h2>`;
             let stats = {};
-            let customFormula = null;
+            let customFormulas = null;
 
             if (transformType === 'custom') {
                 try {
-                    customFormula = await getCustomFormula();
+                    customFormulas = await getCustomFormula();
                     actualTransform = 'custom';
                 } catch (error) {
                     return { html: `<div class="app-message msg-error"><strong>Error in ${analysisName}:</strong> ${error.message}</div>`, stats: {} };
@@ -1163,7 +1163,7 @@ let rows = treatments.map(t => {
             }
 
             if (actualTransform !== 'none') {
-               transformedValues = applyTransformation(originalValues, actualTransform, customFormula);
+               transformedValues = applyTransformation(originalValues, actualTransform, customFormulas);
                analysisData = transformedValues.data;
                transformNote = transformNote || transformedValues.note;
             }
@@ -1889,13 +1889,15 @@ function renderFinalTable(orderByOriginal, analysisName) {
         mainTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
 
         if (backTransformedTableBody) {
-            const backTransformedMean = backTransformValue(item.mean, actualTransform, null, transformInfo.hasZero);
+            const backTransformedMean = backTransformValue(item.mean, actualTransform, customFormulas, transformInfo.hasZero);
+
             backTransformedTbodyHtml += `<tr><td>${item.name}</td>`;
-            if (actualTransform === 'custom') {
-                backTransformedTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`;
-            } else {
-                backTransformedTbodyHtml += `<td>${backTransformedMean.toFixed(3)}</td>`;
-            }
+            if (actualTransform === 'custom' && (!customFormulas || !customFormulas.backward)) {
+    backTransformedTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`; // Show transformed mean if no back-formula
+} else {
+    backTransformedTbodyHtml += `<td>${backTransformedMean.toFixed(3)}</td>`;
+}
+
             backTransformedTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
         }
     }
