@@ -812,6 +812,14 @@
                     <input type="text" id="formulaInput" placeholder="e.g., Math.sqrt(x + 0.5)">
                     <div id="customModalError" class="modal-error-message" style="display: none;"></div>
                 </div>
+                
+<div class="custom-modal-input-group">
+    <label for="backFormulaInput">Back-Transformation Formula:</label>
+    <input type="text" id="backFormulaInput" placeholder="e.g., (y * y) - 0.5">
+    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Use <strong>y</strong> to represent the transformed value.</p>
+</div>
+
+
                 <div class="custom-modal-examples" style="margin-top: 15px;">
                     <strong>Examples:</strong>
                     <ul>
@@ -861,6 +869,8 @@
         let sortedTreatmentsData = []; // Global for final table rendering
         let transformedValues = {}; // Global to hold transformation details
         let actualTransform = 'none'; // Global to track transformation type
+        let customFormulas = null;
+
 
         document.addEventListener("DOMContentLoaded", () => {
             setupUIListeners();
@@ -1606,6 +1616,7 @@ async function generateDocx() {
 
 // --- STATISTICAL & UTILITY HELPER FUNCTIONS ---
 
+// --- REPLACE THE OLD getCustomFormula FUNCTION WITH THIS ---
 function getCustomFormula() {
     return new Promise((resolve, reject) => {
         const modal = document.getElementById('customTransformModal');
@@ -1613,27 +1624,40 @@ function getCustomFormula() {
         const cancelBtn = document.getElementById('customModalCancelBtn');
         const closeBtn = document.getElementById('customModalCloseBtn');
         const formulaInput = document.getElementById('formulaInput');
+        const backFormulaInput = document.getElementById('backFormulaInput'); // New input
         const errorDiv = document.getElementById('customModalError');
 
         formulaInput.value = '';
+        backFormulaInput.value = ''; // Clear back-transform input
         errorDiv.style.display = 'none';
         modal.style.display = 'flex';
         formulaInput.focus();
 
         const handleSubmit = () => {
-            const formula = formulaInput.value.trim();
-            if (!formula) {
-                errorDiv.textContent = 'Formula cannot be empty.';
+            const forwardFormula = formulaInput.value.trim();
+            const backwardFormula = backFormulaInput.value.trim();
+
+            if (!forwardFormula) {
+                errorDiv.textContent = 'Transformation formula cannot be empty.';
                 errorDiv.style.display = 'block';
                 return;
             }
-            if (!formula.includes('x')) {
-                errorDiv.textContent = 'Formula must include the variable "x".';
+            if (!forwardFormula.includes('x')) {
+                errorDiv.textContent = 'Transformation formula must include the variable "x".';
                 errorDiv.style.display = 'block';
                 return;
             }
+            if (backwardFormula && !backwardFormula.includes('y')) {
+                errorDiv.textContent = 'Back-transformation formula must include the variable "y".';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             cleanup();
-            resolve(formula);
+            resolve({
+                forward: forwardFormula,
+                backward: backwardFormula // Can be an empty string
+            });
         };
 
         const handleCancel = () => {
@@ -1772,7 +1796,7 @@ function suggestTransformation(data) {
     return { type: 'none', note: 'Data appears to meet ANOVA assumptions.' };
 }
 
-function applyTransformation(data, type, customFormula = null) {
+function applyTransformation(data, type, customFormulas = null) {
     let transformedData, name, note = '';
     const hasZero = data.flat().some(v => v === 0);
     const hasNegative = data.flat().some(v => v < 0);
@@ -1780,8 +1804,9 @@ function applyTransformation(data, type, customFormula = null) {
     switch (type) {
         case 'custom':
             try {
-                const transformFn = new Function('x', `return ${customFormula}`);
-                name = `Custom: ${customFormula}`;
+                const transformFn = new Function('x', `return ${customFormulas.forward}`);
+name = `Custom: ${customFormulas.forward}`;
+
                 transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : transformFn(v)));
             } catch (e) {
                 throw new Error(`Invalid custom formula: "${customFormula}".`);
@@ -1904,7 +1929,7 @@ function generateComparisonMatrix(title, treatments, repCounts, getCriticalValue
     return generateTable(title, ['Treatment', ...treatments], tableData);
 }
 
-function backTransformValue(value, type, customFormula = null, hasZero = false) {
+function backTransformValue(value, type, customFormulas = null, hasZero = false) {
     if (isNaN(value)) return NaN;
     switch (type) {
         case 'log':
@@ -1917,7 +1942,17 @@ function backTransformValue(value, type, customFormula = null, hasZero = false) 
             const sinVal = Math.sin(value);
             return (sinVal * sinVal) * 100;
         case 'custom':
-            return value; 
+            if (customFormulas && customFormulas.backward) {
+    try {
+        const backTransformFn = new Function('y', `return ${customFormulas.backward}`);
+        return backTransformFn(value);
+    } catch (e) {
+        console.error("Error executing back-transformation formula:", e);
+        return value; // Return original transformed value on error
+    }
+}
+return value; // Return transformed value if no backward formula is given
+ 
         default:
             return value;
     }
