@@ -1,0 +1,1929 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataFlex-CRD | Enscygen</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.5/jstat.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js/dist/html-docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    
+    <style>
+        /* --- General Styling & Resets --- */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --text-color: #333;
+            --light-text-color: #666;
+            --bg-color: #f4f7fa;
+            --container-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --border-radius: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- New Interactive Header --- */
+        .app-header-interactive {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header-logo {
+            height: 45px;
+            width: auto;
+        }
+        .header-title h1 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin: 0;
+            font-weight: 600;
+        }
+        .header-title p {
+            font-size: 0.9rem;
+            color: var(--light-text-color);
+            margin: 0;
+        }
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+        .header-btn {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: transparent; /* No background by default */
+        }
+        .btn-primary {
+            color: var(--primary-color); /* Set text/icon color */
+        }
+        .btn-primary:hover {
+            background-color: rgba(0, 123, 255, 0.1); /* Subtle blue background on hover */
+        }
+        .btn-secondary {
+            color: #6c757d; /* Set text/icon color */
+        }
+        .btn-secondary:hover {
+            background-color: rgba(108, 117, 125, 0.1); /* Subtle grey background on hover */
+        }
+
+        /* --- Main App Wrapper --- */
+        .app-wrapper {
+            background-color: var(--container-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        /* --- Input Section --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+
+        .input-group input[type="file"],
+        .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .input-group input[type="file"]::file-selector-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .input-group input[type="file"]::file-selector-button:hover {
+             background-color: var(--primary-hover);
+        }
+
+        .input-group input[type="file"]:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        .analyze-button {
+            grid-column: 1 / -1; 
+        }
+        
+        @media (min-width: 880px) {
+            .analyze-button {
+                grid-column: auto;
+            }
+        }
+
+        .enscy-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .enscy-btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .parsing-mode-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+        }
+        .parsing-mode-selector > div {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .parsing-mode-selector label {
+            margin-right: 5px;
+        }
+        
+        /* --- Progress Bar Styling --- */
+        .progress-container {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 10px;
+            width: 0%;
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        .progress-bar.loaded {
+            background-color: #28a745;
+        }
+
+        .progress-text {
+            padding-top: 5px;
+            font-size: 0.8rem;
+            color: var(--light-text-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- Output & Tables --- */
+        #output {
+            margin-top: 25px;
+        }
+        
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        .pro-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .pro-table th,
+        .pro-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pro-table thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .pro-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pro-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .pro-table .check-groups-assigned {
+            font-weight: 600;
+        }
+
+        .app-message {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            font-size: 0.9rem;
+            border-left-width: 4px;
+            border-left-style: solid;
+        }
+        
+        .msg-info {
+            background-color: #e6f2ff;
+            border-color: var(--primary-color);
+            color: #004085;
+        }
+
+        .msg-success {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .msg-warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .msg-error {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .form-check-container {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .form-check-input {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* --- Tabbed Output Styling --- */
+        .tabs-container {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            border-bottom: 3px solid transparent;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--light-text-color);
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .tab-content-wrapper {
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Modals --- */
+        .info-modal-overlay, .custom-modal-overlay, .q-value-modal-overlay, .download-table-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .info-modal-overlay, .custom-modal-overlay, .q-value-modal-overlay { z-index: 2000; }
+        .download-table-modal { z-index: 3000; }
+        
+        .info-modal-content, .custom-modal-content, .q-value-modal-content, .download-table-modal-content {
+            background-color: white; border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%;
+            max-height: 90vh; display: flex; flex-direction: column;
+        }
+        .info-modal-content { max-width: 600px; }
+        .custom-modal-content, .q-value-modal-content, .download-table-modal-content { max-width: 500px; }
+
+        .info-modal-header, .custom-modal-header, .q-value-modal-header, .download-table-modal-content-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; border-bottom: 1px solid var(--border-color);
+        }
+        .info-modal-header h4, .custom-modal-header h4, .q-value-modal-header h4, .download-modal-header { margin: 0; font-size: 1.25rem; }
+        .info-modal-close, .custom-modal-close, .q-value-modal-close, .download-modal-close {
+            border: none; background: none; font-size: 2rem;
+            font-weight: 300; cursor: pointer; color: #888;
+        }
+
+        .info-modal-body, .custom-modal-body, .q-value-modal-body { padding: 20px; overflow-y: auto; }
+        .custom-modal-footer, .q-value-modal-footer {
+            display: flex; justify-content: flex-end; gap: 10px;
+            padding: 15px 20px; border-top: 1px solid var(--border-color);
+        }
+        
+        .sample-data-table {
+            width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden;
+        }
+        .sample-data-table caption {
+            caption-side: top; text-align: left; padding: 8px; font-weight: 600;
+            background-color: #f8f9fa; color: var(--text-color); font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sample-data-table th, .sample-data-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .sample-data-table tbody tr:last-child td { border-bottom: none; }
+        .sample-data-table thead th { background-color: #f8f9fa; font-weight: 500; }
+
+        /* Download Modal Specifics */
+        .download-tab-buttons { display: flex; border-bottom: 1px solid var(--border-color); padding: 0 20px; }
+        .report-tab-btn {
+            flex: 1; padding: 12px 10px; background: none; border: none;
+            border-bottom: 3px solid transparent; cursor: pointer; font-size: 0.9rem;
+            font-weight: 500; color: var(--light-text-color); transition: all 0.2s ease-in-out;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .report-tab-btn:hover { color: var(--primary-color); background-color: #f8f9fa; }
+        .report-tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .download-tab-content { padding: 20px; overflow-y: auto; }
+        .select-table-to-save { display: flex; align-items: center; padding: 8px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+        .select-table-to-save:hover { background-color: #f8f9fa; }
+        .stts-checkbox input { width: 16px; height: 16px; margin-right: 12px; }
+        .stts-label label { font-size: 0.9rem; color: var(--text-color); cursor: pointer; }
+        .no-data-msg { color: var(--light-text-color); text-align: center; padding: 20px; }
+        .download-tab-footer {
+            padding-top: 20px; margin-top: 10px; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: flex-end;
+        }
+
+        /* --- UNIFIED MODAL STYLING (Covers Info, Q-Value, and Custom Modals) --- */
+
+/* Generic Overlay for all modals */
+.info-modal-overlay, .custom-modal-overlay, .q-value-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Ensures modals are on top */
+}
+
+/* Generic Content Box for all modals */
+.info-modal-content, .custom-modal-content, .q-value-modal-content {
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+.info-modal-content { max-width: 600px; }
+.custom-modal-content, .q-value-modal-content { max-width: 500px; }
+
+/* Generic Header for all modals */
+.info-modal-header, .custom-modal-header, .q-value-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.info-modal-header h4, .custom-modal-header h4, .q-value-modal-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+.info-modal-close, .custom-modal-close, .q-value-modal-close {
+    border: none;
+    background: none;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+.info-modal-close:hover, .custom-modal-close:hover, .q-value-modal-close:hover {
+    color: #333;
+}
+
+/* Generic Body for all modals */
+.info-modal-body, .custom-modal-body, .q-value-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    line-height: 1.7;
+}
+
+/* Styling for Input fields and their labels inside modals */
+.q-value-modal-body .input-group,
+.custom-modal-body .input-group {
+    margin-bottom: 15px;
+}
+.q-value-modal-body .input-group label,
+.custom-modal-body .input-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+.q-value-modal-body input[type="number"],
+.custom-modal-body input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+.custom-modal-body input[type="text"] {
+     font-family: monospace; /* Better for formulas */
+}
+.q-value-modal-body input[type="number"]:focus,
+.custom-modal-body input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Error messages */
+.modal-error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Generic Footer for modals with buttons */
+.custom-modal-footer, .q-value-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+}
+
+/* Generic Button styles for modal footers */
+.modal-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-btn.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.modal-btn.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+.modal-btn.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.modal-btn.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Specifics for Info Modal */
+.info-modal-body h5 { font-size: 1.1rem; font-weight: 600; color: var(--primary-color); margin-top: 15px; margin-bottom: 8px; }
+.info-modal-body p { margin-bottom: 10px; color: var(--light-text-color); }
+.info-modal-body ul { padding-left: 20px; margin-bottom: 15px; color: var(--light-text-color); }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="app-header-interactive">
+            <div class="header-left">
+                <a href="/ORT/" style="line-height: 1;">
+                    <img src="https://enscygen.web.app/assets/brand/enscygen-global-vertical-black.png" alt="Enscygen Logo" class="header-logo">
+                </a>
+                <div class="header-title">
+                    <h1>DataFlex-CRD</h1>
+                    <p>Statistical Core for Experimental Analysis</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="infoBtn" class="header-btn btn-secondary">
+                    <i class="bi bi-info-circle"></i> Info
+                </button>
+                <button onclick="openDownloadModal()" class="header-btn btn-primary">
+                    <i class="bi bi-download"></i> Report
+                </button>
+            </div>
+        </header>
+
+        <main class="app-wrapper">
+            <div class="parsing-mode-selector">
+                <label><strong>1. Select Data Format:</strong></label>
+                <div>
+                    <input type="radio" id="singleVariableMode" name="parsingMode" value="single" checked>
+                    <label for="singleVariableMode">Single Variable (Wide Format)</label>
+                </div>
+                <div>
+                    <input type="radio" id="multiVariableMode" name="parsingMode" value="multi">
+                    <label for="multiVariableMode">Multiple Variables (Long Format)</label>
+                </div>
+            </div>
+
+            <div id="input-container">
+                <div id="singleVariableInputs">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="csvFileSingle"><i class="bi bi-file-earmark-spreadsheet"></i> Upload Data File (Wide Format)</label>
+                            <input type="file" id="csvFileSingle" accept=".csv" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="multiVariableSetup" style="display: none;">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="csvFileMulti"><i class="bi bi-file-earmark-spreadsheet"></i> Upload Data File (Long Format)</label>
+                            <input type="file" id="csvFileMulti" accept=".csv" required>
+                        </div>
+                        <div id="multiVariableSelectors" class="input-grid" style="grid-column: 1 / -1;"></div>
+                    </div>
+                </div>
+                
+                <div id="sharedAnalysisControls" class="input-grid" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                     <div class="input-group">
+                        <label for="alpha"><i class="bi bi-sliders"></i> Significance Level (α)</label>
+                        <select id="alpha">
+                            <option value="0.05">0.05</option>
+                            <option value="0.01">0.01</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="transform"><i class="bi bi-arrow-repeat"></i> Data Transformation</label>
+                        <select id="transform">
+                            <option value="auto">Detect Automatically</option>
+                            <option value="none">None</option>
+                            <option value="log">Log10(x)</option>
+                            <option value="sqrt">Square Root(x)</option>
+                            <option value="arcsine">Arcsine √x</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="comparisonTest"><i class="bi bi-diagram-3"></i> Comparison Test</label>
+                        <select id="comparisonTest">
+                            <option value="lsd">Fisher's LSD (CD)</option>
+                            <option value="tukey">Tukey's HSD</option>
+                        </select>
+                    </div>
+                    <div class="input-group analyze-button">
+                        <button onclick="analyzeCRD()" class="enscy-btn">
+                            <i class="bi bi-bar-chart-line-fill"></i> Analyze
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="progress-container" class="progress-container" style="display: none;">
+                <div class="progress-bar-wrapper">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="file-name-display"></span>
+                    <span id="progress-percentage"></span>
+                </div>
+            </div>
+
+            <div id="output" class="save-div" div-name="DataFlex CRD Analysis"></div>
+            
+            <div id="privacy-notice" style="margin: 25px 0; padding: 15px; border: 1px solid #dee2e6; border-left: 4px solid #007bff; border-radius: 6px; background-color: #f8f9fa; display: flex; align-items: center; gap: 15px;">
+                <div style="flex-shrink: 0;">
+                    <i class="bi bi-shield-check" style="font-size: 32px; color: #007bff; line-height: 1;"></i>
+                </div>
+                <div>
+                    <h5 style="margin: 0 0 5px 0; font-size: 1rem; font-weight: 600; color: #333;">Your Data's Privacy</h5>
+                    <p style="margin: 0; font-size: 0.85rem; color: #666; line-height: 1.5;">
+                        The data you upload is processed entirely within your browser. No information is ever sent to or stored on our servers, ensuring your work remains completely private on your own device.
+                    </p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- All Modals Below -->
+    <div id="infoModal" class="info-modal-overlay" style="display: none;">
+        <div class="info-modal-content">
+            <div class="info-modal-header">
+                <h4>About DataFlex-CRD</h4>
+                <button id="infoModalCloseBtn" class="info-modal-close">&times;</button>
+            </div>
+            <div class="info-modal-body">
+                <h5>How It Works</h5>
+                <p>This tool performs a complete Analysis of Variance (ANOVA) for Completely Randomized Designs (CRD). It calculates key statistics, checks for overall significance, and performs post-hoc pairwise comparisons using Fisher's LSD or Tukey's HSD to identify which specific treatment groups are different from each other.</p>
+                
+                <h5>Data Formatting Guide</h5>
+                <p>The app supports two data formats. Select the correct format before uploading.</p>
+                <strong>1. Single Variable (Wide Format)</strong>
+                <ul>
+                    <li>The <strong>first row</strong> must contain the names of your replications (e.g., R1, R2, R3).</li>
+                    <li>The <strong>first column</strong> must contain the names of your treatments.</li>
+                    <li>All other cells should contain the numerical data for each observation.</li>
+                </ul>
+                <table class="sample-data-table">
+                    <caption>Example: Single Variable (Wide Format)</caption>
+                    <thead><tr><th>Treatment</th><th>R1</th><th>R2</th><th>R3</th></tr></thead>
+                    <tbody>
+                        <tr><td>Control</td><td>25.4</td><td>28.1</td><td>26.5</td></tr>
+                        <tr><td>Fungicide A</td><td>15.2</td><td>14.8</td><td></td></tr>
+                    </tbody>
+                </table>
+
+                <h5 style="margin-top: 20px;">2. Multiple Variables (Long Format)</h5>
+                <ul>
+                    <li>Each row represents a single observation.</li>
+                    <li>You must have a column for <strong>Treatments</strong>, a column for <strong>Replications</strong>, and one or more columns for your measured <strong>Variables</strong>.</li>
+                </ul>
+                <table class="sample-data-table">
+                    <caption>Example: Multiple Variables (Long Format)</caption>
+                    <thead><tr><th>Treatments</th><th>Replication</th><th>Growth</th><th>Yield</th></tr></thead>
+                    <tbody>
+                        <tr><td>Control</td><td>R1</td><td>10.5</td><td>50.2</td></tr>
+                        <tr><td>Control</td><td>R2</td><td>11.2</td><td>53.1</td></tr>
+                        <tr><td>Fertilizer A</td><td>R1</td><td>15.1</td><td>75.8</td></tr>
+                        <tr><td>Fertilizer A</td><td>R2</td><td>14.9</td><td>77.4</td></tr>
+                    </tbody>
+                </table>
+                
+                <h5 style="margin-top: 20px;">Understanding Data Transformations</h5>
+                <p>Data transformation is used to meet the assumptions of ANOVA. The app can suggest a transformation automatically, or you can apply one manually:</p>
+                <ul>
+                    <li><strong>Square Root:</strong> Best for count data (e.g., number of insects).</li>
+                    <li><strong>Logarithm:</strong> Suitable for data with wide-ranging values (e.g., bacterial growth).</li>
+                    <li><strong>Arcsine:</strong> Specifically for data in percentages or proportions (0-100).</li>
+                    <li><strong>Custom:</strong> Define your own transformation using JavaScript syntax (e.g., <code>1/x</code> or <code>Math.log(x+1)</code>).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="qValueModal" class="q-value-modal-overlay" style="display: none;">
+        <div class="q-value-modal-content">
+            <div class="q-value-modal-header">
+                <h4>Tukey's HSD Input Required</h4>
+                <button class="q-value-modal-close">&times;</button>
+            </div>
+            <div class="q-value-modal-body">
+                <p>Could not find the required 'q' value in the internal table. Please provide it manually.</p>
+                <p id="modalSearchInstructions" style="font-weight: 500;"></p>
+                <div class="modal-params">
+                    <div>Significance Level (α): <strong id="modalAlpha"></strong></div>
+                    <div>Number of Treatments (k): <strong id="modalK"></strong></div>
+                    <div>Error Degrees of Freedom (df): <strong id="modalDf"></strong></div>
+                </div>
+                <div class="input-group">
+                    <label for="qValueInput">'q' Value:</label>
+                    <input type="number" id="qValueInput" placeholder="Enter the q-value here" step="0.001">
+                    <div id="modalError" class="modal-error-message" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="q-value-modal-footer">
+                 <button class="modal-btn btn-secondary">Cancel</button>
+                 <button class="modal-btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div id="customTransformModal" class="custom-modal-overlay" style="display: none;">
+         <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h4>Enter Custom Transformation</h4>
+                <button id="customModalCloseBtn" class="custom-modal-close">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <p>Define your transformation using standard JavaScript Math functions. Your data point is represented by the variable <strong>x</strong>.</p>
+                <div class="input-group">
+                    <label for="formulaInput">Formula:</label>
+                    <input type="text" id="formulaInput" placeholder="e.g., Math.sqrt(x + 0.5)">
+                    <div id="customModalError" class="modal-error-message" style="display: none;"></div>
+                </div>
+                <div class="custom-modal-examples" style="margin-top: 15px;">
+                    <strong>Examples:</strong>
+                    <ul>
+                        <li>Square Root with constant: <code>Math.sqrt(x + 0.5)</code></li>
+                        <li>Natural Log: <code>Math.log(x)</code></li>
+                        <li>Reciprocal: <code>1 / x</code></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button id="customModalCancelBtn" class="modal-btn btn-secondary">Cancel</button>
+                <button id="customModalSubmitBtn" class="modal-btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const qValueData = {
+            "0.05": {
+                "1": { "2": 17.97, "3": 26.98, "4": 32.82, "5": 37.08, "6": 40.41, "7": 43.12, "8": 45.4, "9": 47.36, "10": 49.07 },
+                "2": { "2": 6.08, "3": 8.33, "4": 9.8, "5": 10.88, "6": 11.74, "7": 12.44, "8": 13.03, "9": 13.54, "10": 13.99 },
+                "3": { "2": 4.5, "3": 5.91, "4": 6.82, "5": 7.5, "6": 8.04, "7": 8.48, "8": 8.85, "9": 9.18, "10": 9.46 },
+                "4": { "2": 3.93, "3": 5.04, "4": 5.76, "5": 6.29, "6": 6.71, "7": 7.05, "8": 7.35, "9": 7.6, "10": 7.83 },
+                "5": { "2": 3.64, "3": 4.6, "4": 5.22, "5": 5.67, "6": 6.03, "7": 6.33, "8": 6.58, "9": 6.8, "10": 6.99 },
+                "10": { "2": 3.15, "3": 3.88, "4": 4.33, "5": 4.65, "6": 4.91, "7": 5.12, "8": 5.3, "9": 5.46, "10": 5.6 },
+                "15": { "2": 3.01, "3": 3.67, "4": 4.08, "5": 4.37, "6": 4.59, "7": 4.78, "8": 4.94, "9": 5.08, "10": 5.2 },
+                "20": { "2": 2.95, "3": 3.58, "4": 3.96, "5": 4.23, "6": 4.45, "7": 4.62, "8": 4.77, "9": 4.9, "10": 5.01 },
+                "30": { "2": 2.89, "3": 3.49, "4": 3.85, "5": 4.1, "6": 4.3, "7": 4.46, "8": 4.59, "9": 4.7, "10": 4.81 },
+                "60": { "2": 2.83, "3": 3.4, "4": 3.74, "5": 3.98, "6": 4.16, "7": 4.31, "8": 4.44, "9": 4.55, "10": 4.65 },
+                "120": { "2": 2.8, "3": 3.36, "4": 3.68, "5": 3.92, "6": 4.1, "7": 4.24, "8": 4.36, "9": 4.47, "10": 4.56 }
+            },
+            "0.01": {
+                "1": { "2": 90.03, "3": 135.0, "4": 164.3, "5": 185.6, "6": 202.3, "7": 215.8, "8": 227.2, "9": 237.0, "10": 245.6 },
+                "2": { "2": 14.04, "3": 19.02, "4": 22.29, "5": 24.72, "6": 26.63, "7": 28.2, "8": 29.53, "9": 30.68, "10": 31.69 },
+                "3": { "2": 8.26, "3": 10.62, "4": 12.17, "5": 13.33, "6": 14.24, "7": 15.0, "8": 15.64, "9": 16.2, "10": 16.69 },
+                "4": { "2": 6.51, "3": 8.12, "4": 9.17, "5": 9.96, "6": 10.58, "7": 11.1, "8": 11.55, "9": 11.93, "10": 12.27 },
+                "5": { "2": 5.7, "3": 6.98, "4": 7.8, "5": 8.42, "6": 8.91, "7": 9.32, "8": 9.67, "9": 9.97, "10": 10.24 },
+                "10": { "2": 4.48, "3": 5.27, "4": 5.77, "5": 6.14, "6": 6.43, "7": 6.67, "8": 6.87, "9": 7.05, "10": 7.21 },
+                "15": { "2": 4.2, "3": 4.89, "4": 5.32, "5": 5.63, "6": 5.88, "7": 6.08, "8": 6.26, "9": 6.41, "10": 6.55 },
+                "20": { "2": 4.1, "3": 4.73, "4": 5.12, "5": 5.4, "6": 5.62, "7": 5.8, "8": 5.95, "9": 6.09, "10": 6.21 },
+                "30": { "2": 3.87, "3": 4.45, "4": 4.8, "5": 5.05, "6": 5.24, "7": 5.4, "8": 5.54, "9": 5.66, "10": 5.76 },
+                "60": { "2": 3.76, "3": 4.28, "4": 4.59, "5": 4.82, "6": 4.99, "7": 5.13, "8": 5.25, "9": 5.36, "10": 5.46 },
+                "120": { "2": 3.7, "3": 4.2, "4": 4.5, "5": 4.71, "6": 4.87, "7": 5.0, "8": 5.12, "9": 5.22, "10": 5.31 }
+            }
+        };
+
+        let sortedTreatmentsData = []; // Global for final table rendering
+        let transformedValues = {}; // Global to hold transformation details
+        let actualTransform = 'none'; // Global to track transformation type
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupUIListeners();
+            setupInfoModal();
+            setupDownloadModal();
+        });
+
+        // --- UI Setup ---
+        function setupUIListeners() {
+            const singleModeRadio = document.getElementById('singleVariableMode');
+            const multiModeRadio = document.getElementById('multiVariableMode');
+            const singleInputs = document.getElementById('singleVariableInputs');
+            const multiSetup = document.getElementById('multiVariableSetup');
+            const multiSelectorsContainer = document.getElementById('multiVariableSelectors');
+
+            const switchMode = () => {
+                document.getElementById('output').innerHTML = ''; // Clear results on mode switch
+                if (singleModeRadio.checked) {
+                    singleInputs.style.display = 'block';
+                    multiSetup.style.display = 'none';
+                } else {
+                    singleInputs.style.display = 'none';
+                    multiSetup.style.display = 'block';
+                }
+            };
+
+            singleModeRadio.addEventListener('change', switchMode);
+            multiModeRadio.addEventListener('change', switchMode);
+
+            document.getElementById('csvFileMulti').addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                Papa.parse(file, {
+                    header: true,
+                    preview: 1,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        const headers = results.meta.fields;
+                        multiSelectorsContainer.innerHTML = `
+                            <div class="input-group">
+                                <label for="treatmentColumn"><strong>2. Select Treatment Column:</strong></label>
+                                <select id="treatmentColumn">
+                                    ${headers.map(h => `<option value="${h}">${h}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="replicationColumn"><strong>3. Select Replication Column:</strong></label>
+                                <select id="replicationColumn">
+                                    ${headers.map(h => `<option value="${h}">${h}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="input-group" style="grid-column: 1 / -1;">
+                                <label for="variableColumns"><strong>4. Select Variable Columns (Ctrl/Cmd + Click):</strong></label>
+                                <select id="variableColumns" multiple style="height: 120px;">
+                                    ${headers.map(h => `<option value="${h}">${h}</option>`).join('')}
+                                </select>
+                            </div>
+                        `;
+                    },
+                     error: (err) => {
+                        multiSelectorsContainer.innerHTML = `<p class="msg-error">Error parsing CSV headers: ${err.message}</p>`;
+                    }
+                });
+            });
+        }
+        
+        function setupInfoModal() {
+            const infoBtn = document.getElementById('infoBtn');
+            const infoModal = document.getElementById('infoModal');
+            const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+            infoBtn.addEventListener('click', () => { infoModal.style.display = 'flex'; });
+            infoModalCloseBtn.addEventListener('click', () => { infoModal.style.display = 'none'; });
+            infoModal.addEventListener('click', (event) => {
+                if (event.target === infoModal) { infoModal.style.display = 'none'; }
+            });
+        }
+
+        // --- Main Dispatcher ---
+        async function analyzeCRD() {
+            const parsingMode = document.querySelector('input[name="parsingMode"]:checked').value;
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ''; // Clear previous results
+
+            try {
+                if (parsingMode === 'single') {
+                    const fileInput = document.getElementById('csvFileSingle');
+                    if (!fileInput.files.length) throw new Error("Please upload a file for single variable analysis.");
+                    await runSingleVariableAnalysis(fileInput.files[0]);
+                } else {
+                    const fileInput = document.getElementById('csvFileMulti');
+                    if (!fileInput.files.length) throw new Error("Please upload a file for multi-variable analysis.");
+                    await runMultiVariableAnalysis(fileInput.files[0]);
+                }
+            } catch (error) {
+                outputDiv.innerHTML = `<div class="app-message msg-error"><strong>Error:</strong> ${error.message}</div>`;
+            }
+        }
+        
+        // --- Single Variable (Wide Format) Logic ---
+        async function runSingleVariableAnalysis(file) {
+            const fileContent = await file.text();
+            const results = Papa.parse(fileContent, { skipEmptyLines: true });
+            const data = results.data;
+            if (data.length < 2 || data[0].length < 2) throw new Error("Wide format CSV must have at least one treatment row and one replication column.");
+            
+            const repNames = data[0].slice(1);
+            const treatments = data.slice(1).map(row => row[0]);
+            const originalValues = data.slice(1).map(row => row.slice(1).map(cell => cell.trim() === "" ? NaN : parseFloat(cell)));
+            
+            const analysisResult = await performFullCRDAnalysis("Single Variable Analysis", treatments, repNames, originalValues);
+            document.getElementById('output').innerHTML = analysisResult.html;
+        }
+
+        // --- Multi Variable (Long Format) Logic ---
+        async function runMultiVariableAnalysis(file) {
+            const outputDiv = document.getElementById('output');
+            
+            const treatmentCol = document.getElementById('treatmentColumn').value;
+            const replicationCol = document.getElementById('replicationColumn').value;
+            const variableCols = Array.from(document.getElementById('variableColumns').selectedOptions).map(opt => opt.value);
+
+            if (!treatmentCol || !replicationCol || variableCols.length === 0) {
+                throw new Error("Please select Treatment, Replication, and at least one Variable column.");
+            }
+            
+            const longFormatData = await new Promise((resolve, reject) => {
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: true,
+                    complete: res => resolve(res.data),
+                    error: err => reject(err)
+                });
+            });
+
+            outputDiv.innerHTML = generateTable('Raw Data (Long Format)', Object.keys(longFormatData[0]), longFormatData.map(row => Object.values(row)));
+
+            const tabContainer = document.createElement('div');
+            tabContainer.className = 'tabs-container';
+            outputDiv.appendChild(tabContainer);
+            
+            const tabContentWrapper = document.createElement('div');
+            tabContentWrapper.className = 'tab-content-wrapper';
+            outputDiv.appendChild(tabContentWrapper);
+
+            let allResults = [];
+            let first = true;
+            for (const variable of variableCols) {
+                const { treatments, repNames, wideData } = pivotData(longFormatData, treatmentCol, replicationCol, variable);
+                
+                const tabBtn = document.createElement('button');
+                tabBtn.className = 'tab-btn' + (first ? ' active' : '');
+                tabBtn.textContent = variable;
+                tabBtn.onclick = () => openTab(variable);
+                tabContainer.appendChild(tabBtn);
+
+                const tabContent = document.createElement('div');
+                const sanitizedId = `tab-${variable.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                tabContent.id = sanitizedId;
+                tabContent.className = 'tab-content' + (first ? ' active' : '');
+                tabContentWrapper.appendChild(tabContent);
+                
+                const analysisResult = await performFullCRDAnalysis(variable, treatments, repNames, wideData);
+                tabContent.innerHTML = analysisResult.html;
+                allResults.push({ variable, ...analysisResult.stats });
+                first = false;
+            }
+
+            outputDiv.insertAdjacentHTML('beforeend', generateMasterResultTable(allResults, longFormatData, treatmentCol));
+        }
+
+        function pivotData(longData, treatmentCol, replicationCol, variableCol) {
+            const treatmentMap = new Map();
+            const repSet = new Set();
+            longData.forEach(row => {
+                const treatment = row[treatmentCol];
+                const replication = row[replicationCol];
+                const value = row[variableCol];
+                repSet.add(replication);
+                if (!treatmentMap.has(treatment)) {
+                    treatmentMap.set(treatment, {});
+                }
+                treatmentMap.get(treatment)[replication] = (value === null || value === undefined) ? NaN : parseFloat(value);
+            });
+            const treatments = Array.from(treatmentMap.keys());
+            const repNames = Array.from(repSet).sort();
+            const wideData = treatments.map(t => {
+                const rowData = treatmentMap.get(t);
+                return repNames.map(r => rowData[r] ?? NaN);
+            });
+            return { treatments, repNames, wideData };
+        }
+        
+        function openTab(variableName) {
+            const sanitizedId = `tab-${variableName.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(sanitizedId).classList.add('active');
+            Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.textContent === variableName).classList.add('active');
+        }
+
+        function generateMasterResultTable(results, longData, treatmentCol) {
+            const treatments = [...new Set(longData.map(row => row[treatmentCol]))].sort();
+            const alpha = document.getElementById('alpha').value;
+            const headers = ['Treatment', ...results.map(r => r.variable)];
+            
+            // --- REPLACE THE OLD BLOCK WITH THIS NEW ONE ---
+let rows = treatments.map(t => {
+    const row = [t];
+    results.forEach(res => {
+        const treatmentStats = res.originalDetails.find(d => d[0] === t);
+        let cellContent = 'N/A';
+
+        if (treatmentStats) {
+            // Start with the Mean ± SD
+            cellContent = `${treatmentStats[1]} ± ${treatmentStats[2]}`;
+            
+            // Find the corresponding group letter
+            if (res.groupingData) {
+                const groupingInfo = res.groupingData.find(d => d.name === t);
+                if (groupingInfo && groupingInfo.group) {
+                    // Append the group letter in brackets
+                    cellContent += ` <sup>${groupingInfo.group}</sup>`;
+                }
+            }
+        }
+        row.push(cellContent);
+    });
+    return row;
+});
+
+            
+            const semRow = ['SEm ±'];
+            const cdRow = [`CD (${alpha})`];
+            results.forEach(res => {
+                semRow.push(res.sem ? res.sem.toFixed(3) : 'N/A');
+                cdRow.push(res.cd ? res.cd.toFixed(3) : 'N/A');
+            });
+
+            rows.push(semRow);
+            rows.push(cdRow);
+
+            return generateTable('Master Result Table', headers, rows);
+        }
+
+        // --- Core Analysis Engine ---
+        async function performFullCRDAnalysis(analysisName, treatments, repNames, originalValues) {
+            // This function performs the complete CRD analysis for a given dataset
+            // and returns the HTML string for its report and key stats.
+            
+            // Get shared parameters from the UI
+            const alpha = parseFloat(document.getElementById('alpha').value);
+            const transformType = document.getElementById('transform').value;
+            const comparisonTest = document.getElementById('comparisonTest').value;
+
+            // ... (The entire analysis logic from the previous complete version goes here)
+            // It will start with data validation, then transformation, ANOVA, grouping, etc.
+            // and finally return an object: { html: "...", stats: {...} }
+
+            let html = `<h2 class="section-header">Analysis for: ${analysisName}</h2>`;
+            let stats = {};
+            let customFormula = null;
+
+            if (transformType === 'custom') {
+                try {
+                    customFormula = await getCustomFormula();
+                    actualTransform = 'custom';
+                } catch (error) {
+                    return { html: `<div class="app-message msg-error"><strong>Error in ${analysisName}:</strong> ${error.message}</div>`, stats: {} };
+                }
+            }
+            
+            // The rest of the original analysis function logic is here...
+            if (originalValues.some(row => row.filter(v => !isNaN(v)).length === 0)) {
+                throw new Error("Each treatment must have at least one valid numeric value.");
+            }
+            
+            actualTransform = 'none';
+            let analysisData = originalValues;
+            let transformNote = '';
+
+            if (transformType === 'auto') {
+                const suggestion = suggestTransformation(originalValues);
+                actualTransform = suggestion.type;
+                transformNote = suggestion.note;
+            } else {
+                actualTransform = transformType;
+            }
+
+            if (actualTransform !== 'none') {
+               transformedValues = applyTransformation(originalValues, actualTransform, customFormula);
+               analysisData = transformedValues.data;
+               transformNote = transformNote || transformedValues.note;
+            }
+
+            const t = treatments.length;
+            const repCounts = analysisData.map(row => row.filter(v => !isNaN(v)).length);
+            const flatData = analysisData.flat().filter(v => !isNaN(v));
+            const grandMean = jStat.mean(flatData);
+            const treatmentMeans = analysisData.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+            const originalMeans = originalValues.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+            const originalSDs = originalValues.map(row => jStat.stdev(row.filter(v => !isNaN(v)), true));
+            
+            let transformedSDs, transformedMins, transformedMaxs;
+            if (actualTransform !== 'none') {
+                transformedSDs = analysisData.map(row => jStat.stdev(row.filter(v => !isNaN(v)), true));
+                transformedMins = analysisData.map(row => { const v = row.filter(n => !isNaN(n)); return v.length > 0 ? Math.min(...v) : NaN; });
+                transformedMaxs = analysisData.map(row => { const v = row.filter(n => !isNaN(n)); return v.length > 0 ? Math.max(...v) : NaN; });
+            }
+
+            let SSR = 0, SSE = 0, SST = 0;
+            for (let i = 0; i < t; i++) {
+                const cleanRow = analysisData[i].filter(v => !isNaN(v));
+                for (let j = 0; j < cleanRow.length; j++) {
+                    SST += Math.pow(cleanRow[j] - grandMean, 2);
+                    SSE += Math.pow(cleanRow[j] - treatmentMeans[i], 2);
+                }
+                SSR += cleanRow.length * Math.pow(treatmentMeans[i] - grandMean, 2);
+            }
+            
+            const dfTreatment = t - 1;
+            const dfTotal = flatData.length - 1;
+            const dfError = dfTotal - dfTreatment;
+
+            if (dfTreatment <= 0 || dfError <= 0) {
+                throw new Error("Not enough data for ANOVA.");
+            }
+
+            const MSTreatment = SSR / dfTreatment;
+            const MSError = SSE / dfError;
+            const F = MSTreatment / MSError;
+            const FCritical = getCriticalValue('F', 1 - alpha, dfTreatment, dfError);
+            const tTab = getCriticalValue('t', 1 - alpha / 2, dfError);
+
+            html += generateTable('Data (Wide Format)', ['Treatment', ...repNames], originalValues.map((row, i) => [treatments[i], ...row.map(c => isNaN(c) ? '' : c)]));
+
+            if (actualTransform !== 'none') {
+                 html += `<div class="app-message msg-info"><strong>Transformation Applied:</strong> ${transformedValues.name}. ${transformNote}</div>`;
+                 html += generateTable('Transformed Data', ['Treatment', ...repNames], transformedValues.data.map((row, i) => [treatments[i], ...row.map(v => isNaN(v) ? "" : v.toFixed(3))]));
+            } else if (transformType === 'auto') {
+                 html += `<div class="app-message msg-info"><strong>Transformation Check:</strong> ${transformNote} No transformation was applied.</div>`;
+            }
+            
+            const originalDetailsData = treatments.map((name, i) => {
+                const validVals = originalValues[i].filter(v => !isNaN(v));
+                return [ name, originalMeans[i].toFixed(3), originalSDs[i].toFixed(3), validVals.length > 0 ? Math.min(...validVals).toFixed(3) : 'N/A', validVals.length > 0 ? Math.max(...validVals).toFixed(3) : 'N/A', repCounts[i] ];
+            });
+            stats.originalDetails = originalDetailsData;
+            html += generateTable('Treatment Details (Original Data)', ['Treatment', 'Mean', 'SD', 'Min', 'Max', 'n'], originalDetailsData);
+
+            if (actualTransform !== 'none') {
+                const transformedDetailsData = treatments.map((name, i) => [
+                    name, treatmentMeans[i].toFixed(3), transformedSDs[i].toFixed(3),
+                    !isNaN(transformedMins[i]) ? transformedMins[i].toFixed(3) : 'N/A',
+                    !isNaN(transformedMaxs[i]) ? transformedMaxs[i].toFixed(3) : 'N/A',
+                    repCounts[i]
+                ]);
+                html += generateTable('Treatment Details (Transformed Data)', ['Treatment', 'Mean', 'SD', 'Min', 'Max', 'n'], transformedDetailsData);
+            }
+
+            const anovaData = [
+                ['Treatment', dfTreatment, SSR.toFixed(3), MSTreatment.toFixed(3), F.toFixed(3), FCritical.toFixed(3), F > FCritical ? "Yes" : "No"],
+                ['Error', dfError, SSE.toFixed(3), MSError.toFixed(3), '-', '-', '-'],
+                ['Total', dfTotal, SST.toFixed(3), '-', '-', '-', '-']
+            ];
+            html += generateTable(`ANOVA Table ${actualTransform !== 'none' ? '(on Transformed Data)' : ''}`, ['Source', 'DF', 'SS', 'MS', 'F', 'F-Critical', 'Significant?'], anovaData);
+            
+            let qValue; 
+            if (F > FCritical && comparisonTest === 'tukey') {
+                qValue = await getQValue(alpha, t, dfError);
+            }
+
+            const cv = (Math.sqrt(MSError) / grandMean) * 100;
+            let paramsHeaders, paramsData, comparisonMessage;
+            const unequalReplications = repCounts.some(count => count !== repCounts[0]);
+            stats.sem = Math.sqrt(MSError / repCounts[0]); // SEm for equal n
+
+            if (F > FCritical) {
+                if (comparisonTest === 'tukey') {
+                    paramsHeaders = ['F', 'F-Critical', 'q-value', 'MSE', 'CV (%)'];
+                    paramsData = [[F.toFixed(3), FCritical.toFixed(3), qValue.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                    if (!unequalReplications) {
+                        const hsd = qValue * Math.sqrt(MSError / repCounts[0]);
+                        comparisonMessage = `HSD (Tukey) = ${hsd.toFixed(3)} (for n = ${repCounts[0]})`;
+                        stats.cd = hsd;
+                    } else {
+                        comparisonMessage = `Pairwise comparison by Tukey's HSD (Tukey-Kramer for unequal n).`;
+                        stats.cd = null; // Matrix is shown instead
+                    }
+                } else {
+                    paramsHeaders = ['F', 'F-Critical', 't-value', 'MSE', 'CV (%)'];
+                    paramsData = [[F.toFixed(3), FCritical.toFixed(3), tTab.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                     if (!unequalReplications) {
+                        const cd = tTab * Math.sqrt(MSError * (2 / repCounts[0]));
+                        comparisonMessage = `CD (LSD) = ${cd.toFixed(3)} (for n = ${repCounts[0]})`;
+                        stats.cd = cd;
+                    } else {
+                        comparisonMessage = `Pairwise comparison by Fisher's LSD.`;
+                        stats.cd = null;
+                    }
+                }
+            } else {
+                paramsHeaders = ['F', 'F-Critical', 't-value', 'MSE', 'CV (%)'];
+                paramsData = [[F.toFixed(3), FCritical.toFixed(3), tTab.toFixed(3), MSError.toFixed(3), `${cv.toFixed(3)}%`]];
+                comparisonMessage = `Pairwise comparison not required (non-significant).`;
+                stats.cd = null;
+            }
+
+            html += generateTable('Statistical Parameters', paramsHeaders, paramsData);
+            html += `<div class="app-message msg-info">${comparisonMessage}</div>`;
+            
+            let getCriticalValueCallback;
+            if (F > FCritical) {
+                if (comparisonTest === 'tukey') {
+                    getCriticalValueCallback = (i1, i2) => qValue * Math.sqrt((MSError / 2) * (1 / repCounts[i1] + 1 / repCounts[i2]));
+                } else {
+                    getCriticalValueCallback = (i1, i2) => tTab * Math.sqrt(MSError * (1 / repCounts[i1] + 1 / repCounts[i2]));
+                }
+                if (unequalReplications) {
+                    const matrixTitle = comparisonTest === 'tukey' ? "HSD Matrix" : "CD Matrix";
+                    html += generateComparisonMatrix(matrixTitle, treatments, repCounts, getCriticalValueCallback);
+                }
+            
+                html += `<div class="app-message msg-success">The treatments are <strong>significantly different</strong>.</div>`;
+                const sortedData = treatments.map((name, i) => ({ name, mean: treatmentMeans[i], originalMean: originalMeans[i], originalSD: originalSDs[i], repCount: repCounts[i], originalIndex: i })).sort((a, b) => b.mean - a.mean);
+                const sortedMeans = sortedData.map(item => item.mean);
+                const sortedRepCounts = sortedData.map(item => item.repCount);
+                
+                const groups = performGrouping(sortedMeans, sortedRepCounts, MSError, getCriticalValueCallback);
+                sortedTreatmentsData = sortedData.map((item, i) => ({ ...item, group: groups[i] }));
+                // --- ADD THIS LINE ---
+stats.groupingData = sortedTreatmentsData;
+
+                
+                let finalTableHeaders = (actualTransform !== 'none') ? ['Treatment', 'Mean ± SD (Original)', 'Mean (Transformed)', 'Group'] : ['Treatment', 'Mean ± SD', 'Group'];
+                
+                html += `<h3 class="section-header">Final Result Table</h3><div class="table-container"><table class="pro-table"><thead><tr>${finalTableHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody id="finalResultTableBody-${analysisName}"></tbody></table></div>`;
+                html += `<div class="app-message msg-info">Treatments sharing the same letter(s) are not significantly different.</div>`;
+                html += `<div class="form-check-container">
+                            <input class="form-check-input" type="checkbox" id="toggleOriginalOrder-${analysisName}">
+                            <label class="form-check-label" for="toggleOriginalOrder-${analysisName}">Restore original data order</label>
+                        </div>`;
+                
+                if (actualTransform !== 'none') {
+                    let backTransformHeaders = ['Treatment', 'Mean (Back-Transformed)', 'Group'];
+                    if (actualTransform === 'custom') backTransformHeaders[2] = 'Group (Custom formula cannot be back-transformed)';
+                    html += `<h3 class="section-header">Back-Transformed Results</h3>`;
+                    html += `<div class="app-message msg-info">These means are in original units for easier interpretation. The statistical grouping is based on the analysis of the transformed data.</div>`;
+                    html += `<div class="table-container"><table class="pro-table"><thead><tr>${backTransformHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody id="backTransformedTableBody-${analysisName}"></tbody></table></div>`;
+                }
+
+                // We need to defer rendering the table until the HTML is in the DOM
+                setTimeout(() => {
+                    renderFinalTable(false, analysisName);
+                    document.getElementById(`toggleOriginalOrder-${analysisName}`).addEventListener('change', function() {
+                        renderFinalTable(this.checked, analysisName);
+                    });
+                }, 0);
+
+            } else {
+                html += `<div class="app-message msg-warning">The treatments are <strong>not significantly different</strong>.</div>`;
+                // --- ADD THIS LINE ---
+stats.groupingData = null; // No grouping was performed
+
+            }
+
+            return { html, stats };
+        }
+        
+        // --- All other helper functions (getCustomFormula, generateTable, etc.) ---
+        // --- MODAL SETUP AND CONTROL ---
+
+function setupInfoModal() {
+    const infoBtn = document.getElementById('infoBtn');
+    const infoModal = document.getElementById('infoModal');
+    const infoModalCloseBtn = document.getElementById('infoModalCloseBtn');
+
+    infoBtn.addEventListener('click', () => {
+        infoModal.style.display = 'flex';
+    });
+
+    infoModalCloseBtn.addEventListener('click', () => {
+        infoModal.style.display = 'none';
+    });
+
+    infoModal.addEventListener('click', (event) => {
+        if (event.target === infoModal) {
+            infoModal.style.display = 'none';
+        }
+    });
+}
+
+function setupDownloadModal() {
+    const combinedModalHTML = `
+        <div id="downloadModal" class="download-table-modal" style="display:none;">
+            <div class="download-table-modal-content">
+                <div class="download-table-modal-content-header">
+                    <p class="download-modal-header">Download/Print Report</p>
+                    <span class="download-modal-close" onclick="closeDownloadModal()">&times;</span>
+                </div>
+                <div class="download-tab-buttons">
+                    <button id="excelTabBtn" class="report-tab-btn active" onclick="showTab('excel')"><i class="bi bi-file-earmark-excel"></i> Sheet</button>
+                    <button id="pdfTabBtn" class="report-tab-btn" onclick="showTab('pdf')"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+                    <button id="printTabBtn" class="report-tab-btn" onclick="showTab('print')"><i class="bi bi-printer"></i> Print</button>
+                    <button id="docTabBtn" class="report-tab-btn" onclick="showTab('doc')"><i class="bi bi-file-earmark-word"></i> Docx</button>
+                </div>
+                <div id="excelTab" class="download-tab-content">
+                    <div id="excelContent"></div>
+                    <div class="download-tab-footer">
+                        <button class="enscy-btn" onclick="generateSheets()">Download Excel</button>
+                    </div>
+                </div>
+                <div id="pdfTab" class="download-tab-content" style="display:none">
+                    <div id="pdfContent"></div>
+                    <div class="download-tab-footer">
+                        <button class="enscy-btn" onclick="generatePdf()">Download PDF</button>
+                    </div>
+                </div>
+                <div id="printTab" class="download-tab-content" style="display:none">
+                    <div id="printContent"></div>
+                    <div class="download-tab-footer">
+                        <button class="enscy-btn" onclick="printSelectedSections()">Print Selected</button>
+                    </div>
+                </div>
+                <div id="docTab" class="download-tab-content" style="display:none">
+                    <div id="docContent"></div>
+                    <div class="download-tab-footer">
+                        <button class="enscy-btn" onclick="generateDocx()">Download DOCX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", combinedModalHTML);
+}
+
+
+// --- DOWNLOAD MODAL LOGIC ---
+
+function openDownloadModal() {
+    const excelContent = document.getElementById("excelContent");
+    const pdfContent = document.getElementById("pdfContent");
+    const printContent = document.getElementById("printContent");
+    const docContent = document.getElementById("docContent");
+
+    excelContent.innerHTML = "";
+    pdfContent.innerHTML = "";
+    printContent.innerHTML = "";
+    docContent.innerHTML = "";
+
+    // Populate Excel Tab
+    const tables = document.querySelectorAll("#output .pro-table");
+    if (tables.length === 0) {
+        excelContent.innerHTML = `<p class="no-data-msg">No tables available to download.</p>`;
+    } else {
+        tables.forEach((table, index) => {
+            const tableContainer = table.closest('.table-container');
+            const header = tableContainer ? tableContainer.previousElementSibling : null;
+            const name = header && header.classList.contains('section-header') ? header.textContent : `Table ${index + 1}`;
+            const id = `tableCheckbox_${index}`;
+            const checkboxHTML = `
+                <div class="select-table-to-save">
+                    <div class="stts-checkbox"><input type="checkbox" id="${id}" data-index="${index}" checked></div>
+                    <div class="stts-label"><label for="${id}">${name}</label></div>
+                </div>
+            `;
+            excelContent.insertAdjacentHTML("beforeend", checkboxHTML);
+        });
+    }
+
+    // Populate PDF, Print, and DOCX Tabs
+    const divs = document.querySelectorAll(".save-div");
+    if (divs.length === 0) {
+        const noSectionsMsg = `<p class="no-data-msg">No sections available.</p>`;
+        pdfContent.innerHTML = noSectionsMsg;
+        printContent.innerHTML = noSectionsMsg;
+        docContent.innerHTML = noSectionsMsg;
+    } else {
+        divs.forEach((div, index) => {
+            const name = div.getAttribute("div-name") || `Section ${index + 1}`;
+            const createCheckboxHTML = (type, idx, sectionName) => `
+                <div class="select-table-to-save">
+                    <div class="stts-checkbox"><input type="checkbox" id="${type}Checkbox_${idx}" data-index="${idx}" checked></div>
+                    <div class="stts-label"><label for="${type}Checkbox_${idx}">${sectionName}</label></div>
+                </div>
+            `;
+            pdfContent.insertAdjacentHTML("beforeend", createCheckboxHTML('pdf', index, name));
+            printContent.insertAdjacentHTML("beforeend", createCheckboxHTML('print', index, name));
+            docContent.insertAdjacentHTML("beforeend", createCheckboxHTML('doc', index, name));
+        });
+    }
+
+    document.getElementById("downloadModal").style.display = "flex";
+    showTab('excel');
+}
+
+function closeDownloadModal() {
+    const modal = document.getElementById("downloadModal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+function showTab(tabName) {
+    document.getElementById("excelTab").style.display = tabName === 'excel' ? "block" : "none";
+    document.getElementById("pdfTab").style.display = tabName === 'pdf' ? "block" : "none";
+    document.getElementById("printTab").style.display = tabName === 'print' ? "block" : "none";
+    document.getElementById("docTab").style.display = tabName === 'doc' ? "block" : "none";
+
+    document.getElementById("excelTabBtn").classList.toggle("active", tabName === 'excel');
+    document.getElementById("pdfTabBtn").classList.toggle("active", tabName === 'pdf');
+    document.getElementById("printTabBtn").classList.toggle("active", tabName === 'print');
+    document.getElementById("docTabBtn").classList.toggle("active", tabName === 'doc');
+}
+
+function generateSheets() {
+    const checkboxes = document.querySelectorAll('#excelContent input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+        alert("Please select at least one table to download.");
+        return;
+    }
+
+    const tables = document.querySelectorAll("#output .pro-table");
+    const wb = XLSX.utils.book_new();
+
+    checkboxes.forEach(checkbox => {
+        const idx = checkbox.getAttribute("data-index");
+        const table = tables[idx];
+        const tableContainer = table.closest('.table-container');
+        const header = tableContainer ? tableContainer.previousElementSibling : null;
+        const tableName = header && header.classList.contains('section-header') ? header.textContent : `Sheet ${parseInt(idx) + 1}`;
+        const ws = XLSX.utils.table_to_sheet(table);
+        XLSX.utils.book_append_sheet(wb, ws, tableName.substring(0, 31));
+    });
+
+    let filename = "DataFlex-CRD-Report.xlsx";
+    XLSX.writeFile(wb, filename);
+    closeDownloadModal();
+}
+
+function generatePdf() {
+    const checkboxes = document.querySelectorAll('#pdfContent input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+        alert("Please select at least one section to download.");
+        return;
+    }
+
+    const allDivs = document.querySelectorAll(".save-div");
+    let contentToConvert = "";
+    checkboxes.forEach(cb => {
+        const idx = cb.getAttribute("data-index");
+        contentToConvert += `<div style="page-break-after: always;">${allDivs[idx].innerHTML}</div>`;
+    });
+
+    let filename = "DataFlex-CRD-Report.pdf";
+    const opt = {
+        margin: [10, 10, 10, 10],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(contentToConvert).set(opt).save().then(closeDownloadModal);
+}
+
+function printSelectedSections() {
+    const checkboxes = document.querySelectorAll('#printContent input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+        alert("Please select at least one section to print.");
+        return;
+    }
+
+    const allDivs = document.querySelectorAll(".save-div");
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+
+    const frameDoc = printFrame.contentWindow.document;
+    frameDoc.open();
+    frameDoc.write('<!DOCTYPE html><html><head><title>Print Content</title>');
+    
+    // Clone all style and link tags
+    document.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(node => {
+        frameDoc.head.appendChild(node.cloneNode(true));
+    });
+
+    frameDoc.write('<style>@media print { body { margin: 20mm; } .save-div { page-break-inside: avoid !important; } }</style>');
+    frameDoc.write('</head><body>');
+
+    checkboxes.forEach(cb => {
+        const idx = cb.getAttribute("data-index");
+        frameDoc.body.innerHTML += allDivs[idx].innerHTML;
+    });
+
+    frameDoc.write('</body></html>');
+    frameDoc.close();
+
+    setTimeout(() => {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+        document.body.removeChild(printFrame);
+    }, 500);
+
+    closeDownloadModal();
+}
+
+async function generateDocx() {
+    const checkboxes = document.querySelectorAll('#docContent input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+        alert("Please select at least one section to download as DOCX.");
+        return;
+    }
+    const allDivs = document.querySelectorAll(".save-div");
+    let combinedHtml = "";
+    checkboxes.forEach(cb => {
+        const idx = cb.getAttribute("data-index");
+        combinedHtml += allDivs[idx].innerHTML + '<br style="page-break-before: always;" />';
+    });
+
+    const container = document.createElement("div");
+    container.innerHTML = combinedHtml;
+    container.querySelectorAll("table").forEach(table => {
+        table.style.borderCollapse = "collapse";
+        table.style.width = "100%";
+        table.style.border = "1px solid black";
+    });
+    container.querySelectorAll("th, td").forEach(cell => {
+        cell.style.border = "1px solid black";
+        cell.style.padding = "5px";
+    });
+
+    let filename = "DataFlex-CRD-Report.docx";
+    const fileBuffer = await htmlDocx.asBlob(container.innerHTML);
+    saveAs(fileBuffer, filename);
+    closeDownloadModal();
+}
+
+// --- STATISTICAL & UTILITY HELPER FUNCTIONS ---
+
+function getCustomFormula() {
+    return new Promise((resolve, reject) => {
+        const modal = document.getElementById('customTransformModal');
+        const submitBtn = document.getElementById('customModalSubmitBtn');
+        const cancelBtn = document.getElementById('customModalCancelBtn');
+        const closeBtn = document.getElementById('customModalCloseBtn');
+        const formulaInput = document.getElementById('formulaInput');
+        const errorDiv = document.getElementById('customModalError');
+
+        formulaInput.value = '';
+        errorDiv.style.display = 'none';
+        modal.style.display = 'flex';
+        formulaInput.focus();
+
+        const handleSubmit = () => {
+            const formula = formulaInput.value.trim();
+            if (!formula) {
+                errorDiv.textContent = 'Formula cannot be empty.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (!formula.includes('x')) {
+                errorDiv.textContent = 'Formula must include the variable "x".';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            cleanup();
+            resolve(formula);
+        };
+
+        const handleCancel = () => {
+            cleanup();
+            reject(new Error("Custom transformation was canceled."));
+        };
+
+        const cleanup = () => {
+            modal.style.display = 'none';
+            submitBtn.removeEventListener('click', handleSubmit);
+            cancelBtn.removeEventListener('click', handleCancel);
+            closeBtn.removeEventListener('click', handleCancel);
+        };
+
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', handleCancel);
+        closeBtn.addEventListener('click', handleCancel);
+    });
+}
+
+async function getQValue(alpha, k, df) {
+    const findQValueInData = () => {
+        const alphaTable = qValueData[alpha];
+        if (!alphaTable) return null;
+        const availableDfs = Object.keys(alphaTable).map(Number).sort((a, b) => b - a);
+        const dfToUse = availableDfs.find(d => d <= df);
+        if (!dfToUse) return null;
+        const dfRow = alphaTable[dfToUse];
+        if (k < 2 || k > 10) return null;
+        return dfRow[k];
+    };
+
+    const qVal = findQValueInData();
+    if (qVal) return qVal;
+
+    return new Promise((resolve, reject) => {
+        const modal = document.getElementById('qValueModal');
+        const submitBtn = modal.querySelector('.btn-primary');
+        const cancelBtn = modal.querySelector('.btn-secondary');
+        const closeBtn = modal.querySelector('.q-value-modal-close');
+        const qInput = document.getElementById('qValueInput');
+        const errorDiv = document.getElementById('modalError');
+
+        document.getElementById('modalAlpha').textContent = alpha;
+        document.getElementById('modalK').textContent = k;
+        document.getElementById('modalDf').textContent = df;
+        document.getElementById('modalSearchInstructions').innerHTML = `Search a q-table for <strong>k = ${k}</strong> and <strong>df = ${df}</strong> at <strong>α = ${alpha}</strong>. If your exact df is not listed, use the next lowest value.`;
+        
+        qInput.value = '';
+        errorDiv.style.display = 'none';
+        modal.style.display = 'flex';
+        qInput.focus();
+
+        const handleSubmit = () => {
+            const value = parseFloat(qInput.value);
+            if (isNaN(value) || value <= 0) {
+                errorDiv.textContent = 'Please enter a valid, positive number.';
+                errorDiv.style.display = 'block';
+            } else {
+                cleanup();
+                resolve(value);
+            }
+        };
+
+        const handleCancel = () => {
+            cleanup();
+            reject(new Error("Tukey's HSD analysis was canceled by the user."));
+        };
+
+        const cleanup = () => {
+            modal.style.display = 'none';
+            submitBtn.removeEventListener('click', handleSubmit);
+            cancelBtn.removeEventListener('click', handleCancel);
+            closeBtn.removeEventListener('click', handleCancel);
+        };
+
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', handleCancel);
+        closeBtn.addEventListener('click', handleCancel);
+    });
+}
+
+function performGrouping(sortedMeans, sortedRepCounts, MSError, getCriticalValueCallback) {
+    const t = sortedMeans.length;
+    const groups = Array(t).fill('');
+    if (t === 0) return [];
+    let groupIndex = 0;
+    groups[0] = String.fromCharCode(97 + groupIndex);
+    const assignedGroups = [[0]];
+    for (let i = 1; i < t; i++) {
+        const currentMean = sortedMeans[i];
+        let foundGroup = false;
+        for (let j = 0; j < assignedGroups.length; j++) {
+            if (assignedGroups[j].every(k => Math.abs(currentMean - sortedMeans[k]) <= getCriticalValueCallback(i, k))) {
+                assignedGroups[j].push(i);
+                groups[i] = String.fromCharCode(97 + j);
+                foundGroup = true;
+                break;
+            }
+        }
+        if (!foundGroup) {
+            groupIndex++;
+            assignedGroups.push([i]);
+            groups[i] = String.fromCharCode(97 + groupIndex);
+        }
+    }
+    for (let j = 1; j < t - 1; j++) {
+        for (let i = 0; i < j; i++) {
+            for (let k = j + 1; k < t; k++) {
+                const crit_ij = getCriticalValueCallback(i, j);
+                const crit_jk = getCriticalValueCallback(j, k);
+                if (Math.abs(sortedMeans[i] - sortedMeans[j]) <= crit_ij && Math.abs(sortedMeans[j] - sortedMeans[k]) <= crit_jk) {
+                    groups[j] = [...new Set([...groups[i].split(''), ...groups[k].split('')])].join('');
+                }
+            }
+        }
+    }
+    return groups;
+}
+
+function suggestTransformation(data) {
+    const means = data.map(row => jStat.mean(row.filter(v => !isNaN(v))));
+    const variances = data.map(row => jStat.variance(row.filter(v => !isNaN(v)), true));
+    if (means.some(isNaN) || variances.some(isNaN)) return { type: 'none', note: 'Could not perform automatic detection due to insufficient data.' };
+
+    const maxMean = Math.max(...means);
+    const minMean = Math.min(...means);
+    const maxVar = Math.max(...variances);
+    const minVar = Math.min(...variances);
+    const allValues = data.flat().filter(v => !isNaN(v));
+
+    if (minMean <= 0 || minVar <= 0) return { type: 'none', note: 'Data contains non-positive values; transformation may be unreliable.' };
+    if (allValues.every(v => v >= 0 && v <= 100)) return { type: 'arcsine', note: 'Data appears to be in percentage/proportion form.' };
+    if ((maxMean / minMean > 5 || maxVar / minVar > 5) && !allValues.some(v => v < 0)) return { type: 'log', note: 'High variation detected.' };
+    if (jStat.corr(means, variances) > 0.7 && !allValues.some(v => v < 0)) return { type: 'sqrt', note: 'Variance appears proportional to the mean.' };
+    return { type: 'none', note: 'Data appears to meet ANOVA assumptions.' };
+}
+
+function applyTransformation(data, type, customFormula = null) {
+    let transformedData, name, note = '';
+    const hasZero = data.flat().some(v => v === 0);
+    const hasNegative = data.flat().some(v => v < 0);
+
+    switch (type) {
+        case 'custom':
+            try {
+                const transformFn = new Function('x', `return ${customFormula}`);
+                name = `Custom: ${customFormula}`;
+                transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : transformFn(v)));
+            } catch (e) {
+                throw new Error(`Invalid custom formula: "${customFormula}".`);
+            }
+            break;
+        case 'log':
+            name = hasZero ? 'Log10(x + 1)' : 'Log10(x)';
+            note = hasZero ? 'Added 1 to values to handle zeros.' : '';
+            if (hasNegative) throw new Error("Log transformation cannot be applied to negative numbers.");
+            transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.log10(hasZero ? v + 1 : v)));
+            break;
+        case 'sqrt':
+            name = hasZero ? '√(x + 0.5)' : '√(x)';
+            note = hasZero ? 'Added 0.5 to values to handle zeros.' : '';
+            if (hasNegative) throw new Error("Square root transformation cannot be applied to negative numbers.");
+            transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.sqrt(hasZero ? v + 0.5 : v)));
+            break;
+        case 'arcsine':
+            name = 'Arcsine √(x/100)';
+            if (data.flat().filter(v => !isNaN(v)).some(v => v < 0 || v > 100)) {
+                throw new Error("Arcsine transformation requires data in percentages (0-100).");
+            }
+            transformedData = data.map(row => row.map(v => isNaN(v) ? NaN : Math.asin(Math.sqrt(v / 100))));
+            break;
+        default:
+            return { data: data, name: 'None', hasZero };
+    }
+    return { data: transformedData, name: name, note: note, hasZero };
+}
+
+function getCriticalValue(type, p, df1, df2) {
+    try {
+        const value = type === 'F' ? jStat.centralF.inv(p, df1, df2) : jStat.studentt.inv(p, df1);
+        if (isNaN(value) || !isFinite(value)) throw new Error();
+        return value;
+    } catch {
+        const manualVal = parseFloat(prompt(`Could not find ${type}-table value for ${type === 'F' ? `df(${df1}, ${df2})` : `df=${df1}`}. Please enter manually:`));
+        if (isNaN(manualVal)) throw new Error(`Invalid manual ${type}-critical value.`);
+        return manualVal;
+    }
+}
+
+function generateTable(title, headers, data) {
+    let tableHtml = `<h3 class="section-header">${title}</h3><div class="table-container"><table class="pro-table"><thead><tr>`;
+    headers.forEach(h => tableHtml += `<th>${h}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
+    data.forEach(row => {
+        tableHtml += `<tr>`;
+        row.forEach(cell => tableHtml += `<td>${(cell === null || cell === undefined) ? '' : String(cell)}</td>`);
+        tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table></div>`;
+    return tableHtml;
+}
+
+function renderFinalTable(orderByOriginal, analysisName) {
+    const mainTableBody = document.getElementById(`finalResultTableBody-${analysisName}`);
+    const backTransformedTableBody = document.getElementById(`backTransformedTableBody-${analysisName}`);
+    if (!mainTableBody) return;
+
+    const transformApplied = sortedTreatmentsData[0] && (sortedTreatmentsData[0].mean !== sortedTreatmentsData[0].originalMean);
+    const transformInfo = transformedValues || {};
+
+    let dataToRender = [...sortedTreatmentsData];
+
+    if (orderByOriginal) {
+        dataToRender.sort((a, b) => a.originalIndex - b.originalIndex);
+    } else {
+        dataToRender.sort((a, b) => b.mean - a.mean);
+    }
+
+    let mainTbodyHtml = '';
+    let backTransformedTbodyHtml = '';
+
+    for (const item of dataToRender) {
+        mainTbodyHtml += `<tr><td>${item.name}</td><td>${item.originalMean.toFixed(3)} ± ${item.originalSD.toFixed(3)}</td>`;
+        if (transformApplied) {
+            mainTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`;
+        }
+        mainTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
+
+        if (backTransformedTableBody) {
+            const backTransformedMean = backTransformValue(item.mean, actualTransform, null, transformInfo.hasZero);
+            backTransformedTbodyHtml += `<tr><td>${item.name}</td>`;
+            if (actualTransform === 'custom') {
+                backTransformedTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`;
+            } else {
+                backTransformedTbodyHtml += `<td>${backTransformedMean.toFixed(3)}</td>`;
+            }
+            backTransformedTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
+        }
+    }
+    
+    mainTableBody.innerHTML = mainTbodyHtml;
+    if (backTransformedTableBody) {
+        backTransformedTableBody.innerHTML = backTransformedTbodyHtml;
+    }
+}
+
+function generateComparisonMatrix(title, treatments, repCounts, getCriticalValueCallback) {
+    const t = treatments.length;
+    let tableData = [];
+    const matrix = [];
+    for (let i = 0; i < t; i++) {
+        const row = [];
+        for (let j = 0; j < t; j++) {
+            if (i === j) {
+                row.push("-");
+            } else {
+                const critVal = getCriticalValueCallback(i, j);
+                row.push(critVal.toFixed(3));
+            }
+        }
+        matrix.push(row);
+    }
+    
+    for (let i = 0; i < t; i++) {
+        tableData.push([treatments[i], ...matrix[i]]);
+    }
+    return generateTable(title, ['Treatment', ...treatments], tableData);
+}
+
+function backTransformValue(value, type, customFormula = null, hasZero = false) {
+    if (isNaN(value)) return NaN;
+    switch (type) {
+        case 'log':
+            const baseVal = Math.pow(10, value);
+            return hasZero ? baseVal - 1 : baseVal;
+        case 'sqrt':
+            const squaredVal = value * value;
+            return hasZero ? squaredVal - 0.5 : squaredVal;
+        case 'arcsine':
+            const sinVal = Math.sin(value);
+            return (sinVal * sinVal) * 100;
+        case 'custom':
+            return value; 
+        default:
+            return value;
+    }
+}
+    </script>
+</body>
+</html>
+
+
