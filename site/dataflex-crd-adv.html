@@ -1881,6 +1881,7 @@ function generateTable(title, headers, data) {
     return tableHtml;
 }
 
+// --- REPLACE THE OLD renderFinalTable FUNCTION WITH THIS NEW, CORRECTED VERSION ---
 function renderFinalTable(orderByOriginal, analysisName) {
     const mainTableBody = document.getElementById(`finalResultTableBody-${analysisName}`);
     const backTransformedTableBody = document.getElementById(`backTransformedTableBody-${analysisName}`);
@@ -1901,23 +1902,25 @@ function renderFinalTable(orderByOriginal, analysisName) {
     let backTransformedTbodyHtml = '';
 
     for (const item of dataToRender) {
+        // Build rows for the main final table (this logic is unchanged)
         mainTbodyHtml += `<tr><td>${item.name}</td><td>${item.originalMean.toFixed(3)} ± ${item.originalSD.toFixed(3)}</td>`;
         if (transformApplied) {
             mainTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`;
         }
         mainTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
 
+        // --- Simplified and Corrected Logic for the Back-Transformed Table ---
         if (backTransformedTableBody) {
+            // This function is already smart. It correctly handles standard transforms,
+            // custom transforms with a back-formula, and custom transforms without one.
             const backTransformedMean = backTransformValue(item.mean, actualTransform, customFormulas, transformInfo.hasZero);
 
-            backTransformedTbodyHtml += `<tr><td>${item.name}</td>`;
-            if (actualTransform === 'custom' && (!customFormulas || !customFormulas.backward)) {
-    backTransformedTbodyHtml += `<td>${item.mean.toFixed(3)}</td>`; // Show transformed mean if no back-formula
-} else {
-    backTransformedTbodyHtml += `<td>${backTransformedMean.toFixed(3)}</td>`;
-}
-
-            backTransformedTbodyHtml += `<td class="check-groups-assigned">${item.group}</td></tr>`;
+            backTransformedTbodyHtml += `<tr>`;
+            backTransformedTbodyHtml += `<td>${item.name}</td>`;
+            // We can now unconditionally display the result of the function call.
+            backTransformedTbodyHtml += `<td>${backTransformedMean.toFixed(3)}</td>`;
+            backTransformedTbodyHtml += `<td class="check-groups-assigned">${item.group}</td>`;
+            backTransformedTbodyHtml += `</tr>`;
         }
     }
     
@@ -1926,6 +1929,7 @@ function renderFinalTable(orderByOriginal, analysisName) {
         backTransformedTableBody.innerHTML = backTransformedTbodyHtml;
     }
 }
+
 
 function generateComparisonMatrix(title, treatments, repCounts, getCriticalValueCallback) {
     const t = treatments.length;
