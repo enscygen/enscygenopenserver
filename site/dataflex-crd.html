@@ -268,7 +268,7 @@
             margin-top: 30px;
             margin-bottom: 15px;
             padding-bottom: 5px;
-            border-bottom: 2px solid var(--primary-color);
+            
         }
         
         .table-container {
@@ -459,6 +459,146 @@
             padding-top: 20px; margin-top: 10px; border-top: 1px solid var(--border-color);
             display: flex; justify-content: flex-end;
         }
+
+        /* --- UNIFIED MODAL STYLING (Covers Info, Q-Value, and Custom Modals) --- */
+
+/* Generic Overlay for all modals */
+.info-modal-overlay, .custom-modal-overlay, .q-value-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Ensures modals are on top */
+}
+
+/* Generic Content Box for all modals */
+.info-modal-content, .custom-modal-content, .q-value-modal-content {
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+.info-modal-content { max-width: 600px; }
+.custom-modal-content, .q-value-modal-content { max-width: 500px; }
+
+/* Generic Header for all modals */
+.info-modal-header, .custom-modal-header, .q-value-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.info-modal-header h4, .custom-modal-header h4, .q-value-modal-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+.info-modal-close, .custom-modal-close, .q-value-modal-close {
+    border: none;
+    background: none;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+.info-modal-close:hover, .custom-modal-close:hover, .q-value-modal-close:hover {
+    color: #333;
+}
+
+/* Generic Body for all modals */
+.info-modal-body, .custom-modal-body, .q-value-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    line-height: 1.7;
+}
+
+/* Styling for Input fields and their labels inside modals */
+.q-value-modal-body .input-group,
+.custom-modal-body .input-group {
+    margin-bottom: 15px;
+}
+.q-value-modal-body .input-group label,
+.custom-modal-body .input-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+.q-value-modal-body input[type="number"],
+.custom-modal-body input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+.custom-modal-body input[type="text"] {
+     font-family: monospace; /* Better for formulas */
+}
+.q-value-modal-body input[type="number"]:focus,
+.custom-modal-body input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Error messages */
+.modal-error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Generic Footer for modals with buttons */
+.custom-modal-footer, .q-value-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+}
+
+/* Generic Button styles for modal footers */
+.modal-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.modal-btn.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.modal-btn.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+.modal-btn.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.modal-btn.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Specifics for Info Modal */
+.info-modal-body h5 { font-size: 1.1rem; font-weight: 600; color: var(--primary-color); margin-top: 15px; margin-bottom: 8px; }
+.info-modal-body p { margin-bottom: 10px; color: var(--light-text-color); }
+.info-modal-body ul { padding-left: 20px; margin-bottom: 15px; color: var(--light-text-color); }
+
     </style>
 </head>
 
