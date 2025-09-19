@@ -1316,13 +1316,24 @@ stats.groupingData = sortedTreatmentsData;
                             <label class="form-check-label" for="toggleOriginalOrder-${analysisName}">Restore original data order</label>
                         </div>`;
                 
-                if (actualTransform !== 'none') {
-                    let backTransformHeaders = ['Treatment', 'Mean (Back-Transformed)', 'Group'];
-                    if (actualTransform === 'custom') backTransformHeaders[2] = 'Group (Custom formula cannot be back-transformed)';
-                    html += `<h3 class="section-header">Back-Transformed Results</h3>`;
-                    html += `<div class="app-message msg-info">These means are in original units for easier interpretation. The statistical grouping is based on the analysis of the transformed data.</div>`;
-                    html += `<div class="table-container"><table class="pro-table"><thead><tr>${backTransformHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody id="backTransformedTableBody-${analysisName}"></tbody></table></div>`;
-                }
+                // --- REPLACE THE OLD BLOCK WITH THIS NEW ONE ---
+if (actualTransform !== 'none') {
+    let backTransformHeaders;
+
+    // This new logic checks if a custom back-formula was actually provided
+    if (actualTransform === 'custom' && (!customFormulas || !customFormulas.backward)) {
+        // Case 1: Custom transform was used, but NO back-formula was given.
+        backTransformHeaders = ['Treatment', 'Mean (Transformed)', 'Group (No back-transform formula provided)'];
+    } else {
+        // Case 2: A standard transform was used, OR a custom transform WITH a back-formula was given.
+        backTransformHeaders = ['Treatment', 'Mean (Back-Transformed)', 'Group'];
+    }
+    
+    html += `<h3 class="section-header">Back-Transformed Results</h3>`;
+    html += `<div class="app-message msg-info">These means are presented in the original units for easier interpretation. The statistical grouping is based on the analysis of the transformed data.</div>`;
+    html += `<div class="table-container"><table class="pro-table"><thead><tr>${backTransformHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody id="backTransformedTableBody-${analysisName}"></tbody></table></div>`;
+}
+
 
                 // We need to defer rendering the table until the HTML is in the DOM
                 setTimeout(() => {
