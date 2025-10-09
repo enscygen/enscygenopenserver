@@ -1600,6 +1600,51 @@
             tableBody.innerHTML = rowsHtml;
         }
 
+// --- ADD THIS ENTIRE NEW FUNCTION TO YOUR SCRIPT ---
+function generateSignificanceMatrix(analysisName, sortedData, getCriticalValueCallback) {
+    // This function builds a matrix showing which pairs are significantly different.
+    
+    // Use the sorted list of treatments for the matrix headers for consistency with the final table.
+    const treatments = sortedData.map(d => d.name);
+    const t = treatments.length;
+    let tableData = [];
+
+    // Loop through each pair of treatments to build the matrix data
+    for (let i = 0; i < t; i++) {
+        const rowData = [treatments[i]]; // First cell in the row is the treatment name
+        for (let j = 0; j < t; j++) {
+            if (i === j) {
+                // The intersection of a treatment with itself is blank.
+                rowData.push(""); 
+            } else {
+                // Get the data for the two treatments being compared
+                const treatment1 = sortedData[i];
+                const treatment2 = sortedData[j];
+
+                // Calculate the absolute difference between their means
+                const meanDifference = Math.abs(treatment1.mean - treatment2.mean);
+                
+                // Get the specific critical value (CD or HSD) for this exact pair
+                const criticalValue = getCriticalValueCallback(i, j);
+
+                // Compare the difference to the critical value
+                if (meanDifference > criticalValue) {
+                    rowData.push("X"); // "X" for Significantly Different
+                } else {
+                    rowData.push("-"); // "-" for Not Significantly Different
+                }
+            }
+        }
+        tableData.push(rowData);
+    }
+
+    // Use our existing generateTable function to create the final HTML
+    const title = `Pairwise Comparison Matrix for ${analysisName}`;
+    return generateTable(title, ['Treatment', ...treatments], tableData);
+}
+
+
+        
         // --- Core Analysis Engine ---
         async function performFullCRDAnalysis(analysisName, treatments, repNames, originalValues, customFormulas) {
             console.log(`Starting analysis for: ${analysisName}`);
@@ -1792,9 +1837,9 @@
                             <input class="form-check-input" type="checkbox" id="toggleOriginalOrder-${analysisName}">
                             <label class="form-check-label" for="toggleOriginalOrder-${analysisName}">Restore original data order</label>
                         </div>`;
+                html += generateSignificanceMatrix(analysisName, sortedTreatmentsData, getCriticalValueCallback);
 
-                // --- REPLACE THE OLD BLOCK WITH THIS NEW ONE ---
-                // --- REPLACE THE OLD BLOCK WITH THIS NEW ONE ---
+                
                 if (actualTransform !== 'none') {
                     let backTransformHeaders;
 
