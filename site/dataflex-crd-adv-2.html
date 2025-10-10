@@ -1330,6 +1330,20 @@
                             renderFinalTable(this.checked, "Single Variable Analysis", renderData);
                         });
                     }
+                    // --- ADD THIS BLOCK INSIDE THE setTimeout OF BOTH runSingleVariableAnalysis AND runMultiVariableAnalysis ---
+
+const matrixOrderToggle = document.getElementById(`matrixOrderToggle-${analysisName}`);
+
+// Perform the initial render of the matrix in its default (mean-sorted) order
+if (matrixOrderToggle) {
+    renderSignificanceMatrix(analysisName, renderData.sortedTreatmentsData, getCriticalValueCallback, false);
+
+    // Add a listener to the new checkbox to re-render the matrix when clicked
+    matrixOrderToggle.addEventListener('change', function() {
+        renderSignificanceMatrix(analysisName, renderData.sortedTreatmentsData, getCriticalValueCallback, this.checked);
+    });
+}
+
                 }, 0);
             }
         }
@@ -1441,6 +1455,20 @@
                                 });
                             }
                         }
+                        // --- ADD THIS BLOCK INSIDE THE setTimeout OF BOTH runSingleVariableAnalysis AND runMultiVariableAnalysis ---
+
+const matrixOrderToggle = document.getElementById(`matrixOrderToggle-${analysisName}`);
+
+// Perform the initial render of the matrix in its default (mean-sorted) order
+if (matrixOrderToggle) {
+    renderSignificanceMatrix(analysisName, renderData.sortedTreatmentsData, getCriticalValueCallback, false);
+
+    // Add a listener to the new checkbox to re-render the matrix when clicked
+    matrixOrderToggle.addEventListener('change', function() {
+        renderSignificanceMatrix(analysisName, renderData.sortedTreatmentsData, getCriticalValueCallback, this.checked);
+    });
+}
+
                     }, 0);
                 }
 
@@ -1607,55 +1635,57 @@
 
             tableBody.innerHTML = rowsHtml;
         }
+// --- REPLACE THE OLD generateSignificanceMatrix FUNCTION WITH THIS ---
+function renderSignificanceMatrix(analysisName, sortedData, getCriticalValueCallback, orderByOriginal) {
+    const container = document.getElementById(`significanceMatrix-${analysisName}`);
+    if (!container) return;
 
-// --- ADD THIS ENTIRE NEW FUNCTION TO YOUR SCRIPT ---
-function generateSignificanceMatrix(analysisName, sortedData, getCriticalValueCallback) {
-    // This function builds a matrix showing which pairs are significantly different.
-    
-    // Use the sorted list of treatments for the matrix headers for consistency with the final table.
-    const treatments = sortedData.map(d => d.name);
+    // --- NEW SORTING LOGIC ---
+    let dataToRender = [...sortedData]; // Create a mutable copy
+
+    if (orderByOriginal) {
+        // Sort the data based on its original index from the file
+        dataToRender.sort((a, b) => a.originalIndex - b.originalIndex);
+    }
+    // If orderByOriginal is false, we use the default mean-sorted order that was passed in.
+
+    const treatments = dataToRender.map(d => d.name);
     const t = treatments.length;
-    let tableData = [];
+    
+    let tableHtml = `<table class="pro-table save-table" table-name="Significance Matrix for ${analysisName}"><thead><tr><th>Treatment</th>`;
+    treatments.forEach(h => tableHtml += `<th>${h}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
 
-    // Loop through each pair of treatments to build the matrix data
     for (let i = 0; i < t; i++) {
-        const rowData = [treatments[i]]; // First cell in the row is the treatment name
+        tableHtml += `<tr><td><strong>${treatments[i]}</strong></td>`;
         for (let j = 0; j < t; j++) {
             if (i === j) {
-                // The intersection of a treatment with itself is blank.
-                rowData.push(""); 
-            } else {
-                // Get the data for the two treatments being compared
-                const treatment1 = sortedData[i];
-                const treatment2 = sortedData[j];
-
-                // Calculate the absolute difference between their means
-                const meanDifference = Math.abs(treatment1.mean - treatment2.mean);
-                
-                // Get the specific critical value (CD or HSD) for this exact pair
-                const criticalValue = getCriticalValueCallback(i, j);
-
-                // Compare the difference to the critical value
-                if (meanDifference > criticalValue) {
-                    rowData.push("X"); // "X" for Significantly Different
-                } else {
-                    rowData.push("-"); // "-" for Not Significantly Different
-                }
+                tableHtml += `<td style="background-color: #f8f9fa;"></td>`;
+                continue;
             }
+            
+            // CRUCIAL: Find the original indices from the mean-sorted list,
+            // as the callback function relies on that specific order.
+            const t1_name = treatments[i];
+            const t2_name = treatments[j];
+            const originalIndex1 = sortedData.findIndex(d => d.name === t1_name);
+            const originalIndex2 = sortedData.findIndex(d => d.name === t2_name);
+            
+            const t1 = sortedData[originalIndex1];
+            const t2 = sortedData[originalIndex2];
+            
+            const meanDifference = Math.abs(t1.mean - t2.mean);
+            const criticalValue = getCriticalValueCallback(originalIndex1, originalIndex2);
+            
+            const isSignificant = meanDifference > criticalValue;
+            tableHtml += `<td style="text-align: center;">${isSignificant ? 'X' : '-'}</td>`;
         }
-        tableData.push(rowData);
+        tableHtml += `</tr>`;
     }
-
-    // --- THIS IS THE NEW end of the function ---
-const title = `Pairwise Comparison Matrix for ${analysisName}`;
-let matrixHtml = generateTable(title, ['Treatment', ...treatments], tableData);
-
-// ADDITION: Append the footnote HTML to the result
-matrixHtml += `<p class="matrix-footnote">X denotes pairs that are significantly different.</p>`;
-
-return matrixHtml;
-
+    tableHtml += `</tbody></table>`;
+    container.innerHTML = tableHtml;
 }
+
 
 
         
@@ -1851,7 +1881,27 @@ return matrixHtml;
                             <input class="form-check-input" type="checkbox" id="toggleOriginalOrder-${analysisName}">
                             <label class="form-check-label" for="toggleOriginalOrder-${analysisName}">Restore original data order</label>
                         </div>`;
-                html += generateSignificanceMatrix(analysisName, sortedTreatmentsData, getCriticalValueCallback);
+                // --- REPLACE THE DELETED LINE WITH THIS BLOCK ---
+
+// Create the container and controls for the significance matrix
+html += `
+    <div class="matrix-container" id="matrix-container-${analysisName}">
+        <div class="master-matrix-controls">
+            <h3 class="section-header">Pairwise Comparison Matrix for ${analysisName}</h3>
+            <div class="form-check-container" style="margin-top: 0;">
+                <input class="form-check-input" type="checkbox" id="matrixOrderToggle-${analysisName}">
+                <label class="form-check-label" for="matrixOrderToggle-${analysisName}">
+                    Restore Original Order
+                </label>
+            </div>
+        </div>
+        <div id="significanceMatrix-${analysisName}" class="table-container" style="margin-top: 15px;">
+            <!-- The matrix table will be rendered here by JavaScript -->
+        </div>
+        <p class="matrix-footnote">X denotes pairs that are significantly different.</p>
+    </div>
+`;
+
 
                 
                 if (actualTransform !== 'none') {
