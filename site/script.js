@@ -256,23 +256,28 @@ async function loadAccessList() {
     try {
         const accessDocRef = doc(db, "user_access", currentUser.email);
         const accessDocSnap = await getDoc(accessDocRef);
+
         if (!accessDocSnap.exists()) {
             accessListEl.innerHTML = '<li>No access information found.</li>';
             return;
         }
 
-        const pageIds = accessDocSnap.data().pages || [];
+        const pagesData = accessDocSnap.data().pages || {};
+        const pageIds = Object.keys(pagesData);
+
         if (!pageIds.length) {
             accessListEl.innerHTML = '<li>You currently have no page access.</li>';
             return;
         }
 
-        // Fetch page metadata for display
+        // Fetch page metadata from 'pages' collection
         const pagePromises = pageIds.map(async (id) => {
             const pageDoc = await getDoc(doc(db, "pages", id));
             return {
                 id,
-                name: pageDoc.exists() ? pageDoc.data().name : "(No Name)"
+                name: pageDoc.exists() ? pageDoc.data().name : "(No Name)",
+                grantedAt: pagesData[id].grantedAt,
+                expiresAt: pagesData[id].expiresAt
             };
         });
 
@@ -281,23 +286,42 @@ async function loadAccessList() {
         accessListEl.innerHTML = '';
         pages.forEach(p => {
             const li = document.createElement('li');
-            li.classList.add('access-item'); // for styling
+            li.classList.add('access-item');
+            li.style.marginBottom = '1em';
+            li.style.padding = '0.5em';
+            li.style.border = '1px solid #ccc';
+            li.style.borderRadius = '5px';
+            li.style.background = '#f9f9f9';
 
-            // Page ID on top
+            // Page ID
             const idDiv = document.createElement('div');
             idDiv.textContent = `ID: ${p.id}`;
             idDiv.classList.add('access-id');
 
-            // Page name below
+            // Page Name
             const nameDiv = document.createElement('div');
-            nameDiv.textContent = p.name;
+            nameDiv.textContent = `Name: ${p.name}`;
             nameDiv.classList.add('access-name');
+
+            // Granted At
+            const grantedDiv = document.createElement('div');
+            grantedDiv.textContent = `Granted At: ${p.grantedAt ? new Date(p.grantedAt.seconds * 1000).toLocaleString() : 'N/A'}`;
+
+            // Expires At
+            const expiresDiv = document.createElement('div');
+            const isExpired = p.expiresAt && (p.expiresAt.seconds * 1000 < Date.now());
+            expiresDiv.textContent = `Expires At: ${p.expiresAt ? new Date(p.expiresAt.seconds * 1000).toLocaleString() : 'No expiry'}`;
+            if (isExpired) {
+                expiresDiv.style.color = 'red';
+                li.style.opacity = 0.6; // visually indicate expired
+            }
 
             li.appendChild(idDiv);
             li.appendChild(nameDiv);
+            li.appendChild(grantedDiv);
+            li.appendChild(expiresDiv);
             accessListEl.appendChild(li);
         });
-
 
     } catch (error) {
         console.error("Error fetching access list:", error);
