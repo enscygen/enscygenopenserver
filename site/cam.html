@@ -206,57 +206,6 @@
             box-shadow: none;
         }
 
-
-        /* --- Result Modal --- */
-        #result-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #result-modal.hidden {
-            display: none;
-        }
-
-        #result-image {
-            max-width: 95vw;
-            max-height: 75vh;
-            border-radius: 8px;
-            border: 2px solid #333;
-        }
-        
-        .modal-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-        }
-        
-        .modal-btn {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .modal-btn.primary {
-            background-color: #fff;
-            color: #000;
-        }
-
     </style>
 </head>
 <body>
@@ -300,14 +249,8 @@
     <!-- Hidden canvas for processing the snapshot -->
     <canvas id="snapshot-canvas" style="display: none;"></canvas>
 
-    <!-- Modal to display the captured photo -->
-    <div id="result-modal" class="hidden">
-        <img id="result-image" src="" alt="Captured Photo">
-        <div class="modal-actions">
-            <button id="close-modal-btn" class="modal-btn"><i class="bi bi-x-lg"></i> Close</button>
-            <a id="download-btn" class="modal-btn primary" download="gps-photo.jpg"><i class="bi bi-download"></i> Download</a>
-        </div>
-    </div>
+    <!-- Hidden download link, we will click this programmatically -->
+    <a id="download-btn" style="display: none;"></a>
 
 
     <script>
@@ -316,9 +259,6 @@
             const video = document.getElementById('camera-feed');
             const captureBtn = document.getElementById('capture-btn');
             const canvas = document.getElementById('snapshot-canvas');
-            const resultModal = document.getElementById('result-modal');
-            const resultImage = document.getElementById('result-image');
-            const closeModalBtn = document.getElementById('close-modal-btn');
             const downloadBtn = document.getElementById('download-btn');
             const infoOverlay = document.getElementById('info-overlay');
             const messageOverlay = document.getElementById('message-overlay');
@@ -376,7 +316,7 @@
                         const { latitude, longitude } = position.coords;
                         locationData = { latitude, longitude };
                         
-                        document.getElementById('coordinates').textContent = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+                        document.getElementById('coordinates').textContent = `${latitude.toFixed(8)}, ${longitude.toFixed(8)}`;
 
                         try {
                             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
@@ -412,12 +352,10 @@
                     hour12: true
                 };
                 const istDateTime = new Intl.DateTimeFormat('en-IN', options).format(now);
-                document.getElementById('datetime').textContent = istDateTime.replace(/, /g, ' | ');
+                document.getElementById('datetime').textContent = istDateTime.replace(/, /g, ' , ');
             }
             
             async function capturePhoto() {
-                // For this version, we will only capture if the stream is active.
-                // A future version could capture a black image with data.
                 if (!stream || video.paused || video.ended) {
                     alert("Camera is not active.");
                     return;
@@ -461,19 +399,18 @@
                 const lineHeight = canvas.width * 0.025;
                 let currentY = startY + padding + (lineHeight * 0.8);
                 
-                // Using bootstrap icon unicode characters. Requires a font that supports them on the canvas.
                 const detailsFont = `500 ${lineHeight*0.9}px ${getComputedStyle(document.body).fontFamily}`;
                 const timeFont = `600 ${lineHeight}px ${getComputedStyle(document.body).fontFamily}`;
 
                 context.font = timeFont;
-                context.fillText(`\u{F1EC} ${overlayData.datetime}`, textStartX, currentY); // Calendar icon
+                context.fillText(`\u{F1EC} ${overlayData.datetime}`, textStartX, currentY); 
                 currentY += lineHeight * 1.5;
                 
                 context.font = detailsFont;
-                context.fillText(`\u{F3E7} ${overlayData.coords}`, textStartX, currentY); // Geo-alt-fill icon
+                context.fillText(`\u{F3E7} ${overlayData.coords}`, textStartX, currentY); 
                 currentY += lineHeight * 1.5;
                 
-                const addressText = `\u{F1B5} ${overlayData.address}`; // Building icon
+                const addressText = `\u{F1B5} ${overlayData.address}`;
                 const words = addressText.split(' ');
                 let line = '';
                 const maxTextWidth = canvas.width - textStartX - padding;
@@ -492,9 +429,15 @@
                 context.fillText(line, textStartX, currentY);
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-                resultImage.src = dataUrl;
+                
+                // Create a unique filename with a timestamp
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                downloadBtn.download = `gps-photo-${timestamp}.jpg`;
+                
                 downloadBtn.href = dataUrl;
-                resultModal.classList.remove('hidden');
+                
+                // Programmatically click the download link to trigger an immediate save
+                downloadBtn.click();
             }
 
             function init() {
@@ -524,13 +467,13 @@
                     .catch(err => {
                         if(isAppInitialized) return;
                         console.error("Camera access error:", err.name, err.message);
-                        setupFallbackUI(); // Fallback if user explicitly denies permission
+                        // Don't call setupFallbackUI here, just let the user click the button.
+                        // The button will handle the fallback.
                     });
 
                 // --- Event Listeners ---
                 skipCameraBtn.addEventListener('click', setupFallbackUI);
                 captureBtn.addEventListener('click', capturePhoto);
-                closeModalBtn.addEventListener('click', () => resultModal.classList.add('hidden'));
             }
 
             init();
