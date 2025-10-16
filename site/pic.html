@@ -445,7 +445,14 @@ td2.appendChild(info);
 tr.appendChild(td2);
         const td3 = document.createElement('td'); td3.textContent = inferenceFromPIC(res.pic); tr.appendChild(td3);
         tbody.appendChild(tr);
-        results.push({marker:m,pic:res.pic,alleles:res.alleles,freqs:res.freqs,counts:res.counts});
+        results.push({
+    marker: m,
+    pic: res.pic,
+    alleles: res.alleles,
+    freqs: res.freqs,
+    counts: res.counts,
+    total: res.total   // <-- add this
+});
       });
       // save last results for chart
       window._lastPIC = results;
