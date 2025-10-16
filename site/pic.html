@@ -415,7 +415,22 @@
         const tr = document.createElement('tr');
         const td0 = document.createElement('td'); td0.textContent = m; tr.appendChild(td0);
         const td1 = document.createElement('td'); td1.textContent = res.alleles; tr.appendChild(td1);
-        const td2 = document.createElement('td'); td2.textContent = res.pic.toFixed(3); tr.appendChild(td2);
+        const td2 = document.createElement('td'); 
+td2.textContent = res.pic.toFixed(3); 
+
+// add info icon
+const info = document.createElement('i');
+info.className = 'bi bi-info-circle-fill info-icon';
+info.title = 'Show PIC calculation';
+info.style.cursor = 'pointer';
+info.style.marginLeft = '4px';
+info.style.color = '#4f46e5';
+info.addEventListener('click', () => {
+    showPICModal({marker:m, pic:res.pic, alleles:res.alleles, freqs:res.freqs, counts:res.counts});
+});
+
+td2.appendChild(info);
+tr.appendChild(td2);
         const td3 = document.createElement('td'); td3.textContent = inferenceFromPIC(res.pic); tr.appendChild(td3);
         tbody.appendChild(tr);
         results.push({marker:m,pic:res.pic,alleles:res.alleles,freqs:res.freqs,counts:res.counts});
@@ -436,29 +451,46 @@
     }
 
     function showPICModal(r){
-        const modal = document.getElementById('picInfoModal');
-        const content = document.getElementById('picModalContent');
-        let html=`<strong>Marker:</strong> ${r.marker}<br>`;
-        html+=`<strong>Total Samples Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
-        html+='<table style="width:100%;border-collapse:collapse;"><tr><th>Allele</th><th>Count</th><th>Frequency (Pi)</th><th>Pi²</th></tr>';
-        let sumPi2=0;
-        for(const a in r.freqs){
-          const p=r.freqs[a];
-          const p2=p*p;
-          sumPi2+=p2;
-          html+=`<tr><td>${a}</td><td>${(p*Object.values(r.freqs).reduce((a,b)=>a+b,0)).toFixed(0)}</td><td>${p.toFixed(3)}</td><td>${p2.toFixed(3)}</td></tr>`;
-        }
-        html+='</table>';
-        html+=`<br><strong>ΣPi² =</strong> ${sumPi2.toFixed(3)}<br>`;
-        html+=`<strong>PIC = 1 - ΣPi² = ${r.pic.toFixed(3)}</strong>`;
-        content.innerHTML=html;
-        modal.style.display='flex';
-      }
+    let modal = document.getElementById('picInfoModal');
+    if(!modal){
+        // create modal if it doesn't exist yet
+        modal = document.createElement('div');
+        modal.id = 'picInfoModal';
+        modal.style = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:9999';
+        modal.innerHTML = `
+            <div style="background:#0b1220;padding:16px;border-radius:10px;max-width:500px;width:90%;color:#e6eef8;max-height:80%;overflow:auto">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <strong>PIC Calculation Details</strong>
+                    <span id="picModalClose" style="cursor:pointer">&times;</span>
+                </div>
+                <div id="picModalContent" style="margin-top:8px;font-size:12px"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.querySelector('#picModalClose').addEventListener('click', ()=>{modal.style.display='none';});
+        modal.addEventListener('click', e=>{ if(e.target===modal) modal.style.display='none'; });
+    }
 
-      document.getElementById('picModalClose').addEventListener('click',()=>{
-        document.getElementById('picInfoModal').style.display='none';
-      });
-      window.addEventListener('click',e=>{ if(e.target.id==='picInfoModal') e.target.style.display='none'; });
+    const content = modal.querySelector('#picModalContent');
+    let html=`<strong>Marker:</strong> ${r.marker}<br>`;
+    html+=`<strong>Total Alleles Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
+    html+='<table style="width:100%;border-collapse:collapse;"><tr><th>Allele</th><th>Count</th><th>Frequency (Pi)</th><th>Pi²</th></tr>';
+    let sumPi2=0;
+    for(const a in r.freqs){
+        const p = r.freqs[a];
+        const count = r.counts && r.counts[a] ? r.counts[a] : (p*Object.values(r.freqs).reduce((a,b)=>a+b,0));
+        const p2 = p*p;
+        sumPi2 += p2;
+        html += `<tr><td>${a}</td><td>${count.toFixed(0)}</td><td>${p.toFixed(3)}</td><td>${p2.toFixed(3)}</td></tr>`;
+    }
+    html+='</table>';
+    html+=`<br><strong>ΣPi² =</strong> ${sumPi2.toFixed(3)}<br>`;
+    html+=`<strong>PIC = 1 - ΣPi² = ${r.pic.toFixed(3)}</strong>`;
+    content.innerHTML = html;
+    modal.style.display = 'flex';
+}
+
+      
 
     // ---------- Plotting generic data ----------
     function aggregateByX(rows, xKey, yKey, agg){
