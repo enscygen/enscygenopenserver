@@ -466,7 +466,8 @@ tr.appendChild(td2);
 function showPICModal(r){
     const content = document.getElementById('picModalContent');
     let html=`<strong>Marker:</strong> ${r.marker}<br>`;
-    html+=`<strong>Total Alleles Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
+    // total number of alleles counted
+html += `<strong>Total Alleles Counted:</strong> ${r.total}<br><br>`;
     html+='<table style="width:100%;border-collapse:collapse;"><tr><th>Allele</th><th>Count</th><th>Frequency (Pi)</th><th>Pi²</th></tr>';
     let sumPi2=0;
     for(const a in r.freqs){
