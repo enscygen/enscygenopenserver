@@ -42,6 +42,7 @@
     .row > *{flex:1}
     .badge{padding:4px 8px;border-radius:8px;background:rgba(255,255,255,0.02)}
     .tiny{font-size:11px}
+    .info-icon{cursor:pointer;margin-left:4px;color:#4f46e5}
   </style></head>
 <body>
   <div class="app">
@@ -176,6 +177,17 @@
       <table id="pic-table"><thead><tr><th>Marker</th><th>No. Alleles</th><th>PIC</th><th>Inference</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
+
+   <!-- PIC Info Modal -->
+    <div id="picInfoModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:9999">
+      <div style="background:#0b1220;padding:16px;border-radius:10px;max-width:500px;width:90%;color:#e6eef8;max-height:80%;overflow:auto">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>PIC Calculation Details</strong>
+          <span style="cursor:pointer" id="picModalClose">&times;</span>
+        </div>
+        <div id="picModalContent" style="margin-top:8px;font-size:12px"></div>
+      </div>
+    </div>
 
   <div class="footer window-like">
     <div>Made for SSR analysis — single-file app</div>
@@ -422,6 +434,31 @@
       if(chart){ chart.destroy(); chart = null; }
       chart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'PIC', data, borderWidth:1 }] }, options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:1}} } });
     }
+
+    function showPICModal(r){
+        const modal = document.getElementById('picInfoModal');
+        const content = document.getElementById('picModalContent');
+        let html=`<strong>Marker:</strong> ${r.marker}<br>`;
+        html+=`<strong>Total Samples Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
+        html+='<table style="width:100%;border-collapse:collapse;"><tr><th>Allele</th><th>Count</th><th>Frequency (Pi)</th><th>Pi²</th></tr>';
+        let sumPi2=0;
+        for(const a in r.freqs){
+          const p=r.freqs[a];
+          const p2=p*p;
+          sumPi2+=p2;
+          html+=`<tr><td>${a}</td><td>${(p*Object.values(r.freqs).reduce((a,b)=>a+b,0)).toFixed(0)}</td><td>${p.toFixed(3)}</td><td>${p2.toFixed(3)}</td></tr>`;
+        }
+        html+='</table>';
+        html+=`<br><strong>ΣPi² =</strong> ${sumPi2.toFixed(3)}<br>`;
+        html+=`<strong>PIC = 1 - ΣPi² = ${r.pic.toFixed(3)}</strong>`;
+        content.innerHTML=html;
+        modal.style.display='flex';
+      }
+
+      document.getElementById('picModalClose').addEventListener('click',()=>{
+        document.getElementById('picInfoModal').style.display='none';
+      });
+      window.addEventListener('click',e=>{ if(e.target.id==='picInfoModal') e.target.style.display='none'; });
 
     // ---------- Plotting generic data ----------
     function aggregateByX(rows, xKey, yKey, agg){
