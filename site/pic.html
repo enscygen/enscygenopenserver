@@ -1,0 +1,465 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SSR Data Visualizer — Single-file App</title>  <!-- Bootstrap Icons -->  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>
+    :root{
+      --bg:#0f1724; --panel:#0b1220; --muted:#9aa4b2; --accent:#4f46e5; --glass: rgba(255,255,255,0.03); --card-shadow: 0 6px 18px rgba(2,6,23,0.6);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071226);color:#e6eef8;font-size:13px}
+    .app{display:flex; gap:14px; padding:14px; height:100vh; box-sizing:border-box;}
+    .sidebar{width:320px; min-width:240px; background:linear-gradient(180deg,var(--panel), rgba(255,255,255,0.02)); border-radius:10px; padding:12px; box-shadow:var(--card-shadow); display:flex; flex-direction:column; gap:12px;}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+    .title{font-size:13px;font-weight:600}
+    .subtitle{font-size:11px;color:var(--muted);margin-top:2px}
+    .card{background:var(--glass);border-radius:8px;padding:10px}
+    .controls{display:flex;flex-direction:column;gap:8px}
+    input[type=file]{display:none}
+    .btn{display:inline-flex;gap:8px;align-items:center;background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;cursor:pointer;font-size:13px}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#06b6d4);border:none;color:white}
+    .btn.ghost{background:transparent}
+    .small{font-size:12px;color:var(--muted)}
+    .main{flex:1;display:flex;flex-direction:column;gap:12px}
+    .topbar{display:flex;justify-content:space-between;align-items:center}
+    .window-like{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:10px; padding:10px; box-shadow:var(--card-shadow)}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:12px}
+    .panel{padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th,td{padding:6px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
+    thead th{font-weight:600;color:var(--muted);font-size:12px}
+    .chart-wrap{height:340px;padding:8px}
+    .footer{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)}
+    @media (max-width:900px){.app{padding:12px}.grid{grid-template-columns:1fr}.sidebar{width:100%;min-width:0;order:2}.main{order:1}}
+    .muted{color:var(--muted)}.icon{font-size:16px}
+    .select, .input{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit}
+    .row{display:flex;gap:8px;align-items:center}
+    .row > *{flex:1}
+    .badge{padding:4px 8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+    .tiny{font-size:11px}
+  </style></head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">SSR</div>
+        <div>
+          <div class="title">SSR Data Visualizer</div>
+          <div class="subtitle">Alleles · PIC · Charts · CSV</div>
+        </div>
+      </div><div class="card controls">
+    <label class="small">Data</label>
+    <div class="file-row" style="display:flex;gap:8px;align-items:center">
+      <label class="btn" for="file-input"><i class="bi bi-upload icon"></i> Upload CSV</label>
+      <input id="file-input" type="file" accept=".csv,text/csv" />
+      <button id="sample-btn" class="btn ghost" title="Load sample SSR data"><i class="bi bi-file-earmark-code icon"></i></button>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <button id="download-csv" class="btn"><i class="bi bi-download icon"></i> Download CSV</button>
+      <button id="download-pic" class="btn"><i class="bi bi-download icon"></i> Export PIC</button>
+      <button id="clear-btn" class="btn"><i class="bi bi-trash icon"></i></button>
+    </div>
+
+    <div style="margin-top:8px" class="small muted">Upload CSV with header row. Columns = Sample, Primer1, Primer2 ... Alleles as numeric (bp) or strings (e.g., 145/147 for diploid heterozygotes).</div>
+  </div>
+
+  <div class="card">
+    <label class="small">Chart & Plot</label>
+    <div class="row" style="margin-top:6px">
+      <select id="chart-type" class="select">
+        <option value="line">Line</option>
+        <option value="bar">Bar</option>
+        <option value="scatter">Scatter</option>
+        <option value="pie">Pie</option>
+      </select>
+      <select id="x-col" class="select"><option value="">X column</option></select>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <select id="y-col" class="select"><option value="">Y column</option></select>
+      <select id="agg" class="select"><option value="none">No agg</option><option value="mean">Mean (per X)</option><option value="sum">Sum (per X)</option></select>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button id="plot-btn" class="btn primary"><i class="bi bi-graph-up icon"></i> Plot</button>
+      <button id="export-chart" class="btn"><i class="bi bi-camera icon"></i> Export</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="small">SSR Analysis</label>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <select id="marker-select" class="select" multiple size="4" style="height:88px"></select>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button id="run-ssr" class="btn primary"><i class="bi bi-calculator icon"></i> Compute PIC</button>
+      <button id="pic-chart-btn" class="btn"><i class="bi bi-bar-chart icon"></i> Show PIC Chart</button>
+    </div>
+    <div style="margin-top:8px" class="tiny muted">Select one or many marker columns, then click Compute PIC. Handles alleles listed as single values or delimited heterozygotes (e.g., "145/147").</div>
+  </div>
+
+  <div class="card small">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>Rows: <span id="row-count">0</span></div>
+      <div class="muted">Cols: <span id="col-count">0</span></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="window-like" style="flex:1">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:10px;height:10px;border-radius:50%;background:#ef4444"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#f59e0b"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#10b981"></div>
+          <div style="margin-left:12px;font-weight:600">Workspace</div>
+        </div>
+        <div class="small muted">SSR-focused: allele counts, frequencies, PIC</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:600">Chart</div>
+        <div class="small muted">Interactive — hover, zoom</div>
+      </div>
+
+      <div class="chart-wrap window-like" id="chart-card">
+        <canvas id="chartCanvas" style="width:100%;height:100%"></canvas>
+      </div>
+
+      <div style="margin-top:10px" class="window-like">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:600">Data Preview</div>
+          <div class="small muted">Editable table — paste rows if needed</div>
+        </div>
+        <div style="margin-top:8px;overflow:auto;max-height:260px">
+          <table id="data-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+    </section>
+
+    <aside class="panel">
+      <div style="font-weight:600;margin-bottom:8px">SSR Inspector</div>
+      <div class="small muted">Quick stats, allele freq, PIC</div>
+
+      <div id="ssr-results" style="margin-top:10px">No SSR analysis run</div>
+
+      <div style="margin-top:12px">
+        <div style="font-weight:600">Selected X/Y</div>
+        <div style="margin-top:6px"><strong>Selected X:</strong> <span id="sel-x">-</span></div>
+        <div style="margin-top:6px"><strong>Selected Y:</strong> <span id="sel-y">-</span></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="clear-selection" class="btn">Clear</button>
+        <button id="transpose" class="btn">Transpose</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="window-like">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:600">PIC Table</div>
+      <div class="small muted">Interpretation: &lt;0.25 low, 0.25–0.5 moderate, &gt;0.5 high</div>
+    </div>
+    <div style="margin-top:8px;overflow:auto;max-height:180px">
+      <table id="pic-table"><thead><tr><th>Marker</th><th>No. Alleles</th><th>PIC</th><th>Inference</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <div class="footer window-like">
+    <div>Made for SSR analysis — single-file app</div>
+    <div class="muted">Version 1.1</div>
+  </div>
+</main>
+
+  </div>  <script>
+    // ---------- Utilities ----------
+    function parseCSV(text){
+      const lines = text.trim().split(/\r?\n/).filter(l=>l.trim().length>0);
+      if(lines.length===0) return {headers:[],rows:[]};
+      const headers = lines.shift().split(/,|\t/).map(h=>h.trim());
+      const rows = lines.map(line=>{
+        const cells = line.split(/,|\t/).map(c=>c.trim());
+        const obj = {};
+        headers.forEach((h,i)=>obj[h]=cells[i] ?? '');
+        return obj;
+      });
+      return {headers,rows};
+    }
+    function toCSV(headers, rows){
+      const esc = v => '"'+String(v ?? '').replace(/"/g,'""')+'"';
+      const headerLine = headers.join(',');
+      const lines = rows.map(r => headers.map(h=>esc(r[h])).join(','));
+      return [headerLine,...lines].join('\n');
+    }
+
+    // ---------- Globals ----------
+    let current = {headers:[],rows:[]};
+    let chart = null;
+
+    // DOM
+    const fileInput = document.getElementById('file-input');
+    const sampleBtn = document.getElementById('sample-btn');
+    const downloadBtn = document.getElementById('download-csv');
+    const downloadPICBtn = document.getElementById('download-pic');
+    const clearBtn = document.getElementById('clear-btn');
+    const plotBtn = document.getElementById('plot-btn');
+    const exportBtn = document.getElementById('export-chart');
+    const runSSRBtn = document.getElementById('run-ssr');
+    const picChartBtn = document.getElementById('pic-chart-btn');
+
+    const xCol = document.getElementById('x-col');
+    const yCol = document.getElementById('y-col');
+    const chartType = document.getElementById('chart-type');
+    const aggSelect = document.getElementById('agg');
+    const markerSelect = document.getElementById('marker-select');
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try{ const parsed = parseCSV(evt.target.result); loadData(parsed.headers, parsed.rows); }catch(err){alert('Failed to parse CSV: '+err)}
+      };
+      reader.readAsText(f);
+    });
+
+    sampleBtn.addEventListener('click',()=>{
+      // SSR-style sample with 15 samples and 5 primers (diploid-like single allele value, or you can use heterozygotes e.g., 145/147)
+      const headers = ['Sample','Primer1','Primer2','Primer3','Primer4','Primer5'];
+      const rows = [
+        {Sample:'S1',Primer1:'145',Primer2:'178',Primer3:'212',Primer4:'134',Primer5:'256'},
+        {Sample:'S2',Primer1:'145',Primer2:'176',Primer3:'210',Primer4:'136',Primer5:'258'},
+        {Sample:'S3',Primer1:'147',Primer2:'182',Primer3:'212',Primer4:'132',Primer5:'254'},
+        {Sample:'S4',Primer1:'149',Primer2:'180',Primer3:'215',Primer4:'134',Primer5:'260'},
+        {Sample:'S5',Primer1:'145',Primer2:'178',Primer3:'214',Primer4:'136',Primer5:'256'},
+        {Sample:'S6',Primer1:'150',Primer2:'184',Primer3:'218',Primer4:'138',Primer5:'262'},
+        {Sample:'S7',Primer1:'147',Primer2:'180',Primer3:'212',Primer4:'132',Primer5:'258'},
+        {Sample:'S8',Primer1:'149',Primer2:'182',Primer3:'216',Primer4:'134',Primer5:'260'},
+        {Sample:'S9',Primer1:'145',Primer2:'178',Primer3:'210',Primer4:'136',Primer5:'254'},
+        {Sample:'S10',Primer1:'148',Primer2:'181',Primer3:'215',Primer4:'135',Primer5:'258'},
+        {Sample:'S11',Primer1:'147',Primer2:'179',Primer3:'213',Primer4:'133',Primer5:'257'},
+        {Sample:'S12',Primer1:'150',Primer2:'183',Primer3:'217',Primer4:'137',Primer5:'261'},
+        {Sample:'S13',Primer1:'146',Primer2:'177',Primer3:'211',Primer4:'134',Primer5:'255'},
+        {Sample:'S14',Primer1:'149',Primer2:'181',Primer3:'215',Primer4:'135',Primer5:'259'},
+        {Sample:'S15',Primer1:'147',Primer2:'180',Primer3:'214',Primer4:'136',Primer5:'257'}
+      ];
+      loadData(headers,rows);
+    });
+
+    clearBtn.addEventListener('click',()=>{ loadData([],[]); });
+    downloadBtn.addEventListener('click',()=>{ if(!current.headers.length) return alert('No data'); const csv = toCSV(current.headers,current.rows); const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'data.csv'; a.click(); URL.revokeObjectURL(url); });
+
+    downloadPICBtn.addEventListener('click',()=>{
+      const tableRows = Array.from(document.querySelectorAll('#pic-table tbody tr'));
+      if(tableRows.length===0) return alert('No PIC results to export');
+      const rows = [];
+      tableRows.forEach(tr=>{
+        const cols = tr.querySelectorAll('td');
+        rows.push({Marker:cols[0].textContent,Alleles:cols[1].textContent,PIC:cols[2].textContent,Inference:cols[3].textContent});
+      });
+      const headers = ['Marker','No. Alleles','PIC','Inference'];
+      const csvRows = rows.map(r=>({Marker:r.Marker,'No. Alleles':r.Alleles,PIC:r.PIC,Inference:r.Inference}));
+      const csv = toCSV(headers,csvRows);
+      const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'pic_results.csv'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    plotBtn.addEventListener('click',()=>{ plotCurrent(); });
+    exportBtn.addEventListener('click',()=>{ if(!chart) return; const url = chart.toBase64Image(); const a = document.createElement('a'); a.href = url; a.download = 'chart.png'; a.click(); });
+
+    runSSRBtn.addEventListener('click',()=>{ runSSRAnalysis(); });
+    picChartBtn.addEventListener('click',()=>{ showPICChart(); });
+
+    // ---------- Data load / UI ----------
+    function loadData(headers,rows){
+      current.headers = headers.slice(); current.rows = rows.map(r=>Object.assign({},r));
+      document.getElementById('row-count').textContent = rows.length;
+      document.getElementById('col-count').textContent = headers.length;
+      populateTable(); populateColumnSelectors(); updateQuickStats(); populateMarkerSelect(); clearPICTable();
+    }
+
+    function populateTable(){
+      const thead = document.querySelector('#data-table thead');
+      const tbody = document.querySelector('#data-table tbody');
+      thead.innerHTML = ''; tbody.innerHTML = '';
+      if(!current.headers.length) return;
+      const tr = document.createElement('tr');
+      current.headers.forEach(h=>{const th=document.createElement('th'); th.textContent=h; tr.appendChild(th)});
+      thead.appendChild(tr);
+
+      current.rows.forEach((row,ridx)=>{
+        const tr = document.createElement('tr');
+        current.headers.forEach(h=>{
+          const td = document.createElement('td');
+          const v = row[h] ?? '';
+          const inp = document.createElement('input'); inp.value = v; inp.className='input'; inp.style.width='100%'; inp.addEventListener('change',e=>{current.rows[ridx][h]=e.target.value; updateQuickStats();});
+          td.appendChild(inp);
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateColumnSelectors(){
+      [xCol,yCol].forEach(s=>s.innerHTML='');
+      const blank = document.createElement('option'); blank.value=''; blank.textContent='— select —';
+      xCol.appendChild(blank.cloneNode(true)); yCol.appendChild(blank.cloneNode(true));
+      current.headers.forEach(h=>{
+        const o1 = document.createElement('option'); o1.value=h; o1.textContent=h; xCol.appendChild(o1);
+        const o2 = document.createElement('option'); o2.value=h; o2.textContent=h; yCol.appendChild(o2);
+      });
+    }
+
+    function populateMarkerSelect(){
+      markerSelect.innerHTML='';
+      current.headers.forEach(h=>{ if(h.toLowerCase() === 'sample') return; const o = document.createElement('option'); o.value=h; o.textContent=h; markerSelect.appendChild(o); });
+    }
+
+    function inferType(values){ const num = values.every(v=>v!=='' && !isNaN(Number(v))); return num ? 'numeric' : 'string'; }
+
+    function updateQuickStats(){
+      const el = document.getElementById('ssr-results');
+      if(!current.headers.length){ el.textContent='No data'; return; }
+      const lines = [];
+      current.headers.forEach(h=>{
+        const vals = current.rows.map(r=>r[h]);
+        const type = inferType(vals);
+        if(type==='numeric'){
+          const nums = vals.map(v=>Number(v));
+          const mean = nums.reduce((a,b)=>a+b,0)/nums.length;
+          const min = Math.min(...nums); const max = Math.max(...nums);
+          lines.push(`${h}: num · mean=${mean.toFixed(2)} min=${min} max=${max}`);
+        }else{
+          const uniq = [...new Set(vals)];
+          lines.push(`${h}: cat · unique=${uniq.length}`);
+        }
+      });
+      el.innerHTML = lines.join('<br>');
+    }
+
+    // ---------- SSR helpers ----------
+    // Parse allele cell value: supports "145", "145/147", "145;147" etc.
+    function parseAlleles(cell){
+      if(cell === null || cell === undefined) return [];
+      const s = String(cell).trim();
+      if(s === '') return [];
+      // separators: /,|; or space
+      return s.split(/\/|\||;|,|\s+/).map(a=>a.trim()).filter(a=>a.length>0);
+    }
+
+    function alleleFrequenciesForColumn(col){
+      const freq = new Map();
+      let total = 0;
+      current.rows.forEach(r=>{
+        const alleles = parseAlleles(r[col]);
+        if(alleles.length===0) return;
+        // If single allele per sample -> count as one; if multiple (diploid) -> count each allele separately
+        alleles.forEach(a=>{
+          const key = a;
+          freq.set(key,(freq.get(key) || 0) + 1);
+          total++;
+        });
+      });
+      // convert to frequency
+      const out = {};
+      for(const [k,v] of freq.entries()) out[k] = v/total;
+      return {counts: Object.fromEntries(freq), freqs: out, total: total};
+    }
+
+    function computePIC(col){
+      const {freqs,counts,total} = alleleFrequenciesForColumn(col);
+      if(total === 0) return {pic:0,alleles:0,freqs:{}};
+      let sumSq = 0;
+      Object.values(freqs).forEach(p=>{ sumSq += p*p; });
+      const pic = 1 - sumSq;
+      const alleles = Object.keys(freqs).length;
+      return {pic,alleles,freqs,counts,total};
+    }
+
+    function inferenceFromPIC(pic){ if(pic < 0.25) return 'Low'; if(pic <= 0.5) return 'Moderate'; return 'High'; }
+
+    // ---------- SSR Analysis / UI ----------
+    function clearPICTable(){ document.querySelector('#pic-table tbody').innerHTML = ''; }
+
+    function runSSRAnalysis(){
+      clearPICTable();
+      const selected = Array.from(markerSelect.selectedOptions).map(o=>o.value);
+      const markers = selected.length ? selected : Array.from(markerSelect.options).map(o=>o.value);
+      if(markers.length === 0){ alert('No marker columns found. Make sure your CSV has marker columns (e.g., Primer1, Primer2)'); return; }
+      const tbody = document.querySelector('#pic-table tbody');
+      const results = [];
+      markers.forEach(m => {
+        const res = computePIC(m);
+        const tr = document.createElement('tr');
+        const td0 = document.createElement('td'); td0.textContent = m; tr.appendChild(td0);
+        const td1 = document.createElement('td'); td1.textContent = res.alleles; tr.appendChild(td1);
+        const td2 = document.createElement('td'); td2.textContent = res.pic.toFixed(3); tr.appendChild(td2);
+        const td3 = document.createElement('td'); td3.textContent = inferenceFromPIC(res.pic); tr.appendChild(td3);
+        tbody.appendChild(tr);
+        results.push({marker:m,pic:res.pic,alleles:res.alleles,freqs:res.freqs,counts:res.counts});
+      });
+      // save last results for chart
+      window._lastPIC = results;
+      document.getElementById('ssr-results').innerHTML = markers.map(m=>'<div><strong>'+m+'</strong></div>').join('');
+      alert('SSR analysis completed for '+markers.length+' marker(s). PIC table updated.');
+    }
+
+    function showPICChart(){
+      if(!window._lastPIC || window._lastPIC.length===0){ alert('Run SSR analysis first'); return; }
+      const labels = window._lastPIC.map(r=>r.marker);
+      const data = window._lastPIC.map(r=>Number(r.pic.toFixed(3)));
+      const ctx = document.getElementById('chartCanvas');
+      if(chart){ chart.destroy(); chart = null; }
+      chart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'PIC', data, borderWidth:1 }] }, options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:1}} } });
+    }
+
+    // ---------- Plotting generic data ----------
+    function aggregateByX(rows, xKey, yKey, agg){
+      const map = new Map();
+      rows.forEach(r=>{
+        const x = r[xKey] ?? '';
+        const y = Number(r[yKey]) || 0;
+        if(!map.has(x)) map.set(x,[]);
+        map.get(x).push(y);
+      });
+      const out = [];
+      for(const [k,arr] of map.entries()){
+        let val = 0;
+        if(agg==='mean') val = arr.reduce((a,b)=>a+b,0)/arr.length;
+        else if(agg==='sum') val = arr.reduce((a,b)=>a+b,0);
+        else val = arr[0] ?? 0;
+        out.push({x:k,y:val});
+      }
+      return out.sort((a,b)=> (a.x>b.x?1:-1));
+    }
+
+    function plotCurrent(){
+      const x = xCol.value; const y = yCol.value; const t = chartType.value; const agg = aggSelect.value;
+      if(!current.headers.length) return alert('No data');
+      if(!x || !y){return alert('Choose X and Y columns');}
+      let series = [];
+      if(agg !== 'none') series = aggregateByX(current.rows,x,y,agg);
+      else series = current.rows.map(r=>({x:r[x],y:Number(r[y])}));
+      const labels = series.map(s=>s.x);
+      const data = series.map(s=>s.y);
+      const cfg = { type: t==='scatter'? 'scatter' : (t==='pie'? 'pie' : t), data:{labels: labels, datasets: [{label: y, data: (t==='scatter'? series.map(s=>({x:s.x,y:s.y})):data), tension:0.2, borderWidth:2}]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display: t==='pie'? true:false}}, scales: t==='pie'? {} : { x: { display:true, title:{display:true,text:x}}, y:{display:true,title:{display:true,text:y}} } } };
+      const ctx = document.getElementById('chartCanvas');
+      if(chart){ chart.destroy(); chart = null; }
+      chart = new Chart(ctx, cfg);
+      document.getElementById('sel-x').textContent = x; document.getElementById('sel-y').textContent = y;
+    }
+
+    // ---------- Init empty ----------
+    loadData([],[]);
+  </script></body>
+</html>
