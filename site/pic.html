@@ -461,16 +461,19 @@ tr.appendChild(td2);
             <div style="background:#0b1220;padding:16px;border-radius:10px;max-width:500px;width:90%;color:#e6eef8;max-height:80%;overflow:auto">
                 <div style="display:flex;justify-content:space-between;align-items:center">
                     <strong>PIC Calculation Details</strong>
-                    <span id="picModalClose" style="cursor:pointer">&times;</span>
+                    <span class="picModalClose" style="cursor:pointer;font-size:18px">&times;</span>
                 </div>
                 <div id="picModalContent" style="margin-top:8px;font-size:12px"></div>
             </div>
         `;
         document.body.appendChild(modal);
-        modal.querySelector('#picModalClose').addEventListener('click', ()=>{modal.style.display='none';});
+
+        // Attach event listeners
+        modal.querySelector('.picModalClose').addEventListener('click', ()=>{ modal.style.display='none'; });
         modal.addEventListener('click', e=>{ if(e.target===modal) modal.style.display='none'; });
     }
 
+    // populate content
     const content = modal.querySelector('#picModalContent');
     let html=`<strong>Marker:</strong> ${r.marker}<br>`;
     html+=`<strong>Total Alleles Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
@@ -487,6 +490,7 @@ tr.appendChild(td2);
     html+=`<br><strong>ΣPi² =</strong> ${sumPi2.toFixed(3)}<br>`;
     html+=`<strong>PIC = 1 - ΣPi² = ${r.pic.toFixed(3)}</strong>`;
     content.innerHTML = html;
+
     modal.style.display = 'flex';
 }
 
