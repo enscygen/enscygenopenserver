@@ -462,7 +462,8 @@ tr.appendChild(td2);
       chart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'PIC', data, borderWidth:1 }] }, options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:1}} } });
     }
 
-    function showPICModal(r){
+
+function showPICModal(r){
     const content = document.getElementById('picModalContent');
     let html=`<strong>Marker:</strong> ${r.marker}<br>`;
     html+=`<strong>Total Alleles Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
@@ -482,28 +483,6 @@ tr.appendChild(td2);
 
     picModal.style.display = 'flex';
 }
-
-    // populate content
-    const content = modal.querySelector('#picModalContent');
-    let html=`<strong>Marker:</strong> ${r.marker}<br>`;
-    html+=`<strong>Total Alleles Counted:</strong> ${Object.values(r.freqs).reduce((a,b)=>a+b,0)}<br><br>`;
-    html+='<table style="width:100%;border-collapse:collapse;"><tr><th>Allele</th><th>Count</th><th>Frequency (Pi)</th><th>Pi²</th></tr>';
-    let sumPi2=0;
-    for(const a in r.freqs){
-        const p = r.freqs[a];
-        const count = r.counts && r.counts[a] ? r.counts[a] : (p*Object.values(r.freqs).reduce((a,b)=>a+b,0));
-        const p2 = p*p;
-        sumPi2 += p2;
-        html += `<tr><td>${a}</td><td>${count.toFixed(0)}</td><td>${p.toFixed(3)}</td><td>${p2.toFixed(3)}</td></tr>`;
-    }
-    html+='</table>';
-    html+=`<br><strong>ΣPi² =</strong> ${sumPi2.toFixed(3)}<br>`;
-    html+=`<strong>PIC = 1 - ΣPi² = ${r.pic.toFixed(3)}</strong>`;
-    content.innerHTML = html;
-
-    modal.style.display = 'flex';
-}
-
       
 
     // ---------- Plotting generic data ----------
