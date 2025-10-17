@@ -542,41 +542,54 @@ html += `<strong>Total Alleles Counted:</strong> ${r.total}<br><br>`;
 document.getElementById('generateBinaryBtn').addEventListener('click', generateBinaryMatrix);
 
 function generateBinaryMatrix() {
-  if (!window._csvData || window._csvData.length === 0) {
-    alert('Please upload your CSV first.');
+  const table = document.getElementById('data-table');
+  if (!table) {
+    alert('No data table found.');
     return;
   }
 
-  const headers = Object.keys(window._csvData[0]);
-  const sampleNames = window._csvData.map((_, i) => "Sample" + (i + 1));
-  const markerCols = headers.filter(h => /^Primer/i.test(h)); // adjust if markers have specific pattern
+  const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
 
+  if (rows.length === 0) {
+    alert('No data rows found in the table.');
+    return;
+  }
+
+  // Assume marker columns start with "Primer" or user-defined marker names
+  const markerCols = headers.filter(h => /^Primer/i.test(h));
   if (markerCols.length === 0) {
     alert('No marker columns found (e.g., Primer1, Primer2).');
     return;
   }
 
-  // Collect all unique allele sizes
-  const allAlleles = {};
-  markerCols.forEach(m => {
-    const vals = window._csvData.map(r => (r[m] || "").toString().trim()).filter(v => v);
-    vals.forEach(v => {
-      const key = `${m}-${v}`;
-      allAlleles[key] = true;
-    });
+  // Build data from table
+  const tableData = rows.map(r => {
+    const cells = Array.from(r.querySelectorAll('td')).map(td => td.textContent.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = cells[i]);
+    return obj;
   });
 
-  const alleleList = Object.keys(allAlleles);
-  const binaryMatrix = [];
-
-  // Create rows for each sample
-  window._csvData.forEach((row, i) => {
-    const sampleRow = { Sample: sampleNames[i] };
-    alleleList.forEach(a => {
-      const [marker, size] = a.split('-');
-      sampleRow[a] = row[marker] && row[marker].toString().trim() === size ? 1 : 0;
+  // Collect all alleles
+  const allAlleles = {};
+  markerCols.forEach(m => {
+    const vals = tableData.map(r => (r[m] || "").toString().trim()).filter(v => v);
+    vals.forEach(v => {
+      allAlleles[`${m}-${v}`] = true;
     });
-    binaryMatrix.push(sampleRow);
+  });
+  const alleleList = Object.keys(allAlleles);
+
+  // Build binary matrix
+  const binaryMatrix = tableData.map((row, idx) => {
+    const sampleLabel = row[headers[0]] || `Sample${idx + 1}`;
+    const obj = { Sample: sampleLabel };
+    alleleList.forEach(a => {
+      const [marker, allele] = a.split('-');
+      obj[a] = row[marker] && row[marker].toString().trim() === allele ? 1 : 0;
+    });
+    return obj;
   });
 
   // Display in modal
