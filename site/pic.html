@@ -548,79 +548,103 @@ function generateBinaryMatrix() {
     return;
   }
 
-  const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
-  const rows = Array.from(table.querySelectorAll('tbody tr'));
+  // --- Get headers safely ---
+  let headers = [];
+  const headerRow = table.querySelector('thead tr');
+  if (headerRow) {
+    headers = Array.from(headerRow.querySelectorAll('th')).map(th => th.textContent.trim());
+  } else {
+    const firstRow = table.querySelector('tbody tr');
+    if (!firstRow) {
+      alert('No data rows found.');
+      return;
+    }
+    headers = Array.from(firstRow.querySelectorAll('td')).map((_, i) => `Col${i + 1}`);
+  }
 
+  // --- Extract rows ---
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
   if (rows.length === 0) {
-    alert('No data rows found in the table.');
+    alert('No data rows found.');
     return;
   }
 
-  // Build data from table
+  // --- Convert table to JSON array ---
   const tableData = rows.map(r => {
     const cells = Array.from(r.querySelectorAll('td')).map(td => td.textContent.trim());
     const obj = {};
-    headers.forEach((h, i) => obj[h] = cells[i]);
+    headers.forEach((h, i) => (obj[h] = cells[i]));
     return obj;
   });
 
-  // --- Detect marker columns automatically ---
-  // We assume first column is sample name; the rest are marker data
-  const markerCols = headers.slice(1); 
+  const sampleCol = headers[0];
+  const markerCols = headers.slice(1);
   if (markerCols.length === 0) {
     alert('No marker columns found.');
     return;
   }
 
-  // --- Collect all alleles (unique band sizes) ---
+  // --- Collect all alleles ---
   const allAlleles = {};
   markerCols.forEach(m => {
-    const vals = tableData.map(r => (r[m] || "").toString().trim()).filter(v => v);
+    const vals = tableData.map(r => (r[m] || "").trim()).filter(v => v);
     vals.forEach(v => {
       allAlleles[`${m}-${v}`] = true;
     });
   });
   const alleleList = Object.keys(allAlleles);
   if (alleleList.length === 0) {
-    alert('No alleles found in the data.');
+    alert('No alleles detected in table data.');
     return;
   }
 
   // --- Build binary matrix ---
   const binaryMatrix = tableData.map((row, idx) => {
-    const sampleLabel = row[headers[0]] || `Sample${idx + 1}`;
+    const sampleLabel = row[sampleCol] || `Sample${idx + 1}`;
     const obj = { Sample: sampleLabel };
     alleleList.forEach(a => {
       const [marker, allele] = a.split('-');
-      obj[a] = row[marker] && row[marker].toString().trim() === allele ? 1 : 0;
+      obj[a] = row[marker] && row[marker].trim() === allele ? 1 : 0;
     });
     return obj;
   });
 
-  // --- Display in modal ---
+  // --- Display binary modal ---
   showBinaryModal(binaryMatrix, alleleList);
 
-  // --- Save for CSV download ---
+  // --- Save globally for CSV export ---
   window._binaryMatrix = binaryMatrix;
 }
 
-// --- BINARY MODAL + DOWNLOAD ---
+// --- BINARY MODAL WITH COLORED CELLS ---
 function showBinaryModal(data, columns) {
   const modal = document.getElementById('binaryModal');
   const content = document.getElementById('binaryModalContent');
 
-  let html = '<table border="1" style="border-collapse:collapse;width:100%;font-size:11px;">';
-  html += '<tr><th>Sample</th>' + columns.map(c => `<th>${c}</th>`).join('') + '</tr>';
-  data.forEach(row => {
-    html += '<tr><td>' + row.Sample + '</td>' +
-      columns.map(c => `<td>${row[c]}</td>`).join('') + '</tr>';
-  });
-  html += '</table>';
+  let html = `
+    <table border="1" style="border-collapse:collapse;width:100%;font-size:11px;text-align:center;">
+      <tr style="background:#f3f4f6;">
+        <th>Sample</th>
+        ${columns.map(c => `<th>${c}</th>`).join('')}
+      </tr>
+  `;
 
+  data.forEach(row => {
+    html += `<tr><td style="background:#fafafa;">${row.Sample}</td>`;
+    columns.forEach(c => {
+      const val = row[c];
+      const bg = val === 1 ? '#22c55e' : '#d1d5db'; // green for 1, grey for 0
+      html += `<td style="background:${bg};color:#fff;">${val}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
   content.innerHTML = html;
   modal.style.display = 'flex';
 }
 
+// --- MODAL CLOSE AND CSV DOWNLOAD ---
 document.getElementById('binaryModalClose').addEventListener('click', () => {
   document.getElementById('binaryModal').style.display = 'none';
 });
@@ -640,8 +664,6 @@ document.getElementById('downloadBinaryCsv').addEventListener('click', () => {
   link.download = 'binary_matrix.csv';
   link.click();
 });
-      
-
     // ---------- Plotting generic data ----------
     function aggregateByX(rows, xKey, yKey, agg){
       const map = new Map();
