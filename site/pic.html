@@ -659,79 +659,63 @@ document.getElementById('generateBinaryBtn').addEventListener('click', generateB
 
 function generateBinaryMatrix() {
   const table = document.getElementById('data-table');
-  if (!table) {
-    alert('No data table found.');
-    return;
-  }
+  if (!table) return alert('No data table found.');
 
-  // --- Get headers safely ---
+  // Get headers
   let headers = [];
   const headerRow = table.querySelector('thead tr');
   if (headerRow) {
     headers = Array.from(headerRow.querySelectorAll('th')).map(th => th.textContent.trim());
-  } else {
-    const firstRow = table.querySelector('tbody tr');
-    if (!firstRow) {
-      alert('No data rows found.');
-      return;
-    }
-    headers = Array.from(firstRow.querySelectorAll('td')).map((_, i) => `Col${i + 1}`);
   }
+  if (headers.length === 0) return alert('No headers found');
 
-  // --- Extract rows ---
   const rows = Array.from(table.querySelectorAll('tbody tr'));
-  if (rows.length === 0) {
-    alert('No data rows found.');
-    return;
-  }
+  if (rows.length === 0) return alert('No data rows found');
 
-  // --- Convert table to JSON array (read from <input> if present) ---
+  // Convert table to JSON array
   const tableData = rows.map(r => {
     const cells = Array.from(r.querySelectorAll('td')).map(td => {
       const input = td.querySelector('input');
       return input ? input.value.trim() : td.textContent.trim();
     });
     const obj = {};
-    headers.forEach((h, i) => (obj[h] = cells[i]));
+    headers.forEach((h,i)=> obj[h] = cells[i]);
     return obj;
   });
 
   const sampleCol = headers[0];
   const markerCols = headers.slice(1);
-  if (markerCols.length === 0) {
-    alert('No marker columns found.');
-    return;
-  }
+  if(markerCols.length === 0) return alert('No marker columns found');
 
-  // --- Collect all alleles ---
+  // Collect all unique alleles per marker
   const allAlleles = {};
   markerCols.forEach(m => {
-    const vals = tableData.map(r => (r[m] || "").trim()).filter(v => v);
-    vals.forEach(v => {
-      allAlleles[`${m}-${v}`] = true;
+    tableData.forEach(r => {
+      const alleles = parseAlleles(r[m]); // <-- reuse parseAlleles function
+      alleles.forEach(a => {
+        allAlleles[`${m}-${a}`] = true;
+      });
     });
   });
-  const alleleList = Object.keys(allAlleles);
-  if (alleleList.length === 0) {
-    alert('No alleles detected in table data.');
-    return;
-  }
 
-  // --- Build binary matrix ---
+  const alleleList = Object.keys(allAlleles);
+  if(alleleList.length === 0) return alert('No alleles detected');
+
+  // Build binary matrix
   const binaryMatrix = tableData.map((row, idx) => {
-    const sampleLabel = row[sampleCol] || `Sample${idx + 1}`;
+    const sampleLabel = row[sampleCol] || `Sample${idx+1}`;
     const obj = { Sample: sampleLabel };
+
     alleleList.forEach(a => {
       const [marker, allele] = a.split('-');
-      obj[a] = row[marker] && row[marker].trim() === allele ? 1 : 0;
+      const allelesInSample = parseAlleles(row[marker]);
+      obj[a] = allelesInSample.includes(allele) ? 1 : 0; // ✅ Multi-band support
     });
+
     return obj;
   });
 
-  // --- Display binary modal ---
   showBinaryModal(binaryMatrix, alleleList);
-
-  // --- Save globally for CSV export ---
   window._binaryMatrix = binaryMatrix;
 }
 
