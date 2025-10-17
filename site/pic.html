@@ -556,13 +556,6 @@ function generateBinaryMatrix() {
     return;
   }
 
-  // Assume marker columns start with "Primer" or user-defined marker names
-  const markerCols = headers.filter(h => /^Primer/i.test(h));
-  if (markerCols.length === 0) {
-    alert('No marker columns found (e.g., Primer1, Primer2).');
-    return;
-  }
-
   // Build data from table
   const tableData = rows.map(r => {
     const cells = Array.from(r.querySelectorAll('td')).map(td => td.textContent.trim());
@@ -571,7 +564,15 @@ function generateBinaryMatrix() {
     return obj;
   });
 
-  // Collect all alleles
+  // --- Detect marker columns automatically ---
+  // We assume first column is sample name; the rest are marker data
+  const markerCols = headers.slice(1); 
+  if (markerCols.length === 0) {
+    alert('No marker columns found.');
+    return;
+  }
+
+  // --- Collect all alleles (unique band sizes) ---
   const allAlleles = {};
   markerCols.forEach(m => {
     const vals = tableData.map(r => (r[m] || "").toString().trim()).filter(v => v);
@@ -580,8 +581,12 @@ function generateBinaryMatrix() {
     });
   });
   const alleleList = Object.keys(allAlleles);
+  if (alleleList.length === 0) {
+    alert('No alleles found in the data.');
+    return;
+  }
 
-  // Build binary matrix
+  // --- Build binary matrix ---
   const binaryMatrix = tableData.map((row, idx) => {
     const sampleLabel = row[headers[0]] || `Sample${idx + 1}`;
     const obj = { Sample: sampleLabel };
@@ -592,10 +597,10 @@ function generateBinaryMatrix() {
     return obj;
   });
 
-  // Display in modal
+  // --- Display in modal ---
   showBinaryModal(binaryMatrix, alleleList);
 
-  // Save for CSV download
+  // --- Save for CSV download ---
   window._binaryMatrix = binaryMatrix;
 }
 
