@@ -99,6 +99,13 @@
     <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
       <select id="marker-select" class="select" multiple size="4" style="height:88px"></select>
     </div>
+    <!-- Decimal Precision Input -->
+<div style="margin-top:10px; font-size:12px;">
+  <label for="precisionInput"><strong>Decimal Precision for PIC:</strong></label>
+  <input id="precisionInput" type="number" min="1" max="6" value="3" style="width:60px; text-align:center; margin-left:5px;">
+</div>
+
+
     <div style="margin-top:8px;display:flex;gap:8px">
       <button id="run-ssr" class="btn primary"><i class="bi bi-calculator icon"></i> Compute PIC</button>
       <button id="pic-chart-btn" class="btn"><i class="bi bi-bar-chart icon"></i> Show PIC Chart</button>
@@ -168,6 +175,12 @@
         <button id="clear-selection" class="btn">Clear</button>
         <button id="transpose" class="btn">Transpose</button>
       </div>
+
+      <!-- Generate Binary Table Button -->
+<button id="generateBinaryBtn" style="margin-top:8px;" class="btn btn-sm btn-outline-light">
+  <i class="bi bi-table"></i> Generate Binary Table
+</button>
+
     </aside>
   </div>
 
@@ -190,6 +203,23 @@
       <span id="picModalClose" style="cursor:pointer;font-size:18px">&times;</span>
     </div>
     <div id="picModalContent" style="margin-top:8px;font-size:12px"></div>
+  </div>
+</div>
+
+  
+<!-- Binary Table Modal -->
+<div id="binaryModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#0b1220;padding:16px;border-radius:10px;max-width:90%;width:90%;
+  color:#e6eef8;max-height:85%;overflow:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>Binary Matrix Preview</strong>
+      <span id="binaryModalClose" style="cursor:pointer;font-size:18px">&times;</span>
+    </div>
+    <div id="binaryModalContent" style="margin-top:10px;font-size:12px;overflow-x:auto;"></div>
+    <button id="downloadBinaryCsv" class="btn btn-sm btn-outline-info" style="margin-top:10px;">
+      <i class="bi bi-download"></i> Download CSV
+    </button>
   </div>
 </div>
 
@@ -243,6 +273,11 @@
 
       const picModal = document.getElementById('picInfoModal');
 const picModalClose = document.getElementById('picModalClose');
+
+    function getPrecision() {
+  const val = parseInt(document.getElementById('precisionInput').value);
+  return isNaN(val) ? 3 : Math.max(1, Math.min(6, val));
+    }
 
 // Close modal on clicking ×
 picModalClose.addEventListener('click', ()=>{ picModal.style.display='none'; });
@@ -423,6 +458,7 @@ picModal.addEventListener('click', e => {
       const selected = Array.from(markerSelect.selectedOptions).map(o=>o.value);
       const markers = selected.length ? selected : Array.from(markerSelect.options).map(o=>o.value);
       if(markers.length === 0){ alert('No marker columns found. Make sure your CSV has marker columns (e.g., Primer1, Primer2)'); return; }
+     const precision = getPrecision();
       const tbody = document.querySelector('#pic-table tbody');
       const results = [];
       markers.forEach(m => {
@@ -431,7 +467,7 @@ picModal.addEventListener('click', e => {
         const td0 = document.createElement('td'); td0.textContent = m; tr.appendChild(td0);
         const td1 = document.createElement('td'); td1.textContent = res.alleles; tr.appendChild(td1);
         const td2 = document.createElement('td'); 
-td2.textContent = res.pic.toFixed(3); 
+td2.textContent = res.pic.toFixed(precision);
 
 // add info icon
 const info = document.createElement('i');
@@ -501,6 +537,91 @@ html += `<strong>Total Alleles Counted:</strong> ${r.total}<br><br>`;
 
     picModal.style.display = 'flex';
 }
+
+    // --- BINARY TABLE GENERATION ---
+document.getElementById('generateBinaryBtn').addEventListener('click', generateBinaryMatrix);
+
+function generateBinaryMatrix() {
+  if (!window._csvData || window._csvData.length === 0) {
+    alert('Please upload your CSV first.');
+    return;
+  }
+
+  const headers = Object.keys(window._csvData[0]);
+  const sampleNames = window._csvData.map((_, i) => "Sample" + (i + 1));
+  const markerCols = headers.filter(h => /^Primer/i.test(h)); // adjust if markers have specific pattern
+
+  if (markerCols.length === 0) {
+    alert('No marker columns found (e.g., Primer1, Primer2).');
+    return;
+  }
+
+  // Collect all unique allele sizes
+  const allAlleles = {};
+  markerCols.forEach(m => {
+    const vals = window._csvData.map(r => (r[m] || "").toString().trim()).filter(v => v);
+    vals.forEach(v => {
+      const key = `${m}-${v}`;
+      allAlleles[key] = true;
+    });
+  });
+
+  const alleleList = Object.keys(allAlleles);
+  const binaryMatrix = [];
+
+  // Create rows for each sample
+  window._csvData.forEach((row, i) => {
+    const sampleRow = { Sample: sampleNames[i] };
+    alleleList.forEach(a => {
+      const [marker, size] = a.split('-');
+      sampleRow[a] = row[marker] && row[marker].toString().trim() === size ? 1 : 0;
+    });
+    binaryMatrix.push(sampleRow);
+  });
+
+  // Display in modal
+  showBinaryModal(binaryMatrix, alleleList);
+
+  // Save for CSV download
+  window._binaryMatrix = binaryMatrix;
+}
+
+// --- BINARY MODAL + DOWNLOAD ---
+function showBinaryModal(data, columns) {
+  const modal = document.getElementById('binaryModal');
+  const content = document.getElementById('binaryModalContent');
+
+  let html = '<table border="1" style="border-collapse:collapse;width:100%;font-size:11px;">';
+  html += '<tr><th>Sample</th>' + columns.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  data.forEach(row => {
+    html += '<tr><td>' + row.Sample + '</td>' +
+      columns.map(c => `<td>${row[c]}</td>`).join('') + '</tr>';
+  });
+  html += '</table>';
+
+  content.innerHTML = html;
+  modal.style.display = 'flex';
+}
+
+document.getElementById('binaryModalClose').addEventListener('click', () => {
+  document.getElementById('binaryModal').style.display = 'none';
+});
+document.getElementById('binaryModal').addEventListener('click', e => {
+  if (e.target.id === 'binaryModal') e.target.style.display = 'none';
+});
+
+document.getElementById('downloadBinaryCsv').addEventListener('click', () => {
+  if (!window._binaryMatrix) return alert('No binary matrix generated yet.');
+  const headers = Object.keys(window._binaryMatrix[0]);
+  const csv = [headers.join(',')]
+    .concat(window._binaryMatrix.map(r => headers.map(h => r[h]).join(',')))
+    .join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'binary_matrix.csv';
+  link.click();
+});
       
 
     // ---------- Plotting generic data ----------
