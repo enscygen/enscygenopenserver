@@ -749,14 +749,17 @@ function showBinaryModal(data, columns) {
   `;
 
   data.forEach(row => {
-    html += `<tr><td style="background:#fafafa;">${row.Sample}</td>`;
-    columns.forEach(c => {
-      const val = row[c];
-      const bg = val === 1 ? '#16a34a' : '#374151';
-      html += `<td style="background:${bg};color:#fff;">${val}</td>`;
-    });
-    html += '</tr>';
+  // Dark theme for sample column
+  html += `<tr><td style="background:#1e293b;color:#f9fafb;font-weight:500;">${row.Sample}</td>`;
+  
+  columns.forEach(c => {
+    const val = row[c];
+    const bg = val === 1 ? '#16a34a' : '#374151';  // keep your green/gray for 1/0
+    html += `<td style="background:${bg};color:#fff;">${val}</td>`;
   });
+
+  html += '</tr>';
+});
 
   html += '</table>';
   content.innerHTML = html;
