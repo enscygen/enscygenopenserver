@@ -46,6 +46,50 @@
     .badge{padding:4px 8px;border-radius:8px;background:rgba(255,255,255,0.02)}
     .tiny{font-size:11px}
     .info-icon{cursor:pointer;margin-left:4px;color:#4f46e5}
+    /* Precision input wrapper */
+.precision-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-left: 8px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* The label next to the precision input */
+.precision-control label {
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* The number input box */
+.precision-control input[type="number"] {
+  width: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 12px;
+  text-align: center;
+  color: #111827;
+}
+
+/* Remove spinners for Chrome, Safari, Edge */
+.precision-control input::-webkit-outer-spin-button,
+.precision-control input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove spinners for Firefox */
+.precision-control input[type=number] {
+  -moz-appearance: textfield;
+            }
   </style></head>
 <body>
   <div class="app">
@@ -100,10 +144,12 @@
       <select id="marker-select" class="select" multiple size="4" style="height:88px"></select>
     </div>
     <!-- Decimal Precision Input -->
-<div style="margin-top:10px; font-size:12px;">
-  <label for="precisionInput"><strong>Decimal Precision for PIC:</strong></label>
-  <input id="precisionInput" type="number" min="1" max="6" value="3" style="width:60px; text-align:center; margin-left:5px;">
-</div>
+
+
+    <div class="precision-control">
+  <label for="precisionInput">Precision</label>
+  <input type="number" id="precisionInput" min="1" max="6" value="3" />
+    </div>
 
 
     <div style="margin-top:8px;display:flex;gap:8px">
@@ -569,9 +615,12 @@ function generateBinaryMatrix() {
     return;
   }
 
-  // --- Convert table to JSON array ---
+  // --- Convert table to JSON array (read from <input> if present) ---
   const tableData = rows.map(r => {
-    const cells = Array.from(r.querySelectorAll('td')).map(td => td.textContent.trim());
+    const cells = Array.from(r.querySelectorAll('td')).map(td => {
+      const input = td.querySelector('input');
+      return input ? input.value.trim() : td.textContent.trim();
+    });
     const obj = {};
     headers.forEach((h, i) => (obj[h] = cells[i]));
     return obj;
