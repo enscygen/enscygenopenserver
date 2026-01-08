@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Velocity GPS</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --panel-bg: #141414;
+            --accent: #00f2ff; /* Cyan Neon */
+            --accent-dim: rgba(0, 242, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #666;
+            --danger: #ff2a2a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Overlays --- */
+        #startScreen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #050505; z-index: 200;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
+        }
+
+        #fuelModal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9); z-index: 150;
+            display: none; flex-direction: column; justify-content: flex-end;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            padding: 30px;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            border-top: 1px solid var(--accent);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* --- Header --- */
+        header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, #111, transparent);
+            z-index: 10;
+        }
+
+        .status-pill {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.8rem; background: #222;
+            padding: 4px 12px; border-radius: 20px;
+            color: var(--text-muted); border: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .status-pill.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+
+        .gps-icon { font-size: 14px; }
+        .gps-icon.blink { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        /* --- Gauge --- */
+        .gauge-container {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .speed-circle-svg {
+            transform: rotate(-90deg);
+            width: 280px; height: 280px;
+        }
+
+        .circle-bg { fill: none; stroke: #222; stroke-width: 10; }
+
+        .circle-progress {
+            fill: none; stroke: var(--accent);
+            stroke-width: 10; stroke-linecap: round;
+            stroke-dasharray: 880; stroke-dashoffset: 880;
+            transition: stroke-dashoffset 0.5s ease-out;
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+
+        .speed-readout {
+            position: absolute; text-align: center;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .speed-value {
+            font-size: 5rem; font-weight: 800;
+            letter-spacing: -2px; line-height: 1;
+            text-shadow: 0 0 20px var(--accent-dim);
+        }
+
+        .speed-unit {
+            font-size: 1.2rem; color: var(--text-muted);
+            font-weight: 600; letter-spacing: 2px; margin-top: 5px;
+        }
+
+        /* --- Dashboard Grid --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px; padding: 20px;
+            background: var(--panel-bg);
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .stat-card {
+            background: #1a1a1a; padding: 12px;
+            border-radius: 12px; display: flex;
+            flex-direction: column; border: 1px solid #2a2a2a;
+            align-items: center; text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.7rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem; font-weight: 700; color: #fff;
+            white-space: nowrap;
+        }
+
+        .stat-unit { font-size: 0.7rem; color: #666; margin-left: 2px; }
+
+        /* --- Inputs --- */
+        .fuel-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        
+        input[type="number"] {
+            width: 100%; padding: 15px;
+            background: #0a0a0a; border: 1px solid #333;
+            color: white; border-radius: 8px;
+            font-size: 1.2rem; margin-top: 5px;
+            outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+        label { color: #888; font-size: 0.8rem; }
+
+        /* --- Buttons --- */
+        .controls { padding: 0 20px 20px 20px; background: var(--panel-bg); }
+        
+        .btn {
+            width: 100%; padding: 16px;
+            border: none; border-radius: 12px;
+            font-weight: 700; font-size: 1rem;
+            cursor: pointer; text-transform: uppercase;
+            letter-spacing: 1px; transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-dim); }
+        .btn-secondary { background: #333; color: white; }
+        .btn:active { transform: scale(0.98); }
+
+        .warning-msg {
+            position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 42, 42, 0.9);
+            color: white; padding: 10px 20px;
+            border-radius: 50px; font-size: 0.85rem;
+            display: none; z-index: 100;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. Start Screen -->
+    <div id="startScreen">
+        <h1 style="font-size: 2rem; color: #fff; text-transform:uppercase; letter-spacing:4px;">Velocity <span style="color:var(--accent)">GPS</span></h1>
+        <button id="startEngineBtn" class="btn btn-primary" style="width:200px;">Start Engine</button>
+        <div style="color:#666; font-size:0.8rem;">Tap to enable GPS & Sensors</div>
+    </div>
+
+    <!-- 2. Fuel Modal -->
+    <div id="fuelModal">
+        <div class="modal-content">
+            <h2 style="color:white; margin-bottom:20px;">Fuel Configuration</h2>
+            <div class="fuel-input-grid">
+                <div>
+                    <label>Current Fuel (L)</label>
+                    <input type="number" id="inputFuel" value="10">
+                </div>
+                <div>
+                    <label>Mileage (km/L)</label>
+                    <input type="number" id="inputMileage" value="15">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label>Tank Capacity (L)</label>
+                    <input type="number" id="inputCapacity" value="40">
+                </div>
+            </div>
+            <button id="saveFuelBtn" class="btn btn-primary">Save & Calculate</button>
+            <button id="closeFuelBtn" class="btn btn-secondary" style="margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div class="warning-msg" id="gpsWarning">GPS Signal Lost</div>
+
+    <header>
+        <div class="status-pill" id="gpsStatus">
+            <span class="material-icons-outlined gps-icon">gps_fixed</span>
+            <span id="gpsText">Standby</span>
+        </div>
+        <div class="status-pill" id="fuelBtn" style="cursor:pointer;">
+            <span class="material-icons-outlined" style="font-size:16px; color:var(--accent)">local_gas_station</span>
+            <span style="color:white">Fuel Setup</span>
+        </div>
+    </header>
+
+    <div class="gauge-container">
+        <svg class="speed-circle-svg" viewBox="0 0 300 300">
+            <circle class="circle-bg" cx="150" cy="150" r="140"></circle>
+            <circle class="circle-progress" id="speedRing" cx="150" cy="150" r="140"></circle>
+        </svg>
+
+        <div class="speed-readout">
+            <div class="speed-value" id="speedDisplay">0</div>
+            <div class="speed-unit">KM/H</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Trip Stats -->
+        <div class="stat-card">
+            <div class="stat-label">Distance</div>
+            <div class="stat-value"><span id="distDisplay">0.0</span><span class="stat-unit">km</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Time</div>
+            <div class="stat-value"><span id="timeDisplay">00:00</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg Spd</div>
+            <div class="stat-value"><span id="avgDisplay">0</span><span class="stat-unit">km/h</span></div>
+        </div>
+
+        <!-- Fuel Stats -->
+        <div class="stat-card" style="border-color: var(--accent-dim);">
+            <div class="stat-label" style="color:var(--accent)">Range Left</div>
+            <div class="stat-value" style="color:var(--accent)"><span id="rangeDisplay">--</span><span class="stat-unit">km</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Fuel Left</div>
+            <div class="stat-value"><span id="fuelLDisplay">--</span><span class="stat-unit">L</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tank %</div>
+            <div class="stat-value"><span id="fuelPctDisplay">--</span><span class="stat-unit">%</span></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-secondary" id="resetBtn">Reset Trip Data</button>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const VISUAL_MAX_SPEED = 160; 
+        
+        // --- State ---
+        let watchId = null;
+        let wakeLock = null;
+        let lastLat = null;
+        let lastLon = null;
+        
+        let stats = {
+            currentSpeed: 0,
+            maxSpeed: 0,
+            totalDistance: 0, // meters
+            startTime: null,
+            elapsedTime: 0, // ms
+            isMoving: false
+        };
+
+        // Fuel State
+        let fuelStats = {
+            startFuel: 0,
+            currentFuel: 0,
+            capacity: 0,
+            mileage: 0,
+            isConfigured: false
+        };
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('startScreen');
+        const startEngineBtn = document.getElementById('startEngineBtn');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const speedRing = document.getElementById('speedRing');
+        const distDisplay = document.getElementById('distDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const avgDisplay = document.getElementById('avgDisplay');
+        
+        const fuelModal = document.getElementById('fuelModal');
+        const fuelBtn = document.getElementById('fuelBtn');
+        const saveFuelBtn = document.getElementById('saveFuelBtn');
+        const closeFuelBtn = document.getElementById('closeFuelBtn');
+        const rangeDisplay = document.getElementById('rangeDisplay');
+        const fuelLDisplay = document.getElementById('fuelLDisplay');
+        const fuelPctDisplay = document.getElementById('fuelPctDisplay');
+        
+        const gpsStatus = document.getElementById('gpsStatus');
+        const gpsText = document.getElementById('gpsText');
+        const gpsIcon = document.querySelector('.gps-icon');
+
+        // --- Startup ---
+        startEngineBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            initGPS();
+        });
+
+        function initGPS() {
+            if ("geolocation" in navigator) {
+                gpsText.textContent = "Locating...";
+                const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+                watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, options);
+                requestWakeLock();
+                setInterval(updateTimer, 1000);
+            } else {
+                alert("Geolocation not supported by this browser");
+            }
+        }
+
+        // --- GPS Handlers ---
+        function handleSuccess(position) {
+            updateGPSStatus(true);
+            const crd = position.coords;
+            
+            // Speed Calculation
+            let speedKmh = (crd.speed || 0) * 3.6;
+            if (speedKmh < 2.0) speedKmh = 0; // Filter standing still noise
+            stats.currentSpeed = speedKmh;
+
+            // Distance Calculation
+            if (lastLat !== null && lastLon !== null && crd.accuracy < 50) {
+                const d = getDistanceFromLatLonInM(lastLat, lastLon, crd.latitude, crd.longitude);
+                // Filter small jitter (only count if moved > 5 meters)
+                if (d > 5) {
+                    stats.totalDistance += d;
+                    if(fuelStats.isConfigured) updateFuelCalculations(d);
+                }
+            }
+
+            // Start Timer on movement
+            if (stats.startTime === null && speedKmh > 5) {
+                stats.startTime = Date.now();
+            }
+
+            lastLat = crd.latitude;
+            lastLon = crd.longitude;
+            updateDisplay();
+        }
+
+        function handleError(err) {
+            console.warn(`GPS Error: ${err.message}`);
+            updateGPSStatus(false);
+        }
+
+        // --- Fuel Logic ---
+        fuelBtn.addEventListener('click', () => fuelModal.style.display = 'flex');
+        closeFuelBtn.addEventListener('click', () => fuelModal.style.display = 'none');
+
+        saveFuelBtn.addEventListener('click', () => {
+            const f = parseFloat(document.getElementById('inputFuel').value);
+            const m = parseFloat(document.getElementById('inputMileage').value);
+            const c = parseFloat(document.getElementById('inputCapacity').value);
+
+            if(f && m && c) {
+                fuelStats = { startFuel: f, currentFuel: f, mileage: m, capacity: c, isConfigured: true };
+                updateFuelDisplay();
+                fuelModal.style.display = 'none';
+            }
+        });
+
+        function updateFuelCalculations(distanceMeters) {
+            const distanceKm = distanceMeters / 1000;
+            const fuelConsumed = distanceKm / fuelStats.mileage;
+            fuelStats.currentFuel = Math.max(0, fuelStats.currentFuel - fuelConsumed);
+            updateFuelDisplay();
+        }
+
+        function updateFuelDisplay() {
+            fuelLDisplay.textContent = fuelStats.currentFuel.toFixed(2);
+            const pct = (fuelStats.currentFuel / fuelStats.capacity) * 100;
+            fuelPctDisplay.textContent = Math.round(pct);
+            const range = fuelStats.currentFuel * fuelStats.mileage;
+            rangeDisplay.textContent = Math.round(range);
+        }
+
+        // --- Display Updates ---
+        function updateDisplay() {
+            // Speed
+            speedDisplay.textContent = Math.round(stats.currentSpeed);
+            
+            // Ring Animation
+            const circumference = 880;
+            const visualSpeed = Math.min(stats.currentSpeed, VISUAL_MAX_SPEED);
+            const offset = circumference - ((visualSpeed / VISUAL_MAX_SPEED) * circumference);
+            speedRing.style.strokeDashoffset = offset;
+            
+            // Color Logic
+            if(stats.currentSpeed > 100) speedRing.style.stroke = "var(--danger)";
+            else speedRing.style.stroke = "var(--accent)";
+
+            // Distance
+            distDisplay.textContent = (stats.totalDistance / 1000).toFixed(1);
+
+            // Avg Speed
+            if (stats.elapsedTime > 0) {
+                const hours = stats.elapsedTime / 1000 / 3600;
+                const avg = (stats.totalDistance / 1000) / hours;
+                avgDisplay.textContent = Math.round(avg) || 0;
+            }
+        }
+
+        function updateTimer() {
+            if (stats.startTime) {
+                stats.elapsedTime = Date.now() - stats.startTime;
+                const totalSeconds = Math.floor(stats.elapsedTime / 1000);
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+                const pad = n => n.toString().padStart(2, '0');
+                timeDisplay.textContent = h > 0 ? `${pad(h)}:${pad(m)}` : `${pad(m)}:${pad(s)}`;
+            }
+        }
+
+        function updateGPSStatus(active) {
+            if (active) {
+                gpsStatus.classList.add('active');
+                gpsText.textContent = "GPS Active";
+                gpsIcon.classList.remove('blink');
+                document.getElementById('gpsWarning').style.display = 'none';
+            } else {
+                gpsStatus.classList.remove('active');
+                gpsText.textContent = "Signal Lost";
+                gpsIcon.classList.add('blink');
+                document.getElementById('gpsWarning').style.display = 'block';
+            }
+        }
+
+        // Haversine Distance
+        function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
+            var R = 6371; 
+            var dLat = deg2rad(lat2-lat1);  
+            var dLon = deg2rad(lon2-lon1); 
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            return R * c * 1000;
+        }
+
+        function deg2rad(deg) { return deg * (Math.PI/180); }
+
+        async function requestWakeLock() {
+            try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if(confirm("Reset all trip data?")) location.reload();
+        });
+    </script>
+</body>
+</html>
+
+
