@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vehicle Dashboard HUD</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #000000;
+            --surface-color: #121212;
+            --surface-variant: #1e1e1e;
+            --primary-color: #03dac6; /* Android Teal */
+            --primary-variant: #018786;
+            --secondary-color: #bb86fc; /* Android Purple */
+            --error-color: #cf6679;
+            --text-high-emphasis: #ffffff;
+            --text-medium-emphasis: rgba(255, 255, 255, 0.74);
+            --text-disabled: rgba(255, 255, 255, 0.38);
+            --gauge-bg: #333333;
+            --hud-mirror-transform: scaleY(-1); /* Flips vertically for windshield reflection */
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevent text selection during driving */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-high-emphasis);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        /* HUD Mirror Mode Class */
+        body.hud-active {
+            transform: var(--hud-mirror-transform);
+        }
+
+        /* Layout Structure */
+        .dashboard-container {
+            display: grid;
+            grid-template-rows: 60px 1fr 80px;
+            height: 100%;
+            width: 100%;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-medium-emphasis);
+        }
+
+        .status-cluster {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-item span.material-icons {
+            font-size: 18px;
+        }
+
+        .gps-status.active { color: var(--primary-color); }
+        .gps-status.inactive { color: var(--error-color); }
+
+        .clock {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-high-emphasis);
+        }
+
+        /* Main Display Area */
+        .main-display {
+            display: flex;
+            flex-direction: row; /* Landscape default */
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        /* Speedometer Section */
+        .speed-section {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gauge-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .speed-value-container {
+            z-index: 2;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .speed-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -4px;
+            text-shadow: 0 0 20px rgba(3, 218, 198, 0.3);
+        }
+
+        .speed-unit {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: var(--primary-color);
+            margin-top: -10px;
+            letter-spacing: 2px;
+        }
+
+        /* Info Cluster (Right Side in Landscape) */
+        .info-cluster {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 40%;
+        }
+
+        .data-card {
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            border-left: 3px solid var(--surface-variant);
+        }
+
+        .data-card.accent {
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .data-label {
+            font-size: 0.75rem;
+            color: var(--text-medium-emphasis);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .data-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .sub-value {
+            font-size: 0.8rem;
+            color: var(--text-disabled);
+            margin-top: 2px;
+        }
+
+        /* Button Bar */
+        .control-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .fab {
+            background-color: var(--surface-variant);
+            color: var(--text-high-emphasis);
+            border: none;
+            height: 56px;
+            min-width: 56px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .fab:active {
+            background-color: #333;
+            transform: scale(0.98);
+        }
+
+        .fab.primary {
+            background-color: var(--primary-color);
+            color: black;
+        }
+
+        .fab .material-icons {
+            margin-right: 8px;
+        }
+        
+        .fab.icon-only {
+            padding: 0;
+            width: 56px;
+        }
+        .fab.icon-only .material-icons {
+            margin-right: 0;
+        }
+
+        .fab.active-state {
+            background-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 0 15px var(--secondary-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface-color);
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--surface-variant);
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-medium-emphasis);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--surface-variant);
+            color: white;
+            border-radius: 8px;
+            font-size: 18px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        /* Portrait Adjustments */
+        @media (orientation: portrait) {
+            .dashboard-container {
+                grid-template-rows: 50px auto 1fr 80px;
+            }
+            .main-display {
+                flex-direction: column;
+                justify-content: center;
+            }
+            .info-cluster {
+                width: 90%;
+                grid-template-columns: 1fr 1fr;
+                margin-top: 20px;
+            }
+            .speed-section {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Top Status Bar -->
+        <div class="top-bar">
+            <div class="status-cluster">
+                <div class="status-item gps-status inactive" id="gpsIndicator">
+                    <span class="material-icons">gps_fixed</span>
+                    <span id="gpsText">No GPS</span>
+                </div>
+                <div class="status-item">
+                    <span class="material-icons">battery_std</span>
+                    <span id="batteryLevel">--%</span>
+                </div>
+            </div>
+            <div class="clock" id="clock">12:00</div>
+        </div>
+
+        <!-- Main Display -->
+        <div class="main-display">
+            <!-- Speedometer -->
+            <div class="speed-section">
+                <canvas id="gaugeCanvas" width="300" height="300" class="gauge-canvas"></canvas>
+                <div class="speed-value-container">
+                    <div class="speed-value" id="speedDisplay">0</div>
+                    <div class="speed-unit">km/h</div>
+                </div>
+            </div>
+
+            <!-- Data Cluster -->
+            <div class="info-cluster">
+                <div class="data-card accent">
+                    <div class="data-label">Trip Distance</div>
+                    <div class="data-value" id="tripDisplay">0.0 <span style="font-size: 0.6em">km</span></div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">Avg Efficiency</div>
+                    <div class="data-value" id="efficiencyDisplay">--.- <span style="font-size: 0.6em">km/L</span></div>
+                    <div class="sub-value" id="fuelLogInfo">Last: -- L</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">Compass</div>
+                    <div class="data-value" id="headingDisplay">---°</div>
+                    <div class="sub-value" id="headingText">N</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">Coordinates</div>
+                    <div class="data-value" style="font-size: 1rem;" id="coordsLat">00.0000 N</div>
+                    <div class="data-value" style="font-size: 1rem;" id="coordsLon">00.0000 E</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Bar -->
+        <div class="control-bar">
+            <button class="fab" onclick="toggleHud()" id="hudBtn">
+                <span class="material-icons">flip</span> HUD
+            </button>
+            <button class="fab primary" onclick="openFuelModal()">
+                <span class="material-icons">local_gas_station</span> Fuel
+            </button>
+            <button class="fab icon-only" onclick="resetTrip()" title="Reset Trip">
+                <span class="material-icons">restart_alt</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Fuel Entry Modal -->
+    <div class="modal-overlay" id="fuelModal">
+        <div class="modal">
+            <h2>Log Refuel</h2>
+            <div class="input-group">
+                <label>Fuel Added (Liters)</label>
+                <input type="number" id="fuelInput" placeholder="e.g. 12.5" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Distance Driven Since Last Fill (Trip)</label>
+                <input type="number" id="tripForCalc" disabled>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-text" style="color: #888" onclick="closeFuelModal()">Cancel</button>
+                <button class="btn-text" onclick="saveFuelLog()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            speed: 0,
+            lat: 0,
+            lon: 0,
+            heading: 0,
+            tripDistance: parseFloat(localStorage.getItem('tripDistance')) || 0,
+            lastLat: null,
+            lastLon: null,
+            gpsActive: false,
+            watchId: null,
+            totalFuel: parseFloat(localStorage.getItem('totalFuel')) || 0,
+            totalDistanceTracked: parseFloat(localStorage.getItem('totalDistanceTracked')) || 0, // Total distance ever for calcs
+            efficiency: parseFloat(localStorage.getItem('efficiency')) || 0
+        };
+
+        // --- DOM Elements ---
+        const els = {
+            speed: document.getElementById('speedDisplay'),
+            trip: document.getElementById('tripDisplay'),
+            gpsIcon: document.getElementById('gpsIndicator'),
+            gpsText: document.getElementById('gpsText'),
+            lat: document.getElementById('coordsLat'),
+            lon: document.getElementById('coordsLon'),
+            heading: document.getElementById('headingDisplay'),
+            headingText: document.getElementById('headingText'),
+            clock: document.getElementById('clock'),
+            battery: document.getElementById('batteryLevel'),
+            canvas: document.getElementById('gaugeCanvas'),
+            hudBtn: document.getElementById('hudBtn'),
+            fuelModal: document.getElementById('fuelModal'),
+            fuelInput: document.getElementById('fuelInput'),
+            tripForCalc: document.getElementById('tripForCalc'),
+            effDisplay: document.getElementById('efficiencyDisplay'),
+            fuelLogInfo: document.getElementById('fuelLogInfo')
+        };
+
+        // --- Initialization ---
+        function init() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            initBattery();
+            drawGauge(0);
+            loadSavedData();
+            
+            // Start GPS
+            if ('geolocation' in navigator) {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+                state.watchId = navigator.geolocation.watchPosition(handlePosition, handleError, options);
+            } else {
+                els.gpsText.textContent = "Not Supported";
+            }
+
+            // Wake Lock
+            requestWakeLock();
+        }
+
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    await navigator.wakeLock.request('screen');
+                    console.log('Screen Wake Lock active');
+                }
+            } catch (err) {
+                console.log('Wake Lock error:', err);
+            }
+        }
+
+        // --- Logic ---
+
+        function handlePosition(pos) {
+            const crd = pos.coords;
+            
+            // GPS Status
+            state.gpsActive = true;
+            els.gpsIcon.classList.remove('inactive');
+            els.gpsIcon.classList.add('active');
+            els.gpsText.textContent = `GPS (${crd.accuracy.toFixed(0)}m)`;
+
+            // Speed (m/s to km/h)
+            // Use Geolocation speed if available, otherwise calculate? No, standard API speed is best for dashboards.
+            let speedKmh = 0;
+            if (crd.speed !== null && crd.speed >= 0) {
+                speedKmh = crd.speed * 3.6;
+            }
+            
+            // Smooth speed decay if stationary
+            if (speedKmh < 1) speedKmh = 0;
+            
+            state.speed = Math.round(speedKmh);
+            els.speed.textContent = state.speed;
+            drawGauge(state.speed);
+
+            // Coordinates
+            state.lat = crd.latitude;
+            state.lon = crd.longitude;
+            els.lat.textContent = state.lat.toFixed(5) + " N";
+            els.lon.textContent = state.lon.toFixed(5) + " E";
+
+            // Heading
+            if (crd.heading !== null && !isNaN(crd.heading) && speedKmh > 3) {
+                state.heading = crd.heading;
+                els.heading.textContent = Math.round(state.heading) + "°";
+                els.headingText.textContent = getCardinal(state.heading);
+            }
+
+            // Trip Distance Calculation
+            if (state.lastLat !== null && state.lastLon !== null) {
+                const distKm = getDistanceFromLatLonInKm(state.lastLat, state.lastLon, state.lat, state.lon);
+                // Only count distance if moving > 3kmh and distance is reasonable (ignore jumps)
+                if (speedKmh > 3 && distKm < 0.5) { 
+                    state.tripDistance += distKm;
+                    state.totalDistanceTracked += distKm;
+                    saveState();
+                }
+            }
+
+            state.lastLat = state.lat;
+            state.lastLon = state.lon;
+            updateTripDisplay();
+        }
+
+        function handleError(err) {
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+            state.gpsActive = false;
+            els.gpsIcon.classList.remove('active');
+            els.gpsIcon.classList.add('inactive');
+            els.gpsText.textContent = "Lost Signal";
+        }
+
+        // --- Helpers ---
+
+        function getCardinal(angle) {
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            return directions[Math.round(angle / 45) % 8];
+        }
+
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the earth in km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            els.clock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function initBattery() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(function(battery) {
+                    updateBattery(battery);
+                    battery.addEventListener('levelchange', function() { updateBattery(battery); });
+                });
+            }
+        }
+
+        function updateBattery(battery) {
+            els.battery.textContent = Math.round(battery.level * 100) + "%";
+            if(battery.charging) els.battery.textContent += "+";
+        }
+
+        function saveState() {
+            localStorage.setItem('tripDistance', state.tripDistance);
+            localStorage.setItem('totalDistanceTracked', state.totalDistanceTracked);
+            localStorage.setItem('efficiency', state.efficiency);
+            localStorage.setItem('totalFuel', state.totalFuel);
+        }
+
+        function loadSavedData() {
+            updateTripDisplay();
+            updateEfficiencyDisplay();
+        }
+
+        function updateTripDisplay() {
+            els.trip.innerHTML = state.tripDistance.toFixed(1) + " <span style='font-size:0.6em'>km</span>";
+        }
+
+        function updateEfficiencyDisplay() {
+            if(state.efficiency > 0) {
+                els.effDisplay.innerHTML = state.efficiency.toFixed(1) + " <span style='font-size:0.6em'>km/L</span>";
+            } else {
+                els.effDisplay.innerHTML = "--.- <span style='font-size:0.6em'>km/L</span>";
+            }
+        }
+
+        // --- HUD Feature ---
+
+        function toggleHud() {
+            document.body.classList.toggle('hud-active');
+            els.hudBtn.classList.toggle('active-state');
+            
+            // Re-request wake lock on interaction just in case
+            requestWakeLock();
+        }
+
+        // --- Canvas Gauge ---
+        function drawGauge(speed) {
+            const ctx = els.canvas.getContext('2d');
+            const w = els.canvas.width;
+            const h = els.canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = 130;
+            
+            ctx.clearRect(0, 0, w, h);
+
+            // Settings
+            const startAngle = 0.75 * Math.PI; // 135 deg
+            const endAngle = 2.25 * Math.PI;   // 405 deg
+            const maxSpeed = 220; // km/h
+
+            // Background Arc
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, startAngle, endAngle);
+            ctx.lineWidth = 15;
+            ctx.strokeStyle = '#333';
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Active Arc
+            const speedFraction = Math.min(speed, maxSpeed) / maxSpeed;
+            const currentAngle = startAngle + (speedFraction * (endAngle - startAngle));
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, startAngle, currentAngle);
+            ctx.lineWidth = 15;
+            // Gradient Stroke
+            const grad = ctx.createLinearGradient(0, h, w, 0);
+            grad.addColorStop(0, '#03dac6');
+            grad.addColorStop(1, '#bb86fc');
+            ctx.strokeStyle = grad;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            
+            // Ticks (Optional)
+            // Can be added for more detail
+        }
+
+        // --- Fuel & Trip Logic ---
+        
+        function resetTrip() {
+            if(confirm("Reset Trip Distance?")) {
+                state.tripDistance = 0;
+                saveState();
+                updateTripDisplay();
+            }
+        }
+
+        function openFuelModal() {
+            els.tripForCalc.value = state.tripDistance.toFixed(1);
+            els.fuelModal.classList.add('open');
+            els.fuelInput.focus();
+        }
+
+        function closeFuelModal() {
+            els.fuelModal.classList.remove('open');
+        }
+
+        function saveFuelLog() {
+            const liters = parseFloat(els.fuelInput.value);
+            if (!liters || liters <= 0) {
+                alert("Please enter a valid fuel amount.");
+                return;
+            }
+
+            // Calculate Efficiency for this specific segment (since last reset or tracked distance)
+            // Simplified: We use the current Trip distance as the distance driven for this fuel fill.
+            // Then we reset the trip automatically (common behavior) or just log it.
+            // Let's calculate efficiency based on Current Trip / Liters.
+            
+            if (state.tripDistance > 0) {
+                const currentEff = state.tripDistance / liters;
+                
+                // Update running average or just use last fill efficiency
+                state.efficiency = currentEff; 
+                state.totalFuel += liters;
+                els.fuelLogInfo.textContent = `Last: ${liters} L`;
+                
+                saveState();
+                updateEfficiencyDisplay();
+                
+                if(confirm(`Efficiency: ${currentEff.toFixed(1)} km/L.\n\nReset trip meter now?`)) {
+                    state.tripDistance = 0;
+                    saveState();
+                    updateTripDisplay();
+                }
+            } else {
+                alert("Drive some distance before logging fuel to calculate efficiency.");
+            }
+
+            closeFuelModal();
+            els.fuelInput.value = '';
+        }
+
+        // Start
+        window.addEventListener('load', init);
+
+    </script>
+</body>
+</html>
+
