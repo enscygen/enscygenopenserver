@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KAU MycoGuide | Mushroom Expert</title>
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1b5e20; 
+            --primary-container: #e8f5e9;
+            --secondary: #4e342e;
+            --background: #fdfdfd;
+            --surface: #ffffff;
+            --text-main: #1b1c1b;
+            --text-sub: #5f635f;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --radius-lg: 28px;
+            --radius-md: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--background);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--surface);
+            padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 100;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .header-brand img { width: 36px; height: 36px; object-fit: contain; }
+        .header-title h1 { font-size: 18px; margin: 0; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+        .header-title p { font-size: 10px; margin: 0; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-sub); font-weight: 500; }
+
+        .lang-toggle {
+            background: var(--primary-container);
+            color: var(--primary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        main { flex: 1; overflow-y: auto; padding-bottom: 90px; }
+        .view { display: none; animation: slideIn 0.4s ease-out; }
+        .view.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .home-hero {
+            padding: 24px 16px;
+            background: linear-gradient(135deg, var(--primary), #388e3c);
+            color: white;
+            border-radius: 0 0 32px 32px;
+            margin-bottom: 24px;
+        }
+
+        .mushroom-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 0 16px; }
+        .mushroom-card {
+            background: var(--surface); border-radius: var(--radius-md); overflow: hidden;
+            box-shadow: var(--shadow-sm); cursor: pointer; border: 1px solid #f0f0f0;
+        }
+        .card-img { width: 100%; height: 130px; background-size: cover; background-position: center; }
+        .card-content { padding: 12px; }
+        .card-content h3 { margin: 0; font-size: 15px; font-weight: 600; }
+
+        .gallery-container { position: relative; background: #eee; }
+        .gallery-scroller { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; height: 280px; }
+        .gallery-scroller::-webkit-scrollbar { display: none; }
+        .gallery-item { flex: 0 0 100%; scroll-snap-align: center; background-size: cover; background-position: center; }
+
+        .back-btn {
+            position: absolute; top: 16px; left: 16px;
+            background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md); z-index: 50; backdrop-filter: blur(8px);
+        }
+
+        .detail-body {
+            padding: 24px 20px; background: var(--surface); border-radius: 32px 32px 0 0;
+            margin-top: -32px; position: relative; z-index: 5;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+        }
+
+        .mushroom-intro {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-sub);
+            margin: 16px 0;
+            padding: 16px;
+            background: #f8fcf8;
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .video-wrapper {
+            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px;
+            margin: 16px 0 24px; overflow: hidden; box-shadow: var(--shadow-md);
+        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .info-pill-container { display: flex; overflow-x: auto; gap: 8px; padding: 4px 0 16px; scrollbar-width: none; }
+        .info-pill {
+            flex-shrink: 0; background: var(--primary-container); padding: 8px 14px;
+            border-radius: 12px; font-size: 12px; color: var(--primary); font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .variety-scroller { display: flex; overflow-x: auto; gap: 16px; padding: 8px 4px 24px; scrollbar-width: none; }
+        .variety-card {
+            flex: 0 0 160px; background: white; border-radius: 18px; padding: 10px;
+            box-shadow: var(--shadow-sm); text-align: center; border: 1px solid #f0f0f0;
+        }
+        .variety-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-bottom: 8px; }
+
+        .step-item { position: relative; padding-left: 44px; margin-bottom: 32px; }
+        .step-item::before {
+            content: ''; position: absolute; left: 15px; top: 32px; bottom: -32px; width: 2px; background: #e0e0e0;
+        }
+        .step-item:last-child::before { display: none; }
+        .step-marker {
+            position: absolute; left: 0; top: 0; width: 32px; height: 32px;
+            background: var(--primary); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; z-index: 2;
+            box-shadow: 0 0 0 4px var(--primary-container);
+        }
+
+        .sub-steps { background: #f9faf9; border-radius: 16px; padding: 16px; margin-top: 12px; }
+        .sub-step-item { display: flex; gap: 8px; margin-bottom: 8px; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 2000;
+            display: none; align-items: flex-end; justify-content: center;
+            backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            background: white; width: 100%; max-width: 500px;
+            border-radius: 32px 32px 0 0; padding: 28px;
+            max-height: 90vh; overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        nav.bottom-nav {
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 12px 0 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100;
+            border-top: 1px solid #f0f0f0;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); text-decoration: none; flex: 1; transition: var(--transition); }
+        .nav-item span.material-symbols-rounded { padding: 6px 20px; border-radius: 20px; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active span.material-symbols-rounded { background-color: var(--primary-container); font-variation-settings: 'FILL' 1; }
+        .nav-label { font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 16px; }
+        .section-title { font-size: 19px; font-weight: 700; color: var(--secondary); margin: 0; }
+        .p-16 { padding: 16px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/en/2/23/Keral_Agricultural_University_logo.png" alt="KAU Logo">
+            <div class="header-title">
+                <h1>MycoGuide</h1>
+                <p id="header-subtitle">KAU Extension Services</p>
+            </div>
+        </div>
+        <button class="lang-toggle" onclick="toggleLanguage()">
+            <span class="material-symbols-rounded" style="font-size:16px">translate</span>
+            <span id="lang-btn-text">മലയാളം</span>
+        </button>
+    </header>
+
+    <main id="app-content">
+        <div id="view-home" class="view active">
+            <div class="home-hero">
+                <h2 id="welcome-msg" style="margin:0; font-size: 24px;">Welcome back</h2>
+                <p id="welcome-sub" style="margin:4px 0 0; opacity: 0.8; font-size: 14px;">Select a variety to start cultivation</p>
+            </div>
+            
+            <div class="p-16" style="margin-top:-44px">
+                <div style="background:white; padding:12px 16px; border-radius:16px; box-shadow:var(--shadow-md); display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+                    <span class="material-symbols-rounded" style="color:var(--text-sub)">search</span>
+                    <input type="text" id="search-placeholder" placeholder="Search mushrooms..." style="border:none; outline:none; font-size:16px; width:100%;">
+                </div>
+
+                <div class="section-header" style="margin-top:0">
+                    <h2 class="section-title" id="popular-title">Popular Choices</h2>
+                </div>
+                <div class="mushroom-grid" id="home-grid"></div>
+            </div>
+        </div>
+
+        <div id="view-detail" class="view"></div>
+
+        <div id="view-cultivation" class="view">
+            <div class="p-16">
+                <h2 class="section-title" id="library-title">Training Library</h2>
+                <p id="library-sub" style="color:var(--text-sub); font-size:14px; margin:8px 0 24px;">Scientific protocols developed by KAU experts.</p>
+                <div id="cult-list"></div>
+            </div>
+        </div>
+
+        <div id="view-about" class="view">
+            <div class="p-16">
+                <div style="text-align:center; padding:32px 16px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/2/23/Keral_Agricultural_University_logo.png" style="width:80px; margin-bottom:16px;">
+                    <h2 style="margin:0">KAU MycoGuide</h2>
+                    <p id="about-location">Vellayani, Thiruvananthapuram</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content" id="modal-body"></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" id="nav-home" class="nav-item active" onclick="switchView('home', event)">
+            <span class="material-symbols-rounded">dashboard</span>
+            <span class="nav-label" id="label-home">Home</span>
+        </a>
+        <a href="#" id="nav-cultivation" class="nav-item" onclick="switchView('cultivation', event)">
+            <span class="material-symbols-rounded">menu_book</span>
+            <span class="nav-label" id="label-learn">Learn</span>
+        </a>
+        <a href="#" id="nav-about" class="nav-item" onclick="switchView('about', event)">
+            <span class="material-symbols-rounded">account_balance</span>
+            <span class="nav-label" id="label-inst">Institution</span>
+        </a>
+    </nav>
+
+    <script>
+        let currentLang = 'en';
+
+        const uiStrings = {
+            en: {
+                subtitle: "KAU Extension Services",
+                welcome: "Welcome back",
+                welcomeSub: "Select a variety to start cultivation",
+                search: "Search mushrooms...",
+                popular: "Popular Choices",
+                library: "Training Library",
+                libSub: "Scientific protocols developed by KAU experts.",
+                loc: "Vellayani, Thiruvananthapuram",
+                home: "Home",
+                learn: "Learn",
+                inst: "Institution",
+                langBtn: "മലയാളം",
+                yield: "Yield",
+                temp: "Temp",
+                incubation: "Incub",
+                substrate: "Medium",
+                video: "Preparation Video",
+                varieties: "Popular Varieties",
+                steps: "Cultivation Steps",
+                gotit: "Got it"
+            },
+            ml: {
+                subtitle: "കെ.എ.യു എക്സ്റ്റൻഷൻ സർവീസസ്",
+                welcome: "സ്വാഗതം",
+                welcomeSub: "കൃഷി ആരംഭിക്കാൻ ഒരു ഇനം തിരഞ്ഞെടുക്കുക",
+                search: "കൂണുകൾ തിരയുക...",
+                popular: "പ്രധാന ഇനങ്ങൾ",
+                library: "പരിശീലന ലൈബ്രറി",
+                libSub: "കെ.എ.യു വിദഗ്ധർ വികസിപ്പിച്ച ശാസ്ത്രീയ രീതികൾ.",
+                loc: "വെള്ളായണി, തിരുവനന്തപുരം",
+                home: "ഹോം",
+                learn: "പഠിക്കാം",
+                inst: "സ്ഥാപനം",
+                langBtn: "English",
+                yield: "വിളവ്",
+                temp: "താപനില",
+                incubation: "ഇൻകുബേഷൻ",
+                substrate: "മീഡിയം",
+                video: "പരിശീലന വീഡിയോ",
+                varieties: "മറ്റ് ഇനങ്ങൾ",
+                steps: "കൃഷി രീതികൾ",
+                gotit: "ശരി"
+            }
+        };
+
+        const mushrooms = [
+            {
+                id: 1,
+                en: {
+                    name: "Oyster Mushroom",
+                    scientific: "Pleurotus ostreatus",
+                    intro: "Oyster mushrooms are among the most popular and versatile mushrooms cultivated worldwide. In Kerala, they are highly favored due to their ability to grow on simple organic wastes like paddy straw. They are rich in protein, vitamins, and minerals while being low in fat. This variety is perfect for home-based cultivation and commercial farming alike, offering high returns with relatively low maintenance.",
+                    varieties: [
+                        { name: "Florida (White)", info: "A high-yielding pure white variety ideal for winter months. It produces dense clusters and has excellent market demand in Kerala.", img: "https://via.placeholder.com/300x200?text=White+Oyster" },
+                        { name: "Sajor-caju (Grey)", info: "A robust grey-brown variety known for its exceptional heat tolerance. Suitable for year-round cultivation in the humid climate of coastal Kerala.", img: "https://via.placeholder.com/300x200?text=Grey+Oyster" },
+                        { name: "Pink Oyster (Eous)", info: "Known for its striking pink color and rapid growth. It can be harvested in just 12-14 days after spawning but has a very short shelf life.", img: "https://via.placeholder.com/300x200?text=Pink+Oyster" }
+                    ],
+                    steps: [
+                        { title: "Substrate Preparation", subSteps: [
+                            { head: "Straw Selection", text: "Use fresh, golden-colored paddy straw. Avoid damp or moldy straw." },
+                            { head: "Chopping", text: "Chop straw into small bits of 2-3 inches to allow better mycelium colonization." },
+                            { head: "Hydration & Sterilization", text: "Soak straw for 12 hours. Pasteurize by steaming for 2 hours to kill harmful microbes." }
+                        ]},
+                        { title: "Spawning & Bagging", subSteps: [
+                            { head: "Spawn Layering", text: "Fill 30x60cm polybags in layers. Apply spawn on the periphery of each layer (3% by weight)." },
+                            { head: "Compression", text: "Compress slightly to remove air pockets. Tie the bag firmly and punch ventilation holes." }
+                        ]},
+                        { title: "Incubation & Cropping", subSteps: [
+                            { head: "Dark Room Run", text: "Keep bags in a dark, clean room for 15-20 days until completely white." },
+                            { head: "Opening & Watering", text: "Cut open bags and spray water twice daily. Maintain 80% humidity." }
+                        ]}
+                    ]
+                },
+                ml: {
+                    name: "ചിപ്പി കൂൺ",
+                    scientific: "Pleurotus ostreatus",
+                    intro: "ലോകമെമ്പാടും കൃഷി ചെയ്യുന്നതിൽ ഏറ്റവും പ്രചാരമുള്ള ഇനമാണ് ചിപ്പി കൂൺ. വൈക്കോൽ പോലുള്ള ജൈവമാലിന്യങ്ങളിൽ ഇത് എളുപ്പത്തിൽ വളരുന്നു. കേരളത്തിലെ കാലാവസ്ഥയിൽ ഇതിന് മികച്ച വിളവ് ലഭിക്കുന്നു. പോഷകസമൃദ്ധവും കൊഴുപ്പ് കുറഞ്ഞതുമായ ഈ കൂൺ വീട്ടാവശ്യങ്ങൾക്കും വാണിജ്യാടിസ്ഥാനത്തിലുള്ള കൃഷിക്കും ഒരുപോലെ അനുയോജ്യമാണ്.",
+                    varieties: [
+                        { name: "ഫ്ലോറിഡ", info: "വെളുത്ത നിറത്തിലുള്ള ഇനം. ശൈത്യകാലത്ത് മികച്ച വിളവ് നൽകുന്നു.", img: "https://via.placeholder.com/300x200?text=White+Oyster" },
+                        { name: "സജോർ-കാജു", info: "ചാരനിറത്തിലുള്ള ഇനം. കൂടുതൽ ചൂടിനെ പ്രതിരോധിക്കാൻ കഴിവുണ്ട്.", img: "https://via.placeholder.com/300x200?text=Grey+Oyster" },
+                        { name: "പിങ്ക് ചിപ്പി", info: "ആകർഷകമായ പിങ്ക് നിറം. വേഗത്തിൽ വളരുന്നു (12-14 ദിവസം).", img: "https://via.placeholder.com/300x200?text=Pink+Oyster" }
+                    ],
+                    steps: [
+                        { title: "അടിസ്ഥാന ഒരുക്കം", subSteps: [
+                            { head: "വൈക്കോൽ തിരഞ്ഞെടുക്കൽ", text: "നല്ല സ്വർണ്ണനിറമുള്ള വൈക്കോൽ ഉപയോഗിക്കുക." },
+                            { head: "മുറിക്കൽ", text: "വൈക്കോൽ 2-3 ഇഞ്ച് കഷ്ണങ്ങളായി മുറിക്കുക." },
+                            { head: "അണുനശീകരണം", text: "12 മണിക്കൂർ കുതിർത്ത ശേഷം 2 മണിക്കൂർ ആവിയിൽ പുഴുങ്ങുക." }
+                        ]},
+                        { title: "വിത്തിടൽ", subSteps: [
+                            { head: "പാളികൾ", text: "പോളിബാഗുകളിൽ വൈക്കോലും വിത്തും പാളികളായി നിറയ്ക്കുക." },
+                            { head: "ദ്വാരങ്ങൾ", text: "വായുസഞ്ചാരത്തിനായി ബാഗുകളിൽ ചെറിയ ദ്വാരങ്ങൾ ഇടുക." }
+                        ]}
+                    ]
+                },
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                gallery: ["https://via.placeholder.com/800x450?text=Oyster+Cultivation+1", "https://via.placeholder.com/800x450?text=Oyster+Cultivation+2", "https://via.placeholder.com/800x450?text=Oyster+Market"],
+                meta: { yield: "1.5-2kg", temp: "22-28°C", substrate: "Paddy Straw", incubation: "18 Days" }
+            },
+            {
+                id: 2,
+                en: {
+                    name: "Milky Mushroom",
+                    scientific: "Calocybe indica",
+                    intro: "The Milky mushroom is a robust, tropical variety native to India. It is highly valued in Kerala for its ability to thrive during the hot summer months (March-May) when other mushrooms struggle. It features a thick, meaty stem and a long shelf life, staying fresh for up to a week at room temperature. Its attractive milky-white appearance makes it a premium product in the local markets.",
+                    varieties: [
+                        { name: "APK-2", info: "The gold standard variety for South India. Known for consistent large caps and resistance to pests.", img: "https://via.placeholder.com/300x200?text=APK-2+Milky" },
+                        { name: "Hybrid Giant", info: "Produces exceptionally large mushrooms (up to 500g each) under strict humidity control.", img: "https://via.placeholder.com/300x200?text=Giant+Milky" }
+                    ],
+                    steps: [
+                        { title: "Substrate Treatment", subSteps: [
+                            { head: "Soaking", text: "Paddy straw is soaked and pasteurized similar to Oyster but slightly higher temp." }
+                        ]},
+                        { title: "Spawn Run", subSteps: [
+                            { head: "Incubation", text: "Place bags in a warm dark room (30-35°C). Ensure total colonization before casing." }
+                        ]},
+                        { title: "Casing Operation", subSteps: [
+                            { head: "Soil Mix", text: "Prepare 1:1 mixture of sand and garden soil. Steam sterilize for 1 hour." },
+                            { head: "Application", text: "Apply a 2cm layer of soil on top of the fully colonised substrate." }
+                        ]},
+                        { title: "Fruiting", subSteps: [
+                            { head: "Light & Air", text: "After casing, provide diffuse light and fresh air for pinhead formation." }
+                        ]}
+                    ]
+                },
+                ml: {
+                    name: "പാൽ കൂൺ",
+                    scientific: "Calocybe indica",
+                    intro: "ഇന്ത്യയിൽ നിന്നുള്ള കടുപ്പമേറിയതും ഉഷ്ണമേഖലാ കാലാവസ്ഥയിൽ വളരുന്നതുമായ ഇനമാണ് പാൽ കൂൺ. കേരളത്തിലെ കഠിനമായ വേനൽക്കാലത്തും ഇത് മികച്ച വിളവ് നൽകുന്നു. ഇതിന്റെ മാംസളമായ തണ്ടും വെളുത്ത നിറവും വിപണിയിൽ ഇതിന് നല്ല ഡിമാൻഡ് നൽകുന്നു. മുറിയിലെ താപനിലയിൽ ഒരാഴ്ചയോളം ഇത് കേടുകൂടാതെ ഇരിക്കും.",
+                    varieties: [
+                        { name: "APK-2", info: "ദക്ഷിണേന്ത്യയിൽ ഏറ്റവും കൂടുതൽ കൃഷി ചെയ്യുന്ന ഇനം.", img: "https://via.placeholder.com/300x200?text=APK-2+Milky" },
+                        { name: "ഹൈബ്രിഡ് ജയന്റ്", info: "വളരെ വലിയ വലിപ്പമുള്ള കൂണുകൾ ഉത്പാദിപ്പിക്കുന്നു.", img: "https://via.placeholder.com/300x200?text=Giant+Milky" }
+                    ],
+                    steps: [
+                        { title: "ഇൻകുബേഷൻ", subSteps: [
+                            { head: "താപനില", text: "30-35°C താപനിലയിൽ ഇരുട്ടുള്ള മുറിയിൽ സൂക്ഷിക്കുക." }
+                        ]},
+                        { title: "കേസിംഗ്", subSteps: [
+                            { head: "മണ്ണ് ഒരുക്കൽ", text: "അണുവിമുക്തമാക്കിയ മണ്ണ് ഉപയോഗിച്ച് 2 സെ.മീ കനത്തിൽ പുതയിടുക." }
+                        ]}
+                    ]
+                },
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                gallery: ["https://via.placeholder.com/800x450?text=Milky+Beds", "https://via.placeholder.com/800x450?text=Milky+Harvest"],
+                meta: { yield: "1.2kg", temp: "30-35°C", substrate: "Paddy Straw", incubation: "25 Days" }
+            },
+            {
+                id: 3,
+                en: {
+                    name: "Button Mushroom",
+                    scientific: "Agaricus bisporus",
+                    intro: "Button mushrooms are the classic gourmet choice and the most commercially traded mushrooms in the world. Being a temperate variety, they require cold temperatures (15-20°C) which makes them challenging to grow in Kerala without climate-controlled rooms (AC chambers). They grow on specially prepared compost rather than simple straw, requiring a more technical approach involving fermentation and pasteurization phases.",
+                    varieties: [
+                        { name: "White Button (S-11)", info: "The most common commercial strain. Produces uniform, white, rounded caps.", img: "https://via.placeholder.com/300x200?text=White+Button" },
+                        { name: "Brown Cremini", info: "A more flavorful and firm-textured variety with a brownish cap color.", img: "https://via.placeholder.com/300x200?text=Cremini" }
+                    ],
+                    steps: [
+                        { title: "Phase I Composting", subSteps: [
+                            { head: "Mixing", text: "Straw, poultry manure, and urea are mixed and wetted on a concrete floor." },
+                            { head: "Turning", text: "Mixed every 2-3 days over a week to encourage aerobic fermentation." }
+                        ]},
+                        { title: "Phase II Pasteurization", subSteps: [
+                            { head: "Peak Heating", text: "Compost is moved to a tunnel where steam maintains 60°C for 6 hours." },
+                            { head: "Conditioning", text: "Maintained at 48°C for 4 days to convert ammonia into microbial protein." }
+                        ]},
+                        { title: "Spawning & Casing", subSteps: [
+                            { head: "Inoculation", text: "Spawn is mixed thoroughly into the cooled compost." },
+                            { head: "Casing", text: "After spawn run, a casing layer triggers mushroom development." }
+                        ]}
+                    ]
+                },
+                ml: {
+                    name: "ബട്ടൺ കൂൺ",
+                    scientific: "Agaricus bisporus",
+                    intro: "ലോകമെമ്പാടും വാണിജ്യാടിസ്ഥാനത്തിൽ ഏറ്റവുമധികം വിൽക്കപ്പെടുന്ന കൂണാണ് ബട്ടൺ കൂൺ. കേരളത്തിൽ ഇത് കൃഷി ചെയ്യാൻ ശീതീകരിച്ച മുറികൾ അത്യാവശ്യമാണ്. ഇതിന്റെ കൃഷി രീതി മറ്റ് കൂണുകളെ അപേക്ഷിച്ച് കൂടുതൽ സാങ്കേതിക വിദ്യകൾ ആവശ്യമായ ഒന്നാണ്.",
+                    varieties: [
+                        { name: "S-11", info: "വാണിജ്യാടിസ്ഥാനത്തിൽ കൃഷി ചെയ്യാൻ അനുയോജ്യമായ വെളുത്ത ഇനം.", img: "https://via.placeholder.com/300x200?text=White+Button" }
+                    ],
+                    steps: [
+                        { title: "കമ്പോസ്റ്റിംഗ്", subSteps: [
+                            { head: "തയ്യാറാക്കൽ", text: "വൈക്കോലും വളങ്ങളും ചേർത്ത് കമ്പോസ്റ്റ് തയ്യാറാക്കുക." }
+                        ]}
+                    ]
+                },
+                videoUrl: null,
+                gallery: ["https://via.placeholder.com/800x450?text=Button+Trays", "https://via.placeholder.com/800x450?text=Button+Compost"],
+                meta: { yield: "12kg/sqm", temp: "15-22°C", substrate: "Compost", incubation: "15 Days" }
+            },
+            {
+                id: 4,
+                en: {
+                    name: "Straw Mushroom",
+                    scientific: "Volvariella volvacea",
+                    intro: "Straw mushrooms are prized for their unique 'egg stage' harvest and savory flavor. They are incredibly fast-growing, with the entire cycle from bed preparation to harvest taking less than two weeks. While they have a low shelf life, they are a delicacy in South Asian cuisine. Traditionally grown on paddy straw bundles in Kerala, they require very high temperatures and humidity for success.",
+                    varieties: [
+                        { name: "Paddy Straw (Egg)", info: "Harvested before the cap opens for the best flavor and texture.", img: "https://via.placeholder.com/300x200?text=Straw+Egg" },
+                        { name: "V. bombycina", info: "A wild relative sometimes found on wood, known for silky hairs.", img: "https://via.placeholder.com/300x200?text=Wild+Straw" }
+                    ],
+                    steps: [
+                        { title: "Bed Construction", subSteps: [
+                            { head: "Bundling", text: "Tie straw into bundles of 1kg each. Soak in water for 12 hours." },
+                            { head: "Stacking", text: "Layer 4-8 bundles in a square pattern. Apply spawn and gram flour on each layer." }
+                        ]},
+                        { title: "Environment Control", subSteps: [
+                            { head: "Humidity", text: "Maintain 85% humidity using misting or wet gunny bags." },
+                            { head: "Temp", text: "Keep temperature consistently above 32°C." }
+                        ]},
+                        { title: "Harvesting", subSteps: [
+                            { head: "Timing", text: "Harvest at the 'egg' or 'button' stage for maximum market value." }
+                        ]}
+                    ]
+                },
+                ml: {
+                    name: "വൈക്കോൽ കൂൺ",
+                    scientific: "Volvariella volvacea",
+                    intro: "വളരെ വേഗത്തിൽ (10-12 ദിവസം) വിളവെടുക്കാൻ കഴിയുന്ന കൂൺ വർഗ്ഗമാണിത്. വൈക്കോൽ കെട്ടുകളിലാണ് ഇത് പ്രധാനമായും കൃഷി ചെയ്യുന്നത്. ഇതിന്റെ രുചി സമാനതകളില്ലാത്തതാണ്.",
+                    varieties: [
+                        { name: "പാഡി സ്ട്രോ", info: "പരമ്പരാഗത രീതിയിലുള്ള വൈക്കോൽ കെട്ടുകളിൽ കൃഷി ചെയ്യാം.", img: "https://via.placeholder.com/300x200?text=Straw+Egg" }
+                    ],
+                    steps: [
+                        { title: "ബെഡ് ഒരുക്കൽ", subSteps: [
+                            { head: "കെട്ടുകൾ", text: "വൈക്കോൽ 1 കിലോ വീതമുള്ള കെട്ടുകളാക്കുക." }
+                        ]}
+                    ]
+                },
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                gallery: ["https://via.placeholder.com/800x450?text=Straw+Bed+Layout", "https://via.placeholder.com/800x450?text=Straw+Mushroom+Eggs"],
+                meta: { yield: "0.8kg", temp: "32-35°C", substrate: "Straw Bundles", incubation: "8 Days" }
+            }
+        ];
+
+        function updateUI() {
+            const s = uiStrings[currentLang];
+            document.getElementById('header-subtitle').innerText = s.subtitle;
+            document.getElementById('welcome-msg').innerText = s.welcome;
+            document.getElementById('welcome-sub').innerText = s.welcomeSub;
+            document.getElementById('search-placeholder').placeholder = s.search;
+            document.getElementById('popular-title').innerText = s.popular;
+            document.getElementById('library-title').innerText = s.library;
+            document.getElementById('library-sub').innerText = s.libSub;
+            document.getElementById('about-location').innerText = s.loc;
+            document.getElementById('lang-btn-text').innerText = s.langBtn;
+            
+            document.getElementById('label-home').innerText = s.home;
+            document.getElementById('label-learn').innerText = s.learn;
+            document.getElementById('label-inst').innerText = s.inst;
+            
+            renderData();
+        }
+
+        function toggleLanguage() {
+            currentLang = (currentLang === 'en') ? 'ml' : 'en';
+            updateUI();
+        }
+
+        function renderData() {
+            const grid = document.getElementById('home-grid');
+            const cult = document.getElementById('cult-list');
+            const s = uiStrings[currentLang];
+            
+            grid.innerHTML = mushrooms.map(m => `
+                <div class="mushroom-card" onclick="openDetail(${m.id})">
+                    <div class="card-img" style="background-image: url('${m.gallery[0]}')"></div>
+                    <div class="card-content">
+                        <h3>${m[currentLang].name}</h3>
+                        <small>${m[currentLang].scientific}</small>
+                    </div>
+                </div>
+            `).join('');
+
+            cult.innerHTML = mushrooms.map(m => `
+                <div style="background:white; display:flex; align-items:center; gap:16px; padding:16px; border-radius:18px; margin-bottom:16px; box-shadow:var(--shadow-sm); border:1px solid #f0f0f0;" onclick="openDetail(${m.id}, 'steps')">
+                    <img src="${m.gallery[0]}" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">
+                    <div style="flex:1">
+                        <h4 style="margin:0; font-size:16px;">${m[currentLang].name}</h4>
+                        <small style="color:var(--text-sub)">${m[currentLang].steps.length} ${s.steps}</small>
+                    </div>
+                    <span class="material-symbols-rounded" style="color:var(--primary)">arrow_forward_ios</span>
+                </div>
+            `).join('');
+        }
+
+        function openDetail(id, section = null) {
+            const m = mushrooms.find(x => x.id === id);
+            const detail = document.getElementById('view-detail');
+            const langData = m[currentLang];
+            const s = uiStrings[currentLang];
+            
+            const videoBlock = m.videoUrl ? `
+                <div class="section-header"><h2 class="section-title">${s.video}</h2></div>
+                <div class="video-wrapper"><iframe src="${m.videoUrl}" allowfullscreen></iframe></div>
+            ` : '';
+
+            detail.innerHTML = `
+                <div class="gallery-container">
+                    <button class="back-btn" onclick="switchView('home')"><span class="material-symbols-rounded">arrow_back</span></button>
+                    <div class="gallery-scroller">${m.gallery.map(img => `<div class="gallery-item" style="background-image:url('${img}')"></div>`).join('')}</div>
+                </div>
+                <div class="detail-body">
+                    <h1 style="margin:0; font-size:26px;">${langData.name}</h1>
+                    <p style="color:var(--primary); font-style:italic; margin:4px 0 20px;">${langData.scientific}</p>
+                    <div class="info-pill-container">
+                        <div class="info-pill"><span>scale</span>${s.yield}: ${m.meta.yield}</div>
+                        <div class="info-pill"><span>thermostat</span>${s.temp}: ${m.meta.temp}</div>
+                        <div class="info-pill"><span>eco</span>${s.substrate}: ${m.meta.substrate}</div>
+                    </div>
+
+                    <div class="mushroom-intro">${langData.intro}</div>
+
+                    ${videoBlock}
+                    <div class="section-header"><h2 class="section-title">${s.varieties}</h2></div>
+                    <div class="variety-scroller">
+                        ${langData.varieties.map(v => `
+                            <div class="variety-card" onclick="openVarietyModal('${v.name}', '${v.img}', '${v.info}')">
+                                <img src="${v.img}"><span>${v.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="section-header" id="steps-anchor"><h2 class="section-title">${s.steps}</h2></div>
+                    <div class="step-container">
+                        ${langData.steps.map((step, i) => `
+                            <div class="step-item">
+                                <div class="step-marker">${i+1}</div>
+                                <h3 style="margin:0 0 8px; font-size:18px;">${step.title}</h3>
+                                <div class="sub-steps">
+                                    ${step.subSteps.map(sub => `
+                                        <div class="sub-step-item">
+                                            <div style="color:var(--primary); font-size:18px; line-height:1;">•</div>
+                                            <div>
+                                                <strong>${sub.head}</strong>
+                                                <div style="color:var(--text-sub); font-size:14px;">${sub.text}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            switchView('detail');
+            if(section === 'steps') setTimeout(() => document.getElementById('steps-anchor').scrollIntoView({behavior:'smooth'}), 400);
+        }
+
+        function openVarietyModal(name, img, info) {
+            const overlay = document.getElementById('modal-overlay');
+            const body = document.getElementById('modal-body');
+            const s = uiStrings[currentLang];
+            body.innerHTML = `
+                <div style="text-align:center;"><img src="${img}" style="width:100%; border-radius:24px; aspect-ratio:4/3; object-fit:cover; margin-bottom:20px;">
+                <h2 style="margin:0; font-size:24px; color:var(--primary)">${name}</h2></div>
+                <p style="color:var(--text-sub); line-height:1.6; font-size:16px; margin:16px 0 24px;">${info}</p>
+                <button onclick="closeModal()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:16px; font-weight:700;">${s.gotit}</button>
+            `;
+            overlay.style.display = 'flex';
+        }
+
+        function switchView(viewId, event) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) target.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const nav = document.getElementById(`nav-${viewId}`);
+            if(nav) nav.classList.add('active');
+            document.querySelector('main').scrollTop = 0;
+        }
+
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+        window.onclick = (e) => { if(e.target.id == 'modal-overlay') closeModal(); }
+        document.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+</body>
+</html>
