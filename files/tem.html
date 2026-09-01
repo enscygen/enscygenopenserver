@@ -608,7 +608,8 @@
       const frameDoc = frame.contentDocument || frame.contentWindow.document;
       
       const range = frameDoc.createRange();
-      range.selectNodeContents(frameDoc.body);
+      // AFTER (selects strictly the styled table element):
+range.selectNode(frameDoc.body.firstElementChild);
       const sel = frameDoc.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
