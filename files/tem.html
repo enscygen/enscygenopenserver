@@ -1,563 +1,82 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Universal Email Template Generator</title>
-  <style>
-    :root[data-theme="dark"] {
-      --bg-app: #090d14;
-      --panel-bg: #121824;
-      --header-bg: #0d121c;
-      --card-section-bg: #080b11;
-      --input-bg: #080b10;
-      --border-color: #232d3f;
-      --text-main: #e2e8f0;
-      --text-muted: #94a3b8;
-      --accent-blue: #2563eb;
-      --accent-hover: #1d4ed8;
-      --danger: #ef4444;
-      --preview-bg: #0a0e17;
-      
-      --scrollbar-track: #090d14;
-      --scrollbar-thumb: #232d3f;
-      --scrollbar-thumb-hover: #374151;
-    }
-
-    :root[data-theme="light"] {
-      --bg-app: #f1f5f9;
-      --panel-bg: #ffffff;
-      --header-bg: #f8fafc;
-      --card-section-bg: #f8fafc;
-      --input-bg: #ffffff;
-      --border-color: #cbd5e1;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --accent-blue: #2563eb;
-      --accent-hover: #1d4ed8;
-      --danger: #dc2626;
-      --preview-bg: #e2e8f0;
-      
-      --scrollbar-track: #f1f5f9;
-      --scrollbar-thumb: #cbd5e1;
-      --scrollbar-thumb-hover: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      scrollbar-width: thin;
-      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--scrollbar-track);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--scrollbar-thumb);
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--scrollbar-thumb-hover);
-    }
-
-    body {
-      background-color: var(--bg-app);
-      color: var(--text-main);
-      padding: 20px;
-      font-size: 12px;
-      line-height: 1.4;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .app-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 20px;
-      height: calc(100vh - 40px);
-    }
-
-    .panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-
-    .panel-header {
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--header-bg);
-      min-height: 48px;
-    }
-
-    .panel-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
-    }
-
-    .panel-body {
-      padding: 16px;
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    input[type="text"],
-    input[type="url"],
-    textarea,
-    select {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 2px;
-      color: var(--text-main);
-      padding: 8px 10px;
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.15s ease, background 0.2s ease;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-      font-family: inherit;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--accent-blue);
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 8px;
-    }
-
-    .card-section {
-      background: var(--card-section-bg);
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 2px;
-      margin-bottom: 14px;
-    }
-
-    .table-row-item {
-      display: grid;
-      grid-template-columns: 1fr 1fr 28px;
-      gap: 6px;
-      margin-bottom: 6px;
-      align-items: center;
-    }
-
-    .btn {
-      background: var(--accent-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 2px;
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn:hover { background: var(--accent-hover); }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-    }
-    .btn-secondary:hover { 
-      background: var(--border-color); 
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: var(--danger);
-      border: 1px solid var(--border-color);
-      padding: 6px;
-    }
-    .btn-danger:hover { 
-      background: rgba(239, 68, 68, 0.1); 
-      border-color: var(--danger); 
-    }
-
-    .btn-block { width: 100%; }
-
-    .preview-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: var(--preview-bg);
-      transition: background-color 0.2s ease;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    <!-- Controls Panel -->
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">Template Configuration</span>
-        <div style="display: flex; gap: 6px;">
-          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="toggleTheme()" id="themeBtn">☀ Light Mode</button>
-          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="saveCustomTemplate()">Save Preset</button>
-          <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteCustomTemplate()">Delete</button>
-        </div>
-      </div>
-
-      <div class="panel-body">
-        <!-- Presets -->
-        <div class="form-group">
-          <label for="templateSelect">Load Saved Presets</label>
-          <select id="templateSelect" onchange="loadSelectedTemplate()">
-            <!-- Populated via JS -->
-          </select>
-        </div>
-
-        <!-- Logo Settings -->
-        <div class="card-section">
-          <div class="form-group">
-            <label for="logoUrl">Brand Logo URL</label>
-            <input type="url" id="logoUrl" value="https://enscygen.com/assets/brand/enscygen-global-white.svg" placeholder="https://domain.com/logo.png">
-          </div>
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="logoFilter">Logo Color Style</label>
-            <select id="logoFilter">
-              <option value="none">Original (Lock Actual Color)</option>
-              <option value="brightness(0) invert(1)" selected>White Monochrome (Invert to White)</option>
-              <option value="brightness(0)">Black Monochrome (Invert to Black)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Header Subject & Pre-text -->
-        <div class="form-group">
-          <label for="emailSubject">Subject / Title</label>
-          <input type="text" id="emailSubject" value="Subscription Confirmation: SCEA ExpiDesK Activated" placeholder="Email subject/title">
-        </div>
-
-        <div class="form-group">
-          <label for="bodyTop">Body Top (HTML supported)</label>
-          <textarea id="bodyTop" rows="3" placeholder="Dear Researcher,<br><br>Your access is ready.">Dear Researcher,<br><br>This is an automated confirmation from <strong>Enscygen</strong> to inform you that your subscription has been successfully activated.</textarea>
-        </div>
-
-        <!-- Dynamic Data Table Builder -->
-        <div class="card-section">
-          <label class="checkbox-label">
-            <input type="checkbox" id="enableTable" checked>
-            Include Key-Value Data Table
-          </label>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f9;">
+    <tr>
+      <td align="center">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 2px;">
           
-          <div id="tableConfigArea">
-            <div class="form-group">
-              <label for="tableTitle">Table Section Title</label>
-              <input type="text" id="tableTitle" value="Subscription Details">
-            </div>
-            
-            <div id="tableRowsContainer"></div>
-            
-            <button type="button" class="btn btn-secondary" style="width: 100%; margin-top: 6px; font-size: 11px;" onclick="addTableRow('','', true)">+ Add Table Row</button>
-          </div>
-        </div>
+          <tr>
+            <td style="background-color: #090d16; padding: 20px 28px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+              <img src="https://enscygen.com/assets/brand/enscygen-global-white.svg" alt="Logo" style="height: 20px; display: block; filter: brightness(0);">
+            </td>
+          </tr>
 
-        <!-- Body Bottom Text -->
-        <div class="form-group">
-          <label for="bodyBottom">Body Bottom (HTML supported)</label>
-          <textarea id="bodyBottom" rows="2" placeholder="Thank you for choosing us.">You may now log in to configure your experimental design parameters.</textarea>
-        </div>
+          <tr>
+            <td style="padding: 28px;">
+              <h2 style="margin: 0 0 16px 0; color: #111827; font-size: 15px; font-weight: 600; letter-spacing: -0.2px;">Subscription Confirmation: SCEA ExpiDesK Activated</h2>
+              
+              <div style="font-size: 13px; line-height: 1.6; color: #4b5563;">
+                Dear Researcher,<br><br>This is an automated confirmation from <strong>Enscygen</strong> to inform you that your subscription has been successfully activated.
+              </div>
 
-        <!-- Call to Action Link Button -->
-        <div class="card-section">
-          <label class="checkbox-label">
-            <input type="checkbox" id="enableButton" checked>
-            Include Action Button
-          </label>
-          <div id="buttonConfigArea">
-            <div class="form-group">
-              <label for="btnText">Button Label</label>
-              <input type="text" id="btnText" value="Access Dashboard">
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="btnUrl">Target URL</label>
-              <input type="url" id="btnUrl" value="https://enscygen.com/account/subscriptions">
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer Text -->
-        <div class="form-group">
-          <label for="footerText">Footer Note / Disclaimer</label>
-          <textarea id="footerText" rows="2">This is an automated system notification from an unmonitored address. For support, please contact the Enscygen Help Desk.</textarea>
-        </div>
-
-        <!-- Primary Action -->
-        <button type="button" class="btn btn-block" id="copyBtn" onclick="copyRichEmailForGmail()">Copy for Gmail (Rich Formatted)</button>
-      </div>
-    </div>
-
-    <!-- Live Preview -->
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">Live Preview (<span id="previewThemeLabel">Dark Inbox</span>)</span>
-      </div>
-      <iframe id="previewFrame" class="preview-frame"></iframe>
-    </div>
-  </div>
-
-  <script>
-    const defaultTemplates = {
-      "subscription_activation": {
-        name: "Subscription Activation (Default)",
-        logoUrl: "https://enscygen.com/assets/brand/enscygen-global-white.svg",
-        logoFilter: "brightness(0) invert(1)",
-        emailSubject: "Subscription Confirmation: SCEA ExpiDesK Activated",
-        bodyTop: "Dear Researcher,<br><br>This is an automated confirmation from <strong>Enscygen</strong> to inform you that your subscription has been successfully activated.",
-        enableTable: true,
-        tableTitle: "Subscription Overview",
-        tableRows: [
-          { label: "Account Name", value: "" },
-          { label: "Registry Email", value: "" },
-          { label: "Service", value: "SCEA ExpiDesK" },
-          { label: "Status", value: "Active" },
-          { label: "Valid Until", value: "" }
-        ],
-        bodyBottom: "You may log in to your account dashboard to access the platform modules and configure your experimental parameters.",
-        enableButton: true,
-        btnText: "Access Dashboard",
-        btnUrl: "https://enscygen.com/account/subscriptions",
-        footerText: "This is an automated system notification from an unmonitored address. For support, please contact the Enscygen Help Desk."
-      },
-      "complete_profile": {
-        name: "Complete Profile Notice",
-        logoUrl: "https://enscygen.com/assets/brand/enscygen-global-white.svg",
-        logoFilter: "brightness(0) invert(1)",
-        emailSubject: "Complete Your Profile for Tailored Access & Offers",
-        bodyTop: "Dear Researcher,<br><br>Thank you for being part of <strong>Enscygen</strong>. Please take a moment to complete your institutional profile to ensure your workspace and models are fully aligned with your academic institution.",
-        enableTable: true,
-        tableTitle: "Why complete your profile?",
-        tableRows: [
-          { label: "Tailored Tools", value: "Optimized for your institution's specific department" },
-          { label: "Special Offers", value: "Introductory trials and research tier updates" },
-          { label: "Priority Support", value: "Faster verification and institutional help desk" }
-        ],
-        bodyBottom: "Log in to your dashboard, navigate to Account Settings > Profile Information, and save your credentials.",
-        enableButton: true,
-        btnText: "Complete Profile Now",
-        btnUrl: "https://enscygen.com/account/profile",
-        footerText: "This is an automated system notification from an unmonitored address. For support, please contact the Enscygen Help Desk."
-      }
-    };
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const btn = document.getElementById('themeBtn');
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      
-      const newTheme = isDark ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      btn.innerText = isDark ? '🌙 Dark Mode' : '☀ Light Mode';
-      document.getElementById('previewThemeLabel').innerText = isDark ? 'Light Inbox' : 'Dark Inbox';
-      
-      updatePreview();
-    }
-
-    function syncTemplateDropdown() {
-      const select = document.getElementById('templateSelect');
-      select.innerHTML = '';
-
-      for (const [key, tpl] of Object.entries(defaultTemplates)) {
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.textContent = tpl.name;
-        select.appendChild(opt);
-      }
-
-      const saved = JSON.parse(localStorage.getItem('enscygen_user_templates') || '{}');
-      for (const [key, tpl] of Object.entries(saved)) {
-        const opt = document.createElement('option');
-        opt.value = 'user_' + key;
-        opt.textContent = '★ ' + tpl.name;
-        select.appendChild(opt);
-      }
-    }
-
-    function addTableRow(label = '', value = '', triggerUpdate = true) {
-      const container = document.getElementById('tableRowsContainer');
-      const div = document.createElement('div');
-      div.className = 'table-row-item';
-      div.innerHTML = `
-        <input type="text" placeholder="Field Name" class="row-label" value="${label}">
-        <input type="text" placeholder="Value" class="row-val" value="${value}">
-        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); updatePreview();">×</button>
-      `;
-
-      div.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', updatePreview);
-      });
-
-      container.appendChild(div);
-      if (triggerUpdate) updatePreview();
-    }
-
-    function generateTemplate(forceTheme = null) {
-      const logoUrl = document.getElementById('logoUrl').value;
-      const logoFilter = document.getElementById('logoFilter').value;
-      const subject = document.getElementById('emailSubject').value;
-      const bodyTop = document.getElementById('bodyTop').value;
-      const bodyBottom = document.getElementById('bodyBottom').value;
-      const enableTable = document.getElementById('enableTable').checked;
-      const tableTitle = document.getElementById('tableTitle').value;
-      const enableBtn = document.getElementById('enableButton').checked;
-      const btnText = document.getElementById('btnText').value;
-      const btnUrl = document.getElementById('btnUrl').value;
-      const footerText = document.getElementById('footerText').value;
-      
-      const currentTheme = forceTheme || document.documentElement.getAttribute('data-theme') || 'dark';
-      const isDark = currentTheme === 'dark';
-
-      // Palette resolution
-      const emailBg = isDark ? '#050505' : '#f4f6f9';
-      const cardBg = isDark ? '#111111' : '#ffffff';
-      const cardBorder = isDark ? '#222222' : '#e5e7eb';
-      const panelBg = isDark ? '#181818' : '#f9fafb';
-      const panelBorder = isDark ? '#282828' : '#e5e7eb';
-      const titleColor = isDark ? '#ffffff' : '#111827';
-      const bodyColor = isDark ? '#d1d5db' : '#4b5563';
-      const labelColor = isDark ? '#9ca3af' : '#6b7280';
-      const valColor = isDark ? '#ffffff' : '#111827';
-      const footerBg = isDark ? '#0e0e0e' : '#f9fafb';
-      const footerBorder = isDark ? '#222222' : '#e5e7eb';
-
-      let tableHtml = '';
-      if (enableTable) {
-        const rowElements = document.querySelectorAll('.table-row-item');
-        let rowsHtml = '';
-        rowElements.forEach(el => {
-          const l = el.querySelector('.row-label').value;
-          const v = el.querySelector('.row-val').value;
-          rowsHtml += `
-            <tr>
-              <td style="padding: 4px 0; color: ${labelColor}; width: 130px; font-size: 12px; vertical-align: top;">${l}</td>
-              <td style="padding: 4px 0; color: ${valColor}; font-weight: 500; font-size: 12px;">${v}</td>
-            </tr>
-          `;
-        });
-
-        tableHtml = `
-          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${panelBg}; border: 1px solid ${panelBorder}; border-radius: 2px; margin: 18px 0;">
+              
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 2px; margin: 18px 0;">
             <tr>
               <td style="padding: 16px;">
-                ${tableTitle ? `<div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: ${labelColor}; letter-spacing: 0.5px; margin-bottom: 8px;">${tableTitle}</div>` : ''}
+                <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px; margin-bottom: 8px;">Subscription Overview</div>
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="line-height: 1.5;">
-                  ${rowsHtml}
+                  
+            <tr>
+              <td style="padding: 4px 0; color: #6b7280; width: 130px; font-size: 12px; vertical-align: top;">Account Name</td>
+              <td style="padding: 4px 0; color: #111827; font-weight: 500; font-size: 12px;"></td>
+            </tr>
+          
+            <tr>
+              <td style="padding: 4px 0; color: #6b7280; width: 130px; font-size: 12px; vertical-align: top;">Registry Email</td>
+              <td style="padding: 4px 0; color: #111827; font-weight: 500; font-size: 12px;"></td>
+            </tr>
+          
+            <tr>
+              <td style="padding: 4px 0; color: #6b7280; width: 130px; font-size: 12px; vertical-align: top;">Service</td>
+              <td style="padding: 4px 0; color: #111827; font-weight: 500; font-size: 12px;">SCEA ExpiDesK</td>
+            </tr>
+          
+            <tr>
+              <td style="padding: 4px 0; color: #6b7280; width: 130px; font-size: 12px; vertical-align: top;">Status</td>
+              <td style="padding: 4px 0; color: #111827; font-weight: 500; font-size: 12px;">Active</td>
+            </tr>
+          
+            <tr>
+              <td style="padding: 4px 0; color: #6b7280; width: 130px; font-size: 12px; vertical-align: top;">Valid Until</td>
+              <td style="padding: 4px 0; color: #111827; font-weight: 500; font-size: 12px;"></td>
+            </tr>
+          
                 </table>
               </td>
             </tr>
           </table>
-        `;
-      }
+        
 
-      let btnHtml = '';
-      if (enableBtn && btnUrl && btnText) {
-        btnHtml = `
+              <div style="font-size: 13px; line-height: 1.6; color: #4b5563;">
+                You may log in to your account dashboard to access the platform modules and configure your experimental parameters.
+              </div>
+
+              
           <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 20px 0;">
             <tr>
               <td align="left">
-                <a href="${btnUrl}" target="_blank" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 9px 20px; border-radius: 2px; font-size: 12px; font-weight: 600; display: inline-block;">${btnText}</a>
+                <a href="https://enscygen.com/account/subscriptions" target="_blank" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 9px 20px; border-radius: 2px; font-size: 12px; font-weight: 600; display: inline-block;">Access Dashboard</a>
               </td>
             </tr>
           </table>
-        `;
-      }
-
-      return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${subject}</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: ${emailBg}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: ${bodyColor}; -webkit-font-smoothing: antialiased;">
-
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${emailBg}; padding: 0px;">
-    <tr>
-      <td align="center">
-        <!-- Card -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 2px;">
-          
-          <!-- Header Area -->
-          <tr>
-            <td style="background-color: #090d16; padding: 20px 28px; border-bottom: 1px solid #1e293b;">
-              <img src="${logoUrl}" alt="Logo" style="height: 20px; display: block; filter: ${logoFilter};">
+        
             </td>
           </tr>
 
-          <!-- Content Body -->
           <tr>
-            <td style="padding: 28px;">
-              ${subject ? `<h2 style="margin: 0 0 16px 0; color: ${titleColor}; font-size: 15px; font-weight: 600; letter-spacing: -0.2px;">${subject}</h2>` : ''}
-              
-              <div style="font-size: 13px; line-height: 1.6; color: ${bodyColor};">
-                ${bodyTop}
-              </div>
-
-              ${tableHtml}
-
-              <div style="font-size: 13px; line-height: 1.6; color: ${bodyColor};">
-                ${bodyBottom}
-              </div>
-
-              ${btnHtml}
-            </td>
-          </tr>
-
-          <!-- Footer Area -->
-          <tr>
-            <td style="padding: 16px 28px; background-color: ${footerBg}; border-top: 1px solid ${footerBorder};">
-              <p style="margin: 0 0 4px 0; font-size: 11px; line-height: 1.4; color: ${labelColor};">
-                <em>${footerText}</em>
+            <td style="padding: 16px 28px; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 4px 0; font-size: 11px; line-height: 1.4; color: #6b7280;">
+                <em>This is an automated system notification from an unmonitored address. For support, please contact the Enscygen Help Desk.</em>
               </p>
-              <p style="margin: 0; font-size: 11px; font-weight: 600; color: ${labelColor};">
+              <p style="margin: 0; font-size: 11px; font-weight: 600; color: #6b7280;">
                 The Enscygen Team
               </p>
             </td>
@@ -567,168 +86,3 @@
       </td>
     </tr>
   </table>
-
-</body>
-</html>`;
-    }
-
-    function updatePreview() {
-      const enableTable = document.getElementById('enableTable').checked;
-      document.getElementById('tableConfigArea').style.display = enableTable ? 'block' : 'none';
-
-      const enableButton = document.getElementById('enableButton').checked;
-      document.getElementById('buttonConfigArea').style.display = enableButton ? 'block' : 'none';
-
-      const frame = document.getElementById('previewFrame');
-      const doc = frame.contentDocument || frame.contentWindow.document;
-      doc.open();
-      doc.write(generateTemplate());
-      doc.close();
-    }
-
-    // Rich Copy (Inserts directly rendered HTML into Gmail compose)
-    async function copyRichEmailForGmail() {
-      const htmlText = generateTemplate();
-
-      try {
-        if (navigator.clipboard && window.ClipboardItem) {
-          const blobHtml = new Blob([htmlText], { type: 'text/html' });
-          const blobText = new Blob([htmlText], { type: 'text/plain' });
-          const data = [new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText })];
-          await navigator.clipboard.write(data);
-          showSuccessNotice();
-          return;
-        }
-      } catch (err) {
-        console.warn('ClipboardItem API blocked, falling back to selection copy.');
-      }
-
-      // DOM Selection Fallback for Rich HTML
-      const frame = document.getElementById('previewFrame');
-      const frameDoc = frame.contentDocument || frame.contentWindow.document;
-      
-      const range = frameDoc.createRange();
-      // AFTER (selects strictly the styled table element):
-range.selectNode(frameDoc.body.firstElementChild);
-      const sel = frameDoc.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      
-      try {
-        frameDoc.execCommand('copy');
-        sel.removeAllRanges();
-        showSuccessNotice();
-      } catch (e) {
-        alert('Could not copy automatically. Please open the preview and press Ctrl+A then Ctrl+C.');
-      }
-    }
-
-    function showSuccessNotice() {
-      const btn = document.getElementById('copyBtn');
-      const orig = btn.innerText;
-      btn.innerText = 'Copied! Paste Directly in Gmail';
-      btn.style.background = '#10b981';
-      setTimeout(() => {
-        btn.innerText = orig;
-        btn.style.background = 'var(--accent-blue)';
-      }, 2500);
-    }
-
-    function loadTemplateData(data) {
-      document.getElementById('logoUrl').value = data.logoUrl || '';
-      document.getElementById('logoFilter').value = data.logoFilter || 'none';
-      document.getElementById('emailSubject').value = data.emailSubject || '';
-      document.getElementById('bodyTop').value = data.bodyTop || '';
-      document.getElementById('bodyBottom').value = data.bodyBottom || '';
-      document.getElementById('enableTable').checked = !!data.enableTable;
-      document.getElementById('tableTitle').value = data.tableTitle || '';
-      document.getElementById('enableButton').checked = !!data.enableButton;
-      document.getElementById('btnText').value = data.btnText || '';
-      document.getElementById('btnUrl').value = data.btnUrl || '';
-      document.getElementById('footerText').value = data.footerText || '';
-
-      const container = document.getElementById('tableRowsContainer');
-      container.innerHTML = '';
-      if (data.tableRows && data.tableRows.length > 0) {
-        data.tableRows.forEach(row => addTableRow(row.label, row.value, false));
-      }
-      updatePreview();
-    }
-
-    function loadSelectedTemplate() {
-      const select = document.getElementById('templateSelect');
-      const val = select.value;
-      if (val.startsWith('user_')) {
-        const key = val.replace('user_', '');
-        const saved = JSON.parse(localStorage.getItem('enscygen_user_templates') || '{}');
-        if (saved[key]) loadTemplateData(saved[key]);
-      } else if (defaultTemplates[val]) {
-        loadTemplateData(defaultTemplates[val]);
-      }
-    }
-
-    function saveCustomTemplate() {
-      const name = prompt('Enter a name for this custom template preset:');
-      if (!name) return;
-
-      const rows = [];
-      document.querySelectorAll('.table-row-item').forEach(el => {
-        rows.push({
-          label: el.querySelector('.row-label').value,
-          value: el.querySelector('.row-val').value
-        });
-      });
-
-      const templateData = {
-        name: name,
-        logoUrl: document.getElementById('logoUrl').value,
-        logoFilter: document.getElementById('logoFilter').value,
-        emailSubject: document.getElementById('emailSubject').value,
-        bodyTop: document.getElementById('bodyTop').value,
-        bodyBottom: document.getElementById('bodyBottom').value,
-        enableTable: document.getElementById('enableTable').checked,
-        tableTitle: document.getElementById('tableTitle').value,
-        tableRows: rows,
-        enableButton: document.getElementById('enableButton').checked,
-        btnText: document.getElementById('btnText').value,
-        btnUrl: document.getElementById('btnUrl').value,
-        footerText: document.getElementById('footerText').value
-      };
-
-      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-      const saved = JSON.parse(localStorage.getItem('enscygen_user_templates') || '{}');
-      saved[key] = templateData;
-      localStorage.setItem('enscygen_user_templates', JSON.stringify(saved));
-      
-      syncTemplateDropdown();
-      document.getElementById('templateSelect').value = 'user_' + key;
-    }
-
-    function deleteCustomTemplate() {
-      const select = document.getElementById('templateSelect');
-      const val = select.value;
-      if (!val.startsWith('user_')) {
-        alert('You cannot delete built-in system templates.');
-        return;
-      }
-
-      if (confirm('Delete this saved preset?')) {
-        const key = val.replace('user_', '');
-        const saved = JSON.parse(localStorage.getItem('enscygen_user_templates') || '{}');
-        delete saved[key];
-        localStorage.setItem('enscygen_user_templates', JSON.stringify(saved));
-        syncTemplateDropdown();
-        loadSelectedTemplate();
-      }
-    }
-
-    document.querySelectorAll('input, textarea, select').forEach(el => {
-      el.addEventListener('input', updatePreview);
-      el.addEventListener('change', updatePreview);
-    });
-
-    syncTemplateDropdown();
-    loadSelectedTemplate();
-  </script>
-</body>
-</html>
